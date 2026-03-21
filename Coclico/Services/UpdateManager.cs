@@ -15,7 +15,7 @@ namespace Coclico.Services
         private static readonly HttpClient _httpClient = new();
         private const string GitHubApiUrl = "https://api.github.com/repos";
         // ⚠️ CONFIGURE THESE WITH YOUR GITHUB USERNAME AND REPO NAME
-        private const string GitHubOwner = "YOUR_GITHUB_USERNAME";
+        private const string GitHubOwner = "Coclico-cy";
         private const string GitHubRepo = "Coclico";
 
         private readonly ILogger<UpdateManager> _logger;
@@ -44,10 +44,10 @@ namespace Coclico.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogWarning($"GitHub API returned {response.StatusCode}");
-                    return null;
+                    return null!;
                 }
 
-                var json = await response.Content.ReadAsStringAsync(ct);
+                var json = await response.Content.ReadAsStringAsync(ct) ?? string.Empty;
                 var release = JsonSerializer.Deserialize<GitHubRelease>(json, new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
@@ -57,7 +57,7 @@ namespace Coclico.Services
                 if (release == null)
                 {
                     _logger.LogWarning("Failed to parse GitHub release JSON");
-                    return null;
+                    return null!;
                 }
 
                 if (IsNewerVersion(release.TagName, currentVersion))
@@ -68,28 +68,28 @@ namespace Coclico.Services
                 else
                 {
                     _logger.LogInformation("Already up-to-date");
-                    return null;
+                    return null!;
                 }
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError($"HTTP error checking updates: {ex.Message}");
-                return null;
+                return null!;
             }
             catch (JsonException ex)
             {
                 _logger.LogError($"JSON parsing error: {ex.Message}");
-                return null;
+                return null!;
             }
             catch (OperationCanceledException)
             {
                 _logger.LogWarning("Update check cancelled");
-                return null;
+                return null!;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Unexpected error checking updates: {ex.Message}");
-                return null;
+                return null!;
             }
         }
 
@@ -212,10 +212,10 @@ namespace Coclico.Services
     public class GitHubRelease
     {
         [JsonPropertyName("tag_name")]
-        public string TagName { get; set; }
+        public string TagName { get; set; } = string.Empty;
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("draft")]
         public bool Draft { get; set; }
@@ -224,31 +224,31 @@ namespace Coclico.Services
         public bool Prerelease { get; set; }
 
         [JsonPropertyName("body")]
-        public string Body { get; set; }
+        public string Body { get; set; } = string.Empty;
 
         [JsonPropertyName("published_at")]
         public DateTime PublishedAt { get; set; }
 
         [JsonPropertyName("assets")]
-        public List<GitHubAsset> Assets { get; set; }
+        public List<GitHubAsset> Assets { get; set; } = new();
 
         [JsonPropertyName("html_url")]
-        public string HtmlUrl { get; set; }
+        public string HtmlUrl { get; set; } = string.Empty;
     }
 
     public class GitHubAsset
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("size")]
         public long Size { get; set; }
 
         [JsonPropertyName("browser_download_url")]
-        public string BrowserDownloadUrl { get; set; }
+        public string BrowserDownloadUrl { get; set; } = string.Empty;
 
         [JsonPropertyName("content_type")]
-        public string ContentType { get; set; }
+        public string ContentType { get; set; } = string.Empty;
     }
 
     public interface ILogger<T>
@@ -256,5 +256,15 @@ namespace Coclico.Services
         void LogInformation(string message);
         void LogWarning(string message);
         void LogError(string message);
+    }
+
+    /// <summary>
+    /// Null logger implementation for I logger Interface
+    /// </summary>
+    public class NullLogger<T> : ILogger<T>
+    {
+        public void LogInformation(string message) { }
+        public void LogWarning(string message) { }
+        public void LogError(string message) { }
     }
 }

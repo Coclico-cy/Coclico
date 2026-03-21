@@ -601,7 +601,7 @@
                                                       Opacity="0.4" ShadowDepth="0"/>
                                 </Border.Effect>
                                 <StackPanel>
-                                    <TextBlock Text="v1.0.1" FontSize="20" FontWeight="Black"
+                                    <TextBlock Text="v1.0.3" FontSize="20" FontWeight="Black"
                                                Foreground="White" HorizontalAlignment="Center"
                                                FontFamily="Consolas, Courier New, monospace"/>
                                     <TextBlock Text="BETA" FontSize="8" FontWeight="Black"

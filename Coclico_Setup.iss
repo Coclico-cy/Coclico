@@ -9,12 +9,12 @@
 ;           -c Release -r win-x64 --self-contained false ^
 ;           --output Coclico\publish
 ;    2. Ouvrir ce fichier dans Inno Setup 6 → Ctrl+F9 (Compile)
-;    3. L'installateur est dans :  Installer\Coclico_Setup_1.0.1.exe
+;    3. L'installateur est dans :  Installer\Coclico_Setup.exe
 ; ================================================================
 
 ; ── Constantes globales ─────────────────────────────────────────
 #define MyAppName         "Coclico"
-#define MyAppVersion      "1.0.1"
+#define MyAppVersion      "1.0.3"
 #define MyAppPublisher    "Coclico"
 #define MyAppURL          "https://coclico.app"
 #define MyAppExeName      "Coclico.exe"
@@ -54,7 +54,7 @@ DisableFinishedPage=no
 
 ; ── Sortie ──────────────────────────────────────────────────────
 OutputDir=Installer
-OutputBaseFilename=Coclico_Setup_{#MyAppVersion}
+OutputBaseFilename=Coclico_Setup
 
 ; ── Compression maximale ────────────────────────────────────────
 Compression=lzma2/ultra64

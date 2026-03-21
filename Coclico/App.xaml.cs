@@ -142,6 +142,22 @@ namespace Coclico
 
             _ = Task.Run(MemoryCleanerService.TrimSelfWorkingSet);
 
+            // Start automatic update checking (every 5 minutes)
+            try
+            {
+                var updateCheckService = UpdateCheckService.GetInstance(
+                    new UpdateManager(new NullLogger<UpdateManager>(), SettingsService.Instance),
+                    new NullLogger<UpdateCheckService>(),
+                    SettingsService.Instance
+                );
+                updateCheckService.Start();
+                LoggingService.LogInfo("UpdateCheckService started - checking every 5 minutes");
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogException(ex, "App.UpdateCheckServiceInit");
+            }
+
             base.OnStartup(e);
         }
 

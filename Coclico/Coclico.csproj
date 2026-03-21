@@ -9,10 +9,10 @@
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\icone\plage.ico</ApplicationIcon>
-    <Version>1.0.0.2</Version>
-    <AssemblyVersion>1.0.0.2</AssemblyVersion>
-    <FileVersion>1.0.0.2</FileVersion>
-    <InformationalVersion>1.0.0.2 beta</InformationalVersion>
+    <Version>1.0.3</Version>
+    <AssemblyVersion>1.0.3</AssemblyVersion>
+    <FileVersion>1.0.3</FileVersion>
+    <InformationalVersion>1.0.3 beta</InformationalVersion>
     <Company>Coclico</Company>
     <Product>Coclico System Manager</Product>
     <Description>Enterprise-grade Windows system management, automation, and cyber defense platform.</Description>

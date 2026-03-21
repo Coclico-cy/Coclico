@@ -466,5 +466,34 @@ namespace Coclico
             profileWindow.Owner = this;
             profileWindow.ShowDialog();
         }
+
+        private async void UpdateCheckButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ToastService.ShowInfo("Vérification des mises à jour en cours...");
+                var updateCheckService = UpdateCheckService.GetInstance(
+                    new UpdateManager(new NullLogger<UpdateManager>(), SettingsService.Instance),
+                    new NullLogger<UpdateCheckService>(),
+                    SettingsService.Instance
+                );
+
+                var update = await updateCheckService.CheckForUpdatesAsync();
+
+                if (update != null)
+                {
+                    ToastService.Show($"Mise à jour disponible : {update.TagName}");
+                }
+                else
+                {
+                    ToastService.ShowInfo("Vous utilisez la dernière version.");
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogException(ex, "MainWindow.UpdateCheck");
+                ToastService.ShowError("Erreur lors de la vérification des mises à jour");
+            }
+        }
     }
 }

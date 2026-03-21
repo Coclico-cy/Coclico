@@ -184,7 +184,7 @@
                                                     </LinearGradientBrush>
                                                 </Ellipse.Fill>
                                             </Ellipse>
-                                            <TextBlock Text="v1.0.1  BETA"
+                                            <TextBlock Text="v1.0.3  BETA"
                                                        FontSize="9" FontWeight="SemiBold"
                                                        Foreground="#5A4080"
                                                        VerticalAlignment="Center"/>

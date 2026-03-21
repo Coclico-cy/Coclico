@@ -289,7 +289,7 @@
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                     <Border Background="#30FFFFFF" CornerRadius="6" Padding="8,4" Margin="0,0,10,0">
-                                        <TextBlock Text="v1.0.1" FontSize="11" FontWeight="ExtraBold" Foreground="White"/>
+                                        <TextBlock Text="v1.0.3" FontSize="11" FontWeight="ExtraBold" Foreground="White"/>
                                     </Border>
                                     <Border Background="#30FFFFFF" CornerRadius="6" Padding="8,4">
                                         <TextBlock Text="{DynamicResource Help_Latest}" FontSize="11" FontWeight="SemiBold" Foreground="White"/>

@@ -1,6 +1,6 @@
 # 🏖️ Coclico — Enterprise Windows Management Platform
 
-![Version](https://img.shields.io/badge/Version-1.0.0.2%20Beta-blue)
+![Version](https://img.shields.io/badge/Version-1.0.3%20Beta-blue)
 ![License](https://img.shields.io/badge/License-Proprietary-red)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%2B%20%26%20Windows%2011-0078d4)
 ![Built with](https://img.shields.io/badge/Built%20with-.NET%2010%20%26%20WPF-512bd4)
@@ -188,12 +188,12 @@ Coclico includes `UpdateManager.cs` for GitHub Releases integration:
 var updateMgr = new UpdateManager(logger, settingsService);
 
 // Check for updates
-var latest = await updateMgr.CheckForUpdatesAsync("1.0.0.2", cancellationToken);
+var latest = await updateMgr.CheckForUpdatesAsync("1.0.3", cancellationToken);
 if (latest != null)
 {
     // Download and install
-    await updateMgr.DownloadReleaseAsync(latest, "Coclico-setup.exe", "./downloads/", ct);
-    updateMgr.LaunchInstaller("./downloads/Coclico-setup.exe");
+    await updateMgr.DownloadReleaseAsync(latest, "Coclico_Setup.exe", "./downloads/", ct);
+    updateMgr.LaunchInstaller("./downloads/Coclico_Setup.exe");
 }
 ```
 
@@ -330,7 +330,7 @@ For bug reports or feature requests, please contact the development team.
 
 ## 🚀 Release Notes
 
-### v1.0.0.2 Beta
+### v1.0.3 Beta
 - ✅ Complete 8-module suite
 - ✅ Local AI assistant
 - ✅ 30+ Flow Chain nodes
