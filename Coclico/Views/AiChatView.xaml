@@ -1,0 +1,506 @@
+<UserControl x:Class="Coclico.Views.AiChatView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="640" d:DesignWidth="420"
+             Width="420" MaxWidth="420">
+
+    <UserControl.Resources>
+        <Style x:Key="UserBubble" TargetType="Border">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#6B2FD9" Offset="0"/>
+                        <GradientStop Color="#BE185D" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="CornerRadius"         Value="16,4,16,16"/>
+            <Setter Property="Padding"              Value="14,10"/>
+            <Setter Property="MaxWidth"             Value="300"/>
+            <Setter Property="Margin"               Value="60,4,4,4"/>
+            <Setter Property="HorizontalAlignment"  Value="Right"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#7C3AED" BlurRadius="12" ShadowDepth="0" Opacity="0.25"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="AiBubble" TargetType="Border">
+            <Setter Property="CornerRadius"         Value="4,16,16,16"/>
+            <Setter Property="Padding"              Value="14,10"/>
+            <Setter Property="MaxWidth"             Value="320"/>
+            <Setter Property="Margin"               Value="4,4,60,4"/>
+            <Setter Property="HorizontalAlignment"  Value="Left"/>
+            <Setter Property="BorderThickness"      Value="1"/>
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2A1848" Offset="0"/>
+                        <GradientStop Color="#1A1030" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#1A1030" Offset="0"/>
+                        <GradientStop Color="#130B22" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border BorderBrush="#2A1848" BorderThickness="1,0,0,0">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#0D0818" Offset="0"/>
+                <GradientStop Color="#08050F" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            
+            <Border Grid.Row="0" Padding="16,14"
+                    BorderBrush="#2A1848" BorderThickness="0,0,0,1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#0F0820" Offset="0"/>
+                        <GradientStop Color="#170B2E" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" Margin="0,0,10,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#6B2FD9" Offset="0"/>
+                                <GradientStop Color="#BE185D" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect Color="#7C3AED" BlurRadius="10" ShadowDepth="0" Opacity="0.5"/>
+                        </Border.Effect>
+                        <ui:SymbolIcon Symbol="Bot24" FontSize="18" Foreground="White"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Coclico AI" FontSize="14" FontWeight="SemiBold" Foreground="#EDE9F7"/>
+                            <Border x:Name="DevBadge"
+                                    Background="#1A0A30" BorderBrush="#3D1860" BorderThickness="1"
+                                    CornerRadius="4" Padding="5,2" Margin="7,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="EN DEV" FontSize="8" FontWeight="Black" Foreground="#A78BFA"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtAiStatus" Text="Désactivée par défaut" FontSize="10"
+                                   Foreground="{DynamicResource TextMutedBrush}"/>
+                    </StackPanel>
+
+                    <Button x:Name="BtnReset" Grid.Column="2"
+                            Click="BtnReset_Click"
+                            Background="Transparent" BorderThickness="0"
+                            Padding="6" Cursor="Hand" ToolTip="Nouvelle conversation">
+                        <ui:SymbolIcon Symbol="ArrowReset24" FontSize="14" Foreground="{DynamicResource TextMutedBrush}"/>
+                    </Button>
+
+                    <Button x:Name="BtnClose" Grid.Column="3"
+                            Click="BtnClose_Click"
+                            Background="Transparent" BorderThickness="0"
+                            Padding="6" Cursor="Hand" ToolTip="Fermer">
+                        <ui:SymbolIcon Symbol="Dismiss24" FontSize="14" Foreground="{DynamicResource TextMutedBrush}"/>
+                    </Button>
+                </Grid>
+            </Border>
+
+            
+            <Border x:Name="BannerLowSpec" Grid.Row="1"
+                    Background="#33F97316" BorderBrush="#55F97316" BorderThickness="0,0,0,1"
+                    Padding="12,8" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Warning24" Foreground="#F97316" Margin="0,0,8,0" FontSize="13"/>
+                    <TextBlock x:Name="TxtLowSpecBanner" TextWrapping="Wrap" FontSize="11" Foreground="#FDBA74" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            
+            <ScrollViewer x:Name="DevPanel" Grid.Row="2" Grid.RowSpan="2"
+                          VerticalScrollBarVisibility="Auto"
+                          Background="#0D0818"
+                          Padding="20,0">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Margin="0,32,0,32" MaxWidth="340">
+
+                    <Border Width="80" Height="80" CornerRadius="40"
+                            HorizontalAlignment="Center" Margin="0,0,0,20">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#1A0A30" Offset="0"/>
+                                <GradientStop Color="#2A1050" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.BorderBrush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#3B0764" Offset="0"/>
+                                <GradientStop Color="#1A1030" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.BorderBrush>
+                        <Border.BorderThickness>1</Border.BorderThickness>
+                        <ui:SymbolIcon Symbol="Bot24" FontSize="36" Foreground="#6B3DAE"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <TextBlock Text="Coclico AI" FontSize="20" FontWeight="Bold"
+                               Foreground="#EDE9F7" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBlock Text="Assistant IA — 100% local et privé"
+                               FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                               HorizontalAlignment="Center" TextWrapping="Wrap"
+                               TextAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBlock Text="Le modèle tourne entièrement sur ton PC. Aucune donnée n'est envoyée sur internet."
+                               FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}"
+                               HorizontalAlignment="Center" TextWrapping="Wrap"
+                               TextAlignment="Center" Margin="0,0,0,24"/>
+
+                    
+                    <Border CornerRadius="10" Padding="16,14" Margin="0,0,0,10"
+                            BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#0D0818" Offset="0"/>
+                                <GradientStop Color="#08050F" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel>
+                            <TextBlock Text="VOTRE CONFIGURATION" FontSize="9" FontWeight="Black"
+                                       Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12"
+                                       FontFamily="Consolas, Courier New"/>
+
+                            
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22" Height="22" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#4A1FA8" Offset="0"/>
+                                            <GradientStop Color="#7C3AED" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Memory16" FontSize="11" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="6,0">
+                                    <TextBlock Text="RAM" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="16 Go minimum requis" FontSize="9.5" Foreground="{DynamicResource TextMutedBrush}"/>
+                                </StackPanel>
+                                <Border Grid.Column="2" x:Name="RamBadge" CornerRadius="5" Padding="7,3" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <SolidColorBrush x:Name="RamBadgeBg" Color="#1A1A2E"/>
+                                    </Border.Background>
+                                    <TextBlock x:Name="TxtRamValue" Text="..." FontSize="11" FontWeight="Bold" Foreground="#A78BFA"/>
+                                </Border>
+                            </Grid>
+
+                            
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22" Height="22" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#7A3010" Offset="0"/>
+                                            <GradientStop Color="#F97316" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Flash24" FontSize="11" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="6,0">
+                                    <TextBlock Text="Processeur" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="4 cœurs minimum conseillés" FontSize="9.5" Foreground="{DynamicResource TextMutedBrush}"/>
+                                </StackPanel>
+                                <Border Grid.Column="2" x:Name="CpuBadge" CornerRadius="5" Padding="7,3" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <SolidColorBrush x:Name="CpuBadgeBg" Color="#1A1A2E"/>
+                                    </Border.Background>
+                                    <TextBlock x:Name="TxtCpuValue" Text="..." FontSize="11" FontWeight="Bold" Foreground="#A78BFA"/>
+                                </Border>
+                            </Grid>
+
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22" Height="22" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#065F46" Offset="0"/>
+                                            <GradientStop Color="#10B981" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Storage24" FontSize="11" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="6,0">
+                                    <TextBlock Text="Espace disque" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="~2.5 Go requis pour le modèle" FontSize="9.5" Foreground="{DynamicResource TextMutedBrush}"/>
+                                </StackPanel>
+                                <Border Grid.Column="2" x:Name="DiskBadge" CornerRadius="5" Padding="7,3" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <SolidColorBrush x:Name="DiskBadgeBg" Color="#1A1A2E"/>
+                                    </Border.Background>
+                                    <TextBlock x:Name="TxtDiskValue" Text="..." FontSize="11" FontWeight="Bold" Foreground="#A78BFA"/>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    
+                    <Border x:Name="WarningPerfCard" CornerRadius="8" Padding="12,10" Margin="0,0,0,16"
+                            Background="#1A0A08" BorderBrush="#7C2D12" BorderThickness="1" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Grid.Column="0" Symbol="Warning24" Foreground="#F97316"
+                                          FontSize="15" Margin="0,0,10,0" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="TxtPerfWarning" Grid.Column="1" TextWrapping="Wrap" FontSize="10.5"
+                                       Foreground="#FDBA74" LineHeight="16"/>
+                        </Grid>
+                    </Border>
+
+                    
+                    <StackPanel x:Name="DownloadSection" Visibility="Collapsed" Margin="0,0,0,16">
+                        <TextBlock Text="Le modèle IA (~2.4 Go) n'est pas encore téléchargé."
+                                   FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center" TextWrapping="Wrap"
+                                   TextAlignment="Center" Margin="0,0,0,14"/>
+
+                        <Border x:Name="ProgressContainer" CornerRadius="8" Padding="14,12"
+                                Margin="0,0,0,10" Visibility="Collapsed"
+                                BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#0D0818" Offset="0"/>
+                                    <GradientStop Color="#08050F" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="TxtDownloadStatus" Grid.Column="0"
+                                               Text="Préparation…" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock x:Name="TxtDownloadSpeed" Grid.Column="1"
+                                               Text="" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                                </Grid>
+                                <ProgressBar x:Name="DownloadProgress"
+                                             Minimum="0" Maximum="100" Value="0"
+                                             Height="6" Margin="0,0,0,6" BorderThickness="0">
+                                    <ProgressBar.Foreground>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#6B2FD9" Offset="0"/>
+                                            <GradientStop Color="#BE185D" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </ProgressBar.Foreground>
+                                </ProgressBar>
+                                <TextBlock x:Name="TxtDownloadBytes" Text="" FontSize="9.5"
+                                           Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right"
+                                           FontFamily="Consolas, Courier New"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Button x:Name="BtnDownloadModel" HorizontalAlignment="Center"
+                                Click="BtnDownloadModel_Click" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bg" CornerRadius="10" Padding="20,11"
+                                            BorderBrush="#1E6B3D" BorderThickness="1">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#0A1F12" Offset="0"/>
+                                                <GradientStop Color="#0F2E1A" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bg" Property="BorderBrush" Value="#2ECC71"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bg" Property="Opacity" Value="0.4"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="ArrowDownload24" FontSize="14" Foreground="#2ECC71"
+                                               Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TxtBtnDownload" Text="Télécharger le modèle IA"
+                                           FontSize="12" FontWeight="SemiBold" Foreground="#6EE7A0"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="BtnCancelDownload" HorizontalAlignment="Center"
+                                Click="BtnCancelDownload_Click" Cursor="Hand"
+                                Margin="0,8,0,0" Visibility="Collapsed"
+                                Background="Transparent" BorderThickness="0" Padding="4">
+                            <TextBlock Text="Annuler" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                                       TextDecorations="Underline"/>
+                        </Button>
+                    </StackPanel>
+
+                    
+                    <Button x:Name="BtnActivateAi" HorizontalAlignment="Center"
+                            Click="BtnActivateAi_Click" Cursor="Hand" Visibility="Collapsed">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Bg" CornerRadius="10" Padding="20,11"
+                                        BorderBrush="#3D1860" BorderThickness="1">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#0F0520" Offset="0"/>
+                                            <GradientStop Color="#1A0838" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bg" Property="BorderBrush" Value="#7C3AED"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Play24" FontSize="14" Foreground="#7C3AED"
+                                           Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtBtnActivate" Text="Activer l'IA"
+                                       FontSize="12" FontWeight="SemiBold" Foreground="#A78BFA"/>
+                        </StackPanel>
+                    </Button>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            
+            <ScrollViewer x:Name="MessagesScroll" Grid.Row="2"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Padding="4,8" Visibility="Collapsed">
+                <StackPanel x:Name="MessagesPanel" Margin="4">
+                    <Border Style="{StaticResource AiBubble}">
+                        <TextBlock TextWrapping="Wrap" FontSize="12.5"
+                                   Foreground="#C4B5FD" LineHeight="18">
+                            👋 Salut ! Je suis <Run FontWeight="Bold">Coclico AI</Run>.&#x0a;Pose-moi tes questions sur Coclico — je suis là pour t'aider !
+                        </TextBlock>
+                    </Border>
+
+                    <Border x:Name="TypingBubble" Style="{StaticResource AiBubble}"
+                            Visibility="Collapsed" Padding="14,10">
+                        <TextBlock x:Name="TxtReflecting"
+                                   Text="Réflexion en cours…"
+                                   FontSize="12" FontStyle="Italic"
+                                   Foreground="{DynamicResource TextMutedBrush}"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            
+            <Border x:Name="InputPanel" Grid.Row="3" Padding="12,10"
+                    BorderBrush="#2A1848" BorderThickness="0,1,0,0"
+                    Visibility="Collapsed">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#0F0820" Offset="0"/>
+                        <GradientStop Color="#0A0520" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" CornerRadius="20"
+                            BorderBrush="#2A1848" BorderThickness="1"
+                            Padding="4,2" Margin="0,0,8,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#130B20" Offset="0"/>
+                                <GradientStop Color="#0D0818" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <ui:TextBox x:Name="TxtInput"
+                                 PlaceholderText="Écrivez votre message…"
+                                 Background="Transparent" BorderThickness="0"
+                                 Foreground="#EDE9F7" FontSize="13"
+                                 VerticalAlignment="Center" MaxHeight="80"
+                                 TextWrapping="Wrap"
+                                 KeyDown="TxtInput_KeyDown"/>
+                    </Border>
+
+                    <Button x:Name="BtnSend" Grid.Column="1"
+                            Click="BtnSend_Click"
+                            Width="40" Height="40" Padding="0"
+                            Cursor="Hand" ToolTip="Envoyer (Entrée)">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Bg" CornerRadius="20">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#6B2FD9" Offset="0"/>
+                                            <GradientStop Color="#BE185D" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter TargetName="Bg" Property="Opacity" Value="0.35"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bg" Property="Opacity" Value="0.85"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <ui:SymbolIcon Symbol="Send24" FontSize="16" Foreground="White"/>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>
+

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Coclico — Documentation complète. Guide utilisateur, architecture, et référence développeur.">
+  <title>Coclico — Documentation</title>
+  <link rel="icon" href="../Coclico/Resources/icone/plage.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#03030a;--bg-card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.07);--border-h:rgba(255,255,255,0.14);
+      --blue:#4a6cf7;--blue-dim:rgba(74,108,247,0.15);--blue-glow:rgba(74,108,247,0.3);
+      --purple:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f97316;
+      --text:#f0f0f8;--text-2:rgba(240,240,248,0.6);--text-3:rgba(240,240,248,0.35);
+      --sidebar-w:280px;--font:'DM Sans',system-ui,sans-serif;--font-display:'Syne','DM Sans',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+    }
+    html{scroll-behavior:smooth;font-size:15px}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+    a{color:inherit;text-decoration:none}
+    code{font-family:var(--mono);font-size:0.85em;background:rgba(74,108,247,0.12);color:var(--blue);padding:0.15em 0.45em;border-radius:4px}
+    pre code{background:none;color:inherit;padding:0;font-size:0.88rem}
+    pre{background:#0d0d1a;border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem;overflow-x:auto;margin:1.2rem 0}
+
+    /* Sidebar */
+    .sidebar{
+      width:var(--sidebar-w);min-width:var(--sidebar-w);
+      height:100vh;position:sticky;top:0;
+      background:rgba(0,0,0,0.4);border-right:1px solid var(--border);
+      display:flex;flex-direction:column;overflow-y:auto;
+      backdrop-filter:blur(10px);
+    }
+    .sidebar-brand{padding:1.2rem 1.2rem 1rem;border-bottom:1px solid var(--border)}
+    .sidebar-logo{display:flex;align-items:center;gap:0.6rem;font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:0.6rem}
+    .sidebar-logo img{width:26px;height:26px;border-radius:6px}
+    .sidebar-sub{font-size:0.75rem;color:var(--text-3);font-weight:500}
+    .back-link{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--text-3);padding:0.4rem 0.6rem;border-radius:6px;transition:0.2s;margin-top:0.5rem}
+    .back-link:hover{color:var(--blue);background:var(--blue-dim)}
+
+    .nav-group{padding:0.8rem 0.8rem 0.2rem;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);font-weight:700}
+    .nav-link{display:flex;align-items:center;gap:0.5rem;padding:0.4rem 1rem;color:var(--text-2);font-size:0.84rem;border-radius:8px;transition:0.2s;margin:0 0.4rem}
+    .nav-link:hover,.nav-link.active{color:var(--text);background:var(--bg-card)}
+    .nav-link.active{color:var(--blue)}
+
+    /* Main */
+    .main{flex:1;max-width:860px;padding:3rem 3.5rem;overflow-y:auto}
+    @media(max-width:900px){.main{padding:2rem 1.5rem}.sidebar{display:none}}
+
+    .doc-section{margin-bottom:4rem;padding-bottom:4rem;border-bottom:1px solid var(--border)}
+    .doc-section:last-child{border-bottom:none}
+
+    h1{font-size:2.2rem;font-weight:900;letter-spacing:-0.03em;line-height:1.15;margin-bottom:0.6rem}
+    h1 span{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    h2{font-size:1.5rem;font-weight:800;margin:2.5rem 0 1rem;letter-spacing:-0.02em;color:var(--text)}
+    h3{font-size:1.1rem;font-weight:700;margin:1.8rem 0 0.8rem;color:var(--text)}
+    p{color:var(--text-2);margin-bottom:0.9rem;font-size:0.95rem}
+    ul,ol{padding-left:1.4rem;color:var(--text-2);font-size:0.95rem;line-height:1.8}
+    li{margin-bottom:0.3rem}
+    strong{color:var(--text);font-weight:600}
+
+    .badge{display:inline-flex;align-items:center;gap:0.4rem;padding:0.3rem 0.8rem;background:var(--blue-dim);border:1px solid rgba(74,108,247,0.3);border-radius:50px;color:var(--blue);font-size:0.75rem;font-weight:600;margin-bottom:1.2rem}
+    .badge::before{content:'';width:5px;height:5px;background:var(--blue);border-radius:50%;box-shadow:0 0 5px var(--blue)}
+
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin:1.2rem 0}
+    .info-card{padding:1rem 1.2rem;background:var(--bg-card);border:1px solid var(--border);border-radius:12px}
+    .info-card h4{font-size:0.85rem;font-weight:700;margin-bottom:0.4rem;color:var(--text)}
+    .info-card p{font-size:0.82rem;color:var(--text-2);margin:0}
+
+    .module-row{display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.2rem;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;margin-bottom:0.7rem;transition:0.2s}
+    .module-row:hover{border-color:var(--border-h);background:rgba(255,255,255,0.045)}
+    .module-row-num{font-family:var(--mono);font-size:0.7rem;color:var(--text-3);min-width:24px;padding-top:2px}
+    .module-row-content h4{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:0.25rem}
+    .module-row-content p{font-size:0.82rem;color:var(--text-2);margin:0}
+
+    .spec-table{width:100%;border-collapse:collapse;margin:1rem 0}
+    .spec-table th,.spec-table td{padding:0.6rem 1rem;text-align:left;font-size:0.85rem;border-bottom:1px solid var(--border)}
+    .spec-table th{color:var(--text-3);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.07em}
+    .spec-table td{color:var(--text-2)}
+    .spec-table td:first-child{color:var(--text);font-weight:600;font-family:var(--mono);font-size:0.8rem}
+
+    .node-grid{display:flex;flex-wrap:wrap;gap:0.4rem;margin:1rem 0}
+    .node-tag{padding:0.25rem 0.65rem;border-radius:50px;font-size:0.75rem;font-weight:600;font-family:var(--mono)}
+    .nt-blue  {background:var(--blue-dim);color:var(--blue);border:1px solid rgba(74,108,247,0.3)}
+    .nt-purple{background:rgba(124,58,237,0.15);color:var(--purple);border:1px solid rgba(124,58,237,0.3)}
+    .nt-cyan  {background:rgba(6,182,212,0.15);color:var(--cyan);border:1px solid rgba(6,182,212,0.3)}
+    .nt-green {background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3)}
+    .nt-orange{background:rgba(249,115,22,0.15);color:var(--orange);border:1px solid rgba(249,115,22,0.3)}
+
+    .callout{padding:1rem 1.2rem;border-radius:12px;margin:1.2rem 0;font-size:0.88rem;line-height:1.6}
+    .callout-blue{background:var(--blue-dim);border-left:3px solid var(--blue);color:var(--text-2)}
+    .callout-green{background:rgba(16,185,129,0.1);border-left:3px solid var(--green);color:var(--text-2)}
+    .callout-orange{background:rgba(249,115,22,0.1);border-left:3px solid var(--orange);color:var(--text-2)}
+    .callout strong{color:var(--text)}
+
+    .path{font-family:var(--mono);font-size:0.82rem;background:rgba(255,255,255,0.06);padding:0.5rem 0.9rem;border-radius:8px;color:var(--text-2);display:inline-block;border:1px solid var(--border);margin:0.3rem 0}
+  </style>
+</head>
+<body>
+
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">
+      <img src="../Coclico/Resources/icone/plage.png" alt="Coclico" onerror="this.style.display='none'">
+      <span>Coclico</span>
+    </div>
+    <div class="sidebar-sub">Documentation v1.0.1</div>
+    <a class="back-link" href="index.html">← Retour au site</a>
+    <a class="back-link" href="tutorial.html" style="margin-top:2px">📖 Guide & Tutoriel</a>
+    <a class="back-link" href="wiki.html" style="margin-top:2px">⚙️ Wiki Développeur</a>
+    <a class="back-link" href="faq.html" style="margin-top:2px">❓ FAQ</a>
+  </div>
+
+  <div class="nav-group">Démarrage</div>
+  <a class="nav-link" href="#overview">Vue d'ensemble</a>
+  <a class="nav-link" href="#installation">Installation</a>
+  <a class="nav-link" href="#requirements">Configuration requise</a>
+
+  <div class="nav-group">Modules</div>
+  <a class="nav-link" href="#dashboard">Tableau de Bord</a>
+  <a class="nav-link" href="#programs">Applications</a>
+  <a class="nav-link" href="#flowchains">Flow Chains</a>
+  <a class="nav-link" href="#installer">Installeur Rapide</a>
+  <a class="nav-link" href="#cleaning">Nettoyage Système</a>
+  <a class="nav-link" href="#ramcleaner">RAM Cleaner</a>
+  <a class="nav-link" href="#scanner">App Scanner</a>
+  <a class="nav-link" href="#settings">Paramètres</a>
+
+  <div class="nav-group">Fonctionnalités</div>
+  <a class="nav-link" href="#ai">Coclico AI</a>
+  <a class="nav-link" href="#shortcuts">Raccourcis Globaux</a>
+  <a class="nav-link" href="#tray">Icône Tray</a>
+  <a class="nav-link" href="#profile">Profil</a>
+  <a class="nav-link" href="#localization">Localisation</a>
+
+  <div class="nav-group">Support</div>
+  <a class="nav-link" href="#faq">FAQ</a>
+
+  <div class="nav-group">Technique</div>
+  <a class="nav-link" href="#architecture">Architecture MVVM</a>
+  <a class="nav-link" href="#services">Services</a>
+  <a class="nav-link" href="#datafiles">Fichiers de données</a>
+  <a class="nav-link" href="#flowchain-nodes">Référence nœuds</a>
+</aside>
+
+
+<main class="main">
+
+  
+  <section class="doc-section" id="overview">
+    <div class="badge">Documentation officielle</div>
+    <h1>Coclico <span>v1.0.1</span></h1>
+    <p>Gestionnaire système Windows complet développé en .NET 10 / WPF-UI 4.2 / C# 13. Coclico centralise 8 modules actifs de surveillance, automatisation, nettoyage et intelligence artificielle dans une interface unifiée avec un thème sombre ultra-personnalisable.</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>Version</h4>
+        <p>1.0.1 — Beta publique</p>
+      </div>
+      <div class="info-card">
+        <h4>Technologie</h4>
+        <p>.NET 10 · WPF-UI 4.2 · C# 13 · LLamaSharp v0.26</p>
+      </div>
+      <div class="info-card">
+        <h4>Compatibilité</h4>
+        <p>Windows 10 22H2 (build 22621)+ · Windows 11 (64-bit)</p>
+      </div>
+      <div class="info-card">
+        <h4>Langues</h4>
+        <p>FR, EN, DE, ES, IT, JA, KO, PT, RU, ZH</p>
+      </div>
+    </div>
+
+    <h2>Les 8 modules</h2>
+    <div class="module-row"><span class="module-row-num">01</span><div class="module-row-content"><h4>Tableau de Bord</h4><p>Supervision temps réel CPU, RAM, disque, uptime, processus et applications installées.</p></div></div>
+    <div class="module-row"><span class="module-row-num">02</span><div class="module-row-content"><h4>Applications</h4><p>Bibliothèque complète multi-sources : Registre, Steam, Epic, GOG, Ubisoft, EA, Rockstar, Microsoft Store.</p></div></div>
+    <div class="module-row"><span class="module-row-num">03</span><div class="module-row-content"><h4>Flow Chains</h4><p>Éditeur visuel d'automatisation drag-and-drop avec 28 types de nœuds.</p></div></div>
+    <div class="module-row"><span class="module-row-num">04</span><div class="module-row-content"><h4>Installeur Rapide</h4><p>Interface graphique pour Winget. Catalogue curé par catégories.</p></div></div>
+    <div class="module-row"><span class="module-row-num">05</span><div class="module-row-content"><h4>Nettoyage Système</h4><p>10 catégories de nettoyage : temp, caches navigateurs, logs, DNS, prefetch, Deep Clean.</p></div></div>
+    <div class="module-row"><span class="module-row-num">06</span><div class="module-row-content"><h4>RAM Cleaner</h4><p>18 opérations P/Invoke natives. Surveillance temps réel RAM physique, virtuelle et pagefile.</p></div></div>
+    <div class="module-row"><span class="module-row-num">07</span><div class="module-row-content"><h4>App Scanner</h4><p>Audit complet de toutes les applications installées avec version, éditeur, taille et chemin.</p></div></div>
+    <div class="module-row"><span class="module-row-num">08</span><div class="module-row-content"><h4>Paramètres</h4><p>Personnalisation totale : thème, langue, couleurs, raccourcis globaux, démarrage auto.</p></div></div>
+  </section>
+
+  
+  <section class="doc-section" id="installation">
+    <h2>Installation</h2>
+    <p>Téléchargez la dernière release depuis la page GitHub, puis lancez <code>Coclico.exe</code> en tant qu'administrateur. Aucun installeur requis — format portable.</p>
+    <ol>
+      <li>Téléchargez le fichier <code>Coclico.exe</code> depuis la page de release</li>
+      <li>Placez-le dans le dossier de votre choix (ex : <code>C:\Apps\Coclico\</code>)</li>
+      <li>Installez le <a href="https://dotnet.microsoft.com/download/dotnet/10.0" target="_blank">.NET 10 Desktop Runtime</a> si nécessaire</li>
+      <li>Lancez <code>Coclico.exe</code> en tant qu'administrateur</li>
+      <li>Au premier lancement, l'application se configure automatiquement</li>
+    </ol>
+    <div class="callout callout-blue">
+      <strong>Données utilisateur :</strong> Toutes les données sont stockées dans <code>%AppData%\Coclico\</code>. La désinstallation ne supprime pas vos données.
+    </div>
+    <div class="callout callout-green">
+      <strong>Modèle IA optionnel :</strong> Placez un fichier <code>.gguf</code> dans <code>resource/model/IA-support-chat.gguf</code> (à côté de Coclico.exe) pour activer Coclico AI. Le modèle n'est pas inclus dans la release.
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="requirements">
+    <h2>Configuration requise</h2>
+    <table class="spec-table">
+      <tr><th>Composant</th><th>Minimum</th><th>Recommandé</th></tr>
+      <tr><td>OS</td><td>Windows 10 22H2 (build 22621) 64-bit</td><td>Windows 11 (toute version)</td></tr>
+      <tr><td>RAM</td><td>4 GB</td><td>8 GB (recommandés pour l'IA)</td></tr>
+      <tr><td>Stockage</td><td>~300 MB</td><td>3 GB+ (avec modèle IA)</td></tr>
+      <tr><td>.NET Runtime</td><td>.NET 10 Desktop Runtime</td><td>À installer séparément si absent</td></tr>
+      <tr><td>Droits</td><td>Utilisateur standard</td><td>Administrateur (RAM Cleaner recommandé)</td></tr>
+      <tr><td>GPU</td><td>Non requis</td><td>GPU CUDA/Metal pour accélération IA</td></tr>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="dashboard">
+    <h2>Tableau de Bord</h2>
+    <p>Page d'accueil de Coclico. Affiche en temps réel toutes les 3 secondes :</p>
+    <ul>
+      <li><strong>CPU %</strong> — utilisation processeur instantanée</li>
+      <li><strong>RAM</strong> — utilisée / totale en GB</li>
+      <li><strong>Disque C:\</strong> — espace utilisé / total</li>
+      <li><strong>Uptime</strong> — temps depuis le dernier démarrage Windows</li>
+      <li><strong>Applications installées</strong> — nombre total détecté toutes sources</li>
+      <li><strong>Processus actifs</strong> — nombre de processus en cours d'exécution</li>
+    </ul>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_dashboard</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="programs">
+    <h2>Applications</h2>
+    <p>Bibliothèque complète de tous les logiciels et jeux installés. Sources détectées automatiquement :</p>
+    <ul>
+      <li>Registre Windows (HKLM + HKCU)</li>
+      <li>Steam, Epic Games, GOG Galaxy</li>
+      <li>Ubisoft Connect, EA App, Rockstar Games</li>
+      <li>Microsoft Store (MSIX packages)</li>
+    </ul>
+    <h3>Fonctionnalités</h3>
+    <ul>
+      <li>Double-clic pour lancer l'application directement</li>
+      <li>Renommer chaque application (persisté en JSON)</li>
+      <li>Changer la catégorie d'une application</li>
+      <li>Ajouter manuellement un .exe personnalisé</li>
+      <li>Créer des filtres et vues personnalisées</li>
+      <li>Cache TTL 6h pour éviter les rescans répétés</li>
+    </ul>
+    <div class="callout callout-blue">
+      <strong>Données :</strong> Les surcharges (noms, catégories) sont dans <code>%AppData%\Coclico\custom_apps_data.json</code>. Les apps manuelles dans <code>manual_apps.json</code>.
+    </div>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_programs</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="flowchains">
+    <h2>Flow Chains</h2>
+    <p>Éditeur visuel d'automatisation par nœuds drag-and-drop. Créez des séquences de tâches Windows automatiques en connectant des nœuds dans un canvas interactif.</p>
+    <h3>28 types de nœuds disponibles</h3>
+    <div class="node-grid">
+      <span class="node-tag nt-green">Start</span>
+      <span class="node-tag nt-orange">End</span>
+      <span class="node-tag nt-blue">OpenApp</span>
+      <span class="node-tag nt-blue">CloseApp</span>
+      <span class="node-tag nt-blue">RunCommand</span>
+      <span class="node-tag nt-blue">RunPowerShell</span>
+      <span class="node-tag nt-blue">KillProcess</span>
+      <span class="node-tag nt-blue">KillByMemory</span>
+      <span class="node-tag nt-blue">SetProcessPriority</span>
+      <span class="node-tag nt-purple">Condition</span>
+      <span class="node-tag nt-purple">Loop</span>
+      <span class="node-tag nt-purple">Parallel</span>
+      <span class="node-tag nt-cyan">Delay</span>
+      <span class="node-tag nt-cyan">Notification</span>
+      <span class="node-tag nt-cyan">HttpRequest</span>
+      <span class="node-tag nt-cyan">OpenUrl</span>
+      <span class="node-tag nt-cyan">ClipboardSet</span>
+      <span class="node-tag nt-cyan">SendKeys</span>
+      <span class="node-tag nt-cyan">TriggerShortcut</span>
+      <span class="node-tag nt-cyan">Screenshot</span>
+      <span class="node-tag nt-green">FileOperation</span>
+      <span class="node-tag nt-green">CompressFile</span>
+      <span class="node-tag nt-green">EmptyRecycleBin</span>
+      <span class="node-tag nt-green">CleanTemp</span>
+      <span class="node-tag nt-green">RamClean</span>
+      <span class="node-tag nt-green">SystemCheck</span>
+      <span class="node-tag nt-orange">SetVolume</span>
+      <span class="node-tag nt-orange">MuteAudio</span>
+    </div>
+    <h3>Stockage</h3>
+    <p>Les chaînes sont sauvegardées en JSON dans <span class="path">%AppData%\Coclico\flow_chains.json</span></p>
+    <h3>Raccourcis globaux</h3>
+    <p>Associez un raccourci <code>Ctrl+Touche</code> ou <code>Ctrl+Alt+Touche</code> à n'importe quelle Flow Chain depuis Paramètres → Raccourcis.</p>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_flowchains</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="installer">
+    <h2>Installeur Rapide</h2>
+    <p>Interface graphique pour <strong>Winget</strong> (Windows Package Manager). Installe, met à jour et répare des logiciels en 1 clic sans ligne de commande.</p>
+    <h3>Catégories du catalogue</h3>
+    <ul>
+      <li><strong>Internet</strong> — navigateurs, clients mail, VPN</li>
+      <li><strong>Runtimes</strong> — .NET, Visual C++, Java, DirectX</li>
+      <li><strong>Développement</strong> — IDE, Git, Docker, outils CLI</li>
+      <li><strong>Gaming</strong> — plateformes de jeux, launchers</li>
+      <li><strong>Création</strong> — suites créatives, éditeurs</li>
+      <li><strong>Système</strong> — utilitaires, sécurité, optimisation</li>
+    </ul>
+    <h3>Options Winget</h3>
+    <p>Configurez la portée d'installation (Machine ou Utilisateur) depuis Paramètres → Winget Scope.</p>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_installer</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="ramcleaner">
+    <h2>RAM Cleaner</h2>
+    <p>Module de surveillance et nettoyage de la mémoire vive avec 18 opérations P/Invoke natives Windows.</p>
+    <h3>Indicateurs surveillés</h3>
+    <ul>
+      <li><strong>RAM physique</strong> — utilisée / totale</li>
+      <li><strong>Mémoire virtuelle (Commit Charge)</strong> — utilisation RAM + pagefile</li>
+      <li><strong>Taille du Pagefile</strong> — taille physique sur disque</li>
+    </ul>
+    <h3>Types de nettoyage (18 opérations P/Invoke)</h3>
+    <ul>
+      <li>Vider les Working Sets de tous les processus</li>
+      <li>Purger le Modified File Cache</li>
+      <li>Libérer la Standby List</li>
+      <li>Libérer la Priority 0 Standby List</li>
+      <li>Combiner les pages mémoire (Memory Combine)</li>
+      <li>Forcer le Garbage Collector .NET</li>
+      <li>Vider le cache système (System Cache)</li>
+      <li>Compresser la mémoire</li>
+      <li>Libérer la mémoire des processus inactifs</li>
+      <li>Purger le File Cache</li>
+      <li>Réduire le Working Set du processus courant</li>
+      <li>Appeler NtSetSystemInformation (MemoryPurge)</li>
+      <li>Forcer le vidage du Pool Non Paginé</li>
+      <li>Libérer les handles orphelins</li>
+      <li>Vider les Large System Cache</li>
+      <li>Forcer SetProcessWorkingSetSize sur tous les processus</li>
+      <li>Purger le session pool</li>
+      <li>Nettoyage complet combiné (all-in-one)</li>
+    </ul>
+    <h3>Mode automatique</h3>
+    <p>Configurez un intervalle de nettoyage (ex : toutes les 30 minutes) ou un seuil d'utilisation (ex : dès que la RAM dépasse 85%).</p>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_ramcleaner</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="cleaning">
+    <h2>Nettoyage Système</h2>
+    <p>Moteur de nettoyage professionnel avec estimation de gain avant nettoyage et rapport détaillé final. Inclut un mode Deep Clean pour un nettoyage intensif.</p>
+    <h3>10 catégories</h3>
+    <ul>
+      <li>Fichiers temporaires Windows (<code>%Temp%</code>, <code>C:\Windows\Temp</code>)</li>
+      <li>Caches navigateurs (Chrome, Firefox, Edge)</li>
+      <li>Journaux système Windows</li>
+      <li>Corbeille (tous les lecteurs)</li>
+      <li>Temp utilisateur</li>
+      <li>Cache des miniatures (thumbcache)</li>
+      <li>Rapports d'erreur Windows (WER)</li>
+      <li>Anciens installers et mises à jour Windows</li>
+      <li>Cache DNS</li>
+      <li>Prefetch Windows</li>
+    </ul>
+    <h3>Deep Clean</h3>
+    <p>Mode intensif qui analyse et nettoie des emplacements supplémentaires : caches d'applications, fichiers de débogage, données de mise en veille prolongée, etc.</p>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_cleaning</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="scanner">
+    <h2>App Scanner</h2>
+    <p>Audit complet de toutes les applications installées sur le système. Affiche pour chaque application :</p>
+    <ul>
+      <li>Nom et version</li>
+      <li>Éditeur (Publisher)</li>
+      <li>Taille d'installation</li>
+      <li>Chemin d'installation</li>
+      <li>Source (Registre Windows, Steam, Epic, GOG, Microsoft Store…)</li>
+      <li>Date d'installation</li>
+    </ul>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_scanner</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="settings">
+    <h2>Paramètres</h2>
+    <p>Personnalisation totale de Coclico. Toutes les valeurs sont sauvegardées dans <span class="path">%AppData%\Coclico\settings.json</span></p>
+    <table class="spec-table">
+      <tr><th>Option</th><th>Description</th></tr>
+      <tr><td>Couleur d'accent</td><td>Code hexadécimal #RRGGBB — appliqué à toute l'interface</td></tr>
+      <tr><td>Thème</td><td>Sombre / Clair (sombre par défaut)</td></tr>
+      <tr><td>Opacité des cartes</td><td>Transparence des panneaux de l'interface</td></tr>
+      <tr><td>Taille de police</td><td>Ajustement global de la typographie</td></tr>
+      <tr><td>Largeur sidebar</td><td>Mode compact (icônes uniquement) ou étendu</td></tr>
+      <tr><td>Langue</td><td>10 langues disponibles, changement immédiat sans redémarrage</td></tr>
+      <tr><td>Démarrage auto</td><td>Lance Coclico au démarrage de Windows</td></tr>
+      <tr><td>Réduire dans le tray</td><td>Masque la fenêtre principale dans la zone de notification</td></tr>
+      <tr><td>Portée Winget</td><td>Installation Machine ou Utilisateur</td></tr>
+      <tr><td>Raccourcis globaux</td><td>Ctrl+(Alt+)Touche pour déclencher une Flow Chain</td></tr>
+    </table>
+    <div class="callout callout-blue"><strong>Action IA :</strong> <code>open_settings</code></div>
+  </section>
+
+  
+  <section class="doc-section" id="ai">
+    <h2>Coclico AI</h2>
+    <p>Assistant conversationnel intégré, alimenté par un modèle GGUF local via <strong>LLamaSharp v0.26</strong>. Aucune donnée ne quitte votre machine.</p>
+    <h3>Caractéristiques techniques</h3>
+    <ul>
+      <li><strong>Moteur</strong> : LLamaSharp 0.26 — inférence locale GGUF (CPU par défaut, Vulkan GPU optionnel)</li>
+      <li><strong>Modèle fourni</strong> : IA-support-chat.gguf (~2.3 GB) — téléchargeable depuis l'interface</li>
+      <li><strong>Context size</strong> : 2048 tokens</li>
+      <li><strong>Réponses max</strong> : 512 tokens par message</li>
+      <li><strong>RAG</strong> : top-K=2, 350 chars max — enrichit les réponses avec la doc Coclico</li>
+      <li><strong>Mémoire</strong> : 4 échanges conservés, reset automatique après 6 tours</li>
+      <li><strong>Nettoyage RAM</strong> : libère la mémoire après chaque réponse générée</li>
+      <li><strong>GPU</strong> : tente Vulkan (8 couches GPU) puis retombe sur CPU automatiquement</li>
+    </ul>
+    <div class="callout callout-blue">
+      <strong>Configuration recommandée :</strong> 16 Go de RAM minimum, processeur 4+ cœurs. 32 Go recommandé pour des performances optimales. Le modèle se télécharge (~2.3 GB) directement depuis le panneau Coclico AI.
+    </div>
+    <h3>Installation du modèle</h3>
+    <p>Depuis l'interface Coclico AI (bouton en bas de la sidebar), cliquez sur <strong>"Télécharger le modèle IA"</strong>. Le modèle se télécharge automatiquement (~2.3 GB) depuis Hugging Face et se place dans le bon dossier.</p>
+    <p>Alternativement, placez manuellement un fichier <code>.gguf</code> compatible dans :</p>
+    <span class="path">Coclico\resource\model\IA-support-chat.gguf</span>
+    <div class="callout callout-green">
+      <strong>Vie privée totale :</strong> Le modèle tourne entièrement en local. Aucune donnée n'est envoyée sur internet. Aucun compte requis.
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="shortcuts">
+    <h2>Raccourcis Clavier Globaux</h2>
+    <p>Configurez des raccourcis clavier globaux dans <strong>Paramètres → Raccourcis</strong>. Ils fonctionnent même lorsque Coclico est en arrière-plan ou réduit dans le tray.</p>
+    <h3>Formats supportés</h3>
+    <ul>
+      <li><code>Ctrl + Touche</code></li>
+      <li><code>Ctrl + Alt + Touche</code></li>
+    </ul>
+    <p>Chaque raccourci déclenche une <strong>Flow Chain</strong> spécifique identifiée par son nom. Plusieurs raccourcis peuvent être configurés simultanément.</p>
+    <div class="callout callout-blue">
+      Les raccourcis globaux sont gérés par <code>KeyboardShortcutsService</code> via les API Win32 <code>RegisterHotKey</code> / <code>UnregisterHotKey</code>.
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="tray">
+    <h2>Icône Tray</h2>
+    <p>Coclico peut se réduire dans la zone de notification Windows (system tray) pour rester accessible sans encombrer la barre des tâches.</p>
+    <ul>
+      <li><strong>Clic gauche</strong> : réouvrir la fenêtre principale</li>
+      <li><strong>Clic droit</strong> : menu contextuel (Ouvrir, Quitter)</li>
+    </ul>
+    <p>Activez dans <strong>Paramètres → Réduire dans le tray</strong>. Le comportement à la fermeture (X) peut être configuré pour réduire dans le tray plutôt que quitter.</p>
+  </section>
+
+  
+  <section class="doc-section" id="profile">
+    <h2>Profil Utilisateur</h2>
+    <p>Personnalisez votre profil Coclico pour une expérience plus personnelle :</p>
+    <ul>
+      <li><strong>Avatar</strong> : importez une image (PNG, JPG) et recadrez-la avec l'outil intégré (recadrage carré)</li>
+      <li><strong>Nom d'utilisateur</strong> : affiché dans la sidebar et l'écran d'accueil</li>
+    </ul>
+    <p>L'avatar est sauvegardé dans <span class="path">%AppData%\Coclico\avatar.png</span></p>
+  </section>
+
+  
+  <section class="doc-section" id="localization">
+    <h2>Localisation</h2>
+    <p>Coclico est disponible en 10 langues. Le changement est immédiat sans redémarrage :</p>
+    <div class="node-grid">
+      <span class="node-tag nt-blue">Français</span>
+      <span class="node-tag nt-blue">English</span>
+      <span class="node-tag nt-purple">Deutsch</span>
+      <span class="node-tag nt-purple">Español</span>
+      <span class="node-tag nt-cyan">Italiano</span>
+      <span class="node-tag nt-cyan">日本語</span>
+      <span class="node-tag nt-green">한국어</span>
+      <span class="node-tag nt-green">Português</span>
+      <span class="node-tag nt-orange">Русский</span>
+      <span class="node-tag nt-orange">中文</span>
+    </div>
+    <p>Les traductions sont stockées dans <span class="path">Resources/Languages/</span> en fichiers JSON par langue. <code>LocalizationService</code> gère le chargement et le rechargement à chaud.</p>
+  </section>
+
+  
+  <section class="doc-section" id="architecture">
+    <h2>Architecture MVVM</h2>
+    <p>Coclico utilise le pattern <strong>MVVM (Model-View-ViewModel)</strong> avec WPF .NET 10 et WPF-UI 4.2.</p>
+    <pre><code>Coclico/
+├── Views/          # Vues XAML + code-behind minimal (10 vues)
+├── ViewModels/     # ViewModels (logique de présentation, 6 VMs)
+├── Models/         # FlowChain.cs, NodeType (28 nœuds), LaunchMode
+├── Services/       # 22 services découplés (ServiceContainer)
+├── Converters/     # Convertisseurs WPF (6 convertisseurs)
+└── Resources/
+    ├── Lang/       # 10 fichiers XAML de traduction (fr, en, de, es, it, ja, ko, pt, ru, zh)
+    ├── icone/      # Icône application (plage.ico / plage.png)
+    ├── docs/       # Données RAG pour l'IA (JSON par langue)
+    └── software_list.json  # Catalogue Winget curé</code></pre>
+    <h3>Couches applicatives</h3>
+    <ul>
+      <li><strong>Views</strong> : XAML pur + minimal code-behind (events UI uniquement)</li>
+      <li><strong>ViewModels</strong> : logique de présentation, binding, ICommand, INotifyPropertyChanged</li>
+      <li><strong>Services</strong> : logique métier découplée, injectée via ServiceContainer maison</li>
+      <li><strong>Models</strong> : données sérialisables (FlowChain, FlowItem, NodeType, AppSettings)</li>
+    </ul>
+    <h3>Dépendances principales</h3>
+    <table class="spec-table">
+      <tr><th>Package</th><th>Version</th><th>Usage</th></tr>
+      <tr><td>WPF-UI</td><td>4.2.0</td><td>Composants UI modernes Fluent Design (NavigationView, SymbolIcon…)</td></tr>
+      <tr><td>LLamaSharp</td><td>0.26.0</td><td>Inférence IA locale (modèles GGUF) — backend CPU ou Vulkan</td></tr>
+      <tr><td>CommunityToolkit.Mvvm</td><td>8.4.0</td><td>MVVM — ObservableObject, RelayCommand, source generators</td></tr>
+      <tr><td>System.Reactive</td><td>6.0.1</td><td>Programmation réactive (Rx.NET) — pour traitements asynchrones</td></tr>
+      <tr><td>Serilog</td><td>4.2.0</td><td>Journaux structurés dans %AppData%\Coclico\logs\</td></tr>
+      <tr><td>System.Text.Json</td><td>natif .NET 10</td><td>Sérialisation JSON (settings, flow chains, apps) — intégré au runtime</td></tr>
+      <tr><td>System.Management</td><td>10.0.0</td><td>WMI — requêtes hardware (RAM, CPU, disque)</td></tr>
+      <tr><td>Microsoft.Extensions.*</td><td>10.0.0</td><td>Hosting, DI, HTTP, Caching — infrastructure services</td></tr>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="services">
+    <h2>Services (22)</h2>
+    <p>Tous les services sont enregistrés dans un <code>ServiceContainer</code> maison et injectés dans les ViewModels via constructeur.</p>
+    <table class="spec-table">
+      <tr><th>Service</th><th>Rôle</th></tr>
+      <tr><td>InstalledProgramsService</td><td>Détection multi-sources des applications (Registre, Steam, Epic, GOG, Ubisoft, EA, Rockstar, Microsoft Store)</td></tr>
+      <tr><td>FlowChainService</td><td>CRUD des Flow Chains (persistance JSON dans flow_chains.json)</td></tr>
+      <tr><td>FlowChainExecutionService</td><td>Moteur d'exécution des 28 nœuds</td></tr>
+      <tr><td>FlowExecutionService</td><td>Contrôleur d'exécution et gestion des déclencheurs</td></tr>
+      <tr><td>MemoryCleanerService</td><td>18 opérations de nettoyage RAM via P/Invoke Win32</td></tr>
+      <tr><td>CleaningService</td><td>Nettoyage disque (10 catégories de base)</td></tr>
+      <tr><td>DeepCleaningService</td><td>Nettoyage approfondi — cibles supplémentaires et estimation d'espace</td></tr>
+      <tr><td>InstallerService</td><td>Pilotage Winget CLI (installation, catalogue curé par catégories)</td></tr>
+      <tr><td>AiChatService</td><td>LLamaSharp 0.26 — inférence locale, gestion mémoire conversationnelle, auto-reset</td></tr>
+      <tr><td>RagService</td><td>Retrieval-Augmented Generation — enrichit les requêtes IA avec la doc Coclico (top-K=2)</td></tr>
+      <tr><td>KeyboardShortcutsService</td><td>Raccourcis globaux Win32 via RegisterHotKey / UnregisterHotKey</td></tr>
+      <tr><td>ThemeService</td><td>Gestion dynamique du thème Fluent et de la couleur d'accent</td></tr>
+      <tr><td>SettingsService</td><td>Persistance JSON des paramètres dans %AppData%\Coclico\settings.json</td></tr>
+      <tr><td>CacheService</td><td>Cache TTL en mémoire (programmes : 6h)</td></tr>
+      <tr><td>TrayService</td><td>Icône système tray Win32 avec menu contextuel</td></tr>
+      <tr><td>ToastService</td><td>Notifications toast Windows</td></tr>
+      <tr><td>ProcessWatcherService</td><td>Surveillance et comptage des processus actifs en temps réel</td></tr>
+      <tr><td>UserAccountService</td><td>Gestion profil utilisateur — avatar (import + recadrage), nom affiché</td></tr>
+      <tr><td>LocalizationService</td><td>Changement de langue à chaud parmi 10 langues (ResourceDictionary)</td></tr>
+      <tr><td>LoggingService</td><td>Journaux Serilog 4.2 structurés dans %AppData%\Coclico\logs\</td></tr>
+      <tr><td>StartupService</td><td>Gestion du démarrage automatique Windows (registre Run)</td></tr>
+      <tr><td>AppResourceGuardService</td><td>Surveillance pression mémoire — libération proactive lors de stress RAM</td></tr>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="datafiles">
+    <h2>Fichiers de données</h2>
+    <p>Toutes les données utilisateur sont stockées dans <span class="path">%AppData%\Coclico\</span></p>
+    <table class="spec-table">
+      <tr><th>Fichier / Dossier</th><th>Contenu</th></tr>
+      <tr><td>settings.json</td><td>Tous les paramètres de l'application</td></tr>
+      <tr><td>flow_chains.json</td><td>Flow Chains sauvegardées</td></tr>
+      <tr><td>custom_apps_data.json</td><td>Surcharges noms et catégories applications</td></tr>
+      <tr><td>manual_apps.json</td><td>Applications ajoutées manuellement</td></tr>
+      <tr><td>flow_chains_v2.migrated</td><td>Marqueur de migration Flow Chains v2</td></tr>
+      <tr><td>avatar.png</td><td>Avatar utilisateur recadré</td></tr>
+      <tr><td>models/</td><td>Dossier pour les modèles GGUF de l'IA</td></tr>
+      <tr><td>logs/</td><td>Journaux Serilog d'événements et erreurs</td></tr>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="faq">
+    <h2>FAQ — Questions fréquentes</h2>
+
+    <h3>L'application ne démarre pas, que faire ?</h3>
+    <p>Vérifiez que <strong>.NET 10 Desktop Runtime</strong> est installé. Téléchargez-le sur dotnet.microsoft.com. Vérifiez également les journaux dans <span class="path">%AppData%\Coclico\logs\</span> pour identifier l'erreur exacte.</p>
+
+    <h3>Coclico nécessite-t-il des droits administrateur ?</h3>
+    <p>Pour la plupart des fonctionnalités, non. Les droits administrateur sont recommandés pour : le RAM Cleaner (certaines opérations P/Invoke), le Nettoyage Système (fichiers système), et les Flow Chains exécutant des commandes système. L'app.manifest demande une élévation à la première utilisation de ces fonctions.</p>
+
+    <h3>L'IA est très lente, comment accélérer ?</h3>
+    <p>Coclico AI tourne entièrement en local (CPU). Assurez-vous d'avoir au moins <strong>16 Go de RAM</strong> et un processeur récent (4 cœurs min.). Fermez les autres applications gourmandes avant d'activer l'IA. Si votre GPU supporte Vulkan, Coclico tentera automatiquement l'accélération GPU.</p>
+
+    <h3>Comment changer la langue ?</h3>
+    <p>Allez dans <strong>Paramètres</strong> (icône en bas de la sidebar) → section Langue → choisissez parmi les 10 langues disponibles. Le changement est immédiat, sans redémarrage.</p>
+
+    <h3>Mes Flow Chains sont-elles sauvegardées automatiquement ?</h3>
+    <p>Oui. Chaque modification est persistée automatiquement dans <code>%AppData%\Coclico\flow_chains.json</code>. Vous pouvez sauvegarder ce fichier pour migrer vos chaînes vers un autre PC.</p>
+
+    <h3>Comment ajouter une application manuellement dans la bibliothèque ?</h3>
+    <p>Allez dans <strong>Applications</strong> → cliquez sur le bouton <strong>+</strong> ou <strong>Ajouter</strong> → sélectionnez votre fichier <code>.exe</code> → assignez un nom et une catégorie → validez. L'application apparaît dans la bibliothèque et est persistée dans <code>manual_apps.json</code>.</p>
+
+    <h3>Le RAM Cleaner peut-il endommager le système ?</h3>
+    <p>Non. Toutes les opérations sont <strong>100% réversibles</strong> — elles libèrent uniquement de la mémoire mise en cache que Windows peut recréer à la demande. Aucune donnée n'est supprimée. Les processus système critiques ne sont jamais affectés.</p>
+
+    <h3>Comment désinstaller Coclico complètement ?</h3>
+    <p>Passez par <strong>Paramètres Windows → Applications</strong> → cherchez "Coclico" → Désinstaller. Pour supprimer également vos données personnelles, supprimez manuellement le dossier <span class="path">%AppData%\Coclico\</span></p>
+
+    <h3>Coclico collecte-t-il des données ?</h3>
+    <p><strong>Non.</strong> Coclico est 100% local. Aucune télémétrie, aucun compte requis, aucune connexion internet (sauf pour l'installeur Winget et le téléchargement optionnel du modèle IA). Toutes les données restent sur votre machine.</p>
+
+    <h3>Comment créer un raccourci global pour une Flow Chain ?</h3>
+    <p>Allez dans <strong>Paramètres</strong> → <strong>Raccourcis</strong> → cliquez sur <strong>Ajouter un raccourci</strong> → choisissez la Flow Chain cible → appuyez sur la combinaison de touches souhaitée (Ctrl+Touche ou Ctrl+Alt+Touche) → validez. Le raccourci fonctionne même quand Coclico est réduit dans le tray.</p>
+  </section>
+
+  
+  <section class="doc-section" id="flowchain-nodes">
+    <h2>Référence des 28 nœuds Flow Chain</h2>
+    <table class="spec-table">
+      <tr><th>Nœud</th><th>Description</th></tr>
+      <tr><td>Start</td><td>Point d'entrée de la chaîne (requis, unique)</td></tr>
+      <tr><td>End</td><td>Point de fin de la chaîne (requis)</td></tr>
+      <tr><td>OpenApp</td><td>Lance une application par chemin ou nom</td></tr>
+      <tr><td>CloseApp</td><td>Ferme proprement une application par nom ou chemin</td></tr>
+      <tr><td>RunCommand</td><td>Exécute une commande shell (cmd.exe)</td></tr>
+      <tr><td>RunPowerShell</td><td>Exécute un script PowerShell inline ou fichier</td></tr>
+      <tr><td>KillProcess</td><td>Termine un processus par nom ou PID</td></tr>
+      <tr><td>KillByMemory</td><td>Termine les processus qui dépassent un seuil de RAM configurable</td></tr>
+      <tr><td>SetProcessPriority</td><td>Ajuste la priorité d'un processus (Idle / BelowNormal / Normal / AboveNormal / High)</td></tr>
+      <tr><td>Condition</td><td>Branchement conditionnel basé sur 10 opérateurs système (CPU %, RAM %, fichier existant, processus actif, heure…)</td></tr>
+      <tr><td>Loop</td><td>Répète un bloc N fois ou jusqu'à condition</td></tr>
+      <tr><td>Parallel</td><td>Exécution parallèle de branches indépendantes</td></tr>
+      <tr><td>Delay</td><td>Pause d'une durée configurable (millisecondes)</td></tr>
+      <tr><td>Notification</td><td>Affiche une notification toast Windows</td></tr>
+      <tr><td>HttpRequest</td><td>Requête HTTP GET/POST avec headers personnalisés</td></tr>
+      <tr><td>OpenUrl</td><td>Ouvre une URL dans le navigateur par défaut</td></tr>
+      <tr><td>ClipboardSet</td><td>Définit le contenu du presse-papiers</td></tr>
+      <tr><td>SendKeys</td><td>Simule des frappes clavier (SendInput Win32)</td></tr>
+      <tr><td>TriggerShortcut</td><td>Déclenche une combinaison de touches clavier</td></tr>
+      <tr><td>Screenshot</td><td>Capture d'écran sauvegardée en PNG</td></tr>
+      <tr><td>FileOperation</td><td>Opérations fichiers : copier, déplacer, supprimer, renommer</td></tr>
+      <tr><td>CompressFile</td><td>Compresse un fichier ou dossier en archive ZIP</td></tr>
+      <tr><td>EmptyRecycleBin</td><td>Vide la corbeille Windows (tous les lecteurs)</td></tr>
+      <tr><td>CleanTemp</td><td>Nettoie les fichiers temporaires système</td></tr>
+      <tr><td>RamClean</td><td>Déclenche le nettoyage RAM via MemoryCleanerService</td></tr>
+      <tr><td>SystemCheck</td><td>Vérifie une condition système (CPU %, RAM %, uptime…)</td></tr>
+      <tr><td>SetVolume</td><td>Règle le volume système via CoreAudio COM (0-100%)</td></tr>
+      <tr><td>MuteAudio</td><td>Coupe ou rétablit le son système</td></tr>
+    </table>
+
+    <h3>10 opérateurs de condition (nœud Condition)</h3>
+    <table class="spec-table">
+      <tr><th>Opérateur</th><th>Description</th></tr>
+      <tr><td>ProcessRunning</td><td>Vrai si un processus est en cours d'exécution</td></tr>
+      <tr><td>ProcessNotRunning</td><td>Vrai si un processus n'est pas en cours d'exécution</td></tr>
+      <tr><td>FileExists</td><td>Vrai si un fichier ou dossier existe</td></tr>
+      <tr><td>FileNotExists</td><td>Vrai si un fichier ou dossier n'existe pas</td></tr>
+      <tr><td>TimeAfter</td><td>Vrai si l'heure actuelle est après une heure définie</td></tr>
+      <tr><td>TimeBefore</td><td>Vrai si l'heure actuelle est avant une heure définie</td></tr>
+      <tr><td>CpuBelow</td><td>Vrai si l'utilisation CPU est sous un seuil (%)</td></tr>
+      <tr><td>CpuAbove</td><td>Vrai si l'utilisation CPU dépasse un seuil (%)</td></tr>
+      <tr><td>RamBelow</td><td>Vrai si l'utilisation RAM est sous un seuil (%)</td></tr>
+      <tr><td>RamAbove</td><td>Vrai si l'utilisation RAM dépasse un seuil (%)</td></tr>
+    </table>
+  </section>
+
+</main>
+
+<script>
+// Active nav link on scroll
+const links = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('.doc-section');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
+

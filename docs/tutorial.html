@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="fr" data-coclico-page="tutorial">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Coclico — Guide & Tutoriel complet. Apprenez à maîtriser chaque module de Coclico : Dashboard, Flow Chains, RAM Cleaner, IA et plus.">
+  <title>Coclico — Guide & Tutoriel</title>
+  <link rel="icon" href="../Coclico/Resources/icone/plage.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="i18n.js" defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #03030a;
+      --bg-2: #07071a;
+      --bg-card: rgba(255,255,255,0.03);
+      --bg-card-h: rgba(255,255,255,0.055);
+      --border: rgba(255,255,255,0.07);
+      --border-h: rgba(255,255,255,0.14);
+      --blue: #4a6cf7;
+      --blue-dim: rgba(74,108,247,0.15);
+      --blue-glow: rgba(74,108,247,0.3);
+      --purple: #7c3aed;
+      --purple-dim: rgba(124,58,237,0.15);
+      --cyan: #06b6d4;
+      --cyan-dim: rgba(6,182,212,0.15);
+      --orange: #f97316;
+      --orange-dim: rgba(249,115,22,0.15);
+      --green: #10b981;
+      --green-dim: rgba(16,185,129,0.15);
+      --pink: #ec4899;
+      --text: #f0f0f8;
+      --text-2: rgba(240,240,248,0.6);
+      --text-3: rgba(240,240,248,0.35);
+      --sidebar-w: 280px;
+      --font: 'DM Sans', system-ui, sans-serif;
+      --font-display: 'Syne', 'DM Sans', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    html { scroll-behavior: smooth; font-size: 15px; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; display: flex; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    code { font-family: var(--mono); font-size: 0.85em; background: rgba(74,108,247,0.12); color: var(--blue); padding: 0.15em 0.45em; border-radius: 4px; }
+    pre code { background: none; color: inherit; padding: 0; font-size: 0.88rem; }
+    pre { background: #0d0d1a; border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; overflow-x: auto; margin: 1.2rem 0; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w); min-width: var(--sidebar-w);
+      height: 100vh; position: sticky; top: 0;
+      background: rgba(0,0,0,0.5); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      backdrop-filter: blur(12px); scrollbar-width: thin; scrollbar-color: rgba(74,108,247,0.3) transparent;
+    }
+    .sidebar-brand { padding: 1.4rem 1.2rem 1rem; border-bottom: 1px solid var(--border); }
+    .sidebar-logo { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.05rem; color: var(--text); margin-bottom: 0.6rem; font-family: var(--font-display); }
+    .sidebar-logo img { width: 26px; height: 26px; border-radius: 6px; }
+    .sidebar-sub { font-size: 0.75rem; color: var(--text-3); font-weight: 500; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--text-3); padding: 0.4rem 0.6rem; border-radius: 6px; transition: 0.2s; margin-top: 0.5rem; }
+    .back-link:hover { color: var(--blue); background: var(--blue-dim); }
+    .nav-group { padding: 0.9rem 1rem 0.3rem; font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); font-weight: 700; }
+    .nav-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.42rem 1rem; color: var(--text-2); font-size: 0.84rem; border-radius: 8px; transition: 0.2s; margin: 0.05rem 0.5rem; cursor: pointer; }
+    .nav-link:hover, .nav-link.active { color: var(--text); background: var(--bg-card); }
+    .nav-link.active { color: var(--blue); border-left: 2px solid var(--blue); padding-left: calc(1rem - 2px); }
+    .nav-link .nl-icon { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
+    .nav-link.active .nl-icon { opacity: 1; }
+    .nav-link .nl-badge { margin-left: auto; font-size: 0.65rem; padding: 0.1rem 0.5rem; background: var(--blue-dim); color: var(--blue); border-radius: 50px; font-weight: 600; }
+
+    /* ── Main ── */
+    .main { flex: 1; max-width: 860px; padding: 3rem 3.5rem 5rem; overflow-y: auto; }
+    @media (max-width: 900px) { .main { padding: 2rem 1.5rem; } .sidebar { display: none; } }
+
+    .doc-section { margin-bottom: 4.5rem; padding-bottom: 4.5rem; border-bottom: 1px solid var(--border); scroll-margin-top: 2rem; }
+    .doc-section:last-child { border-bottom: none; }
+
+    h1 { font-family: var(--font-display); font-size: 2.4rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 0.7rem; }
+    h1 span { background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    h2 { font-family: var(--font-display); font-size: 1.55rem; font-weight: 800; margin: 2.8rem 0 1rem; letter-spacing: -0.02em; color: var(--text); }
+    h3 { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 0.8rem; color: var(--text); }
+    h4 { font-size: 0.95rem; font-weight: 700; margin: 1.5rem 0 0.6rem; color: var(--text); }
+    p { color: var(--text-2); margin-bottom: 0.9rem; font-size: 0.95rem; line-height: 1.75; }
+    ul, ol { padding-left: 1.4rem; color: var(--text-2); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1rem; }
+    li { margin-bottom: 0.35rem; }
+    strong { color: var(--text); font-weight: 600; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* ── Badges & Tags ── */
+    .badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.9rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; margin-bottom: 1.2rem; }
+    .badge-blue { background: var(--blue-dim); border: 1px solid rgba(74,108,247,0.3); color: var(--blue); }
+    .badge-blue::before { content: ''; width: 5px; height: 5px; background: var(--blue); border-radius: 50%; box-shadow: 0 0 5px var(--blue); }
+    .badge-purple { background: var(--purple-dim); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd; }
+    .badge-cyan { background: var(--cyan-dim); border: 1px solid rgba(6,182,212,0.3); color: var(--cyan); }
+    .badge-orange { background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
+    .badge-green { background: var(--green-dim); border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+
+    .module-tag { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.9rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.2rem; }
+
+    /* ── Info cards ── */
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.8rem; margin: 1.2rem 0; }
+    .info-card { padding: 1rem 1.2rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; transition: 0.2s; }
+    .info-card:hover { border-color: var(--border-h); }
+    .info-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem; margin-top: 0; color: var(--text); }
+    .info-card p { font-size: 0.82rem; color: var(--text-2); margin: 0; }
+
+    /* ── Step list ── */
+    .steps { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
+    .step { display: flex; gap: 1rem; padding: 1.1rem 1.2rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; transition: 0.2s; }
+    .step:hover { border-color: var(--border-h); background: var(--bg-card-h); }
+    .step-num { width: 28px; height: 28px; min-width: 28px; background: var(--blue-dim); border: 1px solid rgba(74,108,247,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--blue); font-family: var(--mono); margin-top: 1px; }
+    .step-content h4 { font-size: 0.92rem; font-weight: 700; color: var(--text); margin: 0 0 0.3rem; }
+    .step-content p { font-size: 0.85rem; color: var(--text-2); margin: 0; }
+    .step-content code { font-size: 0.8rem; }
+
+    /* ── Feature rows ── */
+    .feature-rows { display: flex; flex-direction: column; gap: 0.7rem; margin: 1.2rem 0; }
+    .feature-row { display: flex; align-items: flex-start; gap: 0.9rem; padding: 0.9rem 1.1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; transition: 0.2s; }
+    .feature-row:hover { border-color: var(--border-h); }
+    .fr-icon { width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .fr-icon-blue { background: var(--blue-dim); }
+    .fr-icon-purple { background: var(--purple-dim); }
+    .fr-icon-cyan { background: var(--cyan-dim); }
+    .fr-icon-orange { background: var(--orange-dim); }
+    .fr-icon-green { background: var(--green-dim); }
+    .fr-text h4 { font-size: 0.88rem; font-weight: 700; color: var(--text); margin: 0 0 0.2rem; }
+    .fr-text p { font-size: 0.82rem; color: var(--text-2); margin: 0; }
+
+    /* ── Tip / Note boxes ── */
+    .tip, .note, .warning { padding: 1rem 1.2rem; border-radius: 12px; font-size: 0.88rem; margin: 1.2rem 0; display: flex; gap: 0.8rem; align-items: flex-start; }
+    .tip { background: var(--green-dim); border: 1px solid rgba(16,185,129,0.25); }
+    .tip-icon { color: var(--green); font-size: 1.1rem; margin-top: 0.05rem; }
+    .tip-text { color: rgba(240,240,248,0.75); }
+    .note { background: var(--blue-dim); border: 1px solid rgba(74,108,247,0.25); }
+    .note-icon { color: var(--blue); font-size: 1.1rem; }
+    .note-text { color: rgba(240,240,248,0.75); }
+    .warning { background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.25); }
+    .warning-icon { color: var(--orange); font-size: 1.1rem; }
+    .warning-text { color: rgba(240,240,248,0.75); }
+
+    /* ── Shortcut table ── */
+    .shortcut-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+    .shortcut-table th { padding: 0.6rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); border-bottom: 1px solid var(--border); }
+    .shortcut-table td { padding: 0.65rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-2); }
+    .shortcut-table tr:hover td { background: var(--bg-card); color: var(--text); }
+    .kbd { display: inline-flex; align-items: center; gap: 0.2rem; }
+    .kbd span { padding: 0.15rem 0.55rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); border-bottom-width: 2px; border-radius: 5px; font-family: var(--mono); font-size: 0.8rem; color: var(--text); }
+
+    /* ── Node pills ── */
+    .nodes-grid { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1rem 0; }
+    .node-pill { padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.78rem; font-family: var(--mono); font-weight: 500; border: 1px solid transparent; }
+    .np-blue { background: var(--blue-dim); border-color: rgba(74,108,247,0.3); color: #a5b4fc; }
+    .np-purple { background: var(--purple-dim); border-color: rgba(124,58,237,0.3); color: #c4b5fd; }
+    .np-cyan { background: var(--cyan-dim); border-color: rgba(6,182,212,0.3); color: #67e8f9; }
+    .np-orange { background: var(--orange-dim); border-color: rgba(249,115,22,0.3); color: #fdba74; }
+    .np-green { background: var(--green-dim); border-color: rgba(16,185,129,0.3); color: #6ee7b7; }
+    .np-pink { background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.3); color: #f9a8d4; }
+
+    /* ── Spec row ── */
+    .spec-rows { display: flex; flex-direction: column; gap: 0; margin: 1rem 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .spec-row { display: flex; justify-content: space-between; padding: 0.65rem 1.1rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-row:hover { background: var(--bg-card); }
+    .spec-k { color: var(--text-3); font-weight: 500; }
+    .spec-v { color: var(--text); font-weight: 500; font-family: var(--mono); font-size: 0.82rem; }
+
+    /* ── TOC Hero ── */
+    .toc-hero { background: linear-gradient(135deg, rgba(74,108,247,0.08), rgba(124,58,237,0.08)); border: 1px solid rgba(74,108,247,0.2); border-radius: 20px; padding: 2rem 2.2rem; margin-bottom: 2rem; }
+    .toc-hero h1 { margin-bottom: 0.5rem; }
+    .toc-hero p { margin-bottom: 1.5rem; }
+    .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.6rem; }
+    .toc-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.9rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; font-size: 0.83rem; color: var(--text-2); transition: 0.2s; cursor: pointer; }
+    .toc-item:hover { color: var(--blue); border-color: rgba(74,108,247,0.3); background: var(--blue-dim); }
+    .toc-item .ti-num { font-family: var(--mono); font-size: 0.7rem; color: var(--text-3); margin-right: 0.1rem; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(74,108,247,0.3); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">
+      <img src="../Coclico/Resources/icone/plage.png" alt="Coclico" onerror="this.style.display='none'">
+      <span>Coclico</span>
+    </div>
+    <div class="sidebar-sub">Guide & Tutoriel</div>
+    <a href="index.html" class="back-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Retour au site
+    </a>
+    <div class="coclico-lang-wrap" style="margin-top: 0.9rem; margin-bottom: 0.25rem;">
+      <label for="langSwitch" class="coclico-lang-label">🌐</label>
+      <select id="langSwitch" data-coclico-lang-switch class="coclico-lang-switch" aria-label="Language">
+        <option value="fr">🇫🇷 Français</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="ko">🇰🇷 한국어</option>
+        <option value="pt">🇧🇷 Português</option>
+        <option value="ru">🇷🇺 Русский</option>
+        <option value="zh">🇨🇳 中文</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="nav-group">Démarrage</div>
+  <a href="#installation" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Installation
+  </a>
+  <a href="#premiere-utilisation" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Première utilisation
+  </a>
+  <a href="#interface" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+    Interface générale
+  </a>
+
+  <div class="nav-group">Les 8 Modules</div>
+  <a href="#dashboard" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span>01 — Tableau de Bord</span>
+  </a>
+  <a href="#applications" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <span>02 — Applications</span>
+  </a>
+  <a href="#flowchains" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    <span>03 — Flow Chains</span>
+    <span class="nl-badge">Clé</span>
+  </a>
+  <a href="#installeur" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    <span>04 — Installeur</span>
+  </a>
+  <a href="#nettoyage" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    <span>05 — Nettoyage</span>
+  </a>
+  <a href="#ram-cleaner" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <span>06 — RAM Cleaner</span>
+  </a>
+  <a href="#scanner" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>07 — App Scanner</span>
+  </a>
+  <a href="#parametres" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
+    <span>08 — Paramètres</span>
+  </a>
+
+  <div class="nav-group">Fonctionnalités IA</div>
+  <a href="#ai-chat" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Coclico AI
+    <span class="nl-badge">IA</span>
+  </a>
+
+  <div class="nav-group">Références</div>
+  <a href="#raccourcis" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    Raccourcis clavier
+  </a>
+  <a href="#fichiers-donnees" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+    Fichiers & Données
+  </a>
+  <a href="#conseils" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Conseils & Astuces
+  </a>
+</aside>
+
+
+<main class="main">
+
+  
+  <div class="toc-hero" id="top">
+    <div class="badge badge-blue">Guide Utilisateur Complet</div>
+    <h1>Guide & <span>Tutoriel</span></h1>
+    <p>Tout ce qu'il faut savoir pour maîtriser Coclico — de l'installation jusqu'aux automatisations avancées avec les Flow Chains.</p>
+    <div class="toc-grid">
+      <a href="#installation" class="toc-item"><span class="ti-num">01</span> Installation</a>
+      <a href="#interface" class="toc-item"><span class="ti-num">02</span> Interface</a>
+      <a href="#dashboard" class="toc-item"><span class="ti-num">03</span> Dashboard</a>
+      <a href="#applications" class="toc-item"><span class="ti-num">04</span> Applications</a>
+      <a href="#flowchains" class="toc-item"><span class="ti-num">05</span> Flow Chains</a>
+      <a href="#installeur" class="toc-item"><span class="ti-num">06</span> Installeur</a>
+      <a href="#nettoyage" class="toc-item"><span class="ti-num">07</span> Nettoyage</a>
+      <a href="#ram-cleaner" class="toc-item"><span class="ti-num">08</span> RAM Cleaner</a>
+      <a href="#scanner" class="toc-item"><span class="ti-num">09</span> Scanner</a>
+      <a href="#parametres" class="toc-item"><span class="ti-num">10</span> Paramètres</a>
+      <a href="#ai-chat" class="toc-item"><span class="ti-num">11</span> Coclico AI</a>
+      <a href="#raccourcis" class="toc-item"><span class="ti-num">12</span> Raccourcis</a>
+    </div>
+  </div>
+
+  
+  <section class="doc-section" id="installation">
+    <div class="badge badge-blue">Démarrage</div>
+    <h1>Installation <span>&amp; Prérequis</span></h1>
+    <p>Coclico est une application portable — pas d'installeur. Téléchargez, extrayez et lancez.</p>
+
+    <h2>Configuration requise</h2>
+    <div class="spec-rows">
+      <div class="spec-row"><span class="spec-k">Système d'exploitation</span><span class="spec-v">Windows 10 22H2 (build 22621)+ · Windows 11</span></div>
+      <div class="spec-row"><span class="spec-k">Architecture</span><span class="spec-v">x64 uniquement (64-bit)</span></div>
+      <div class="spec-row"><span class="spec-k">RAM minimum</span><span class="spec-v">4 GB (8 GB recommandés avec IA)</span></div>
+      <div class="spec-row"><span class="spec-k">Espace disque</span><span class="spec-v">~300 MB (sans modèle IA) · ~4-6 GB avec IA</span></div>
+      <div class="spec-row"><span class="spec-k">Privilèges</span><span class="spec-v">Administrateur obligatoire (UAC)</span></div>
+      <div class="spec-row"><span class="spec-k">GPU (optionnel pour IA)</span><span class="spec-v">Vulkan ou CUDA compatible</span></div>
+    </div>
+
+    <h2>Étapes d'installation</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Télécharger l'archive</h4>
+          <p>Rendez-vous sur la page GitHub Releases et téléchargez le fichier <code>Coclico-v1.0.1-win-x64.zip</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Extraire l'archive</h4>
+          <p>Faites un clic droit sur le ZIP → <strong>Extraire tout</strong>. Choisissez un dossier stable (ex. <code>C:\Programs\Coclico</code>). Évitez le Bureau ou Téléchargements.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Lancer en tant qu'Administrateur</h4>
+          <p>Faites un clic droit sur <code>Coclico.exe</code> → <strong>Exécuter en tant qu'administrateur</strong>. La fenêtre UAC s'ouvre — cliquez Oui. L'élévation est obligatoire pour les opérations RAM et processus.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Fenêtre de démarrage (SplashScreen)</h4>
+          <p>Au premier lancement, un écran de démarrage initialise les services. Durée : 2-5 secondes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Fenêtre Lanceur (premier démarrage uniquement)</h4>
+          <p>Une fenêtre de bienvenue vous propose de choisir votre langue, votre thème et de configurer le démarrage automatique.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning">
+      <span class="warning-icon">⚠</span>
+      <span class="warning-text"><strong>Important :</strong> Si vous n'exécutez pas en tant qu'Administrateur, l'application affiche une invite UAC et se relance automatiquement avec les bons privilèges. C'est le comportement normal.</span>
+    </div>
+
+    <h2>Activer le modèle IA (optionnel)</h2>
+    <p>L'IA locale nécessite un fichier modèle GGUF séparé (non inclus dans l'archive).</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Obtenir le modèle</h4>
+          <p>Téléchargez un modèle GGUF compatible (ex. Llama 3.2 3B Instruct, Mistral 7B). Taille recommandée : 3-7B paramètres.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Placer le fichier</h4>
+          <p>Copiez le fichier <code>.gguf</code> dans le dossier <code>resource/model/</code> et renommez-le exactement : <code>IA-support-chat.gguf</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Relancer Coclico</h4>
+          <p>Le module IA détecte automatiquement le modèle au démarrage. Aucune configuration supplémentaire n'est requise.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Pour activer l'accélération GPU, éditez le <code>.csproj</code> et remplacez <code>LLamaSharp.Backend.Cpu</code> par <code>LLamaSharp.Backend.Vulkan</code>, puis recompilez.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="premiere-utilisation">
+    <div class="badge badge-cyan">Démarrage</div>
+    <h1>Première <span>utilisation</span></h1>
+    <p>Voici ce qui se passe lors du premier lancement et comment configurer rapidement Coclico selon vos préférences.</p>
+
+    <h2>Séquence de démarrage</h2>
+    <div class="feature-rows">
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-blue">🌊</div>
+        <div class="fr-text">
+          <h4>SplashWindow</h4>
+          <p>Écran de chargement animé qui initialise tous les services (DI container, base de données programmes, services réseau, etc.).</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-purple">🚀</div>
+        <div class="fr-text">
+          <h4>LauncherWindow (premier lancement)</h4>
+          <p>Fenêtre de bienvenue : choix de langue, thème, activation du démarrage automatique. N'apparaît qu'une seule fois.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-cyan">🏠</div>
+        <div class="fr-text">
+          <h4>MainWindow</h4>
+          <p>La fenêtre principale s'ouvre avec le Tableau de Bord actif. Toute la navigation se fait via la barre latérale gauche.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Configuration rapide recommandée</h2>
+    <ol>
+      <li>Allez dans <strong>Paramètres</strong> → choisissez votre <strong>langue</strong> et votre <strong>couleur d'accent</strong></li>
+      <li>Activez le <strong>démarrage automatique</strong> si vous souhaitez que Coclico se lance avec Windows</li>
+      <li>Configurez votre <strong>profil utilisateur</strong> (nom + avatar) via l'icône de profil en bas de la sidebar</li>
+      <li>Naviguez dans le module <strong>Applications</strong> pour vérifier que vos logiciels sont bien détectés</li>
+      <li>Créez votre première <strong>Flow Chain</strong> avec une automatisation simple (voir section dédiée)</li>
+    </ol>
+  </section>
+
+  
+  <section class="doc-section" id="interface">
+    <div class="badge badge-blue">Navigation</div>
+    <h1>L'interface <span>générale</span></h1>
+    <p>Coclico utilise une interface Fluent Design (WPF-UI 4.2) avec une barre de navigation latérale fixe et une zone de contenu centrale.</p>
+
+    <h2>Structure de la fenêtre</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>Barre latérale gauche</h4>
+        <p>Navigation entre les 8 modules + accès profil, tray, et paramètres. Peut être compacte ou large.</p>
+      </div>
+      <div class="info-card">
+        <h4>Zone de contenu</h4>
+        <p>Affiche le module actif. Chaque module est un UserControl WPF indépendant chargé à la demande.</p>
+      </div>
+      <div class="info-card">
+        <h4>Barre de titre</h4>
+        <p>Barre personnalisée WPF-UI avec boutons Réduire / Maximiser / Fermer. Intègre le titre de la page active.</p>
+      </div>
+      <div class="info-card">
+        <h4>Icône système (Tray)</h4>
+        <p>Coclico se minimise dans la zone de notification. Clic gauche → ouvrir. Clic droit → menu rapide.</p>
+      </div>
+    </div>
+
+    <h2>Modes de la sidebar</h2>
+    <p>Deux modes disponibles dans les Paramètres :</p>
+    <ul>
+      <li><strong>Mode large</strong> — icônes + texte, idéal sur grands écrans</li>
+      <li><strong>Mode compact</strong> — icônes seules, libère de l'espace sur petits écrans</li>
+    </ul>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Vous pouvez réduire Coclico dans le tray en cliquant le bouton <strong>×</strong>. L'application continue de tourner en arrière-plan (utile pour les raccourcis globaux et l'auto-clean RAM).</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="dashboard">
+    <div class="module-tag" style="background:rgba(74,108,247,0.12);border:1px solid rgba(74,108,247,0.3);color:#a5b4fc;">Module 01</div>
+    <h1>Tableau <span>de Bord</span></h1>
+    <p>Le tableau de bord est la page d'accueil de Coclico. Il affiche en temps réel les métriques essentielles de votre système, actualisées toutes les <strong>3 secondes</strong>.</p>
+
+    <h2>Métriques surveillées</h2>
+    <div class="feature-rows">
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-blue">🖥️</div>
+        <div class="fr-text">
+          <h4>CPU</h4>
+          <p>Pourcentage d'utilisation du processeur, mesuré avec <code>PerformanceCounter</code> Windows. Affiché sous forme de jauge et de valeur numérique.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-purple">🧠</div>
+        <div class="fr-text">
+          <h4>RAM utilisée / totale</h4>
+          <p>Mémoire physique consommée en GB, avec le total disponible. Calculé via <code>GlobalMemoryStatusEx</code> (Win32 P/Invoke).</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-cyan">💾</div>
+        <div class="fr-text">
+          <h4>Disque C:</h4>
+          <p>Espace utilisé et total du disque système. Affiché en GB avec un pourcentage de remplissage.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-green">⏱️</div>
+        <div class="fr-text">
+          <h4>Uptime Windows</h4>
+          <p>Temps écoulé depuis le dernier démarrage de Windows, en jours/heures/minutes.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-orange">⚙️</div>
+        <div class="fr-text">
+          <h4>Processus actifs</h4>
+          <p>Nombre total de processus en cours d'exécution sur le système.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-blue">📦</div>
+        <div class="fr-text">
+          <h4>Apps installées</h4>
+          <p>Nombre d'applications détectées depuis toutes les sources (registre + game launchers).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Le polling de 3 secondes est intentionnellement léger pour ne pas impacter les performances. Les métriques sont lues via des appels P/Invoke natifs optimisés.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="applications">
+    <div class="module-tag" style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);color:#c4b5fd;">Module 02</div>
+    <h1>Bibliothèque <span>Applications</span></h1>
+    <p>Ce module centralise toutes vos applications et jeux dans une bibliothèque unifiée, quelle que soit leur source d'installation.</p>
+
+    <h2>Sources de détection</h2>
+    <div class="info-grid">
+      <div class="info-card"><h4>🪟 Registre Windows</h4><p>HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall (32 et 64 bit)</p></div>
+      <div class="info-card"><h4>🎮 Steam</h4><p>Librairies Steam détectées depuis le fichier libraryfolders.vdf</p></div>
+      <div class="info-card"><h4>🎯 Epic Games</h4><p>Manifests JSON dans le dossier de données EGS</p></div>
+      <div class="info-card"><h4>🌿 GOG Galaxy</h4><p>Base de données SQLite locale de GOG</p></div>
+      <div class="info-card"><h4>🔷 Ubisoft Connect</h4><p>Registre Uplay et dossiers de données</p></div>
+      <div class="info-card"><h4>🟡 EA App</h4><p>Fichiers manifests EA (successeur d'Origin)</p></div>
+      <div class="info-card"><h4>🎰 Rockstar</h4><p>Social Club — données d'installation Rockstar</p></div>
+      <div class="info-card"><h4>🏪 Microsoft Store</h4><p>Packages AppX installés via PowerShell</p></div>
+    </div>
+
+    <h2>Fonctionnalités clés</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">✎</div>
+        <div class="step-content">
+          <h4>Renommer une application</h4>
+          <p>Clic droit sur une entrée → <strong>Renommer</strong>. Le nouveau nom est sauvegardé dans <code>custom_apps_data.json</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🏷</div>
+        <div class="step-content">
+          <h4>Changer la catégorie</h4>
+          <p>Clic droit → <strong>Changer catégorie</strong>. Assignez une catégorie personnalisée pour organiser votre bibliothèque.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">+</div>
+        <div class="step-content">
+          <h4>Ajouter manuellement un .exe</h4>
+          <p>Bouton <strong>Ajouter manuellement</strong> → choisissez un fichier .exe. Utile pour les apps portables non détectées automatiquement.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🔍</div>
+        <div class="step-content">
+          <h4>Filtres et recherche</h4>
+          <p>Utilisez la barre de recherche et les filtres par catégorie/source. Créez vos propres onglets de filtre personnalisés.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="note-icon">ℹ</span>
+      <span class="note-text">Un cache de 6 heures assure un chargement instantané. Cliquez le bouton <strong>Rafraîchir</strong> pour forcer une nouvelle détection si vous avez installé de nouvelles apps.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="flowchains">
+    <div class="module-tag" style="background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.3);color:#67e8f9;">Module 03 — Clé</div>
+    <h1>Flow <span>Chains</span></h1>
+    <p>Les Flow Chains sont le moteur d'automatisation de Coclico. Créez des séquences d'actions visuelles déclenchées par raccourci clavier, même quand Coclico est en arrière-plan.</p>
+
+    <h2>Créer une Flow Chain</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Cliquer "Nouvelle chaîne"</h4>
+          <p>Bouton en haut à droite du module. Donnez un nom explicite à votre chaîne.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Ajouter un nœud Start</h4>
+          <p>Tout Flow Chain commence par un nœud <code>Start</code>. Il est ajouté automatiquement à la création.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Glisser-déposer des nœuds</h4>
+          <p>Faites glisser les nœuds depuis le panneau gauche vers le canvas. Connectez-les en tirant depuis le point de sortie vers l'entrée du nœud suivant.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Configurer chaque nœud</h4>
+          <p>Cliquez sur un nœud pour ouvrir son panneau de propriétés. Configurez les paramètres, le délai de retry et le timeout.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Assigner un raccourci global</h4>
+          <p>Dans la barre du haut, cliquez le champ raccourci et appuyez la combinaison souhaitée (<code>Ctrl+Alt+K</code> par exemple).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>Sauvegarder et tester</h4>
+          <p>Cliquez <strong>Sauvegarder</strong> puis le bouton <strong>▶ Exécuter</strong> pour tester immédiatement. Les résultats de chaque nœud s'affichent en temps réel.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Les 28 types de nœuds</h2>
+    <h3>Contrôle du flux</h3>
+    <div class="nodes-grid">
+      <span class="node-pill np-green">Start</span>
+      <span class="node-pill np-green">End</span>
+      <span class="node-pill np-blue">Condition</span>
+      <span class="node-pill np-purple">Loop</span>
+      <span class="node-pill np-cyan">Delay</span>
+      <span class="node-pill np-purple">Parallel</span>
+    </div>
+    <h3>Applications &amp; processus</h3>
+    <div class="nodes-grid">
+      <span class="node-pill np-blue">OpenApp</span>
+      <span class="node-pill np-blue">CloseApp</span>
+      <span class="node-pill np-purple">KillProcess</span>
+      <span class="node-pill np-purple">KillByMemory</span>
+      <span class="node-pill np-cyan">SetProcessPriority</span>
+    </div>
+    <h3>Système &amp; audio</h3>
+    <div class="nodes-grid">
+      <span class="node-pill np-cyan">SetVolume</span>
+      <span class="node-pill np-pink">MuteAudio</span>
+      <span class="node-pill np-orange">Screenshot</span>
+      <span class="node-pill np-orange">EmptyRecycleBin</span>
+      <span class="node-pill np-orange">CleanTemp</span>
+      <span class="node-pill np-orange">RamClean</span>
+      <span class="node-pill np-green">Notification</span>
+    </div>
+    <h3>Scripts &amp; commandes</h3>
+    <div class="nodes-grid">
+      <span class="node-pill np-green">RunCommand</span>
+      <span class="node-pill np-green">RunPowerShell</span>
+      <span class="node-pill np-green">OpenUrl</span>
+      <span class="node-pill np-green">SendKeys</span>
+      <span class="node-pill np-pink">ClipboardSet</span>
+      <span class="node-pill np-pink">HttpRequest</span>
+    </div>
+    <h3>Fichiers</h3>
+    <div class="nodes-grid">
+      <span class="node-pill np-blue">FileOperation</span>
+      <span class="node-pill np-blue">CompressFile</span>
+    </div>
+    <h3>Conditions disponibles</h3>
+    <div class="nodes-grid">
+      <span class="node-pill np-blue">ProcessRunning</span>
+      <span class="node-pill np-blue">FileExists</span>
+      <span class="node-pill np-cyan">TimeAfter</span>
+      <span class="node-pill np-cyan">TimeBefore</span>
+      <span class="node-pill np-purple">CpuBelow</span>
+      <span class="node-pill np-purple">CpuAbove</span>
+      <span class="node-pill np-orange">RamAbove</span>
+      <span class="node-pill np-orange">RamBelow</span>
+      <span class="node-pill np-green">NetworkUp</span>
+      <span class="node-pill np-green">SystemCheck</span>
+    </div>
+
+    <h2>Exemple de Flow Chain : Routine de travail</h2>
+    <p>Voici un exemple concret — une chaîne qui prépare votre session de travail :</p>
+    <pre><code>Start
+  → OpenApp "Code.exe"          [Ouvre VS Code]
+  → Delay 3s                    [Attendre le chargement]
+  → OpenApp "Firefox.exe"       [Ouvre le navigateur]
+  → SetVolume 60%               [Volume à 60%]
+  → Condition : RamAbove 80%    [Si RAM > 80%]
+    ├─ Oui → RamClean           [Nettoyer si nécessaire]
+    └─ Non → Notification "Prêt !" [Notification sinon]
+  → End</code></pre>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Assignez le raccourci <code>Ctrl+Alt+W</code> à cette chaîne. Elle se déclenche même si Coclico est minimisé dans le tray, ou si vous êtes dans une autre application.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="installeur">
+    <div class="module-tag" style="background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:#fdba74;">Module 04</div>
+    <h1>Installeur <span>Rapide</span></h1>
+    <p>Interface graphique pour <strong>Winget</strong> (Windows Package Manager). Installez des logiciels populaires en un clic sans jamais ouvrir un navigateur.</p>
+
+    <h2>Catégories disponibles</h2>
+    <div class="info-grid">
+      <div class="info-card"><h4>🌐 Internet</h4><p>Navigateurs, clients mail, VPN, gestionnaires de téléchargements</p></div>
+      <div class="info-card"><h4>⚙️ Runtimes</h4><p>Visual C++, .NET, DirectX, Java — les dépendances essentielles</p></div>
+      <div class="info-card"><h4>💻 Développement</h4><p>VS Code, Git, Node.js, Python, Docker et autres outils dev</p></div>
+      <div class="info-card"><h4>🎮 Gaming</h4><p>Steam, Epic, GOG, Discord, GPU tools et utilitaires gaming</p></div>
+      <div class="info-card"><h4>🎨 Création</h4><p>GIMP, Inkscape, OBS, Handbrake et outils créatifs</p></div>
+      <div class="info-card"><h4>🔧 Système</h4><p>7-Zip, VLC, Notepad++, CrystalDiskInfo et utilitaires système</p></div>
+    </div>
+
+    <h2>Portée d'installation</h2>
+    <p>Deux modes disponibles via le sélecteur en haut du module :</p>
+    <ul>
+      <li><strong>Machine</strong> — Installe pour tous les utilisateurs (nécessite Administrateur)</li>
+      <li><strong>Utilisateur</strong> — Installe uniquement pour l'utilisateur actuel</li>
+    </ul>
+
+    <div class="warning">
+      <span class="warning-icon">⚠</span>
+      <span class="warning-text">Winget doit être installé sur votre système (inclus par défaut sur Windows 11 et Windows 10 21H2+). Si Winget est absent, allez dans le Microsoft Store et installez "App Installer".</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="nettoyage">
+    <div class="module-tag" style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#6ee7b7;">Module 05</div>
+    <h1>Nettoyage <span>Système</span></h1>
+    <p>Libérez de l'espace disque en supprimant les fichiers temporaires, caches navigateurs, journaux et autres résidus système en toute sécurité.</p>
+
+    <h2>10 catégories de nettoyage</h2>
+    <div class="feature-rows">
+      <div class="feature-row"><div class="fr-icon fr-icon-blue">🗂️</div><div class="fr-text"><h4>Fichiers temporaires Windows</h4><p>Contenu de <code>%TEMP%</code> et <code>C:\Windows\Temp</code></p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-cyan">🌐</div><div class="fr-text"><h4>Caches navigateurs</h4><p>Chrome, Firefox et Edge — données de cache uniquement (historique préservé)</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-orange">📋</div><div class="fr-text"><h4>Journaux système</h4><p>Fichiers <code>.log</code> et <code>.etl</code> dans les dossiers Windows</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-purple">🗑️</div><div class="fr-text"><h4>Corbeille</h4><p>Vide la corbeille de tous les lecteurs</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-green">🖼️</div><div class="fr-text"><h4>Miniatures (Thumbnails)</h4><p>Cache des aperçus d'images — régénéré automatiquement</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-blue">💥</div><div class="fr-text"><h4>Rapports d'erreurs Windows</h4><p>Fichiers WER (Windows Error Reporting)</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-cyan">📦</div><div class="fr-text"><h4>Anciens installers</h4><p>Résidus d'installation dans <code>C:\Windows\Installer</code></p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-orange">🌐</div><div class="fr-text"><h4>Cache DNS</h4><p>Vide le cache DNS Windows (<code>ipconfig /flushdns</code>)</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-purple">⚡</div><div class="fr-text"><h4>Prefetch</h4><p>Fichiers prefetch Windows — <code>C:\Windows\Prefetch</code></p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-green">🧹</div><div class="fr-text"><h4>Deep Clean</h4><p>Analyse approfondie supplémentaire avec rapport fichier par fichier</p></div></div>
+    </div>
+
+    <h2>Comment nettoyer</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Sélectionner les catégories</h4>
+          <p>Cochez les catégories à nettoyer. Une <strong>estimation de l'espace récupérable</strong> s'affiche instantanément.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Lancer le nettoyage</h4>
+          <p>Cliquez <strong>Nettoyer</strong>. Une barre de progression s'affiche. Durée : quelques secondes à une minute selon la quantité.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Consulter le rapport</h4>
+          <p>Un résumé détaillé affiche l'espace libéré par catégorie et liste les fichiers supprimés.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="ram-cleaner">
+    <div class="module-tag" style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);color:#c4b5fd;">Module 06</div>
+    <h1>RAM <span>Cleaner</span></h1>
+    <p>Surveillance et optimisation avancée de la mémoire RAM via 18 opérations Windows natives. Le module le plus technique de Coclico.</p>
+
+    <h2>Métriques surveillées en temps réel</h2>
+    <div class="spec-rows">
+      <div class="spec-row"><span class="spec-k">RAM physique</span><span class="spec-v">Utilisée / Totale en GB, avec %</span></div>
+      <div class="spec-row"><span class="spec-k">Mémoire virtuelle (Commit)</span><span class="spec-v">Espace d'adressage virtuel utilisé</span></div>
+      <div class="spec-row"><span class="spec-k">Pagefile</span><span class="spec-v">Utilisation du fichier d'échange Windows</span></div>
+      <div class="spec-row"><span class="spec-k">Historique 90 secondes</span><span class="spec-v">Graphique temps réel de la consommation RAM</span></div>
+      <div class="spec-row"><span class="spec-k">Top 8 processus</span><span class="spec-v">Les processus les plus gourmands en mémoire</span></div>
+      <div class="spec-row"><span class="spec-k">VRAM GPU</span><span class="spec-v">Mémoire dédiée et partagée du GPU</span></div>
+    </div>
+
+    <h2>Les 3 profils de nettoyage</h2>
+    <div class="feature-rows">
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-blue">⚡</div>
+        <div class="fr-text">
+          <h4>Profil Rapide (~2 opérations)</h4>
+          <p>Working Sets + GC .NET forcé. Très rapide (< 1 seconde). Impact minimal sur le système. Idéal en usage quotidien.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-purple">🔧</div>
+        <div class="fr-text">
+          <h4>Profil Normal (~8 opérations)</h4>
+          <p>Profil Rapide + Standby Lists + Cache fichiers modifiés. Durée ~2-3 secondes. Recommandé pour le nettoyage régulier.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="fr-icon fr-icon-cyan">🧠</div>
+        <div class="fr-text">
+          <h4>Profil Profond (18 opérations)</h4>
+          <p>Toutes les opérations incluant Working Set noyau, Cache DNS, ARP, NetBIOS, SuperFetch, Compactage du tas. Durée ~5-10s. Utiliser avec modération.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Mode automatique</h2>
+    <p>Activez le nettoyage automatique via deux modes :</p>
+    <ul>
+      <li><strong>Seuil RAM</strong> — Déclenche le nettoyage quand la RAM dépasse X% (ex. 85%)</li>
+      <li><strong>Intervalle</strong> — Nettoie automatiquement toutes les N minutes</li>
+    </ul>
+    <p>Le profil utilisé en mode auto est configurable indépendamment du profil manuel.</p>
+
+    <div class="warning">
+      <span class="warning-icon">⚠</span>
+      <span class="warning-text">Le Profil Profond désactive temporairement SuperFetch et vide le cache de standby système. Cela peut ralentir légèrement les premiers accès aux fichiers après le nettoyage. À utiliser quand le système manque vraiment de RAM.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="scanner">
+    <div class="module-tag" style="background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.3);color:#67e8f9;">Module 07</div>
+    <h1>App <span>Scanner</span></h1>
+    <p>Audit complet de toutes les applications installées. Ce module affiche bien plus d'informations que le module Applications — il est pensé pour l'analyse, pas pour le lancement.</p>
+
+    <h2>Informations affichées par application</h2>
+    <div class="info-grid">
+      <div class="info-card"><h4>Nom complet</h4><p>Nom officiel tel qu'enregistré dans le registre ou le launcher</p></div>
+      <div class="info-card"><h4>Version</h4><p>Numéro de version de l'application</p></div>
+      <div class="info-card"><h4>Éditeur</h4><p>Nom du développeur ou de l'éditeur</p></div>
+      <div class="info-card"><h4>Taille</h4><p>Espace disque occupé (si disponible)</p></div>
+      <div class="info-card"><h4>Chemin d'installation</h4><p>Répertoire complet de l'application</p></div>
+      <div class="info-card"><h4>Date d'installation</h4><p>Date à laquelle l'application a été installée</p></div>
+      <div class="info-card"><h4>Source</h4><p>D'où vient l'application (registre, Steam, etc.)</p></div>
+    </div>
+
+    <h2>Filtrage et tri</h2>
+    <p>Tous les résultats sont triables par colonne (clic sur l'en-tête) et filtrables via la barre de recherche. Vous pouvez filtrer par source pour ne voir que les jeux Steam, ou par éditeur pour auditer les apps d'un développeur spécifique.</p>
+  </section>
+
+  
+  <section class="doc-section" id="parametres">
+    <div class="module-tag" style="background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:#fdba74;">Module 08</div>
+    <h1><span>Paramètres</span></h1>
+    <p>Personnalisation complète de l'interface, du comportement et de l'expérience utilisateur. Tout est sauvegardé dans <code>%AppData%\Coclico\settings.json</code>.</p>
+
+    <h2>Apparence</h2>
+    <div class="feature-rows">
+      <div class="feature-row"><div class="fr-icon fr-icon-blue">🎨</div><div class="fr-text"><h4>Couleur d'accent</h4><p>Entrez n'importe quel code <code>#RRGGBB</code> ou utilisez l'un des 8 préréglages de couleur. Change instantanément toute l'interface.</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-purple">🌗</div><div class="fr-text"><h4>Thème</h4><p>5 thèmes prédéfinis : Dark, Darker, Abyss, Deep Purple, Midnight. Personnalisez l'opacité des cartes et la taille de police.</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-cyan">📐</div><div class="fr-text"><h4>Sidebar compacte</h4><p>Mode icônes seules pour libérer de l'espace sur petits écrans. Bascule instantanée.</p></div></div>
+    </div>
+
+    <h2>Comportement</h2>
+    <div class="feature-rows">
+      <div class="feature-row"><div class="fr-icon fr-icon-orange">🚀</div><div class="fr-text"><h4>Démarrage automatique</h4><p>Lance Coclico au démarrage de Windows. Mode normal ou minimisé dans le tray.</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-green">🔔</div><div class="fr-text"><h4>Icône tray</h4><p>Active/désactive l'icône dans la zone de notification. Quand active, fermer la fenêtre la réduit dans le tray.</p></div></div>
+    </div>
+
+    <h2>Localisation</h2>
+    <p>10 langues disponibles avec changement à chaud (sans redémarrage) :</p>
+    <div class="nodes-grid">
+      <span class="node-pill np-blue">Français</span>
+      <span class="node-pill np-blue">English</span>
+      <span class="node-pill np-blue">Deutsch</span>
+      <span class="node-pill np-blue">Español</span>
+      <span class="node-pill np-blue">Italiano</span>
+      <span class="node-pill np-blue">日本語</span>
+      <span class="node-pill np-blue">한국어</span>
+      <span class="node-pill np-blue">Português</span>
+      <span class="node-pill np-blue">Русский</span>
+      <span class="node-pill np-blue">中文</span>
+    </div>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">La langue peut aussi être changée directement depuis la page d'accueil du site web Coclico via le sélecteur de langue dans la barre de navigation.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="ai-chat">
+    <div class="badge badge-purple">Intelligence Artificielle</div>
+    <h1>Coclico <span>AI</span></h1>
+    <p>Assistant conversationnel entièrement local, propulsé par un modèle GGUF via LLamaSharp v0.26. Zéro donnée envoyée sur Internet.</p>
+
+    <h2>Fonctionnalités</h2>
+    <div class="feature-rows">
+      <div class="feature-row"><div class="fr-icon fr-icon-blue">🔒</div><div class="fr-text"><h4>100% local et privé</h4><p>Le modèle tourne entièrement sur votre machine. Aucune connexion réseau requise pour l'inférence.</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-purple">📚</div><div class="fr-text"><h4>RAG intégré (Retrieval-Augmented Generation)</h4><p>L'IA dispose d'une base de connaissances sur Coclico, construite à partir des docs Markdown dans <code>resource/docs/</code>. Elle peut répondre à des questions précises sur chaque module.</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-cyan">⚡</div><div class="fr-text"><h4>Actions directes</h4><p>Dites "Ouvre le RAM Cleaner" ou "Lance un nettoyage" — l'IA interprète l'intention et exécute l'action via le <code>FeatureExecutionEngine</code>.</p></div></div>
+      <div class="feature-row"><div class="fr-icon fr-icon-green">🌍</div><div class="fr-text"><h4>Multilingue</h4><p>Répond dans la langue de l'utilisateur, quelle que soit la langue du système ou de Coclico.</p></div></div>
+    </div>
+
+    <h2>Exemples de questions</h2>
+    <pre><code>"Comment nettoyer ma RAM ?"
+"Quels sont les nœuds disponibles dans les Flow Chains ?"
+"Ouvre le module Scanner"
+"Explique-moi le profil de nettoyage profond"
+"Crée une routine de démarrage automatique"
+"Pourquoi Coclico nécessite les droits Administrateur ?"</code></pre>
+
+    <div class="note">
+      <span class="note-icon">ℹ</span>
+      <span class="note-text">Le premier message après le démarrage peut prendre quelques secondes pendant le chargement du modèle en mémoire. Les messages suivants sont nettement plus rapides.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="raccourcis">
+    <div class="badge badge-cyan">Référence</div>
+    <h1>Raccourcis <span>Clavier</span></h1>
+    <p>Coclico supporte les raccourcis globaux pour déclencher les Flow Chains même quand l'application est en arrière-plan.</p>
+
+    <h2>Raccourcis globaux (Flow Chains)</h2>
+    <p>Configurez n'importe quel raccourci <code>Ctrl+Touche</code> ou <code>Ctrl+Alt+Touche</code> dans le module Flow Chains. Les raccourcis fonctionnent globalement — dans toute application, même avec Coclico dans le tray.</p>
+
+    <table class="shortcut-table">
+      <thead>
+        <tr>
+          <th>Raccourci</th>
+          <th>Action</th>
+          <th>Disponibilité</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="kbd"><span>Ctrl</span> + <span>Touche</span></span></td>
+          <td>Déclencher une Flow Chain assignée</td>
+          <td>Global (partout)</td>
+        </tr>
+        <tr>
+          <td><span class="kbd"><span>Ctrl</span> + <span>Alt</span> + <span>Touche</span></span></td>
+          <td>Déclencher une Flow Chain assignée</td>
+          <td>Global (partout)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Navigation dans l'interface</h2>
+    <table class="shortcut-table">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Changer de module</td>
+          <td>Clic sur l'icône dans la sidebar gauche</td>
+        </tr>
+        <tr>
+          <td>Minimiser dans le tray</td>
+          <td>Bouton × de la fenêtre (si tray activé)</td>
+        </tr>
+        <tr>
+          <td>Réduire la fenêtre</td>
+          <td>Bouton − de la barre de titre</td>
+        </tr>
+        <tr>
+          <td>Changer de langue</td>
+          <td>Paramètres → section Langue</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="fichiers-donnees">
+    <div class="badge badge-orange">Référence</div>
+    <h1>Fichiers <span>&amp; Données</span></h1>
+    <p>Toutes les données de Coclico sont stockées localement dans <code>%AppData%\Coclico\</code>. Aucune donnée n'est envoyée sur Internet.</p>
+
+    <div class="spec-rows">
+      <div class="spec-row"><span class="spec-k"><code>settings.json</code></span><span class="spec-v">Tous les paramètres utilisateur (thème, langue, etc.)</span></div>
+      <div class="spec-row"><span class="spec-k"><code>flow_chains.json</code></span><span class="spec-v">Toutes vos Flow Chains créées</span></div>
+      <div class="spec-row"><span class="spec-k"><code>custom_apps_data.json</code></span><span class="spec-v">Personnalisations apps (noms, catégories)</span></div>
+      <div class="spec-row"><span class="spec-k"><code>manual_apps.json</code></span><span class="spec-v">Applications ajoutées manuellement</span></div>
+      <div class="spec-row"><span class="spec-k"><code>profile.json</code></span><span class="spec-v">Données du profil utilisateur</span></div>
+      <div class="spec-row"><span class="spec-k"><code>avatar.*</code></span><span class="spec-v">Image d'avatar (recadrée par l'outil intégré)</span></div>
+      <div class="spec-row"><span class="spec-k"><code>logs\coclico-YYYYMMDD.log</code></span><span class="spec-v">Journaux Serilog (rotation quotidienne, 14 jours)</span></div>
+    </div>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Pour <strong>sauvegarder</strong> votre configuration, copiez simplement le dossier <code>%AppData%\Coclico\</code>. Pour <strong>migrer</strong> vers un nouvel ordinateur, collez ce dossier au même emplacement.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="conseils">
+    <div class="badge badge-green">Pro Tips</div>
+    <h1>Conseils <span>&amp; Astuces</span></h1>
+
+    <h2>Optimiser les performances</h2>
+    <ul>
+      <li>Activez le <strong>mode auto du RAM Cleaner</strong> avec un seuil à 80% — Coclico nettoiera automatiquement sans intervention</li>
+      <li>Utilisez le <strong>Profil Rapide</strong> pour le nettoyage quotidien, réservez le Profil Profond aux situations critiques</li>
+      <li>Le Dashboard se met à jour toutes les 3s — laissez-le ouvert pour surveiller votre système pendant les tâches intensives</li>
+    </ul>
+
+    <h2>Tirer le meilleur des Flow Chains</h2>
+    <ul>
+      <li>Créez une chaîne <strong>"Fin de journée"</strong> : ferme les apps, vide la corbeille, nettoie la RAM, éteint le PC</li>
+      <li>Créez une chaîne <strong>"Jeu"</strong> : ferme les apps inutiles, RAM Clean profond, règle le volume, ouvre Steam</li>
+      <li>Utilisez les <strong>conditions RamAbove</strong> pour un nettoyage conditionnel intelligent</li>
+      <li>Le nœud <strong>Parallel</strong> permet d'exécuter plusieurs actions simultanément — idéal pour les ouvertures d'apps</li>
+    </ul>
+
+    <h2>Dépannage</h2>
+    <ul>
+      <li>Si l'IA ne répond pas : vérifiez que <code>resource/model/IA-support-chat.gguf</code> existe et est accessible</li>
+      <li>Si les raccourcis globaux ne fonctionnent pas : vérifiez qu'aucun autre logiciel n'utilise la même combinaison</li>
+      <li>Si des apps ne sont pas détectées : cliquez <strong>Rafraîchir</strong> dans le module Applications pour forcer une nouvelle détection</li>
+      <li>Consultez les logs dans <code>%AppData%\Coclico\logs\</code> pour diagnostiquer tout problème</li>
+    </ul>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Lisez le <strong><a href="wiki.html" style="color:var(--blue)">Wiki Développeur</a></strong> si vous souhaitez contribuer au projet, ajouter de nouveaux nœuds Flow Chain, ou comprendre l'architecture interne de Coclico.</span>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Intersection observer for active link highlighting
+  const sections = document.querySelectorAll('.doc-section');
+  const links = document.querySelectorAll('.nav-link');
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
+

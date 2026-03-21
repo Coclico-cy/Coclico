@@ -1,0 +1,333 @@
+<UserControl x:Class="Coclico.Views.InstallerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:conv="clr-namespace:Coclico.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{DynamicResource BgBaseBrush}" d:DesignHeight="800" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <conv:BooleanToVisibilityInvertedConverter x:Key="BoolToVisInv"/>
+
+        
+        <Style x:Key="InstallBar" TargetType="ProgressBar">
+            <Setter Property="Height"          Value="4"/>
+            <Setter Property="Maximum"         Value="100"/>
+            <Setter Property="Background"      Value="#14FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border CornerRadius="2" Background="{TemplateBinding Background}"
+                                Height="{TemplateBinding Height}">
+                            <Border x:Name="PART_Indicator" CornerRadius="2"
+                                    Background="{TemplateBinding Foreground}"
+                                    HorizontalAlignment="Left"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="PageRoot"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.35"/>
+                    <DoubleAnimation Storyboard.TargetName="PageSlide"
+                                     Storyboard.TargetProperty="Y"
+                                     From="14" To="0" Duration="0:0:0.35">
+                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid x:Name="PageRoot" Margin="32,28,32,0" Opacity="0">
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="PageSlide" Y="0"/>
+        </Grid.RenderTransform>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource Installer_Title}" FontSize="26" FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <TextBlock Text="{DynamicResource Installer_Subtitle}" FontSize="12"
+                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Style="{StaticResource SecondaryButton}"
+                        Command="{Binding UpgradeAllCommand}" Padding="16,8">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="ArrowSync24" Margin="0,0,8,0"
+                                       Foreground="{DynamicResource PrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource Installer_UpdateAll}"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource PrimaryBrush}"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            
+            <Border Visibility="{Binding IsAdminWarningVisible, Converter={StaticResource BoolToVis}}"
+                    CornerRadius="{DynamicResource CornerSmall}" Padding="14,10"
+                    Margin="0,52,0,0" BorderThickness="1">
+                <Border.Background><SolidColorBrush Color="#EF4444" Opacity="0.12"/></Border.Background>
+                <Border.BorderBrush><SolidColorBrush Color="#EF4444" Opacity="0.5"/></Border.BorderBrush>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Warning24" Foreground="#EF4444" Margin="0,0,10,0"/>
+                        <TextBlock Foreground="#EF4444" VerticalAlignment="Center">
+                            <Run Text="{DynamicResource Installer_AdminWarning}" FontWeight="Bold"/>
+                            <Run Text=" "/>
+                            <Run Text="{DynamicResource Installer_AdminWarningDesc}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <Button Grid.Column="1" x:Name="BtnRelaunchAdmin"
+                            Click="BtnRelaunchAdmin_Click"
+                            Padding="14,7" VerticalAlignment="Center"
+                            Background="#EF4444" Foreground="White"
+                            BorderThickness="0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Shield24" FontSize="14" Margin="0,0,6,0"/>
+                            <TextBlock Text="Relancer en Admin" FontWeight="SemiBold" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+
+        
+        <ui:TextBox Grid.Row="1" x:Name="InstallerSearchBox"
+                    PlaceholderText="{DynamicResource Installer_SearchPlaceholder}"
+                    Margin="0,0,0,20"
+                    TextChanged="InstallerSearch_TextChanged"/>
+
+        
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,0,0,24">
+            <ItemsControl x:Name="SoftwareList" ItemsSource="{Binding CategorizedSoftware}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,0,0,32">
+
+                            
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding CategoryName}"
+                                           FontSize="9" FontWeight="Black"
+                                           Foreground="{DynamicResource PrimaryBrush}"
+                                           VerticalAlignment="Center" Margin="2,0,12,0"/>
+                                <Border Grid.Column="1" Height="1" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="{DynamicResource AccentPrimary}" Offset="0"/>
+                                            <GradientStop Color="Transparent" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                            </Grid>
+
+                            
+                            <ItemsControl ItemsSource="{Binding Items}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Width="272" Margin="0,0,14,14" Padding="18,16"
+                                                CornerRadius="{DynamicResource CornerCard}"
+                                                BorderThickness="1">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#110820" Offset="0"/>
+                                                    <GradientStop Color="#0D0618" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <Border.BorderBrush>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#2A1848" Offset="0"/>
+                                                    <GradientStop Color="#1E1030" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.BorderBrush>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                
+                                                <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,14">
+                                                    <Border Width="40" Height="40"
+                                                            CornerRadius="{DynamicResource CornerNode}">
+                                                        <Border.Background>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                <GradientStop Color="#2A0A50" Offset="0"/>
+                                                                <GradientStop Color="#1A0838" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Border.Background>
+                                                        <TextBlock Text="{Binding Name, Converter={StaticResource FirstCharConverter}}"
+                                                                   Foreground="{DynamicResource TextAccentBrush}"
+                                                                   FontSize="17" FontWeight="Bold"
+                                                                   VerticalAlignment="Center"
+                                                                   HorizontalAlignment="Center"/>
+                                                    </Border>
+                                                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Text="{Binding WingetId}"
+                                                                   FontSize="9"
+                                                                   Foreground="{DynamicResource TextMutedBrush}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   FontFamily="Consolas, Courier New"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+
+                                                
+                                                <StackPanel Grid.Row="1" Margin="0,0,0,10">
+                                                    <TextBlock Text="{Binding Status}"
+                                                               FontSize="11"
+                                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                    <ProgressBar Style="{StaticResource InstallBar}"
+                                                                 Value="{Binding ProgressValue, Mode=OneWay}"
+                                                                 Foreground="{DynamicResource PrimaryBrush}"
+                                                                 Margin="0,6,0,0"
+                                                                 Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVis}}"/>
+                                                    <Border CornerRadius="{DynamicResource CornerSmall}"
+                                                            Padding="8,6" Margin="0,6,0,0"
+                                                            Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVis}}">
+                                                        <Border.Background>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                <GradientStop Color="#06030C" Offset="0"/>
+                                                                <GradientStop Color="#08050F" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Border.Background>
+                                                        <Border.BorderBrush>
+                                                            <SolidColorBrush Color="#2A1848" Opacity="0.4"/>
+                                                        </Border.BorderBrush>
+                                                        <Border.BorderThickness>1</Border.BorderThickness>
+                                                        <ScrollViewer Height="70" VerticalScrollBarVisibility="Auto">
+                                                            <TextBlock Text="{Binding LastOutput}"
+                                                                       FontFamily="Consolas, Courier New"
+                                                                       FontSize="9"
+                                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                                       TextWrapping="Wrap"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                
+                                                <Grid Grid.Row="2">
+                                                    <Button Style="{StaticResource PrimaryButton}"
+                                                            HorizontalAlignment="Stretch" Padding="12,8"
+                                                            Command="{Binding DataContext.InstallCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVisInv}}">
+                                                        <TextBlock Text="{DynamicResource Installer_Install}"
+                                                                   FontWeight="SemiBold" FontSize="13"/>
+                                                    </Button>
+                                                    <Button Style="{StaticResource GhostButton}"
+                                                            HorizontalAlignment="Stretch" Padding="12,8"
+                                                            Command="{Binding DataContext.CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVis}}">
+                                                        <TextBlock Text="{DynamicResource Installer_CancelInstall}"
+                                                                   FontWeight="SemiBold" FontSize="13"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        
+        <Border Visibility="{Binding IsTestRunning, Converter={StaticResource BoolToVis}}"
+                Background="{DynamicResource OverlayDarkStrong}"
+                Grid.RowSpan="3" Margin="-32">
+            <Border VerticalAlignment="Center" HorizontalAlignment="Center"
+                    MaxWidth="560" Padding="32"
+                    CornerRadius="{DynamicResource CornerCard}"
+                    BorderThickness="1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#130B20" Offset="0"/>
+                        <GradientStop Color="#0D0818" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#4A1FA8" Offset="0"/>
+                        <GradientStop Color="#BE185D" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Border.Effect>
+                    <DropShadowEffect Color="#7C3AED" BlurRadius="40"
+                                      Opacity="0.3" ShadowDepth="0"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Installer_TestMode}"
+                               FontSize="20" FontWeight="Bold"
+                               Margin="0,0,0,16"
+                               Foreground="{DynamicResource SecondaryBrush}"/>
+                    <TextBlock Text="{Binding TestProgressText}"
+                               FontSize="13"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,10"/>
+                    <ProgressBar Value="{Binding TestProgressValue, Mode=OneWay}"
+                                 Maximum="100" Height="5" Margin="0,0,0,12"
+                                 Background="#14FFFFFF"
+                                 Foreground="{DynamicResource PrimaryBrush}"
+                                 BorderThickness="0"/>
+                    <Border CornerRadius="{DynamicResource CornerSmall}"
+                            Padding="12,10" Margin="0,4,0,0">
+                        <Border.Background>
+                            <SolidColorBrush Color="#06030C"/>
+                        </Border.Background>
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="#2A1848" Opacity="0.4"/>
+                        </Border.BorderBrush>
+                        <Border.BorderThickness>1</Border.BorderThickness>
+                        <TextBlock Text="{Binding TestCurrentLog}" FontSize="10"
+                                   FontFamily="Consolas, Courier New"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   TextWrapping="Wrap" MaxHeight="90"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</UserControl>
+

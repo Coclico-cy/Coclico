@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="fr" data-coclico-page="wiki">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Coclico — Wiki Développeur. Architecture MVVM, DI Container, Services, Flow Chains, IA, Localisation — documentation technique complète.">
+  <title>Coclico — Wiki Développeur</title>
+  <link rel="icon" href="../Coclico/Resources/icone/plage.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="i18n.js" defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #03030a; --bg-2: #07071a;
+      --bg-card: rgba(255,255,255,0.03); --bg-card-h: rgba(255,255,255,0.055);
+      --border: rgba(255,255,255,0.07); --border-h: rgba(255,255,255,0.14);
+      --blue: #4a6cf7; --blue-dim: rgba(74,108,247,0.15); --blue-glow: rgba(74,108,247,0.3);
+      --purple: #7c3aed; --purple-dim: rgba(124,58,237,0.15);
+      --cyan: #06b6d4; --cyan-dim: rgba(6,182,212,0.15);
+      --orange: #f97316; --orange-dim: rgba(249,115,22,0.15);
+      --green: #10b981; --green-dim: rgba(16,185,129,0.15);
+      --pink: #ec4899;
+      --text: #f0f0f8; --text-2: rgba(240,240,248,0.6); --text-3: rgba(240,240,248,0.35);
+      --sidebar-w: 280px;
+      --font: 'DM Sans', system-ui, sans-serif;
+      --font-display: 'Syne', 'DM Sans', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    html { scroll-behavior: smooth; font-size: 15px; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; display: flex; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    code { font-family: var(--mono); font-size: 0.85em; background: rgba(74,108,247,0.12); color: var(--blue); padding: 0.15em 0.45em; border-radius: 4px; }
+    pre code { background: none; color: inherit; padding: 0; font-size: 0.86rem; }
+    pre { background: #080814; border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem 1.5rem; overflow-x: auto; margin: 1.2rem 0; position: relative; }
+    .pre-lang { position: absolute; top: 0.6rem; right: 0.8rem; font-family: var(--mono); font-size: 0.65rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* Syntax highlight tokens (manual) */
+    .tok-kw { color: #c792ea; } /* keyword */
+    .tok-type { color: #82aaff; } /* type */
+    .tok-str { color: #c3e88d; } /* string */
+    .tok-cmt { color: #546e7a; font-style: italic; } /* comment */
+    .tok-fn { color: #82aaff; } /* function */
+    .tok-num { color: #f78c6c; } /* number */
+    .tok-attr { color: #ffcb6b; } /* attribute */
+    .tok-ns { color: #89ddff; } /* namespace / class */
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w); min-width: var(--sidebar-w);
+      height: 100vh; position: sticky; top: 0;
+      background: rgba(0,0,0,0.5); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      backdrop-filter: blur(12px); scrollbar-width: thin; scrollbar-color: rgba(124,58,237,0.3) transparent;
+    }
+    .sidebar-brand { padding: 1.4rem 1.2rem 1rem; border-bottom: 1px solid var(--border); }
+    .sidebar-logo { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.05rem; color: var(--text); margin-bottom: 0.6rem; font-family: var(--font-display); }
+    .sidebar-logo img { width: 26px; height: 26px; border-radius: 6px; }
+    .sidebar-sub { font-size: 0.75rem; color: var(--text-3); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--text-3); padding: 0.4rem 0.6rem; border-radius: 6px; transition: 0.2s; margin-top: 0.5rem; }
+    .back-link:hover { color: var(--purple); background: var(--purple-dim); }
+    .nav-group { padding: 0.9rem 1rem 0.3rem; font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); font-weight: 700; }
+    .nav-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.42rem 1rem; color: var(--text-2); font-size: 0.84rem; border-radius: 8px; transition: 0.2s; margin: 0.05rem 0.5rem; cursor: pointer; }
+    .nav-link:hover, .nav-link.active { color: var(--text); background: var(--bg-card); }
+    .nav-link.active { color: #c4b5fd; border-left: 2px solid var(--purple); padding-left: calc(1rem - 2px); }
+    .nl-icon { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
+    .nav-link.active .nl-icon { opacity: 1; }
+
+    /* ── Main ── */
+    .main { flex: 1; max-width: 900px; padding: 3rem 3.5rem 5rem; overflow-y: auto; }
+    @media (max-width: 900px) { .main { padding: 2rem 1.5rem; } .sidebar { display: none; } }
+
+    .doc-section { margin-bottom: 4.5rem; padding-bottom: 4.5rem; border-bottom: 1px solid var(--border); scroll-margin-top: 2rem; }
+    .doc-section:last-child { border-bottom: none; }
+
+    h1 { font-family: var(--font-display); font-size: 2.4rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 0.7rem; }
+    h1 span { background: linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    h2 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; margin: 2.8rem 0 1rem; letter-spacing: -0.02em; color: var(--text); }
+    h3 { font-size: 1.05rem; font-weight: 700; margin: 2rem 0 0.8rem; color: var(--text); }
+    h4 { font-size: 0.92rem; font-weight: 700; margin: 1.4rem 0 0.5rem; color: var(--text); }
+    p { color: var(--text-2); margin-bottom: 0.9rem; font-size: 0.95rem; line-height: 1.75; }
+    ul, ol { padding-left: 1.4rem; color: var(--text-2); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1rem; }
+    li { margin-bottom: 0.35rem; }
+    strong { color: var(--text); font-weight: 600; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.9rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; margin-bottom: 1.2rem; }
+    .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+    .badge-purple { background: var(--purple-dim); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd; }
+    .badge-purple::before { background: var(--purple); box-shadow: 0 0 5px var(--purple); }
+    .badge-blue { background: var(--blue-dim); border: 1px solid rgba(74,108,247,0.3); color: var(--blue); }
+    .badge-blue::before { background: var(--blue); box-shadow: 0 0 5px var(--blue); }
+    .badge-cyan { background: var(--cyan-dim); border: 1px solid rgba(6,182,212,0.3); color: var(--cyan); }
+    .badge-cyan::before { background: var(--cyan); }
+    .badge-orange { background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
+    .badge-orange::before { background: var(--orange); }
+    .badge-green { background: var(--green-dim); border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+    .badge-green::before { background: var(--green); }
+
+    /* ── Tables ── */
+    .data-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.87rem; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .data-table th { padding: 0.7rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+    .data-table td { padding: 0.65rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-2); vertical-align: top; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--bg-card); color: var(--text); }
+    .tag { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; font-family: var(--mono); }
+    .tag-s { background: var(--blue-dim); color: #a5b4fc; }
+    .tag-t { background: var(--orange-dim); color: #fdba74; }
+    .tag-i { background: var(--purple-dim); color: #c4b5fd; }
+
+    /* ── Info & note boxes ── */
+    .note, .tip, .warning { padding: 1rem 1.2rem; border-radius: 12px; font-size: 0.88rem; margin: 1.2rem 0; display: flex; gap: 0.8rem; align-items: flex-start; line-height: 1.65; }
+    .note { background: var(--blue-dim); border: 1px solid rgba(74,108,247,0.25); }
+    .note-icon { color: var(--blue); font-size: 1.1rem; flex-shrink: 0; }
+    .note-text { color: rgba(240,240,248,0.75); }
+    .tip { background: var(--green-dim); border: 1px solid rgba(16,185,129,0.25); }
+    .tip-icon { color: var(--green); font-size: 1.1rem; flex-shrink: 0; }
+    .tip-text { color: rgba(240,240,248,0.75); }
+    .warning { background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.25); }
+    .warning-icon { color: var(--orange); font-size: 1.1rem; flex-shrink: 0; }
+    .warning-text { color: rgba(240,240,248,0.75); }
+
+    /* ── Architecture diagram ── */
+    .arch { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin: 1.5rem 0; }
+    .arch-layer { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+    .arch-layer:last-child { border-bottom: none; }
+    .arch-layer-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--text-3); min-width: 100px; }
+    .arch-chip { padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; white-space: nowrap; }
+    .chip-view { background: rgba(74,108,247,0.12); border: 1px solid rgba(74,108,247,0.25); color: #a5b4fc; }
+    .chip-vm { background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25); color: #c4b5fd; }
+    .chip-svc { background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); color: #67e8f9; }
+    .chip-data { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
+    .chip-win { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.25); color: #fdba74; }
+    .arch-arrow { display: flex; justify-content: center; padding: 0.3rem 0; background: rgba(0,0,0,0.2); font-size: 1rem; color: var(--text-3); border-bottom: 1px solid var(--border); }
+
+    /* ── Flow diagram ── */
+    .flow { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 1.2rem 0; }
+    .flow-box { padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; border: 1px solid transparent; font-family: var(--mono); }
+    .flow-arrow { color: var(--text-3); font-size: 1rem; }
+
+    /* ── TOC hero ── */
+    .toc-hero { background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(74,108,247,0.08)); border: 1px solid rgba(124,58,237,0.2); border-radius: 20px; padding: 2rem 2.2rem; margin-bottom: 2rem; }
+    .toc-hero p { margin-bottom: 1.5rem; }
+    .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 0.6rem; }
+    .toc-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.9rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; font-size: 0.83rem; color: var(--text-2); transition: 0.2s; }
+    .toc-item:hover { color: #c4b5fd; border-color: rgba(124,58,237,0.3); background: var(--purple-dim); }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">
+      <img src="../Coclico/Resources/icone/plage.png" alt="Coclico" onerror="this.style.display='none'">
+      <span>Coclico</span>
+    </div>
+    <div class="sidebar-sub">Wiki Développeur</div>
+    <a href="index.html" class="back-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Retour au site
+    </a>
+    <div class="coclico-lang-wrap" style="margin-top: 0.9rem; margin-bottom: 0.25rem;">
+      <label for="langSwitch" class="coclico-lang-label">🌐</label>
+      <select id="langSwitch" data-coclico-lang-switch class="coclico-lang-switch" aria-label="Language">
+        <option value="fr">🇫🇷 Français</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="ko">🇰🇷 한국어</option>
+        <option value="pt">🇧🇷 Português</option>
+        <option value="ru">🇷🇺 Русский</option>
+        <option value="zh">🇨🇳 中文</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="nav-group">Vue d'ensemble</div>
+  <a href="#overview" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Vue d'ensemble
+  </a>
+  <a href="#tech-stack" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Stack technique
+  </a>
+
+  <div class="nav-group">Architecture</div>
+  <a href="#mvvm" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+    Pattern MVVM
+  </a>
+  <a href="#di-container" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    DI Container
+  </a>
+  <a href="#startup-flow" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Flux de démarrage
+  </a>
+
+  <div class="nav-group">Services</div>
+  <a href="#services-reference" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+    Référence Services
+  </a>
+  <a href="#settings-service" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
+    SettingsService
+  </a>
+
+  <div class="nav-group">Systèmes clés</div>
+  <a href="#flowchain-system" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/></svg>
+    Système Flow Chains
+  </a>
+  <a href="#ai-system" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Système IA
+  </a>
+  <a href="#ram-system" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>
+    Système RAM
+  </a>
+
+  <div class="nav-group">Guides Dev</div>
+  <a href="#localization" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    Localisation
+  </a>
+  <a href="#add-node" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Ajouter un nœud
+  </a>
+  <a href="#add-service" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.6 6.6a8 8 0 0 1 11.3 0"/></svg>
+    Ajouter un service
+  </a>
+  <a href="#data-persistence" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/></svg>
+    Persistance données
+  </a>
+  <a href="#build-deploy" class="nav-link" onclick="setActive(this)">
+    <svg class="nl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+    Build & Déploiement
+  </a>
+</aside>
+
+
+<main class="main">
+
+  
+  <div class="toc-hero" id="top">
+    <div class="badge badge-purple">Documentation Technique</div>
+    <h1>Wiki <span>Développeur</span></h1>
+    <p>Architecture interne, patterns, services et guides de contribution pour Coclico — Application Windows .NET 10 / WPF.</p>
+    <div class="toc-grid">
+      <a href="#overview" class="toc-item">Vue d'ensemble</a>
+      <a href="#tech-stack" class="toc-item">Stack technique</a>
+      <a href="#mvvm" class="toc-item">MVVM</a>
+      <a href="#di-container" class="toc-item">DI Container</a>
+      <a href="#services-reference" class="toc-item">Services</a>
+      <a href="#flowchain-system" class="toc-item">Flow Chains</a>
+      <a href="#ai-system" class="toc-item">Système IA</a>
+      <a href="#ram-system" class="toc-item">RAM P/Invoke</a>
+      <a href="#localization" class="toc-item">Localisation</a>
+      <a href="#add-node" class="toc-item">Ajouter un nœud</a>
+      <a href="#data-persistence" class="toc-item">Données</a>
+      <a href="#build-deploy" class="toc-item">Build & Deploy</a>
+    </div>
+  </div>
+
+  
+  <section class="doc-section" id="overview">
+    <div class="badge badge-purple">Architecture</div>
+    <h1>Vue <span>d'ensemble</span></h1>
+    <p>Coclico est une application de bureau Windows construite avec <strong>.NET 10 / WPF</strong>, suivant le pattern <strong>MVVM</strong> avec injection de dépendances. L'application centralise 8 modules dans une interface unifiée Fluent Design.</p>
+
+    <h2>Structure du projet</h2>
+    <pre><code>Coclico/
+├── App.xaml / App.xaml.cs          <span class="tok-cmt">// DI registration + startup</span>
+├── Views/                           <span class="tok-cmt">// XAML + code-behind</span>
+│   ├── MainWindow.xaml              <span class="tok-cmt">// Fenêtre principale + navigation</span>
+│   ├── SplashWindow.xaml            <span class="tok-cmt">// Écran de chargement</span>
+│   ├── LauncherWindow.xaml          <span class="tok-cmt">// Assistant premier démarrage</span>
+│   ├── DashboardView.xaml           <span class="tok-cmt">// Module 01</span>
+│   ├── ProgramsView.xaml            <span class="tok-cmt">// Module 02 — Applications</span>
+│   ├── FlowChainsView.xaml          <span class="tok-cmt">// Module 03 — Flow Chains</span>
+│   ├── InstallerView.xaml           <span class="tok-cmt">// Module 04</span>
+│   ├── CleaningView.xaml            <span class="tok-cmt">// Module 05</span>
+│   ├── RamCleanerView.xaml          <span class="tok-cmt">// Module 06</span>
+│   ├── ScannerView.xaml             <span class="tok-cmt">// Module 07</span>
+│   ├── SettingsView.xaml            <span class="tok-cmt">// Module 08</span>
+│   ├── AiChatView.xaml              <span class="tok-cmt">// Coclico AI</span>
+│   └── FlowLink.cs                  <span class="tok-cmt">// 30+ node type definitions</span>
+├── ViewModels/                      <span class="tok-cmt">// ObservableObject héritages</span>
+├── Models/                          <span class="tok-cmt">// FlowChain, LaunchMode, etc.</span>
+├── Services/                        <span class="tok-cmt">// 22+ services métier</span>
+│   ├── ServiceContainer.cs          <span class="tok-cmt">// Wraps Microsoft.Extensions.DI</span>
+│   ├── SettingsService.cs           <span class="tok-cmt">// Persistance JSON</span>
+│   ├── AiChatService.cs             <span class="tok-cmt">// LLamaSharp + RAG</span>
+│   ├── FlowChainService.cs          <span class="tok-cmt">// CRUD Flow Chains</span>
+│   ├── FlowChainExecutionService.cs <span class="tok-cmt">// Runner step-by-step</span>
+│   ├── MemoryCleanerService.cs      <span class="tok-cmt">// 18 P/Invoke RAM ops</span>
+│   └── ...
+└── Resources/
+    ├── Lang/                        <span class="tok-cmt">// fr.xaml, en.xaml, etc.</span>
+    ├── software_list.json           <span class="tok-cmt">// Catalogue Winget</span>
+    └── icone/</code></pre>
+
+    <h2>Couches architecturales</h2>
+    <div class="arch">
+      <div class="arch-layer">
+        <span class="arch-layer-label">Vues (UI)</span>
+        <span class="arch-chip chip-view">DashboardView</span>
+        <span class="arch-chip chip-view">FlowChainsView</span>
+        <span class="arch-chip chip-view">RamCleanerView</span>
+        <span class="arch-chip chip-view">AiChatView</span>
+        <span class="arch-chip chip-view">SettingsView</span>
+        <span class="arch-chip chip-view">...</span>
+      </div>
+      <div class="arch-arrow">↕ Data Binding (ObservableObject)</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">ViewModels</span>
+        <span class="arch-chip chip-vm">ObservableObject</span>
+        <span class="arch-chip chip-vm">RelayCommand</span>
+        <span class="arch-chip chip-vm">RelayCommandAsync</span>
+      </div>
+      <div class="arch-arrow">↕ ServiceContainer.GetRequired&lt;T&gt;()</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">Services (Singletons)</span>
+        <span class="arch-chip chip-svc">SettingsService</span>
+        <span class="arch-chip chip-svc">AiChatService</span>
+        <span class="arch-chip chip-svc">FlowExecutionService</span>
+        <span class="arch-chip chip-svc">NetworkMonitorService</span>
+        <span class="arch-chip chip-svc">KeyboardShortcutsService</span>
+        <span class="arch-chip chip-svc">ThemeService</span>
+        <span class="arch-chip chip-svc">LocalizationService</span>
+      </div>
+      <div class="arch-arrow">↕ Transients / Lifecycle</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">Services (Transients)</span>
+        <span class="arch-chip chip-svc">CleaningService</span>
+        <span class="arch-chip chip-svc">DeepCleaningService</span>
+        <span class="arch-chip chip-svc">InstallerService</span>
+        <span class="arch-chip chip-svc">FlowChainService</span>
+        <span class="arch-chip chip-svc">FlowChainExecutionService</span>
+      </div>
+      <div class="arch-arrow">↕ P/Invoke / Win32 API</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">Windows</span>
+        <span class="arch-chip chip-win">Win32 API (kernel32, ntdll, pdh)</span>
+        <span class="arch-chip chip-win">Registry</span>
+        <span class="arch-chip chip-win">WMI</span>
+        <span class="arch-chip chip-win">Winget CLI</span>
+      </div>
+      <div class="arch-arrow">↕ Filesystem</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">Données</span>
+        <span class="arch-chip chip-data">%AppData%\Coclico\settings.json</span>
+        <span class="arch-chip chip-data">flow_chains.json</span>
+        <span class="arch-chip chip-data">logs\ (Serilog)</span>
+        <span class="arch-chip chip-data">resource/model/</span>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="tech-stack">
+    <div class="badge badge-blue">Stack</div>
+    <h1>Stack <span>Technique</span></h1>
+
+    <table class="data-table">
+      <thead><tr><th>Composant</th><th>Package / Version</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Framework UI</strong></td><td><code>WPF-UI (Wpf-UI 4.2.0)</code></td><td>Fluent Design, contrôles modernes, theming</td></tr>
+        <tr><td><strong>MVVM</strong></td><td><code>CommunityToolkit.Mvvm</code></td><td>ObservableObject, RelayCommand, source generators</td></tr>
+        <tr><td><strong>DI</strong></td><td><code>Microsoft.Extensions.DependencyInjection</code></td><td>Injection de dépendances, lifecycle management</td></tr>
+        <tr><td><strong>IA locale</strong></td><td><code>LLamaSharp 0.26.0</code></td><td>Inférence GGUF, context management</td></tr>
+        <tr><td><strong>IA backend CPU</strong></td><td><code>LLamaSharp.Backend.Cpu</code></td><td>Backend par défaut, universel</td></tr>
+        <tr><td><strong>IA backend GPU</strong></td><td><code>LLamaSharp.Backend.Vulkan</code></td><td>Accélération GPU (optionnel, swap dans .csproj)</td></tr>
+        <tr><td><strong>Réactivité</strong></td><td><code>System.Reactive 6.0 (Rx.NET)</code></td><td>Streams d'événements, debounce, throttle</td></tr>
+        <tr><td><strong>Logging</strong></td><td><code>Serilog 4.2</code></td><td>Journaux structurés, rotation 14j</td></tr>
+        <tr><td><strong>Sinks Serilog</strong></td><td><code>Serilog.Sinks.File</code></td><td>Écriture dans %AppData%\Coclico\logs\</td></tr>
+        <tr><td><strong>Tests</strong></td><td><code>xUnit + Moq</code></td><td>Tests unitaires et mocks</td></tr>
+        <tr><td><strong>Runtime cible</strong></td><td><code>net10.0-windows10.0.22621.0</code></td><td>Accès aux APIs Windows modernes</td></tr>
+        <tr><td><strong>Publish</strong></td><td><code>win-x64 --self-contained</code></td><td>Portable, pas de .NET requis côté utilisateur</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Performances au démarrage</h2>
+    <p>Plusieurs optimisations sont appliquées dans <code>App.xaml.cs</code> :</p>
+    <pre><code><span class="tok-cmt">// Force D3D11 hardware rendering — no software fallback</span>
+<span class="tok-ns">RenderOptions</span>.<span class="tok-fn">ProcessRenderMode</span> = <span class="tok-ns">RenderMode</span>.Default;
+
+<span class="tok-cmt">// Pre-warm thread pool with all logical CPUs</span>
+<span class="tok-kw">int</span> cpuCount = <span class="tok-ns">Environment</span>.ProcessorCount;
+<span class="tok-ns">ThreadPool</span>.<span class="tok-fn">SetMinThreads</span>(cpuCount, cpuCount);
+
+<span class="tok-cmt">// GC tuned for low latency — avoids pauses during UI interactions</span>
+<span class="tok-ns">GCSettings</span>.LatencyMode = <span class="tok-ns">GCLatencyMode</span>.SustainedLowLatency;
+
+<span class="tok-cmt">// Lock WPF animation framerate to 60fps</span>
+<span class="tok-ns">Timeline</span>.DesiredFrameRateProperty.<span class="tok-fn">OverrideMetadata</span>(
+    <span class="tok-kw">typeof</span>(<span class="tok-ns">Timeline</span>),
+    <span class="tok-kw">new</span> <span class="tok-ns">FrameworkPropertyMetadata</span> { DefaultValue = <span class="tok-num">60</span> });</code></pre>
+    <div class="pre-lang">C#</div>
+  </section>
+
+  
+  <section class="doc-section" id="mvvm">
+    <div class="badge badge-blue">Architecture</div>
+    <h1>Pattern <span>MVVM</span></h1>
+    <p>Coclico suit le pattern Model-View-ViewModel (MVVM) via <code>CommunityToolkit.Mvvm</code>. Les views ne contiennent aucune logique métier — elles se limitent au data binding et à la navigation.</p>
+
+    <h2>Views</h2>
+    <p>Les views sont des <code>UserControl</code> WPF (XAML). Elles résolvent leurs ViewModels et services directement depuis le <code>ServiceContainer</code> :</p>
+    <pre><code><span class="tok-cmt">// Dans DashboardView.xaml.cs</span>
+<span class="tok-kw">public partial class</span> <span class="tok-ns">DashboardView</span> : <span class="tok-ns">UserControl</span>
+{
+    <span class="tok-kw">private readonly</span> <span class="tok-ns">DashboardViewModel</span> _vm;
+
+    <span class="tok-kw">public</span> <span class="tok-ns">DashboardView</span>()
+    {
+        <span class="tok-fn">InitializeComponent</span>();
+        _vm = <span class="tok-ns">ServiceContainer</span>.<span class="tok-fn">GetRequired</span>&lt;<span class="tok-ns">DashboardViewModel</span>&gt;();
+        DataContext = _vm;
+    }
+}</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>ViewModels</h2>
+    <p>Les ViewModels héritent de <code>ObservableObject</code> (CommunityToolkit) et utilisent les source generators pour éviter le boilerplate :</p>
+    <pre><code><span class="tok-kw">public partial class</span> <span class="tok-ns">DashboardViewModel</span> : <span class="tok-ns">ObservableObject</span>
+{
+    <span class="tok-attr">[ObservableProperty]</span>
+    <span class="tok-kw">private double</span> _cpuUsage;
+
+    <span class="tok-attr">[ObservableProperty]</span>
+    <span class="tok-kw">private string</span> _ramUsed = <span class="tok-str">"0 GB"</span>;
+
+    <span class="tok-attr">[RelayCommand]</span>
+    <span class="tok-kw">private async</span> <span class="tok-ns">Task</span> <span class="tok-fn">RefreshAsync</span>()
+    {
+        <span class="tok-cmt">// Met à jour les métriques</span>
+    }
+}</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>RelayCommand vs RelayCommandAsync</h2>
+    <p>Coclico définit ses propres <code>RelayCommand</code> et <code>RelayCommandAsync</code> dans <code>Services/RelayCommand.cs</code> et <code>Services/RelayCommandAsync.cs</code>. Ces wrappers implémentent <code>ICommand</code> avec gestion automatique du <code>CanExecute</code> pendant l'exécution asynchrone.</p>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Privilégiez <code>[RelayCommand]</code> du CommunityToolkit pour les nouvelles commandes — il génère automatiquement le code à la compilation, réduisant le boilerplate à zéro.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="di-container">
+    <div class="badge badge-purple">Architecture</div>
+    <h1>DI <span>Container</span></h1>
+    <p><code>ServiceContainer</code> est un wrapper léger autour de <code>Microsoft.Extensions.DependencyInjection</code>. Il expose un accès statique aux services (<code>Instance</code> pattern) en plus de la résolution DI classique.</p>
+
+    <h2>Double pattern d'accès</h2>
+    <p>La plupart des singletons exposent <strong>deux modes d'accès</strong> :</p>
+    <pre><code><span class="tok-cmt">// Mode 1 — Via DI (recommandé, testable)</span>
+<span class="tok-kw">var</span> settings = <span class="tok-ns">ServiceContainer</span>.<span class="tok-fn">GetRequired</span>&lt;<span class="tok-ns">SettingsService</span>&gt;();
+
+<span class="tok-cmt">// Mode 2 — Accès statique direct (pratique dans les views)</span>
+<span class="tok-kw">var</span> settings = <span class="tok-ns">SettingsService</span>.Instance;</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>Enregistrement des services (App.xaml.cs)</h2>
+    <pre><code><span class="tok-ns">ServiceContainer</span>.<span class="tok-fn">Build</span>(services =>
+{
+    <span class="tok-cmt">// Interface registration</span>
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">ICacheService</span>, <span class="tok-ns">CacheService</span>&gt;();
+
+    <span class="tok-cmt">// Singletons — partagés pour toute la durée de l'app</span>
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">SettingsService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">InstalledProgramsService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">ThemeService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">LocalizationService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">AiChatService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">KeyboardShortcutsService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">FlowExecutionService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">NetworkMonitorService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">AppResourceGuardService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">ProcessWatcherService</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">FeatureExecutionEngine</span>&gt;();
+    services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">ProfileService</span>&gt;();
+
+    <span class="tok-cmt">// Transients — nouvelle instance à chaque résolution</span>
+    services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">CleaningService</span>&gt;();
+    services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">DeepCleaningService</span>&gt;();
+    services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">InstallerService</span>&gt;();
+    services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">FlowChainService</span>&gt;();
+    services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">FlowChainExecutionService</span>&gt;();
+    services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">StartupHealthService</span>&gt;();
+    services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">UserAccountService</span>&gt;();
+});</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>Quand utiliser Singleton vs Transient ?</h2>
+    <table class="data-table">
+      <thead><tr><th>Lifecycle</th><th>Usage</th><th>Exemples</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-s">Singleton</span></td><td>État partagé, abonnements actifs, cache, connexions long-lived</td><td>SettingsService, AiChatService, ThemeService</td></tr>
+        <tr><td><span class="tag tag-t">Transient</span></td><td>Opérations courtes, sans état persistant, exécutions isolées</td><td>CleaningService, InstallerService, FlowChainExecutionService</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="startup-flow">
+    <div class="badge badge-blue">Architecture</div>
+    <h1>Flux de <span>démarrage</span></h1>
+    <p>La séquence de démarrage de Coclico est précisément orchestrée pour garantir une bonne expérience utilisateur et l'initialisation correcte de tous les services.</p>
+
+    <div class="flow">
+      <div class="flow-box chip-win">app.manifest</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box chip-win">UAC Elevation</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box chip-vm">App.OnStartup()</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box chip-svc">DI Build</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box chip-view">SplashWindow</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box chip-view">LauncherWindow?</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box chip-view">MainWindow</div>
+    </div>
+
+    <h2>Détails de la séquence</h2>
+    <ol>
+      <li><strong>app.manifest</strong> — Demande <code>requireAdministrator</code> au niveau OS. Windows affiche UAC avant même que le code s'exécute.</li>
+      <li><strong>EnsureRunAsAdmin()</strong> — Vérifie programmatiquement le token Administrateur. Si absent (processus lancé sans UAC), relance avec <code>ShellExecute runas</code>.</li>
+      <li><strong>GC + RenderMode</strong> — Configuration des performances avant toute initialisation UI.</li>
+      <li><strong>ServiceContainer.Build()</strong> — Construction du conteneur DI. Toutes les dépendances sont enregistrées mais pas encore instanciées (lazy par défaut).</li>
+      <li><strong>SplashWindow</strong> — Affichée immédiatement. Déclenche <code>RunStartupAsync()</code> qui initialise les services lourds (InstalledProgramsService scan, AI model pre-check).</li>
+      <li><strong>LauncherWindow</strong> — Affichée uniquement si <code>Settings.FirstRun == true</code>. Permet la configuration initiale. Sauvegarde <code>FirstRun = false</code> à la fermeture.</li>
+      <li><strong>MainWindow</strong> — Fenêtre principale avec toute la navigation.</li>
+    </ol>
+  </section>
+
+  
+  <section class="doc-section" id="services-reference">
+    <div class="badge badge-cyan">Services</div>
+    <h1>Référence <span>Services</span></h1>
+    <p>Inventaire complet des 22+ services de Coclico avec leur rôle, lifecycle et dépendances.</p>
+
+    <h2>Singletons</h2>
+    <table class="data-table">
+      <thead><tr><th>Service</th><th>Rôle</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><code>SettingsService</code></td><td>Persistance et accès aux settings JSON</td><td>Expose <code>.Instance</code>. Async <code>SaveAsync()</code></td></tr>
+        <tr><td><code>ThemeService</code></td><td>Application des thèmes et couleurs d'accent</td><td>Modifie <code>Application.Current.Resources</code></td></tr>
+        <tr><td><code>LocalizationService</code></td><td>Hot-swap des 10 langues</td><td>Merge ResourceDictionary à chaud</td></tr>
+        <tr><td><code>AiChatService</code></td><td>Inférence LLamaSharp + RAG</td><td>Charge GGUF via <code>resource/model/</code></td></tr>
+        <tr><td><code>InstalledProgramsService</code></td><td>Détection multi-sources des apps</td><td>Cache 6h, 8 sources, parallélisé</td></tr>
+        <tr><td><code>FlowExecutionService</code></td><td>Orchestration d'exécution de Flow Chains</td><td>Gère les raccourcis globaux actifs</td></tr>
+        <tr><td><code>KeyboardShortcutsService</code></td><td>Hooks clavier globaux (Win32)</td><td>WH_KEYBOARD_LL via SetWindowsHookEx</td></tr>
+        <tr><td><code>NetworkMonitorService</code></td><td>Surveillance connectivité réseau</td><td>Réactivité Rx.NET, events OnChange</td></tr>
+        <tr><td><code>ProcessWatcherService</code></td><td>Surveillance des processus Windows</td><td>ManagementEventWatcher WMI</td></tr>
+        <tr><td><code>AppResourceGuardService</code></td><td>Surveillance ressources propres de l'app</td><td>Memory, CPU, handles Coclico lui-même</td></tr>
+        <tr><td><code>ProfileService</code></td><td>Gestion du profil utilisateur</td><td>Avatar, nom, CRUD</td></tr>
+        <tr><td><code>FeatureExecutionEngine</code></td><td>Mappe les actions IA vers navigation UI</td><td>Interprète <code>open_dashboard</code>, etc.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Transients</h2>
+    <table class="data-table">
+      <thead><tr><th>Service</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td><code>CleaningService</code></td><td>Nettoyage des 10 catégories de fichiers temp</td></tr>
+        <tr><td><code>DeepCleaningService</code></td><td>Nettoyage approfondi avec rapport détaillé</td></tr>
+        <tr><td><code>InstallerService</code></td><td>Wrapping subprocess Winget</td></tr>
+        <tr><td><code>FlowChainService</code></td><td>CRUD Flow Chains JSON</td></tr>
+        <tr><td><code>FlowChainExecutionService</code></td><td>Exécution step-by-step d'une chaîne</td></tr>
+        <tr><td><code>StartupHealthService</code></td><td>Diagnostic santé au démarrage</td></tr>
+        <tr><td><code>UserAccountService</code></td><td>Compte utilisateur Windows (WMI)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="settings-service">
+    <div class="badge badge-orange">Service Clé</div>
+    <h1><span>SettingsService</span></h1>
+    <p><code>SettingsService</code> est le hub central de configuration. Il charge <code>settings.json</code> au démarrage et expose un objet <code>Settings</code> fortement typé.</p>
+
+    <h2>Accès et sauvegarde</h2>
+    <pre><code><span class="tok-cmt">// Accès aux settings</span>
+<span class="tok-kw">var</span> s = <span class="tok-ns">SettingsService</span>.Instance.Settings;
+<span class="tok-kw">string</span> lang = s.Language; <span class="tok-cmt">// "fr", "en", etc.</span>
+<span class="tok-kw">string</span> accent = s.AccentColor; <span class="tok-cmt">// "#4a6cf7"</span>
+
+<span class="tok-cmt">// Modification + sauvegarde asynchrone</span>
+s.Language = <span class="tok-str">"en"</span>;
+<span class="tok-kw">await</span> <span class="tok-ns">SettingsService</span>.Instance.<span class="tok-fn">SaveAsync</span>();</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>Propriétés du modèle Settings</h2>
+    <table class="data-table">
+      <thead><tr><th>Propriété</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>Language</code></td><td><code>string</code></td><td>Code langue actif ("fr", "en", ...)</td></tr>
+        <tr><td><code>AccentColor</code></td><td><code>string</code></td><td>Couleur d'accent hex (#RRGGBB)</td></tr>
+        <tr><td><code>Theme</code></td><td><code>string</code></td><td>Thème actif (Dark, Abyss, etc.)</td></tr>
+        <tr><td><code>CardOpacity</code></td><td><code>double</code></td><td>Opacité des cartes (0.0 → 1.0)</td></tr>
+        <tr><td><code>FontSize</code></td><td><code>double</code></td><td>Taille de police globale</td></tr>
+        <tr><td><code>CompactSidebar</code></td><td><code>bool</code></td><td>Mode compact de la sidebar</td></tr>
+        <tr><td><code>StartWithWindows</code></td><td><code>bool</code></td><td>Démarrage automatique Windows</td></tr>
+        <tr><td><code>MinimizeToTray</code></td><td><code>bool</code></td><td>Réduire dans le tray à la fermeture</td></tr>
+        <tr><td><code>FirstRun</code></td><td><code>bool</code></td><td>Premier lancement (LauncherWindow)</td></tr>
+        <tr><td><code>RamAutoClean</code></td><td><code>bool</code></td><td>Auto-clean RAM activé</td></tr>
+        <tr><td><code>RamCleanThreshold</code></td><td><code>int</code></td><td>Seuil % RAM pour auto-clean</td></tr>
+        <tr><td><code>RamCleanInterval</code></td><td><code>int</code></td><td>Intervalle auto-clean (minutes)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  
+  <section class="doc-section" id="flowchain-system">
+    <div class="badge badge-cyan">Système Clé</div>
+    <h1>Système <span>Flow Chains</span></h1>
+    <p>Le système d'automatisation de Coclico est constitué de 4 composants principaux qui interagissent pour créer, stocker et exécuter des séquences d'actions.</p>
+
+    <h2>Composants</h2>
+    <table class="data-table">
+      <thead><tr><th>Composant</th><th>Fichier</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td><code>FlowChain</code></td><td><code>Models/FlowChain.cs</code></td><td>Modèle de données — liste de nœuds + métadonnées</td></tr>
+        <tr><td><code>FlowLink</code></td><td><code>Views/FlowLink.cs</code></td><td>Définitions des 30+ types de nœuds</td></tr>
+        <tr><td><code>FlowChainService</code></td><td><code>Services/FlowChainService.cs</code></td><td>CRUD — charge/sauve <code>flow_chains.json</code></td></tr>
+        <tr><td><code>FlowChainExecutionService</code></td><td><code>Services/FlowChainExecutionService.cs</code></td><td>Runner — exécute nœud par nœud avec retry/timeout</td></tr>
+        <tr><td><code>FlowExecutionService</code></td><td><code>Services/FlowExecutionService.cs</code></td><td>Singleton — orchestre et dispatch les exécutions</td></tr>
+        <tr><td><code>KeyboardShortcutsService</code></td><td><code>Services/KeyboardShortcutsService.cs</code></td><td>Écoute les raccourcis globaux et déclenche les chaînes</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Modèle de données FlowChain</h2>
+    <pre><code><span class="tok-kw">public class</span> <span class="tok-ns">FlowChain</span>
+{
+    <span class="tok-kw">public</span> <span class="tok-ns">Guid</span> Id { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }
+    <span class="tok-kw">public string</span> Name { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }
+    <span class="tok-kw">public string</span>? ShortcutKey { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }       <span class="tok-cmt">// "Ctrl+Alt+K"</span>
+    <span class="tok-kw">public bool</span> UseAlt { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }
+    <span class="tok-kw">public</span> <span class="tok-ns">List</span>&lt;<span class="tok-ns">FlowNode</span>&gt; Nodes { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; } = [];
+    <span class="tok-kw">public</span> <span class="tok-ns">DateTime</span> CreatedAt { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }
+    <span class="tok-kw">public</span> <span class="tok-ns">DateTime</span> UpdatedAt { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }
+}
+
+<span class="tok-kw">public class</span> <span class="tok-ns">FlowNode</span>
+{
+    <span class="tok-kw">public string</span> Type { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }          <span class="tok-cmt">// "OpenApp", "Condition", etc.</span>
+    <span class="tok-kw">public</span> <span class="tok-ns">Dictionary</span>&lt;<span class="tok-kw">string</span>, <span class="tok-kw">object</span>&gt; Params { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }
+    <span class="tok-kw">public int</span> RetryCount { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }       <span class="tok-cmt">// 0 = pas de retry</span>
+    <span class="tok-kw">public int</span> TimeoutMs { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }        <span class="tok-cmt">// 0 = pas de timeout</span>
+    <span class="tok-kw">public</span> <span class="tok-ns">Guid</span>? NextNodeId { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }
+    <span class="tok-kw">public</span> <span class="tok-ns">Guid</span>? BranchTrueId { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }   <span class="tok-cmt">// Pour Condition</span>
+    <span class="tok-kw">public</span> <span class="tok-ns">Guid</span>? BranchFalseId { <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; }  <span class="tok-cmt">// Pour Condition</span>
+}</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>Raccourcis globaux — Implémentation</h2>
+    <p><code>KeyboardShortcutsService</code> installe un hook bas niveau via Win32 :</p>
+    <pre><code><span class="tok-cmt">// WH_KEYBOARD_LL — hook clavier bas niveau</span>
+_hookHandle = <span class="tok-fn">SetWindowsHookEx</span>(
+    <span class="tok-num">13</span>, <span class="tok-cmt">// WH_KEYBOARD_LL</span>
+    _hookCallback,
+    <span class="tok-ns">IntPtr</span>.Zero,
+    <span class="tok-num">0</span>  <span class="tok-cmt">// Global — tous les threads</span>
+);</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <div class="warning">
+      <span class="warning-icon">⚠</span>
+      <span class="warning-text">Le hook global clavier nécessite que le message loop Windows soit actif. Il est installé après la création de <code>MainWindow</code> et désinstallé proprement dans <code>App.OnExit()</code>.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="ai-system">
+    <div class="badge badge-purple">Intelligence Artificielle</div>
+    <h1>Système <span>IA</span></h1>
+    <p>Le système IA de Coclico est composé de 3 services qui collaborent : <code>AiChatService</code>, <code>RagService</code>, et <code>AiActionParser</code>.</p>
+
+    <h2>Architecture IA</h2>
+    <div class="arch">
+      <div class="arch-layer">
+        <span class="arch-layer-label">UI</span>
+        <span class="arch-chip chip-view">AiChatView.xaml</span>
+        <span class="arch-chip chip-view">AiChatViewModel</span>
+      </div>
+      <div class="arch-arrow">↓ Message utilisateur</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">RAG</span>
+        <span class="arch-chip chip-svc">RagService</span>
+        <span class="arch-chip chip-data">resource/docs/*.md</span>
+      </div>
+      <div class="arch-arrow">↓ Contexte enrichi + prompt système</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">LLM</span>
+        <span class="arch-chip chip-svc">AiChatService (LLamaSharp)</span>
+        <span class="arch-chip chip-data">resource/model/IA-support-chat.gguf</span>
+      </div>
+      <div class="arch-arrow">↓ Réponse texte + éventuelles actions</div>
+      <div class="arch-layer">
+        <span class="arch-layer-label">Actions</span>
+        <span class="arch-chip chip-svc">AiActionParser</span>
+        <span class="arch-chip chip-svc">FeatureExecutionEngine</span>
+      </div>
+    </div>
+
+    <h2>RagService — Fonctionnement</h2>
+    <p><code>RagService</code> construit un index de mots-clés à partir des fichiers Markdown dans <code>resource/docs/</code>. Pour chaque message utilisateur :</p>
+    <ol>
+      <li>Tokenisation du message (mots-clés significatifs)</li>
+      <li>Recherche dans l'index des passages les plus pertinents</li>
+      <li>Les top passages sont injectés comme contexte dans le prompt système</li>
+      <li>Le LLM répond avec connaissance du contexte spécifique à Coclico</li>
+    </ol>
+    <p>Pour enrichir la base de connaissance, ajoutez des fichiers <code>.md</code> dans <code>resource/docs/</code>.</p>
+
+    <h2>AiActionParser — Actions directes</h2>
+    <p>Le modèle peut émettre des commandes d'action sous forme de tokens spéciaux dans sa réponse. <code>AiActionParser</code> les détecte et les route vers le <code>FeatureExecutionEngine</code> :</p>
+    <pre><code><span class="tok-cmt">// Commandes reconnues par AiActionParser</span>
+<span class="tok-str">"open_dashboard"</span>    → Navigation vers DashboardView
+<span class="tok-str">"open_ram_cleaner"</span>  → Navigation vers RamCleanerView
+<span class="tok-str">"open_scanner"</span>      → Navigation vers ScannerView
+<span class="tok-str">"run_ram_clean"</span>     → Déclenche nettoyage RAM (profil Normal)
+<span class="tok-str">"open_cleaning"</span>     → Navigation vers CleaningView
+<span class="tok-str">"open_flowchains"</span>   → Navigation vers FlowChainsView
+<span class="tok-str">"open_settings"</span>     → Navigation vers SettingsView</code></pre>
+    <div class="pre-lang">C#</div>
+  </section>
+
+  
+  <section class="doc-section" id="ram-system">
+    <div class="badge badge-orange">Système Bas Niveau</div>
+    <h1>Système RAM <span>P/Invoke</span></h1>
+    <p><code>MemoryCleanerService</code> expose 18 opérations Windows natives via P/Invoke direct sur <code>ntdll.dll</code>, <code>kernel32.dll</code> et autres DLLs système.</p>
+
+    <h2>Les 18 opérations par catégorie</h2>
+
+    <h3>Working Sets &amp; Pages</h3>
+    <pre><code><span class="tok-cmt">// Vide les Working Sets de tous les processus</span>
+<span class="tok-kw">foreach</span> (<span class="tok-kw">var</span> proc <span class="tok-kw">in</span> <span class="tok-ns">Process</span>.<span class="tok-fn">GetProcesses</span>())
+    <span class="tok-fn">EmptyWorkingSet</span>(proc.Handle);
+
+<span class="tok-cmt">// Flush des pages modifiées</span>
+<span class="tok-fn">NtSetSystemInformation</span>(
+    <span class="tok-ns">SystemMemoryListInformation</span>,
+    <span class="tok-str">MemoryFlushModifiedList</span>, ...);</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h3>Listes Standby</h3>
+    <table class="data-table">
+      <thead><tr><th>Opération</th><th>Code NtSetSystemInformation</th></tr></thead>
+      <tbody>
+        <tr><td>Purge Standby normale</td><td><code>MemoryPurgeStandbyList (4)</code></td></tr>
+        <tr><td>Purge Standby basse priorité</td><td><code>MemoryPurgeLowPriorityStandbyList (5)</code></td></tr>
+        <tr><td>Purge Standby rapide</td><td><code>MemoryFlushAndResetHardwareList</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>GC .NET &amp; Compactage</h3>
+    <pre><code><span class="tok-cmt">// Forcer un GC complet (Gen0 + Gen1 + Gen2)</span>
+<span class="tok-ns">GC</span>.<span class="tok-fn">Collect</span>(<span class="tok-ns">GC</span>.MaxGeneration, <span class="tok-ns">GCCollectionMode</span>.Forced, blocking: <span class="tok-kw">true</span>);
+<span class="tok-ns">GC</span>.<span class="tok-fn">WaitForPendingFinalizers</span>();
+
+<span class="tok-cmt">// Compacter le tas managé (libère la mémoire vers l'OS)</span>
+<span class="tok-ns">GCSettings</span>.LargeObjectHeapCompactionMode =
+    <span class="tok-ns">GCLargeObjectHeapCompactionMode</span>.CompactOnce;
+<span class="tok-ns">GC</span>.<span class="tok-fn">Collect</span>();</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <div class="note">
+      <span class="note-icon">ℹ</span>
+      <span class="note-text">Les opérations <code>NtSetSystemInformation</code> requièrent le privilège <code>SeProfileSingleProcessPrivilege</code>. C'est l'une des raisons pour lesquelles Coclico nécessite les droits Administrateur.</span>
+    </div>
+  </section>
+
+  
+  <section class="doc-section" id="localization">
+    <div class="badge badge-green">Guide Dev</div>
+    <h1><span>Localisation</span></h1>
+    <p>La localisation de Coclico fonctionne via deux systèmes parallèles — l'un pour l'app WPF, l'autre pour le site web.</p>
+
+    <h2>Localisation WPF (App)</h2>
+    <p>Les chaînes UI sont dans <code>Resources/Lang/{code}.xaml</code> — des <code>ResourceDictionary</code> WPF standard.</p>
+    <pre><code><span class="tok-cmt">&lt;!-- Resources/Lang/en.xaml --&gt;</span>
+&lt;ResourceDictionary&gt;
+    &lt;s:String x:Key="nav_dashboard"&gt;Dashboard&lt;/s:String&gt;
+    &lt;s:String x:Key="nav_apps"&gt;Applications&lt;/s:String&gt;
+    &lt;s:String x:Key="btn_clean"&gt;Clean&lt;/s:String&gt;
+&lt;/ResourceDictionary&gt;</code></pre>
+    <div class="pre-lang">XML</div>
+
+    <p><code>LocalizationService.SetLanguage(code)</code> merge le dictionnaire correspondant dans <code>Application.Current.Resources</code> — le changement est instantané, sans redémarrage.</p>
+
+    <h2>Ajouter une langue</h2>
+    <ol>
+      <li>Dupliquez <code>Resources/Lang/fr.xaml</code> → <code>xx.xaml</code></li>
+      <li>Traduisez toutes les valeurs</li>
+      <li>Ajoutez le code dans <code>LocalizationService</code> et le sélecteur de langue des Paramètres</li>
+      <li>Créez le fichier JSON correspondant pour le site (<code>docs/xx.json</code>)</li>
+    </ol>
+
+    <h2>Localisation Site Web</h2>
+    <p>Les fichiers <code>docs/*.json</code> contiennent les traductions pour le site. Le fichier <code>docs/translations.js</code> charge le JSON et remplace les éléments avec <code>data-i18n</code>.</p>
+  </section>
+
+  
+  <section class="doc-section" id="add-node">
+    <div class="badge badge-blue">Guide Dev</div>
+    <h1>Ajouter un <span>nœud Flow Chain</span></h1>
+    <p>Tutoriel complet pour ajouter un nouveau type de nœud — exemple : <code>OpenBrowser</code>.</p>
+
+    <h2>Étape 1 — Déclarer le type dans FlowLink.cs</h2>
+    <pre><code><span class="tok-cmt">// Views/FlowLink.cs</span>
+<span class="tok-kw">public enum</span> <span class="tok-ns">FlowNodeType</span>
+{
+    Start, End, Condition, Loop, Delay,
+    OpenApp, CloseApp, KillProcess,
+    <span class="tok-cmt">// ... autres types existants ...</span>
+    OpenBrowser  <span class="tok-cmt">// ← Nouveau type</span>
+}
+
+<span class="tok-kw">public static class</span> <span class="tok-ns">FlowNodeMeta</span>
+{
+    <span class="tok-kw">public static</span> <span class="tok-ns">FlowNodeDefinition</span> <span class="tok-fn">Get</span>(<span class="tok-ns">FlowNodeType</span> type) => type <span class="tok-kw">switch</span>
+    {
+        <span class="tok-cmt">// ... existants ...</span>
+        <span class="tok-ns">FlowNodeType</span>.OpenBrowser => <span class="tok-kw">new</span>(<span class="tok-str">"OpenBrowser"</span>, <span class="tok-str">"Ouvrir un URL"</span>, NodeColor.Green,
+            <span class="tok-kw">new</span>[] { <span class="tok-str">"Url"</span> }),  <span class="tok-cmt">// Paramètres requis</span>
+        _ => <span class="tok-kw">throw new</span> <span class="tok-ns">ArgumentOutOfRangeException</span>()
+    };
+}</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>Étape 2 — Implémenter dans FlowChainExecutionService</h2>
+    <pre><code><span class="tok-cmt">// Services/FlowChainExecutionService.cs</span>
+<span class="tok-kw">private async</span> <span class="tok-ns">Task</span>&lt;<span class="tok-kw">bool</span>&gt; <span class="tok-fn">ExecuteNodeAsync</span>(<span class="tok-ns">FlowNode</span> node, <span class="tok-ns">CancellationToken</span> ct)
+{
+    <span class="tok-kw">return</span> node.Type <span class="tok-kw">switch</span>
+    {
+        <span class="tok-cmt">// ... cas existants ...</span>
+        <span class="tok-str">"OpenBrowser"</span> => <span class="tok-kw">await</span> <span class="tok-fn">ExecuteOpenBrowserAsync</span>(node, ct),
+        _ => <span class="tok-kw">throw new</span> <span class="tok-ns">InvalidOperationException</span>(<span class="tok-str">$"Unknown node: {node.Type}"</span>)
+    };
+}
+
+<span class="tok-kw">private async</span> <span class="tok-ns">Task</span>&lt;<span class="tok-kw">bool</span>&gt; <span class="tok-fn">ExecuteOpenBrowserAsync</span>(<span class="tok-ns">FlowNode</span> node, <span class="tok-ns">CancellationToken</span> ct)
+{
+    <span class="tok-kw">var</span> url = node.Params.<span class="tok-fn">GetValueOrDefault</span>(<span class="tok-str">"Url"</span>)?.ToString();
+    <span class="tok-kw">if</span> (<span class="tok-kw">string</span>.<span class="tok-fn">IsNullOrEmpty</span>(url)) <span class="tok-kw">return false</span>;
+    <span class="tok-ns">Process</span>.<span class="tok-fn">Start</span>(<span class="tok-kw">new</span> <span class="tok-ns">ProcessStartInfo</span>(url) { UseShellExecute = <span class="tok-kw">true</span> });
+    <span class="tok-kw">return true</span>;
+}</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>Étape 3 — Ajouter l'UI dans FlowChainsView</h2>
+    <p>Ajoutez le nœud dans le panneau de sélection gauche de <code>FlowChainsView.xaml</code> et créez son panneau de propriétés correspondant.</p>
+
+    <h2>Étape 4 — Ajouter les tests</h2>
+    <pre><code><span class="tok-cmt">// Coclico.Tests/FlowNodeTests.cs</span>
+[<span class="tok-ns">Fact</span>]
+<span class="tok-kw">public async</span> <span class="tok-ns">Task</span> <span class="tok-fn">OpenBrowser_ValidUrl_ReturnsTrue</span>()
+{
+    <span class="tok-kw">var</span> node = <span class="tok-kw">new</span> <span class="tok-ns">FlowNode</span>
+    {
+        Type = <span class="tok-str">"OpenBrowser"</span>,
+        Params = <span class="tok-kw">new</span> { { <span class="tok-str">"Url"</span>, <span class="tok-str">"https://example.com"</span> } }
+    };
+    <span class="tok-kw">var</span> result = <span class="tok-kw">await</span> _sut.<span class="tok-fn">ExecuteNodeAsync</span>(node, <span class="tok-ns">CancellationToken</span>.None);
+    <span class="tok-fn">Assert</span>.<span class="tok-fn">True</span>(result);
+}</code></pre>
+    <div class="pre-lang">C#</div>
+  </section>
+
+  
+  <section class="doc-section" id="add-service">
+    <div class="badge badge-purple">Guide Dev</div>
+    <h1>Ajouter un <span>Service</span></h1>
+    <p>Processus recommandé pour créer un nouveau service dans l'architecture de Coclico.</p>
+
+    <h2>1. Créer le service</h2>
+    <pre><code><span class="tok-cmt">// Services/MyNewService.cs</span>
+<span class="tok-kw">namespace</span> <span class="tok-ns">Coclico.Services</span>;
+
+<span class="tok-kw">public class</span> <span class="tok-ns">MyNewService</span>
+{
+    <span class="tok-kw">public static</span> <span class="tok-ns">MyNewService</span>? Instance { <span class="tok-kw">get</span>; <span class="tok-kw">private set</span>; }
+
+    <span class="tok-kw">public</span> <span class="tok-ns">MyNewService</span>(<span class="tok-ns">SettingsService</span> settings)
+    {
+        Instance = <span class="tok-kw">this</span>;
+        <span class="tok-cmt">// Injection des dépendances via constructeur</span>
+    }
+
+    <span class="tok-kw">public async</span> <span class="tok-ns">Task</span>&lt;<span class="tok-kw">string</span>&gt; <span class="tok-fn">DoSomethingAsync</span>()
+    {
+        <span class="tok-cmt">// Logique métier</span>
+        <span class="tok-kw">return await</span> <span class="tok-ns">Task</span>.<span class="tok-fn">FromResult</span>(<span class="tok-str">"result"</span>);
+    }
+}</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>2. Enregistrer dans App.xaml.cs</h2>
+    <pre><code><span class="tok-cmt">// Singleton si état partagé :</span>
+services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-ns">MyNewService</span>&gt;();
+
+<span class="tok-cmt">// Transient si opération courte :</span>
+services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-ns">MyNewService</span>&gt;();</code></pre>
+    <div class="pre-lang">C#</div>
+
+    <h2>3. Utiliser le service</h2>
+    <pre><code><span class="tok-cmt">// Dans un ViewModel ou une View :</span>
+<span class="tok-kw">var</span> svc = <span class="tok-ns">ServiceContainer</span>.<span class="tok-fn">GetRequired</span>&lt;<span class="tok-ns">MyNewService</span>&gt;();
+<span class="tok-kw">var</span> result = <span class="tok-kw">await</span> svc.<span class="tok-fn">DoSomethingAsync</span>();
+
+<span class="tok-cmt">// Ou via le pattern Instance :</span>
+<span class="tok-kw">var</span> result = <span class="tok-kw">await</span> <span class="tok-ns">MyNewService</span>.Instance!.<span class="tok-fn">DoSomethingAsync</span>();</code></pre>
+    <div class="pre-lang">C#</div>
+  </section>
+
+  
+  <section class="doc-section" id="data-persistence">
+    <div class="badge badge-orange">Données</div>
+    <h1>Persistance <span>des données</span></h1>
+    <p>Toutes les données utilisateur sont stockées en JSON dans <code>%AppData%\Coclico\</code>. Aucune base de données, aucun service cloud.</p>
+
+    <h2>Fichiers de données</h2>
+    <table class="data-table">
+      <thead><tr><th>Fichier</th><th>Géré par</th><th>Contenu</th></tr></thead>
+      <tbody>
+        <tr><td><code>settings.json</code></td><td><code>SettingsService</code></td><td>Toute la configuration utilisateur</td></tr>
+        <tr><td><code>flow_chains.json</code></td><td><code>FlowChainService</code></td><td>Tableau JSON de FlowChain sérialisés</td></tr>
+        <tr><td><code>custom_apps_data.json</code></td><td><code>InstalledProgramsService</code></td><td>Overrides noms/catégories par app ID</td></tr>
+        <tr><td><code>manual_apps.json</code></td><td><code>InstalledProgramsService</code></td><td>Apps .exe ajoutées manuellement</td></tr>
+        <tr><td><code>profile.json</code></td><td><code>ProfileService</code></td><td>Données de profil utilisateur</td></tr>
+        <tr><td><code>logs\coclico-YYYYMMDD.log</code></td><td><code>Serilog</code></td><td>Journaux structurés, rotation 14 jours</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Pattern de lecture/écriture</h2>
+    <pre><code><span class="tok-cmt">// Pattern standard utilisé dans tous les services</span>
+<span class="tok-kw">private static readonly string</span> DataPath =
+    <span class="tok-ns">Path</span>.<span class="tok-fn">Combine</span>(<span class="tok-ns">Environment</span>.<span class="tok-fn">GetFolderPath</span>(
+        <span class="tok-ns">Environment</span>.<span class="tok-ns">SpecialFolder</span>.ApplicationData),
+        <span class="tok-str">"Coclico"</span>, <span class="tok-str">"flow_chains.json"</span>);
+
+<span class="tok-cmt">// Lecture</span>
+<span class="tok-kw">var</span> json = <span class="tok-kw">await</span> <span class="tok-ns">File</span>.<span class="tok-fn">ReadAllTextAsync</span>(DataPath);
+<span class="tok-kw">var</span> chains = <span class="tok-ns">JsonSerializer</span>.<span class="tok-fn">Deserialize</span>&lt;<span class="tok-ns">List</span>&lt;<span class="tok-ns">FlowChain</span>&gt;&gt;(json)
+    ?? [];
+
+<span class="tok-cmt">// Écriture</span>
+<span class="tok-kw">var</span> json = <span class="tok-ns">JsonSerializer</span>.<span class="tok-fn">Serialize</span>(chains, <span class="tok-kw">new</span> <span class="tok-ns">JsonSerializerOptions</span>
+{
+    WriteIndented = <span class="tok-kw">true</span>
+});
+<span class="tok-kw">await</span> <span class="tok-ns">File</span>.<span class="tok-fn">WriteAllTextAsync</span>(DataPath, json);</code></pre>
+    <div class="pre-lang">C#</div>
+  </section>
+
+  
+  <section class="doc-section" id="build-deploy">
+    <div class="badge badge-green">DevOps</div>
+    <h1>Build <span>&amp; Déploiement</span></h1>
+
+    <h2>Commandes essentielles</h2>
+    <pre><code><span class="tok-cmt"># Build Debug</span>
+dotnet build Coclico.slnx
+
+<span class="tok-cmt"># Build Release</span>
+dotnet build Coclico.slnx -c Release
+
+<span class="tok-cmt"># Run (nécessite Admin — lancez terminal en Admin)</span>
+dotnet run --project Coclico/Coclico.csproj
+
+<span class="tok-cmt"># Tests unitaires</span>
+dotnet test Coclico.Tests/Coclico.Tests.csproj
+
+<span class="tok-cmt"># Test d'une classe spécifique</span>
+dotnet test Coclico.Tests/Coclico.Tests.csproj \
+  --filter "FullyQualifiedName~ServiceCoreTests"
+
+<span class="tok-cmt"># Publish auto-contenu (portable .exe)</span>
+dotnet publish Coclico/Coclico.csproj \
+  -c Release -r win-x64 --self-contained</code></pre>
+    <div class="pre-lang">bash</div>
+
+    <h2>Changer le backend IA</h2>
+    <p>Dans <code>Coclico/Coclico.csproj</code>, remplacez la référence LLamaSharp backend :</p>
+    <pre><code><span class="tok-cmt">&lt;!-- CPU (défaut, universel) --&gt;</span>
+&lt;PackageReference Include=<span class="tok-str">"LLamaSharp.Backend.Cpu"</span> Version=<span class="tok-str">"0.26.0"</span> /&gt;
+
+<span class="tok-cmt">&lt;!-- GPU Vulkan (AMD, Intel Arc, NVIDIA via Vulkan) --&gt;</span>
+&lt;PackageReference Include=<span class="tok-str">"LLamaSharp.Backend.Vulkan"</span> Version=<span class="tok-str">"0.26.0"</span> /&gt;</code></pre>
+    <div class="pre-lang">XML</div>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text">Pour distribuer une version avec GPU, publiez deux builds séparés (CPU et Vulkan) ou laissez l'utilisateur choisir son backend via un paramètre de configuration.</span>
+    </div>
+
+    <h2>Structure de publication</h2>
+    <pre><code>bin/Release/net10.0-windows10.0.22621.0/win-x64/publish/
+├── Coclico.exe              <span class="tok-cmt">← Exécutable principal</span>
+├── resource/
+│   ├── model/               <span class="tok-cmt">← Placez IA-support-chat.gguf ici</span>
+│   └── docs/                <span class="tok-cmt">← Base de connaissance RAG</span>
+├── Resources/
+│   └── software_list.json   <span class="tok-cmt">← Catalogue Winget</span>
+└── *.dll                    <span class="tok-cmt">← Dépendances .NET + WPF-UI</span></code></pre>
+    <div class="pre-lang">text</div>
+  </section>
+
+</main>
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+  }
+  const sections = document.querySelectorAll('.doc-section');
+  const links = document.querySelectorAll('.nav-link');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
+

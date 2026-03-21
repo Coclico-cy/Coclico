@@ -1,0 +1,714 @@
+<UserControl x:Class="Coclico.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:vm="clr-namespace:Coclico.ViewModels"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             d:DesignHeight="750" d:DesignWidth="1000"
+             d:DataContext="{d:DesignInstance vm:SettingsViewModel}">
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="PageRoot"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.35"/>
+                    <DoubleAnimation Storyboard.TargetName="PageSlide"
+                                     Storyboard.TargetProperty="Y"
+                                     From="14" To="0" Duration="0:0:0.35">
+                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <UserControl.Resources>
+
+        <Style x:Key="GroupLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"     Value="9"/>
+            <Setter Property="FontWeight"   Value="Black"/>
+            <Setter Property="Foreground"   Value="{DynamicResource TextMutedBrush}"/>
+            <Setter Property="Margin"       Value="4,20,0,8"/>
+            <Setter Property="FontFamily"   Value="Consolas, Courier New"/>
+        </Style>
+
+        <Style x:Key="OptionRow" TargetType="Border">
+            <Setter Property="CornerRadius"     Value="{DynamicResource CornerCard}"/>
+            <Setter Property="Padding"          Value="16,13"/>
+            <Setter Property="Margin"           Value="0,0,0,6"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="BorderBrush"      Value="{DynamicResource BorderDefaultBrush}"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#0D0818" Offset="0"/>
+                        <GradientStop Color="#08050F" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <Style x:Key="OptionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize"         Value="13"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="Foreground"       Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="OptionDesc" TargetType="TextBlock">
+            <Setter Property="FontSize"     Value="11"/>
+            <Setter Property="Foreground"   Value="{DynamicResource TextMutedBrush}"/>
+            <Setter Property="Margin"       Value="0,2,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="ColorSwatchStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="16"
+                                BorderThickness="2" BorderBrush="Transparent" Cursor="Hand">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="White"/>
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SettingsNavItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Background"               Value="Transparent"/>
+            <Setter Property="Foreground"               Value="{DynamicResource TextMutedBrush}"/>
+            <Setter Property="FontSize"                 Value="13"/>
+            <Setter Property="Padding"                  Value="10,9"/>
+            <Setter Property="Margin"                   Value="0,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor"                   Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Grid>
+                            <Border x:Name="GlowLayer" Background="{DynamicResource NavGlowBrush}" CornerRadius="0,8,8,0" Opacity="0" Margin="0,2,4,2"/>
+                            <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}" Margin="0,0,4,0">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border x:Name="Indicator" Width="3" HorizontalAlignment="Left" CornerRadius="0,2,2,0" Visibility="Collapsed" Margin="0,5,0,5">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="{StaticResource AccentSecondary}" Offset="0"/>
+                                        <GradientStop Color="{StaticResource AccentPrimary}" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgHoverBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgCardBrush}"/>
+                                <Setter TargetName="Indicator" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="GlowLayer" Property="Opacity" Value="1"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextAccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="Section_Click"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="PageRoot" Opacity="0">
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="PageSlide" Y="0"/>
+        </Grid.RenderTransform>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        
+        <Border BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="0,0,1,0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#0D0818" Offset="0"/>
+                    <GradientStop Color="#08050F" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <StackPanel Margin="12,24">
+                <TextBlock Text="{DynamicResource Settings_NavHeader}" Style="{StaticResource GroupLabel}" Margin="12,0,0,12"/>
+
+                <ListBox x:Name="NavList" BorderThickness="0" Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionMode="Single">
+                    <ListBox.ItemContainerStyle>
+                        <StaticResource ResourceKey="SettingsNavItemStyle"/>
+                    </ListBox.ItemContainerStyle>
+
+                    <ListBoxItem Tag="Appearance" IsSelected="True">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Color24" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_Appearance}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Language">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="LocalLanguage24" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_Language}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Interface">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Desktop24" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_Interface}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Installer">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="ArrowDownload24" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_Installer}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Profiles">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Person24" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_Profiles}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Cache">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Database24" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_Cache}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="About">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Info24" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_About}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+            </StackPanel>
+        </Border>
+
+        
+        <Grid Grid.Column="1" Margin="32,24,32,24">
+
+            
+            <Border x:Name="PanelAppearance">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource Settings_Appearance}" FontSize="24" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                        
+                        <Border Height="1" Margin="0,0,0,20">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#3B0764" Offset="0"/>
+                                    <GradientStop Color="Transparent" Offset="0.7"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <TextBlock Text="{DynamicResource Settings_ThemePreset}" Style="{StaticResource GroupLabel}"/>
+                        <Border Style="{StaticResource OptionRow}">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Settings_ThemePreset}" Style="{StaticResource OptionTitle}"/>
+                                <TextBlock Text="{Binding SelectedPreset}" Style="{StaticResource OptionDesc}" Margin="0,2,0,14"/>
+                                <WrapPanel>
+                                    <Button Click="Preset_Indigo" Background="#6366F1" Width="32" Height="32" Margin="0,0,8,0" ToolTip="Indigo" Style="{StaticResource ColorSwatchStyle}"/>
+                                    <Button Click="Preset_Cyan" Background="#06B6D4" Width="32" Height="32" Margin="0,0,8,0" ToolTip="Cyan" Style="{StaticResource ColorSwatchStyle}"/>
+                                    <Button Click="Preset_Emerald" Background="#10B981" Width="32" Height="32" Margin="0,0,8,0" ToolTip="Emerald" Style="{StaticResource ColorSwatchStyle}"/>
+                                    <Button Click="Preset_Rose" Background="#F43F5E" Width="32" Height="32" Margin="0,0,8,0" ToolTip="Rose" Style="{StaticResource ColorSwatchStyle}"/>
+                                    <Button Click="Preset_Amber" Background="#F59E0B" Width="32" Height="32" Margin="0,0,8,0" ToolTip="Amber" Style="{StaticResource ColorSwatchStyle}"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Settings_AccentCustom}" Style="{StaticResource OptionTitle}"/>
+                                    <TextBlock Text="{DynamicResource Settings_AccentColor_Desc}" Style="{StaticResource OptionDesc}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <TextBox Text="{Binding CustomAccentHex, UpdateSourceTrigger=PropertyChanged}" Width="100" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <Button Content="{DynamicResource Settings_Apply}" Click="ApplyAccent_Click" Style="{StaticResource PrimaryButton}" Padding="12,7"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Text="{DynamicResource Settings_Background}" Style="{StaticResource GroupLabel}"/>
+                        <Border Style="{StaticResource OptionRow}">
+                            <StackPanel>
+                                <RadioButton x:Name="RbDark" Content="{DynamicResource Settings_BgThemeDark}" GroupName="BgMode" Click="BgMode_Click" Margin="0,4"/>
+                                <RadioButton x:Name="RbLight" Content="{DynamicResource Settings_BgThemeLight}" GroupName="BgMode" Click="BgMode_Click" Margin="0,4"/>
+                                <RadioButton x:Name="RbSystem" Content="{DynamicResource Settings_BgThemeSystem}" GroupName="BgMode" Click="BgMode_Click" Margin="0,4"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="{DynamicResource Settings_CardOpacity}" Style="{StaticResource GroupLabel}"/>
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Settings_CardOpacity}" Style="{StaticResource OptionTitle}"/>
+                                    <TextBlock Text="{DynamicResource Settings_CardOpacity_Desc}" Style="{StaticResource OptionDesc}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding CardOpacity, StringFormat=P0}" HorizontalAlignment="Right" Margin="0,0,0,4" FontWeight="Bold" Foreground="{DynamicResource TextAccentBrush}"/>
+                                    <Slider Minimum="0.02" Maximum="0.30" Value="{Binding CardOpacity}"
+                                            ValueChanged="CardOpacity_Changed" SmallChange="0.01" LargeChange="0.05"
+                                            IsSnapToTickEnabled="True" TickFrequency="0.01"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            
+            <Border x:Name="PanelLanguage" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Settings_Language}" FontSize="24" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                    <Border Height="1" Margin="0,0,0,20">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#3B0764" Offset="0"/>
+                                <GradientStop Color="Transparent" Offset="0.7"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <Border Style="{StaticResource OptionRow}">
+                        <StackPanel>
+                            <RadioButton x:Name="RbFr" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇫🇷" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Français"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbEn" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇺🇸" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="English"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbEs" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇪🇸" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Español"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbDe" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇩🇪" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Deutsch"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbPt" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇧🇷" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Português"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbIt" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇮🇹" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Italiano"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbJa" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇯🇵" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="日本語"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbZh" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇨🇳" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="中文"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbKo" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇰🇷" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="한국어"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbRu" GroupName="Lang" Click="Lang_Click" Margin="0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🇷🇺" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Русский"/>
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            
+            <Border x:Name="PanelInterface" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource Settings_Interface}" FontSize="24" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                        <Border Height="1" Margin="0,0,0,20">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#3B0764" Offset="0"/>
+                                    <GradientStop Color="Transparent" Offset="0.7"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <TextBlock Text="{DynamicResource Settings_DisplayGroup}" Style="{StaticResource GroupLabel}"/>
+
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Settings_FontSize}" Style="{StaticResource OptionTitle}"/>
+                                    <TextBlock Text="{DynamicResource Settings_FontSize_Desc}" Style="{StaticResource OptionDesc}"/>
+                                </StackPanel>
+                                <Slider Grid.Column="1" Minimum="11" Maximum="16" Value="{Binding FontSize}"
+                                        ValueChanged="FontSize_Changed" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Settings_SidebarWidth}" Style="{StaticResource OptionTitle}"/>
+                                    <TextBlock Text="{DynamicResource Settings_SidebarWidth_Desc}" Style="{StaticResource OptionDesc}"/>
+                                </StackPanel>
+                                <Slider Grid.Column="1" Minimum="160" Maximum="300" Value="{Binding SidebarWidth}"
+                                        ValueChanged="SidebarWidth_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Settings_CompactMode}" Style="{StaticResource OptionTitle}"/>
+                                    <TextBlock Text="{DynamicResource Settings_CompactMode_Desc}" Style="{StaticResource OptionDesc}"/>
+                                </StackPanel>
+                                <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding CompactMode}" Click="Compact_Click"/>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Text="{DynamicResource Settings_StartupGroup}" Style="{StaticResource GroupLabel}"/>
+
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Settings_LaunchAtStartup}" Style="{StaticResource OptionTitle}"/>
+                                    <TextBlock Text="{DynamicResource Settings_LaunchAtStartup_Desc}" Style="{StaticResource OptionDesc}"/>
+                                </StackPanel>
+                                <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding LaunchAtStartup}"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Settings_MinimizeToTray}" Style="{StaticResource OptionTitle}"/>
+                                    <TextBlock Text="{DynamicResource Settings_MinimizeToTray_Desc}" Style="{StaticResource OptionDesc}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="{DynamicResource Settings_MinimizeToTray_Test}" Click="BtnTestMinimize_Click" Margin="0,0,12,0" Style="{StaticResource SecondaryButton}" Padding="12,7"/>
+                                    <ui:ToggleSwitch IsChecked="{Binding MinimizeToTray}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            
+            <Border x:Name="PanelInstaller" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Settings_Installer}" FontSize="24" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                    <Border Height="1" Margin="0,0,0,20">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#3B0764" Offset="0"/>
+                                <GradientStop Color="Transparent" Offset="0.7"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <Border Style="{StaticResource OptionRow}">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Settings_WingetScope}" Style="{StaticResource OptionTitle}" Margin="0,0,0,8"/>
+                            <TextBlock Text="{DynamicResource Settings_ScopeDesc}" Style="{StaticResource OptionDesc}" Margin="0,0,0,12"/>
+                            <RadioButton x:Name="RbMachine" Content="{DynamicResource Settings_Machine}" GroupName="Scope" Click="WingetScope_Click" Margin="0,4"/>
+                            <RadioButton x:Name="RbUser" Content="{DynamicResource Settings_User}" GroupName="Scope" Click="WingetScope_Click" Margin="0,4"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            
+            <Border x:Name="PanelProfiles" Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource Settings_Profiles}" FontSize="24" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                        <Border Height="1" Margin="0,0,0,20">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#3B0764" Offset="0"/>
+                                    <GradientStop Color="Transparent" Offset="0.7"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </StackPanel>
+
+                    
+                    <Border Grid.Row="1" Style="{StaticResource OptionRow}" Margin="0,0,0,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Width="50" Height="50" Margin="0,0,16,0" Cursor="Hand">
+                                <Ellipse>
+                                    <Ellipse.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#4A1FA8" Offset="0"/>
+                                            <GradientStop Color="#BE185D" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock x:Name="TbActiveInitials" Text="?" FontSize="20" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <ui:SymbolIcon Symbol="Edit16" FontSize="12" Foreground="White"
+                                               VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            </Grid>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock x:Name="TbActiveProfileName" Text="Default" Style="{StaticResource OptionTitle}"/>
+                                <TextBlock Text="{DynamicResource Settings_ActiveProfile}" Style="{StaticResource OptionDesc}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    
+                    <ListBox x:Name="LbProfiles" Grid.Row="2" Background="Transparent" BorderThickness="0"
+                             Margin="0,0,0,12">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource OptionRow}" Margin="0,0,0,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="40" Height="40" CornerRadius="20" Margin="0,0,16,0">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#1A0A30" Offset="0"/>
+                                                    <GradientStop Color="#2A0A50" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <TextBlock Text="{Binding AvatarInitials}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       FontWeight="Bold" Foreground="{DynamicResource TextAccentBrush}"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding LastUsed, StringFormat='{}{0:g}'}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <Button Content="{DynamicResource Settings_Activate}" Tag="{Binding}" Click="ActivateProfile_Click" Margin="0,0,8,0" Style="{StaticResource SecondaryButton}" Padding="10,5"/>
+                                            <Button Content="{DynamicResource Settings_DeleteProfile}" Tag="{Binding}" Click="DeleteProfile_Click" Style="{StaticResource DangerButton}" Padding="10,5"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    
+                    <StackPanel Grid.Row="3">
+                        <TextBlock Text="{DynamicResource Settings_CreateProfile}" Style="{StaticResource GroupLabel}"/>
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ui:TextBox x:Name="TxtNewProfileName" PlaceholderText="{DynamicResource Settings_NewProfileName}"/>
+                                <Button Grid.Column="1" Content="{DynamicResource Settings_CreateProfile}" Click="CreateProfile_Click" Margin="8,0,0,0" Style="{StaticResource PrimaryButton}" Padding="12,7"/>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Text="{DynamicResource Settings_RenameProfile}" Style="{StaticResource GroupLabel}"/>
+                        <Border Style="{StaticResource OptionRow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ui:TextBox x:Name="TxtRenameProfile" PlaceholderText="{DynamicResource Settings_NewName}"/>
+                                <Button Grid.Column="1" Content="{DynamicResource Settings_Rename}" Click="RenameProfile_Click" Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Padding="12,7"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            
+            <Border x:Name="PanelCache" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Settings_Cache}" FontSize="24" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                    <Border Height="1" Margin="0,0,0,20">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#3B0764" Offset="0"/>
+                                <GradientStop Color="Transparent" Offset="0.7"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <Border Style="{StaticResource OptionRow}">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Settings_CacheDesc}" Style="{StaticResource OptionDesc}" Margin="0,0,0,16"/>
+
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{DynamicResource Settings_CacheSize}" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TbCacheSize" Grid.Column="1" FontWeight="Bold" Foreground="{DynamicResource TextAccentBrush}"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{DynamicResource Settings_CacheLocation}" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TbCachePath" Grid.Column="1" TextTrimming="CharacterEllipsis" FontFamily="Consolas, Courier New" FontSize="11"/>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="{DynamicResource Settings_ClearCache}" Click="ClearCache_Click" Margin="0,0,12,0" Style="{StaticResource DangerButton}" Padding="14,8"/>
+                                <Button Content="{DynamicResource Settings_OpenFolder}" Click="OpenCacheFolder_Click" Style="{StaticResource SecondaryButton}" Padding="14,8"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            
+            <Border x:Name="PanelAbout" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Settings_About}" FontSize="24" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                    <Border Height="1" Margin="0,0,0,20">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#3B0764" Offset="0"/>
+                                <GradientStop Color="Transparent" Offset="0.7"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    
+                    <Border CornerRadius="{StaticResource CornerCard}" Padding="40,32" Margin="0,0,0,20">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#1A0A30" Offset="0"/>
+                                <GradientStop Color="#3B0764" Offset="0.5"/>
+                                <GradientStop Color="#BE185D" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect Color="#7C3AED" BlurRadius="28" ShadowDepth="0" Opacity="0.35"/>
+                        </Border.Effect>
+                        <StackPanel HorizontalAlignment="Center">
+                            <Border Width="64" Height="64" CornerRadius="20" HorizontalAlignment="Center" Margin="0,0,0,16">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#FFFFFF18" Offset="0"/>
+                                        <GradientStop Color="#FFFFFF08" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ui:SymbolIcon Symbol="AppGeneric24" FontSize="32" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{DynamicResource App_Title}" FontSize="26" FontWeight="Bold"
+                                       Foreground="White" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Settings_AppVersion}" Foreground="#CCFFFFFF"
+                                       HorizontalAlignment="Center" Margin="0,6,0,0" FontFamily="Consolas, Courier New"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource OptionRow}">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Settings_AppDesc}" Style="{StaticResource OptionDesc}" Margin="0,0,0,12"/>
+                            <TextBlock Text="© 2025 Coclico Team. All rights reserved." FontSize="11"
+                                       Foreground="{DynamicResource TextMutedBrush}" FontFamily="Consolas, Courier New"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>
+

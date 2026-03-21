@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coclico i18n Debug</title>
+    <style>
+        body { font-family: monospace; margin: 20px; background: #0a0a0a; color: #00ff00; }
+        .section { margin: 20px 0; padding: 10px; border: 1px solid #00ff00; }
+        button { padding: 10px; margin: 5px; cursor: pointer; }
+        #log { max-height: 500px; overflow-y: auto; border: 1px solid #00ff00; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Coclico i18n Debugger</h1>
+    
+    <div class="section">
+        <h2>Language Selector Test</h2>
+        <select id="langSwitch" data-coclico-lang-switch>
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+        </select>
+    </div>
+
+    <div class="section">
+        <h2>Test Elements</h2>
+        <p data-i18n="nav_modules">Test Translation 1</p>
+        <p data-content-i18n="nav_automation">Test Translation 2</p>
+    </div>
+
+    <div class="section">
+        <h2>Actions</h2>
+        <button onclick="testLoadJson()">Test Load JSON</button>
+        <button onclick="testSetLanguage()">Test Set Language (EN)</button>
+        <button onclick="testSetLanguage('fr')">Test Set Language (FR)</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="section">
+        <h2>Console Log</h2>
+        <div id="log"></div>
+    </div>
+
+    <script src="i18n.js" defer></script>
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function testLoadJson() {
+            log('🔍 Loading fr.json...');
+            try {
+                const response = await fetch('./fr.json');
+                log(`📄 Response Status: ${response.status} ${response.statusText}`);
+                if (response.ok) {
+                    const json = await response.json();
+                    log(`✅ Loaded ${Object.keys(json).length} keys from fr.json`);
+                    const keys = Object.keys(json).slice(0, 5);
+                    log(`   Sample keys: ${keys.join(', ')}`);
+                    if (json.nav_modules) log(`   ✓ nav_modules: "${json.nav_modules}"`);
+                } else {
+                    log(`❌ Failed to load: ${response.statusText}`);
+                }
+            } catch (e) {
+                log(`❌ Error: ${e.message}`);
+            }
+        }
+
+        async function testSetLanguage(lang = 'en') {
+            log(`🌐 Setting language to: ${lang}`);
+            try {
+                if (window.CoclicoI18n && window.CoclicoI18n.setLanguage) {
+                    await window.CoclicoI18n.setLanguage(lang);
+                    log(`✅ Language set to ${lang}`);
+                    
+                    // Check if selector value changed
+                    const selector = document.getElementById('langSwitch');
+                    log(`   Selector value: ${selector.value}`);
+                    
+                    // Check if page lang changed
+                    log(`   Page lang: ${document.documentElement.lang}`);
+                } else {
+                    log(`❌ CoclicoI18n not available`);
+                }
+            } catch (e) {
+                log(`❌ Error: ${e.message}`);
+            }
+        }
+
+        // Auto-initialize logging
+        window.addEventListener('load', () => {
+            log('✅ Page loaded');
+            log(`📋 CoclicoI18n available: ${!!window.CoclicoI18n}`);
+            if (window.CoclicoI18n) {
+                log(`   Current language: ${window.CoclicoI18n.getLanguage()}`);
+                log(`   Supported languages: ${window.CoclicoI18n.supportedLanguages.join(', ')}`);
+            }
+        });
+    </script>
+</body>
+</html>
+

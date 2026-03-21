@@ -1,0 +1,668 @@
+<Application x:Class="Coclico.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:Coclico.Converters"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Application.Resources>
+      <ResourceDictionary>
+          <ResourceDictionary.MergedDictionaries>
+              <ui:ThemesDictionary Theme="Dark" />
+              <ui:ControlsDictionary />
+          </ResourceDictionary.MergedDictionaries>
+
+          <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+          <converters:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
+          <converters:FileIconToImageSourceConverter x:Key="FileIconToImageSourceConverter"/>
+          <converters:HexToBrushConverter x:Key="HexToBrush"/>
+          <converters:StringFirstCharConverter x:Key="FirstCharConverter"/>
+
+          <Color x:Key="AccentPrimary">#7C3AED</Color>
+          <Color x:Key="AccentSecondary">#DB2777</Color>
+          <Color x:Key="AccentSuccess">#10D9A0</Color>
+
+          <sys:Double x:Key="GlobalFontSize">13</sys:Double>
+          <Thickness x:Key="CardPadding">24</Thickness>
+          <Thickness x:Key="CardPadding_Compact">12</Thickness>
+
+          <Duration x:Key="AnimFast">0:0:0.15</Duration>
+          <Duration x:Key="AnimMed">0:0:0.25</Duration>
+          <Duration x:Key="AnimSlow">0:0:0.40</Duration>
+
+          <CornerRadius x:Key="CornerCard">14</CornerRadius>
+          <CornerRadius x:Key="CornerBtn">10</CornerRadius>
+          <CornerRadius x:Key="CornerSmall">8</CornerRadius>
+          <CornerRadius x:Key="CornerPill">999</CornerRadius>
+          <CornerRadius x:Key="CornerNode">12</CornerRadius>
+
+          <SolidColorBrush x:Key="BgBaseBrush"        Color="#08050F"/>
+          <SolidColorBrush x:Key="BgPanelBrush"       Color="#0D0818"/>
+          <SolidColorBrush x:Key="BgCardBrush"        Color="#130B20"/>
+          <SolidColorBrush x:Key="BgElevatedBrush"    Color="#1A1030"/>
+          <SolidColorBrush x:Key="BgHoverBrush"       Color="#221545"/>
+
+          <SolidColorBrush x:Key="BorderSubtleBrush"  Color="#1E1030"/>
+          <SolidColorBrush x:Key="BorderDefaultBrush" Color="#2A1848"/>
+          <SolidColorBrush x:Key="BorderStrongBrush"  Color="#3D256A"/>
+
+          <SolidColorBrush x:Key="TextPrimaryBrush"   Color="#EDE9F7"/>
+          <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8B7AAE"/>
+          <SolidColorBrush x:Key="TextMutedBrush"     Color="#4A3870"/>
+          <SolidColorBrush x:Key="TextAccentBrush"    Color="#C4B5FD"/>
+
+          <SolidColorBrush x:Key="PrimaryBrush"    Color="{DynamicResource AccentPrimary}"/>
+          <SolidColorBrush x:Key="SecondaryBrush"  Color="{DynamicResource AccentSecondary}"/>
+          <SolidColorBrush x:Key="SuccessBrush"    Color="{DynamicResource AccentSuccess}"/>
+          <SolidColorBrush x:Key="CyanBrush"       Color="#22D3EE"/>
+          <SolidColorBrush x:Key="WarnBrush"       Color="#F59E0B"/>
+          <SolidColorBrush x:Key="DangerBrush"     Color="#EF4444"/>
+
+          <SolidColorBrush x:Key="NodeStartBrush"   Color="#10D9A0"/>
+          <SolidColorBrush x:Key="NodeActionBrush"  Color="#7C3AED"/>
+          <SolidColorBrush x:Key="NodeEndBrush"     Color="#EF4444"/>
+          <SolidColorBrush x:Key="NodeCmdBrush"     Color="#F59E0B"/>
+          <SolidColorBrush x:Key="NodeWaitBrush"    Color="#22D3EE"/>
+
+          <SolidColorBrush x:Key="OverlayLight"      Color="#0EFFFFFF"/>
+          <SolidColorBrush x:Key="OverlayMid"        Color="#08FFFFFF"/>
+          <SolidColorBrush x:Key="OverlayFaint"      Color="#05FFFFFF"/>
+          <SolidColorBrush x:Key="OverlayDark"       Color="#F008050F"/>
+          <SolidColorBrush x:Key="OverlayDarkStrong" Color="#F004020A"/>
+
+          <LinearGradientBrush x:Key="PrimaryGradient" StartPoint="0,0" EndPoint="1,0">
+              <GradientStop Color="#7C3AED" Offset="0"/>
+              <GradientStop Color="#DB2777" Offset="1"/>
+          </LinearGradientBrush>
+
+          <LinearGradientBrush x:Key="PrimaryGradientDiag" StartPoint="0,0" EndPoint="1,1">
+              <GradientStop Color="#6B2FD9" Offset="0"/>
+              <GradientStop Color="#BE185D" Offset="0.6"/>
+              <GradientStop Color="#F97316" Offset="1"/>
+          </LinearGradientBrush>
+
+          <LinearGradientBrush x:Key="FoxGradient" StartPoint="0,0" EndPoint="1,0">
+              <GradientStop Color="#6B2FD9" Offset="0"/>
+              <GradientStop Color="#BE185D" Offset="0.5"/>
+              <GradientStop Color="#F97316" Offset="1"/>
+          </LinearGradientBrush>
+
+          <LinearGradientBrush x:Key="FoxGradientDiag" StartPoint="0,0" EndPoint="1,1">
+              <GradientStop Color="#4A1FA8" Offset="0"/>
+              <GradientStop Color="#BE185D" Offset="0.55"/>
+              <GradientStop Color="#F97316" Offset="1"/>
+          </LinearGradientBrush>
+
+          <LinearGradientBrush x:Key="SuccessGradient" StartPoint="0,0" EndPoint="1,0">
+              <GradientStop Color="#059669" Offset="0"/>
+              <GradientStop Color="#10D9A0" Offset="1"/>
+          </LinearGradientBrush>
+
+          <SolidColorBrush x:Key="NavGlowBrush" Color="#00000000"/>
+
+          <CubicEase x:Key="EaseOut"   EasingMode="EaseOut"/>
+          <CubicEase x:Key="EaseIn"    EasingMode="EaseIn"/>
+          <CubicEase x:Key="EaseInOut" EasingMode="EaseInOut"/>
+          <BackEase  x:Key="EaseBack"  EasingMode="EaseOut" Amplitude="0.4"/>
+
+          <SolidColorBrush x:Key="AccentBrush"   Color="#7C3AED"/>
+          <SolidColorBrush x:Key="WarningBrush"  Color="#F59E0B"/>
+
+          <Style x:Key="SubtleCard" TargetType="Border">
+              <Setter Property="Background"       Value="{DynamicResource BgCardBrush}"/>
+              <Setter Property="BorderBrush"      Value="{DynamicResource BorderDefaultBrush}"/>
+              <Setter Property="BorderThickness"  Value="1"/>
+              <Setter Property="CornerRadius"     Value="{StaticResource CornerCard}"/>
+              <Setter Property="Padding"          Value="{DynamicResource CardPadding}"/>
+          </Style>
+
+          <Style x:Key="GlowCard" TargetType="Border">
+              <Setter Property="Background"       Value="#150D28"/>
+              <Setter Property="BorderBrush"      Value="{DynamicResource BorderStrongBrush}"/>
+              <Setter Property="BorderThickness"  Value="1"/>
+              <Setter Property="CornerRadius"     Value="{StaticResource CornerCard}"/>
+              <Setter Property="Padding"          Value="20"/>
+          </Style>
+
+          <Style x:Key="TerminalCard" TargetType="Border">
+              <Setter Property="Background"       Value="#06030C"/>
+              <Setter Property="BorderBrush"      Value="{DynamicResource BorderSubtleBrush}"/>
+              <Setter Property="BorderThickness"  Value="1"/>
+              <Setter Property="CornerRadius"     Value="{StaticResource CornerSmall}"/>
+              <Setter Property="Padding"          Value="16,12"/>
+          </Style>
+
+          <Style x:Key="AnimatedCard" TargetType="Border">
+              <Setter Property="Background"       Value="{DynamicResource BgCardBrush}"/>
+              <Setter Property="BorderBrush"      Value="{DynamicResource BorderDefaultBrush}"/>
+              <Setter Property="BorderThickness"  Value="1"/>
+              <Setter Property="CornerRadius"     Value="{StaticResource CornerCard}"/>
+              <Setter Property="Padding"          Value="{DynamicResource CardPadding}"/>
+              <Setter Property="Cursor"           Value="Hand"/>
+              <Setter Property="Effect">
+                  <Setter.Value>
+                      <DropShadowEffect Color="#7C3AED" BlurRadius="0" ShadowDepth="0" Opacity="0"/>
+                  </Setter.Value>
+              </Setter>
+              <Style.Triggers>
+                  <EventTrigger RoutedEvent="Border.MouseEnter">
+                      <BeginStoryboard>
+                          <Storyboard>
+                              <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)"
+                                               To="16" Duration="0:0:0.20"
+                                               EasingFunction="{StaticResource EaseOut}"/>
+                              <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                                               To="0.25" Duration="0:0:0.20"
+                                               EasingFunction="{StaticResource EaseOut}"/>
+                          </Storyboard>
+                      </BeginStoryboard>
+                  </EventTrigger>
+                  <EventTrigger RoutedEvent="Border.MouseLeave">
+                      <BeginStoryboard>
+                          <Storyboard>
+                              <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)"
+                                               To="0" Duration="0:0:0.20"/>
+                              <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                                               To="0" Duration="0:0:0.20"/>
+                          </Storyboard>
+                      </BeginStoryboard>
+                  </EventTrigger>
+              </Style.Triggers>
+          </Style>
+
+          <Style x:Key="SectionLabel" TargetType="TextBlock">
+              <Setter Property="FontSize"         Value="10"/>
+              <Setter Property="FontWeight"       Value="Bold"/>
+              <Setter Property="Foreground"       Value="#5A4080"/>
+              <Setter Property="Margin"           Value="2,0,0,10"/>
+          </Style>
+
+          <Style TargetType="TextBlock">
+              <Setter Property="FontSize" Value="{DynamicResource GlobalFontSize}"/>
+          </Style>
+
+          <Style x:Key="PrimaryButton" TargetType="Button">
+              <Setter Property="Cursor"                     Value="Hand"/>
+              <Setter Property="Foreground"                 Value="White"/>
+              <Setter Property="FontWeight"                 Value="SemiBold"/>
+              <Setter Property="Padding"                    Value="20,10"/>
+              <Setter Property="BorderThickness"            Value="0"/>
+              <Setter Property="RenderTransformOrigin"      Value="0.5,0.5"/>
+              <Setter Property="RenderTransform">
+                  <Setter.Value>
+                      <ScaleTransform ScaleX="1" ScaleY="1"/>
+                  </Setter.Value>
+              </Setter>
+              <Setter Property="Template">
+                  <Setter.Value>
+                      <ControlTemplate TargetType="Button">
+                          <Border x:Name="Bd"
+                                  CornerRadius="{StaticResource CornerBtn}"
+                                  Padding="{TemplateBinding Padding}"
+                                  RenderTransformOrigin="0.5,0.5">
+                              <Border.Background>
+                                  <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                      <GradientStop Color="#7C3AED" Offset="0"/>
+                                      <GradientStop Color="#DB2777" Offset="1"/>
+                                  </LinearGradientBrush>
+                              </Border.Background>
+                              <Border.Effect>
+                                  <DropShadowEffect x:Name="BtnShadow"
+                                                    Color="#7C3AED"
+                                                    BlurRadius="0"
+                                                    ShadowDepth="0"
+                                                    Opacity="0"/>
+                              </Border.Effect>
+                              <Border.RenderTransform>
+                                  <ScaleTransform x:Name="BtnScale" ScaleX="1" ScaleY="1"/>
+                              </Border.RenderTransform>
+                              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                              <Trigger Property="IsEnabled" Value="False">
+                                  <Setter TargetName="Bd" Property="Opacity" Value="0.38"/>
+                              </Trigger>
+                              <EventTrigger RoutedEvent="Button.MouseEnter">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1.04" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1.04" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnShadow"
+                                                           Storyboard.TargetProperty="BlurRadius"
+                                                           To="14" Duration="0:0:0.20"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnShadow"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0.40" Duration="0:0:0.20"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.MouseLeave">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnShadow"
+                                                           Storyboard.TargetProperty="BlurRadius"
+                                                           To="0" Duration="0:0:0.15"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnShadow"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0" Duration="0:0:0.15"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonDown">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="0.96" Duration="0:0:0.08"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="0.96" Duration="0:0:0.08"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonUp">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.25"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.25"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                          </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                  </Setter.Value>
+              </Setter>
+          </Style>
+
+          <Style x:Key="SecondaryButton" TargetType="Button">
+              <Setter Property="Cursor"                Value="Hand"/>
+              <Setter Property="Foreground"            Value="{DynamicResource TextSecondaryBrush}"/>
+              <Setter Property="FontWeight"            Value="SemiBold"/>
+              <Setter Property="Padding"               Value="18,9"/>
+              <Setter Property="BorderThickness"       Value="1"/>
+              <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+              <Setter Property="Template">
+                  <Setter.Value>
+                      <ControlTemplate TargetType="Button">
+                          <Border x:Name="Bd"
+                                  Background="{DynamicResource BgElevatedBrush}"
+                                  BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                  BorderThickness="1"
+                                  CornerRadius="{StaticResource CornerBtn}"
+                                  Padding="{TemplateBinding Padding}">
+                              <Border.RenderTransform>
+                                  <ScaleTransform x:Name="BtnScale" ScaleX="1" ScaleY="1"/>
+                              </Border.RenderTransform>
+                              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                              <Trigger Property="IsEnabled" Value="False">
+                                  <Setter TargetName="Bd" Property="Opacity" Value="0.38"/>
+                              </Trigger>
+                              <EventTrigger RoutedEvent="Button.MouseEnter">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1.02" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1.02" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.MouseLeave">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonDown">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="0.97" Duration="0:0:0.08"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="0.97" Duration="0:0:0.08"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonUp">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.20"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.20"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter TargetName="Bd" Property="Background"   Value="{DynamicResource BgHoverBrush}"/>
+                                  <Setter TargetName="Bd" Property="BorderBrush"  Value="{DynamicResource BorderStrongBrush}"/>
+                                  <Setter Property="Foreground"                   Value="{DynamicResource TextPrimaryBrush}"/>
+                              </Trigger>
+                          </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                  </Setter.Value>
+              </Setter>
+          </Style>
+
+          <Style x:Key="GhostButton" TargetType="Button">
+              <Setter Property="Cursor"          Value="Hand"/>
+              <Setter Property="Foreground"      Value="{DynamicResource TextMutedBrush}"/>
+              <Setter Property="FontWeight"      Value="Medium"/>
+              <Setter Property="Padding"         Value="14,8"/>
+              <Setter Property="BorderThickness" Value="1"/>
+              <Setter Property="Template">
+                  <Setter.Value>
+                      <ControlTemplate TargetType="Button">
+                          <Border x:Name="Bd"
+                                  Background="Transparent"
+                                  BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                  BorderThickness="1"
+                                  CornerRadius="{StaticResource CornerSmall}"
+                                  Padding="{TemplateBinding Padding}">
+                              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter TargetName="Bd" Property="Background"  Value="{DynamicResource BgCardBrush}"/>
+                                  <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BorderDefaultBrush}"/>
+                                  <Setter Property="Foreground"                  Value="{DynamicResource TextSecondaryBrush}"/>
+                              </Trigger>
+                              <Trigger Property="IsPressed" Value="True">
+                                  <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                              </Trigger>
+                              <Trigger Property="IsEnabled" Value="False">
+                                  <Setter TargetName="Bd" Property="Opacity" Value="0.38"/>
+                              </Trigger>
+                          </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                  </Setter.Value>
+              </Setter>
+          </Style>
+
+          <Style x:Key="DangerButton" TargetType="Button">
+              <Setter Property="Cursor"          Value="Hand"/>
+              <Setter Property="Foreground"      Value="White"/>
+              <Setter Property="FontWeight"      Value="SemiBold"/>
+              <Setter Property="Padding"         Value="18,9"/>
+              <Setter Property="BorderThickness" Value="0"/>
+              <Setter Property="Template">
+                  <Setter.Value>
+                      <ControlTemplate TargetType="Button">
+                          <Border x:Name="Bd"
+                                  Background="{DynamicResource DangerBrush}"
+                                  CornerRadius="{StaticResource CornerBtn}"
+                                  Padding="{TemplateBinding Padding}">
+                              <Border.RenderTransform>
+                                  <ScaleTransform x:Name="BtnScale" ScaleX="1" ScaleY="1"/>
+                              </Border.RenderTransform>
+                              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                              <Trigger Property="IsEnabled" Value="False">
+                                  <Setter TargetName="Bd" Property="Opacity" Value="0.38"/>
+                              </Trigger>
+                              <EventTrigger RoutedEvent="Button.MouseEnter">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1.03" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1.03" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.MouseLeave">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonDown">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="0.96" Duration="0:0:0.08"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="0.96" Duration="0:0:0.08"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonUp">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.22"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.22"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                          </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                  </Setter.Value>
+              </Setter>
+          </Style>
+
+          <Style x:Key="SuccessButton" TargetType="Button">
+              <Setter Property="Cursor"          Value="Hand"/>
+              <Setter Property="Foreground"      Value="White"/>
+              <Setter Property="FontWeight"      Value="SemiBold"/>
+              <Setter Property="Padding"         Value="18,9"/>
+              <Setter Property="BorderThickness" Value="0"/>
+              <Setter Property="Template">
+                  <Setter.Value>
+                      <ControlTemplate TargetType="Button">
+                          <Border x:Name="Bd"
+                                  CornerRadius="{StaticResource CornerBtn}"
+                                  Padding="{TemplateBinding Padding}">
+                              <Border.Background>
+                                  <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                      <GradientStop Color="#059669" Offset="0"/>
+                                      <GradientStop Color="#10D9A0" Offset="1"/>
+                                  </LinearGradientBrush>
+                              </Border.Background>
+                              <Border.RenderTransform>
+                                  <ScaleTransform x:Name="BtnScale" ScaleX="1" ScaleY="1"/>
+                              </Border.RenderTransform>
+                              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                              <Trigger Property="IsEnabled" Value="False">
+                                  <Setter TargetName="Bd" Property="Opacity" Value="0.38"/>
+                              </Trigger>
+                              <EventTrigger RoutedEvent="Button.MouseEnter">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1.04" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1.04" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.MouseLeave">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonDown">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="0.96" Duration="0:0:0.08"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="0.96" Duration="0:0:0.08"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="Button.PreviewMouseLeftButtonUp">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1" Duration="0:0:0.22"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                          <DoubleAnimation Storyboard.TargetName="BtnScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1" Duration="0:0:0.22"
+                                                           EasingFunction="{StaticResource EaseBack}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                          </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                  </Setter.Value>
+              </Setter>
+          </Style>
+
+          <Style x:Key="NavItemStyle" TargetType="RadioButton">
+              <Setter Property="Background"                 Value="Transparent"/>
+              <Setter Property="Foreground"                 Value="#8B7AAE"/>
+              <Setter Property="FontSize"                   Value="{DynamicResource GlobalFontSize}"/>
+              <Setter Property="Padding"                    Value="10,9"/>
+              <Setter Property="Margin"                     Value="0,1"/>
+              <Setter Property="HorizontalContentAlignment" Value="Left"/>
+              <Setter Property="Cursor"                     Value="Hand"/>
+              <Setter Property="Template">
+                  <Setter.Value>
+                      <ControlTemplate TargetType="RadioButton">
+                          <Grid>
+                              <Border x:Name="GlowLayer" Background="{StaticResource NavGlowBrush}"
+                                      CornerRadius="0,8,8,0" Opacity="0"
+                                      Margin="0,2,4,2"/>
+                              <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                      CornerRadius="{StaticResource CornerSmall}"
+                                      Padding="{TemplateBinding Padding}"
+                                      Margin="0,0,4,0">
+                                  <Border.RenderTransform>
+                                      <TranslateTransform x:Name="BdSlide" X="0"/>
+                                  </Border.RenderTransform>
+                                  <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalAlignment="Center"
+                                                    RecognizesAccessKey="False"/>
+                              </Border>
+                              <Border x:Name="Indicator" Width="3" HorizontalAlignment="Left"
+                                      CornerRadius="0,2,2,0" Visibility="Collapsed"
+                                      Margin="0,5,0,5">
+                                  <Border.Background>
+                                      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                          <GradientStop Color="#DB2777" Offset="0"/>
+                                          <GradientStop Color="#7C3AED" Offset="1"/>
+                                      </LinearGradientBrush>
+                                  </Border.Background>
+                              </Border>
+                          </Grid>
+                          <ControlTemplate.Triggers>
+                              <EventTrigger RoutedEvent="RadioButton.MouseEnter">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="GlowLayer"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0.5" Duration="0:0:0.15"
+                                                           EasingFunction="{StaticResource EaseOut}"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <EventTrigger RoutedEvent="RadioButton.MouseLeave">
+                                  <BeginStoryboard>
+                                      <Storyboard>
+                                          <DoubleAnimation Storyboard.TargetName="GlowLayer"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0" Duration="0:0:0.15"/>
+                                      </Storyboard>
+                                  </BeginStoryboard>
+                              </EventTrigger>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter TargetName="Bd"       Property="Background"  Value="#120828"/>
+                                  <Setter Property="Foreground" Value="#8B7AAE"/>
+                              </Trigger>
+                              <Trigger Property="IsChecked" Value="True">
+                                  <Setter TargetName="Bd"          Property="Background"  Value="#1A0D35"/>
+                                  <Setter TargetName="Indicator"   Property="Visibility"  Value="Visible"/>
+                                  <Setter TargetName="GlowLayer"   Property="Opacity"     Value="1"/>
+                                  <Setter Property="Foreground"    Value="#C4B5FD"/>
+                              </Trigger>
+                          </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                  </Setter.Value>
+              </Setter>
+          </Style>
+
+      </ResourceDictionary>
+  </Application.Resources>
+</Application>
+

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="fr" data-coclico-page="faq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Coclico FAQ — Réponses aux questions fréquentes sur l'installation, les modules, l'IA et les Flow Chains.">
+  <title>Coclico — FAQ</title>
+  <link rel="icon" href="../Coclico/Resources/icone/plage.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="i18n.js" defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #03030a; --bg-2: #07071a;
+      --bg-card: rgba(255,255,255,0.03); --bg-card-h: rgba(255,255,255,0.055);
+      --border: rgba(255,255,255,0.07); --border-h: rgba(255,255,255,0.14);
+      --blue: #4a6cf7; --blue-dim: rgba(74,108,247,0.15); --blue-glow: rgba(74,108,247,0.3);
+      --purple: #7c3aed; --purple-dim: rgba(124,58,237,0.15);
+      --cyan: #06b6d4; --cyan-dim: rgba(6,182,212,0.15);
+      --orange: #f97316; --orange-dim: rgba(249,115,22,0.15);
+      --green: #10b981; --green-dim: rgba(16,185,129,0.15);
+      --text: #f0f0f8; --text-2: rgba(240,240,248,0.6); --text-3: rgba(240,240,248,0.35);
+      --font: 'DM Sans', system-ui, sans-serif;
+      --font-display: 'Syne', 'DM Sans', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --max-w: 860px;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    code { font-family: var(--mono); font-size: 0.85em; background: var(--blue-dim); color: var(--blue); padding: 0.15em 0.45em; border-radius: 4px; }
+
+    /* ── Nav ── */
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(3,3,10,0.85); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+    .nav-inner { max-width: var(--max-w); margin: 0 auto; padding: 0.9rem 2rem; display: flex; align-items: center; gap: 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+    .nav-logo img { width: 22px; height: 22px; border-radius: 5px; }
+    .nav-links { display: flex; gap: 0.3rem; margin-left: auto; }
+    .nav-link { padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.85rem; color: var(--text-2); transition: 0.2s; }
+    .nav-link:hover { color: var(--text); background: var(--bg-card); }
+    .nav-link.active { color: var(--blue); background: var(--blue-dim); }
+
+    /* ── Container ── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 2rem; }
+
+    /* ── Hero ── */
+    .faq-hero { padding: 5rem 2rem 4rem; text-align: center; }
+    .faq-hero .badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 1rem; background: var(--blue-dim); border: 1px solid rgba(74,108,247,0.3); border-radius: 50px; color: var(--blue); font-size: 0.78rem; font-weight: 600; margin-bottom: 1.5rem; }
+    .faq-hero .badge::before { content: ''; width: 5px; height: 5px; background: var(--blue); border-radius: 50%; box-shadow: 0 0 6px var(--blue); }
+    .faq-hero h1 { font-family: var(--font-display); font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 1rem; }
+    .faq-hero h1 span { background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .faq-hero p { color: var(--text-2); font-size: 1.05rem; max-width: 560px; margin: 0 auto 2.5rem; }
+
+    /* ── Search ── */
+    .faq-search { max-width: 500px; margin: 0 auto 1rem; position: relative; }
+    .faq-search input { width: 100%; padding: 0.9rem 1.2rem 0.9rem 3rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-h); border-radius: 12px; color: var(--text); font-family: var(--font); font-size: 0.95rem; outline: none; transition: 0.2s; }
+    .faq-search input:focus { border-color: var(--blue); background: rgba(74,108,247,0.08); }
+    .faq-search input::placeholder { color: var(--text-3); }
+    .faq-search .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; }
+
+    /* ── Categories ── */
+    .faq-cats { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+    .cat-btn { padding: 0.45rem 1.1rem; border-radius: 50px; border: 1px solid var(--border-h); background: transparent; color: var(--text-2); font-family: var(--font); font-size: 0.83rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .cat-btn:hover { color: var(--text); border-color: var(--blue); background: var(--blue-dim); }
+    .cat-btn.active { color: var(--blue); border-color: var(--blue); background: var(--blue-dim); }
+
+    /* ── FAQ Group ── */
+    .faq-group { margin-bottom: 3rem; }
+    .faq-group-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
+    .faq-group-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .faq-group-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .faq-group-count { margin-left: auto; font-size: 0.75rem; color: var(--text-3); font-family: var(--mono); }
+
+    /* ── FAQ Items ── */
+    .faq-item { border: 1px solid var(--border); border-radius: 14px; margin-bottom: 0.6rem; overflow: hidden; transition: border-color 0.2s; }
+    .faq-item.open { border-color: rgba(74,108,247,0.3); }
+    .faq-item.hidden { display: none; }
+    .faq-q { width: 100%; padding: 1.1rem 1.3rem; background: transparent; border: none; text-align: left; color: var(--text); font-family: var(--font); font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s; }
+    .faq-q:hover { background: var(--bg-card-h); }
+    .faq-item.open .faq-q { background: rgba(74,108,247,0.06); color: var(--blue); }
+    .faq-chevron { margin-left: auto; width: 18px; height: 18px; color: var(--text-3); flex-shrink: 0; transition: transform 0.3s ease; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--blue); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-item.open .faq-a { max-height: 600px; }
+    .faq-a-inner { padding: 0 1.3rem 1.3rem; color: var(--text-2); font-size: 0.9rem; line-height: 1.75; border-top: 1px solid var(--border); }
+    .faq-a-inner p { margin: 0.6rem 0; }
+    .faq-a-inner p:first-child { margin-top: 0.8rem; }
+    .faq-a-inner strong { color: var(--text); }
+    .faq-a-inner ul { padding-left: 1.3rem; margin: 0.5rem 0; }
+    .faq-a-inner li { margin-bottom: 0.3rem; }
+    .faq-a-inner a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── CTA ── */
+    .faq-cta { text-align: center; padding: 5rem 2rem; }
+    .faq-cta h2 { font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.02em; }
+    .faq-cta p { color: var(--text-2); margin-bottom: 2rem; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.8rem; background: var(--blue); color: #fff; border-radius: 50px; font-weight: 600; font-size: 0.95rem; transition: 0.3s; box-shadow: 0 0 30px var(--blue-glow); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px var(--blue-glow); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.8rem; background: transparent; color: var(--text-2); border: 1px solid var(--border-h); border-radius: 50px; font-weight: 500; font-size: 0.95rem; transition: 0.3s; }
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+
+    /* ── No results ── */
+    .no-results { text-align: center; padding: 3rem 2rem; color: var(--text-3); display: none; }
+    .no-results.show { display: block; }
+
+    /* ── Footer ── */
+    .footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text-3); font-size: 0.82rem; }
+    .footer a { color: var(--blue); }
+  </style>
+</head>
+<body>
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="../Coclico/Resources/icone/plage.png" alt="Coclico" onerror="this.style.display='none'">
+      <span>Coclico</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Accueil</a>
+      <a href="tutorial.html" class="nav-link">Tutoriel</a>
+      <a href="wiki.html" class="nav-link">Wiki Dev</a>
+      <a href="docs.html" class="nav-link">Docs</a>
+      <a href="faq.html" class="nav-link active">FAQ</a>
+    </div>
+    <div class="coclico-lang-wrap" style="margin-left: 0.75rem;">
+      <label for="langSwitch" class="coclico-lang-label">🌐</label>
+      <select id="langSwitch" data-coclico-lang-switch class="coclico-lang-switch" aria-label="Language">
+        <option value="fr">🇫🇷 Français</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="ko">🇰🇷 한국어</option>
+        <option value="pt">🇧🇷 Português</option>
+        <option value="ru">🇷🇺 Русский</option>
+        <option value="zh">🇨🇳 中文</option>
+      </select>
+    </div>
+  </div>
+</nav>
+
+
+<div class="faq-hero">
+  <div class="badge">Questions fréquentes</div>
+  <h1>Tout ce que vous<br>voulez <span>savoir</span></h1>
+  <p>Trouvez rapidement la réponse à vos questions sur l'installation, les modules, l'IA et les Flow Chains.</p>
+
+  <div class="faq-search">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="faqSearch" placeholder="Rechercher une question…" oninput="filterFaq(this.value)">
+  </div>
+</div>
+
+<div class="container">
+  
+  <div class="faq-cats" id="faqCats">
+    <button class="cat-btn active" onclick="filterCat('all', this)">Tout</button>
+    <button class="cat-btn" onclick="filterCat('installation', this)">Installation</button>
+    <button class="cat-btn" onclick="filterCat('modules', this)">Modules</button>
+    <button class="cat-btn" onclick="filterCat('flowchains', this)">Flow Chains</button>
+    <button class="cat-btn" onclick="filterCat('ia', this)">IA</button>
+    <button class="cat-btn" onclick="filterCat('performance', this)">Performance</button>
+    <button class="cat-btn" onclick="filterCat('donnees', this)">Données</button>
+    <button class="cat-btn" onclick="filterCat('dev', this)">Développeurs</button>
+  </div>
+
+  <div id="noResults" class="no-results">Aucune question ne correspond à votre recherche.</div>
+
+  
+  <div class="faq-group" data-cat="installation">
+    <div class="faq-group-header">
+      <div class="faq-group-icon" style="background:rgba(74,108,247,0.12)">🔧</div>
+      <span class="faq-group-title">Installation &amp; Démarrage</span>
+      <span class="faq-group-count">5 questions</span>
+    </div>
+
+    <div class="faq-item" data-cat="installation">
+      <button class="faq-q" onclick="toggle(this)">
+        Pourquoi Coclico nécessite-t-il les droits Administrateur ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Plusieurs fonctionnalités de Coclico nécessitent des privilèges élevés :</p>
+          <ul>
+            <li><strong>RAM Cleaner</strong> — Les opérations <code>NtSetSystemInformation</code> (purge Standby, Working Sets) requièrent <code>SeProfileSingleProcessPrivilege</code></li>
+            <li><strong>Processus système</strong> — Surveiller et terminer des processus système protégés</li>
+            <li><strong>Registre HKLM</strong> — Lire les clés d'installation de toutes les apps (incluant les apps installées machine)</li>
+            <li><strong>Démarrage Windows</strong> — Modifier les clés de registre Run pour le démarrage auto</li>
+          </ul>
+          <p>L'UAC est demandé dès le lancement via <code>app.manifest</code> avec <code>requireAdministrator</code>. Si vous ne cliquez pas Oui, Coclico se relance automatiquement avec la demande d'élévation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="installation">
+      <button class="faq-q" onclick="toggle(this)">
+        Coclico fonctionne-t-il sur Windows 10 ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Oui, mais avec une version minimale requise. Coclico cible <strong>Windows 10 22H2 (build 22621)</strong> ou supérieur, ainsi que Windows 11 toutes versions.</p>
+          <p>La raison de cette limitation est l'utilisation d'APIs Windows introduites dans cette version, notamment pour les opérations de surveillance réseau et certains APIs WPF-UI 4.2.</p>
+          <p>Vérifiez votre version : <strong>Win+R</strong> → <code>winver</code> → le numéro de build doit être ≥ 22621.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="installation">
+      <button class="faq-q" onclick="toggle(this)">
+        Dois-je installer .NET séparément ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p><strong>Non.</strong> Coclico est distribué en mode <strong>self-contained</strong> (<code>--self-contained</code>). Le runtime .NET 10 est inclus dans l'archive ZIP. Aucune installation supplémentaire n'est requise.</p>
+          <p>La contrepartie est une taille d'archive plus grande (~250-300 MB), mais l'application fonctionnera sur tout Windows 10 22H2+ sans pré-requis.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="installation">
+      <button class="faq-q" onclick="toggle(this)">
+        Où Coclico stocke-t-il ses données ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Toutes les données sont dans : <code>%AppData%\Coclico\</code></p>
+          <ul>
+            <li><code>settings.json</code> — Paramètres</li>
+            <li><code>flow_chains.json</code> — Vos automatisations</li>
+            <li><code>custom_apps_data.json</code> — Noms et catégories personnalisés</li>
+            <li><code>manual_apps.json</code> — Apps ajoutées manuellement</li>
+            <li><code>logs\</code> — Journaux (rotation 14 jours)</li>
+          </ul>
+          <p>Pour sauvegarder votre configuration, copiez simplement ce dossier. Pour migrer vers un autre PC, collez-le au même chemin.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="installation">
+      <button class="faq-q" onclick="toggle(this)">
+        Comment désinstaller Coclico complètement ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Coclico est portable — pas d'entrée dans Ajout/Suppression de programmes. Pour désinstaller :</p>
+          <ol>
+            <li>Fermez Coclico complètement (clic droit sur l'icône tray → Quitter)</li>
+            <li>Désactivez le démarrage automatique dans les Paramètres Coclico (ou via <code>Démarrage</code> du Gestionnaire des tâches)</li>
+            <li>Supprimez le dossier d'installation de Coclico</li>
+            <li>Optionnel : supprimez <code>%AppData%\Coclico\</code> pour effacer toutes les données</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="faq-group" data-cat="modules">
+    <div class="faq-group-header">
+      <div class="faq-group-icon" style="background:rgba(6,182,212,0.12)">📦</div>
+      <span class="faq-group-title">Modules &amp; Fonctionnalités</span>
+      <span class="faq-group-count">6 questions</span>
+    </div>
+
+    <div class="faq-item" data-cat="modules">
+      <button class="faq-q" onclick="toggle(this)">
+        Certaines de mes applications ne sont pas détectées. Pourquoi ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Coclico détecte depuis 8 sources (registre Windows, Steam, Epic, GOG, Ubisoft, EA, Rockstar, Microsoft Store). Une application peut ne pas être détectée si :</p>
+          <ul>
+            <li>C'est une app portable (pas d'entrée registre) — utilisez <strong>Ajouter manuellement</strong></li>
+            <li>Le launcher de jeu correspondant n'est pas installé</li>
+            <li>L'app est installée dans un profil utilisateur différent</li>
+            <li>Le cache est périmé — cliquez <strong>Rafraîchir</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="modules">
+      <button class="faq-q" onclick="toggle(this)">
+        Le nettoyage système supprime-t-il des fichiers importants ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p><strong>Non.</strong> Le module de nettoyage ne touche que des fichiers temporaires et des caches recréables automatiquement. Il ne supprime jamais :</p>
+          <ul>
+            <li>Vos documents, photos, vidéos ou fichiers personnels</li>
+            <li>L'historique de navigation ou les mots de passe des navigateurs</li>
+            <li>Les données d'applications (sauvegardes de jeux, etc.)</li>
+            <li>Les fichiers système critiques</li>
+          </ul>
+          <p>Une <strong>estimation préalable</strong> de l'espace récupérable est toujours affichée avant de lancer le nettoyage.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="modules">
+      <button class="faq-q" onclick="toggle(this)">
+        L'Installeur Rapide peut-il désinstaller des logiciels ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>La version actuelle (1.0.1 Beta) se concentre sur l'<strong>installation</strong> de logiciels via Winget. La désinstallation n'est pas encore intégrée directement dans l'interface.</p>
+          <p>Pour désinstaller, vous pouvez utiliser les Paramètres Windows → Applications, ou lancer <code>winget uninstall [nom]</code> dans un terminal.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="modules">
+      <button class="faq-q" onclick="toggle(this)">
+        Winget n'est pas disponible sur mon PC. Que faire ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Winget est inclus par défaut sur Windows 11 et Windows 10 21H2+. Si absent :</p>
+          <ol>
+            <li>Ouvrez le <strong>Microsoft Store</strong></li>
+            <li>Recherchez <strong>"App Installer"</strong></li>
+            <li>Installez ou mettez à jour le package</li>
+            <li>Relancez Coclico</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="modules">
+      <button class="faq-q" onclick="toggle(this)">
+        Le Dashboard consomme-t-il beaucoup de ressources ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Non. Le Dashboard utilise un polling léger toutes les <strong>3 secondes</strong> via des appels Win32 P/Invoke natifs, optimisés pour un impact minimal. Coclico en fonctionnement normal consomme :</p>
+          <ul>
+            <li>CPU : &lt; 1% en idle</li>
+            <li>RAM : ~80-120 MB (sans modèle IA chargé)</li>
+            <li>RAM avec IA : 800 MB à 4 GB selon la taille du modèle GGUF</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="modules">
+      <button class="faq-q" onclick="toggle(this)">
+        Puis-je changer la langue à tout moment ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p><strong>Oui, sans redémarrage.</strong> Allez dans <strong>Paramètres → Langue</strong> et sélectionnez parmi les 10 langues disponibles. Le changement est instantané et appliqué à toute l'interface. La langue est sauvegardée dans <code>settings.json</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="faq-group" data-cat="flowchains">
+    <div class="faq-group-header">
+      <div class="faq-group-icon" style="background:rgba(124,58,237,0.12)">⛓️</div>
+      <span class="faq-group-title">Flow Chains</span>
+      <span class="faq-group-count">5 questions</span>
+    </div>
+
+    <div class="faq-item" data-cat="flowchains">
+      <button class="faq-q" onclick="toggle(this)">
+        Les raccourcis Flow Chain fonctionnent-ils quand Coclico est minimisé ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p><strong>Oui, c'est précisément l'intérêt.</strong> Les raccourcis globaux utilisent un hook clavier bas niveau (<code>WH_KEYBOARD_LL</code>) qui écoute les entrées clavier à l'échelle du système, quel que soit l'application en premier plan.</p>
+          <p>Coclico peut être minimisé dans le tray, voire invisible — les raccourcis fonctionnent toujours tant que le processus est actif.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="flowchains">
+      <button class="faq-q" onclick="toggle(this)">
+        Que se passe-t-il si un nœud échoue pendant l'exécution ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Chaque nœud dispose de paramètres <strong>Retry</strong> et <strong>Timeout</strong> indépendants :</p>
+          <ul>
+            <li><strong>Retry</strong> : nombre de tentatives supplémentaires en cas d'échec (0 = pas de retry)</li>
+            <li><strong>Timeout</strong> : durée maximale avant abandon du nœud (0 = pas de limite)</li>
+          </ul>
+          <p>Si un nœud échoue après tous ses retries, l'exécution s'arrête à ce point et un log d'erreur est généré. Les nœuds suivants ne sont pas exécutés.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="flowchains">
+      <button class="faq-q" onclick="toggle(this)">
+        Puis-je exécuter plusieurs Flow Chains en parallèle ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Oui. Plusieurs chaînes assignées à des raccourcis différents peuvent théoriquement être déclenchées simultanément. De plus, le nœud <strong>Parallel</strong> permet d'exécuter plusieurs branches en parallèle <em>au sein</em> d'une même chaîne.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="flowchains">
+      <button class="faq-q" onclick="toggle(this)">
+        Où sont sauvegardées mes Flow Chains ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Dans <code>%AppData%\Coclico\flow_chains.json</code> — un fichier JSON lisible. Vous pouvez l'ouvrir avec n'importe quel éditeur de texte. La sauvegarde est automatique à chaque modification.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="flowchains">
+      <button class="faq-q" onclick="toggle(this)">
+        Comment partager une Flow Chain avec quelqu'un d'autre ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Pour l'instant, il faut partager manuellement le fichier <code>flow_chains.json</code> ou copier l'entrée JSON correspondant à la chaîne. Une fonctionnalité d'import/export dédiée est prévue dans une version future.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="faq-group" data-cat="ia">
+    <div class="faq-group-header">
+      <div class="faq-group-icon" style="background:rgba(124,58,237,0.15)">🤖</div>
+      <span class="faq-group-title">Coclico AI</span>
+      <span class="faq-group-count">5 questions</span>
+    </div>
+
+    <div class="faq-item" data-cat="ia">
+      <button class="faq-q" onclick="toggle(this)">
+        L'IA envoie-t-elle mes données sur Internet ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p><strong>Absolument non.</strong> L'IA de Coclico tourne entièrement en local sur votre machine via LLamaSharp. Le modèle GGUF est chargé en mémoire et l'inférence se fait sur votre CPU (ou GPU si configuré). Aucune requête réseau n'est effectuée pour l'IA.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="ia">
+      <button class="faq-q" onclick="toggle(this)">
+        Quel modèle GGUF recommandez-vous ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Pour une utilisation optimale avec Coclico :</p>
+          <ul>
+            <li><strong>Recommandé</strong> : Llama 3.2 3B Instruct Q4_K_M (~2 GB, rapide)</li>
+            <li><strong>Qualité supérieure</strong> : Mistral 7B Instruct Q4_K_M (~4.5 GB)</li>
+            <li><strong>Machines limitées</strong> : Phi-3.5 Mini Instruct Q4 (~2 GB)</li>
+          </ul>
+          <p>Le fichier doit être renommé exactement <code>IA-support-chat.gguf</code> et placé dans <code>resource/model/</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="ia">
+      <button class="faq-q" onclick="toggle(this)">
+        L'IA répond très lentement. Comment accélérer ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Plusieurs solutions :</p>
+          <ul>
+            <li><strong>Modèle plus petit</strong> : utilisez un modèle 3B plutôt que 7B</li>
+            <li><strong>Quantisation plus agressive</strong> : choisissez Q2_K ou Q3_K plutôt que Q4_K</li>
+            <li><strong>Accélération GPU</strong> : compilez avec le backend <code>LLamaSharp.Backend.Vulkan</code> (nécessite une recompilation)</li>
+            <li><strong>Plus de RAM</strong> : avec 16 GB+, le modèle est chargé entièrement en RAM, évitant les swaps</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="ia">
+      <button class="faq-q" onclick="toggle(this)">
+        L'IA peut-elle ouvrir des applications que je lui demande ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>L'IA peut <strong>naviguer entre les modules de Coclico</strong> (ouvrir le Dashboard, le RAM Cleaner, etc.) et déclencher des actions comme un nettoyage RAM. Elle ne peut pas encore ouvrir des applications tierces — cette fonctionnalité est possible via les <strong>Flow Chains</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="ia">
+      <button class="faq-q" onclick="toggle(this)">
+        L'IA est-elle disponible sans modèle installé ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Non. Le module AI est présent dans l'interface mais affiche un message indiquant que le modèle est absent si <code>resource/model/IA-support-chat.gguf</code> n'existe pas. Tous les autres modules de Coclico fonctionnent parfaitement sans IA.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="faq-group" data-cat="performance">
+    <div class="faq-group-header">
+      <div class="faq-group-icon" style="background:rgba(16,185,129,0.12)">⚡</div>
+      <span class="faq-group-title">Performance &amp; RAM</span>
+      <span class="faq-group-count">4 questions</span>
+    </div>
+
+    <div class="faq-item" data-cat="performance">
+      <button class="faq-q" onclick="toggle(this)">
+        Le nettoyage RAM peut-il ralentir mon PC ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Oui, temporairement avec le <strong>Profil Profond</strong>. Vider la liste Standby et désactiver SuperFetch force Windows à recharger les données depuis le disque lors des premiers accès suivant le nettoyage. Cette "période de réchauffement" dure généralement 30-60 secondes.</p>
+          <p>Pour un usage quotidien, le <strong>Profil Rapide</strong> (Working Sets + GC .NET) est plus approprié — il est rapide et sans impact notable sur les performances.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="performance">
+      <button class="faq-q" onclick="toggle(this)">
+        Quelle est la différence entre RAM physique, virtuelle et Pagefile ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <ul>
+            <li><strong>RAM physique</strong> — Votre mémoire installée (barettes DDR). Rapide, limitée physiquement.</li>
+            <li><strong>Mémoire virtuelle (Commit)</strong> — Espace d'adressage total alloué par tous les processus. Peut dépasser la RAM physique car Windows optimise les pages non utilisées.</li>
+            <li><strong>Pagefile</strong> — Fichier d'échange sur le disque dur/SSD. Utilisé quand la RAM physique est saturée. Beaucoup plus lent que la RAM.</li>
+          </ul>
+          <p>Le RAM Cleaner surveille les trois pour vous donner une vue complète de la santé mémoire de votre système.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="performance">
+      <button class="faq-q" onclick="toggle(this)">
+        À quelle fréquence utiliser le mode auto-clean RAM ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Recommandations :</p>
+          <ul>
+            <li><strong>Par seuil</strong> : 80-85% est généralement le bon équilibre. En dessous, le nettoyage est inutile. Au-dessus de 90%, des ralentissements sont déjà perceptibles.</li>
+            <li><strong>Par intervalle</strong> : toutes les 30-60 minutes en usage intensif, ou désactivé en usage bureautique léger.</li>
+          </ul>
+          <p>Le Profil <strong>Rapide</strong> est recommandé pour l'auto-clean pour minimiser l'impact système.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="performance">
+      <button class="faq-q" onclick="toggle(this)">
+        Pourquoi le graphique RAM fluctue-t-il autant ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>C'est normal. Windows gère activement la mémoire — il précharge des données (SuperFetch/SysMain), libère et réalloue en permanence. Les fluctuations reflètent l'activité normale du gestionnaire de mémoire Windows, pas un problème.</p>
+          <p>Une tendance à la hausse continue sur 90 secondes sans retour indique une possible fuite mémoire dans une application.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="faq-group" data-cat="donnees">
+    <div class="faq-group-header">
+      <div class="faq-group-icon" style="background:rgba(249,115,22,0.12)">🔒</div>
+      <span class="faq-group-title">Confidentialité &amp; Données</span>
+      <span class="faq-group-count">3 questions</span>
+    </div>
+
+    <div class="faq-item" data-cat="donnees">
+      <button class="faq-q" onclick="toggle(this)">
+        Coclico collecte-t-il des données d'utilisation ou de télémétrie ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p><strong>Non.</strong> Coclico est 100% local. Il ne collecte aucune donnée de télémétrie, ne contacte aucun serveur, et ne dispose d'aucun mécanisme de mise à jour automatique. Votre vie privée est totale.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="donnees">
+      <button class="faq-q" onclick="toggle(this)">
+        Coclico nécessite-t-il une connexion Internet ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Pas pour fonctionner. La seule exception est le module <strong>Installeur Rapide</strong> qui appelle <code>winget install</code> — nécessitant Internet pour télécharger les logiciels. Tous les autres modules fonctionnent hors ligne.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="donnees">
+      <button class="faq-q" onclick="toggle(this)">
+        Puis-je réinitialiser complètement Coclico aux paramètres d'usine ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Oui. Fermez Coclico, supprimez le dossier <code>%AppData%\Coclico\</code> en entier, puis relancez. Coclico se comportera comme à la première installation (LauncherWindow, paramètres par défaut).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="faq-group" data-cat="dev">
+    <div class="faq-group-header">
+      <div class="faq-group-icon" style="background:rgba(74,108,247,0.12)">💻</div>
+      <span class="faq-group-title">Développeurs &amp; Contribution</span>
+      <span class="faq-group-count">4 questions</span>
+    </div>
+
+    <div class="faq-item" data-cat="dev">
+      <button class="faq-q" onclick="toggle(this)">
+        Coclico est-il open source ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Le code source est disponible sur GitHub. Consultez le <a href="wiki.html">Wiki Développeur</a> pour comprendre l'architecture et commencer à contribuer.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="dev">
+      <button class="faq-q" onclick="toggle(this)">
+        Comment ajouter un nouveau nœud Flow Chain ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Le processus complet est documenté dans le <a href="wiki.html#add-node">Wiki Développeur → Ajouter un nœud</a>. En résumé :</p>
+          <ol>
+            <li>Déclarer le type dans <code>FlowLink.cs</code></li>
+            <li>Implémenter l'exécution dans <code>FlowChainExecutionService.cs</code></li>
+            <li>Ajouter l'UI dans <code>FlowChainsView.xaml</code></li>
+            <li>Écrire les tests dans <code>Coclico.Tests</code></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="dev">
+      <button class="faq-q" onclick="toggle(this)">
+        Quels tests sont disponibles ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Le projet <code>Coclico.Tests</code> utilise <strong>xUnit + Moq</strong>. Lancez les tests avec :</p>
+          <p><code>dotnet test Coclico.Tests/Coclico.Tests.csproj</code></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-cat="dev">
+      <button class="faq-q" onclick="toggle(this)">
+        Comment enrichir la base de connaissance de l'IA ?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Ajoutez des fichiers <code>.md</code> dans <code>resource/docs/</code>. Le <code>RagService</code> indexe automatiquement tous les fichiers Markdown de ce dossier au démarrage. Pas de recompilation nécessaire — il suffit de relancer Coclico.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="faq-cta">
+  <h2>Vous n'avez pas trouvé votre réponse ?</h2>
+  <p>Consultez la documentation complète ou le tutoriel utilisateur détaillé.</p>
+  <div class="cta-btns">
+    <a href="tutorial.html" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Guide & Tutoriel
+    </a>
+    <a href="wiki.html" class="btn-ghost">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      Wiki Développeur
+    </a>
+    <a href="docs.html" class="btn-ghost">Documentation</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>© 2024-2026 Coclico · <a href="index.html">Accueil</a> · <a href="tutorial.html">Tutoriel</a> · <a href="wiki.html">Wiki</a> · <a href="docs.html">Docs</a></p>
+</footer>
+
+<script>
+  function toggle(btn) {
+    const item = btn.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+  let currentCat = 'all';
+
+  function filterCat(cat, btn) {
+    currentCat = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  function filterFaq(q) {
+    applyFilters(q);
+  }
+
+  function applyFilters(q = document.getElementById('faqSearch').value) {
+    const query = q.toLowerCase().trim();
+    let visible = 0;
+
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const catMatch = currentCat === 'all' || item.dataset.cat === currentCat;
+      const text = item.querySelector('.faq-q').textContent.toLowerCase()
+        + item.querySelector('.faq-a-inner').textContent.toLowerCase();
+      const textMatch = !query || text.includes(query);
+      const show = catMatch && textMatch;
+      item.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+
+    // Show/hide groups
+    document.querySelectorAll('.faq-group').forEach(group => {
+      const catMatch = currentCat === 'all' || group.dataset.cat === currentCat;
+      const hasVisible = group.querySelectorAll('.faq-item:not(.hidden)').length > 0;
+      group.style.display = (catMatch && hasVisible) ? '' : 'none';
+    });
+
+    document.getElementById('noResults').classList.toggle('show', visible === 0);
+  }
+</script>
+</body>
+</html>
+
