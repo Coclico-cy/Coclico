@@ -1,0 +1,216 @@
+---
+import DocLayout from '../../../layouts/DocLayout.astro';
+const lang = 'en' as const;
+
+const sidebarLinks = [
+  { group: 'Getting Started', label: 'Installation', href: '#installation' },
+  { group: 'Getting Started', label: 'First launch', href: '#first-launch' },
+  { group: 'Getting Started', label: 'Main interface', href: '#interface' },
+  { group: 'Modules', label: 'Dashboard', href: '#dashboard' },
+  { group: 'Modules', label: 'Deep Clean', href: '#cleaning' },
+  { group: 'Modules', label: 'RAM Cleaner', href: '#ram-cleaner' },
+  { group: 'Modules', label: 'App Scanner', href: '#scanner' },
+  { group: 'Modules', label: 'Quick Installer', href: '#installer' },
+  { group: 'Modules', label: 'Applications', href: '#applications' },
+  { group: 'Modules', label: 'Flow Chains', href: '#flow-chains' },
+  { group: 'Modules', label: 'Settings', href: '#settings' },
+  { group: 'Advanced', label: 'Flow Chains step-by-step', href: '#flow-chains-guide' },
+  { group: 'Advanced', label: 'Coclico AI', href: '#coclico-ai' },
+  { group: 'Advanced', label: 'Keyboard shortcuts', href: '#shortcuts' },
+  { group: 'Advanced', label: 'Files & Data', href: '#files-data' },
+];
+
+const tocLinks = [
+  { label: 'Installation', href: '#installation', level: 2 as const },
+  { label: 'System requirements', href: '#requirements', level: 3 as const },
+  { label: 'Installation steps', href: '#install-steps', level: 3 as const },
+  { label: 'First launch', href: '#first-launch', level: 2 as const },
+  { label: 'Main interface', href: '#interface', level: 2 as const },
+  { label: 'The 8 modules', href: '#modules', level: 2 as const },
+  { label: 'Dashboard', href: '#dashboard', level: 3 as const },
+  { label: 'Deep Clean', href: '#cleaning', level: 3 as const },
+  { label: 'RAM Cleaner', href: '#ram-cleaner', level: 3 as const },
+  { label: 'App Scanner', href: '#scanner', level: 3 as const },
+  { label: 'Quick Installer', href: '#installer', level: 3 as const },
+  { label: 'Applications', href: '#applications', level: 3 as const },
+  { label: 'Flow Chains', href: '#flow-chains', level: 3 as const },
+  { label: 'Settings', href: '#settings', level: 3 as const },
+  { label: 'Flow Chains step-by-step', href: '#flow-chains-guide', level: 2 as const },
+  { label: 'Coclico AI', href: '#coclico-ai', level: 2 as const },
+  { label: 'Keyboard shortcuts', href: '#shortcuts', level: 2 as const },
+  { label: 'Files & Data', href: '#files-data', level: 2 as const },
+];
+---
+
+<DocLayout
+  title="Guide & Tutorial — Coclico"
+  description="Complete Coclico user guide: installation, modules, Flow Chains, local AI and keyboard shortcuts."
+  lang={lang}
+  currentPath="/guide/"
+  sidebarLinks={sidebarLinks}
+  tocLinks={tocLinks}
+  heroTitle="Guide & Tutorial"
+  heroBadge="User Guide"
+  heroDesc="Everything you need to install, configure and master Coclico — from first launch to advanced automations."
+>
+
+  <!-- Cross-links to complementary sections -->
+  <nav class="doc-crosslinks" aria-label="Complementary sections">
+    <a href="/Coclico/en/docs/" class="crosslink-card">
+      <span class="crosslink-icon">📚</span>
+      <span class="crosslink-label">API Documentation</span>
+      <span class="crosslink-desc">Full reference of interfaces, services and models</span>
+    </a>
+    <a href="/Coclico/en/wiki/" class="crosslink-card">
+      <span class="crosslink-icon">⚙️</span>
+      <span class="crosslink-label">Developer Wiki</span>
+      <span class="crosslink-desc">Internal architecture, MVVM, DI and autonomous system</span>
+    </a>
+    <a href="/Coclico/en/faq/" class="crosslink-card">
+      <span class="crosslink-icon">❓</span>
+      <span class="crosslink-label">FAQ</span>
+      <span class="crosslink-desc">Frequently asked questions about installation and usage</span>
+    </a>
+  </nav>
+
+  <h2 id="installation">Installation</h2>
+
+  <h3 id="requirements">System requirements</h3>
+  <p>Coclico is a native Windows application built on .NET 10 and WPF. Before installing, verify your system meets the minimum requirements:</p>
+  <ul>
+    <li><strong>OS:</strong> Windows 10 21H2 or Windows 11 (64-bit)</li>
+    <li><strong>RAM:</strong> 4 GB minimum — 8 GB recommended for the AI module</li>
+    <li><strong>Disk:</strong> 500 MB for the app + space for the GGUF model (~4 GB)</li>
+    <li><strong>Permissions:</strong> Administrator account required (UAC elevation at startup)</li>
+    <li><strong>GPU (optional):</strong> Vulkan-compatible card for AI model acceleration</li>
+    <li><strong>Runtime:</strong> .NET 10 Runtime included in the installer</li>
+  </ul>
+
+  <h3 id="install-steps">Installation steps</h3>
+  <ol>
+    <li>Download the latest installer <code>Coclico-Setup-x64.exe</code> from the download page.</li>
+    <li>Double-click the installer — Windows may show a SmartScreen warning. Click <strong>"More info" → "Run anyway"</strong>.</li>
+    <li>Accept the UAC elevation. The installer places Coclico in <code>%ProgramFiles%\Coclico\</code>.</li>
+    <li>On first launch, the <strong>LauncherWindow</strong> asks you to choose the startup mode: manual, with Windows, or minimized to system tray.</li>
+    <li>To use the AI module, place your GGUF model in <code>%APPDATA%\Coclico\resource\model\</code> and name it <code>IA-support-chat.gguf</code>.</li>
+  </ol>
+
+  <blockquote>
+    Coclico requires administrator rights to access system APIs (WMI, registry, kernel memory). Elevation is requested once at startup via UAC.
+  </blockquote>
+
+  <h2 id="first-launch">First launch</h2>
+  <p>On first launch, Coclico performs an initial system analysis and displays a splash screen (<strong>SplashWindow</strong>) while services initialize. This typically takes 3 to 8 seconds.</p>
+  <p>The <strong>LauncherWindow</strong> then appears to configure:</p>
+  <ul>
+    <li><strong>Launch mode:</strong> Manual / On Windows startup / Minimized to tray</li>
+    <li><strong>Theme:</strong> Light, Dark, or System (follows Windows preference)</li>
+    <li><strong>Language:</strong> Français, English, Deutsch, Español</li>
+    <li><strong>User profile:</strong> Name and avatar (optional)</li>
+  </ul>
+
+  <h2 id="interface">Main interface</h2>
+  <p>Coclico uses a <strong>WPF-UI 4.x</strong> interface with a vertical navigation bar on the left. Each icon corresponds to a module. The title bar is customized with integrated window control buttons.</p>
+  <ul>
+    <li><strong>Navigation:</strong> Click an icon or use keyboard shortcuts</li>
+    <li><strong>Tray:</strong> Closing the window minimizes to the system tray (double-click to reopen)</li>
+    <li><strong>Theme:</strong> Sun/moon button in the top right to toggle light/dark</li>
+    <li><strong>Notifications:</strong> Toasts appear bottom-right for important actions</li>
+  </ul>
+
+  <h2 id="modules">The 8 modules</h2>
+
+  <h3 id="dashboard">Dashboard</h3>
+  <p>The Dashboard is Coclico's home page. It displays in real time:</p>
+  <ul>
+    <li><strong>CPU:</strong> Instant and 60-second average usage</li>
+    <li><strong>RAM:</strong> Used / available / total memory with historical graph</li>
+    <li><strong>Disk:</strong> Space used per drive with alerts if &lt;10% free</li>
+    <li><strong>Network:</strong> Inbound/outbound throughput and local IP address</li>
+    <li><strong>System health score:</strong> Overall indicator computed by <code>StartupHealthService</code></li>
+    <li><strong>Quick actions:</strong> Quick clean, RAM free, direct scan buttons</li>
+  </ul>
+
+  <h3 id="cleaning">Deep Clean</h3>
+  <p>The Deep Clean module analyzes and removes unnecessary files from your system across <strong>10 categories</strong>:</p>
+  <ol>
+    <li><strong>Windows temporary files</strong> — <code>%TEMP%</code> and <code>C:\Windows\Temp</code></li>
+    <li><strong>Browser cache</strong> — Chrome, Edge, Firefox, Opera (profiles auto-detected)</li>
+    <li><strong>System logs</strong> — Windows event logs, IIS logs, Update logs</li>
+    <li><strong>Recycle Bin</strong> — empties recycle bin on all drives</li>
+    <li><strong>User temp files</strong> — AppData\Local\Temp per user</li>
+    <li><strong>Thumbnail cache</strong> — thumbs.db and Windows icon databases</li>
+    <li><strong>Windows Error Reports</strong> — WER folder</li>
+    <li><strong>Old installers</strong> — pending .msi/.exe in Windows Installer cache</li>
+    <li><strong>DNS cache</strong> — flushes via <code>DnsFlushResolverCache</code> (iphlpapi.dll)</li>
+    <li><strong>Prefetch</strong> — Windows prefetch files (<code>C:\Windows\Prefetch</code>)</li>
+  </ol>
+
+  <h3 id="ram-cleaner">RAM Cleaner</h3>
+  <p>The RAM Cleaner frees physical memory by forcing Windows to trim process working sets and flush kernel standby lists. It directly uses Win32 APIs via P/Invoke:</p>
+  <ul>
+    <li><code>kernel32.dll</code> — <code>SetProcessWorkingSetSize</code>, <code>GetCurrentProcess</code></li>
+    <li><code>ntdll.dll</code> — <code>NtSetSystemInformation</code> (SystemMemoryListInformation)</li>
+    <li><code>advapi32.dll</code> — <code>AdjustTokenPrivileges</code>, <code>LookupPrivilegeValue</code></li>
+    <li><code>dnsapi.dll</code> — <code>DnsFlushResolverCache</code></li>
+    <li><code>iphlpapi.dll</code> — <code>FlushIpNetTable</code></li>
+  </ul>
+  <p>Typically, 200 to 800 MB are freed depending on system state.</p>
+
+  <h3 id="scanner">App Scanner</h3>
+  <p>The App Scanner analyzes your installed applications and identifies unused, large, duplicate, or end-of-life software. Results display in a sortable list with filters.</p>
+
+  <h3 id="installer">Quick Installer</h3>
+  <p>Deploy common applications in one click via <code>InstallerService</code>. Supports silent installation, batch installs, SHA256 integrity verification, and automatic rollback on failure.</p>
+
+  <h3 id="applications">Applications</h3>
+  <p>Lists <strong>all</strong> installed applications from <strong>8 sources</strong>: Registry HKLM+HKCU, Steam, Epic Games, GOG Galaxy, Ubisoft Connect, EA App, Rockstar Games, Microsoft Store.</p>
+
+  <h3 id="flow-chains">Flow Chains</h3>
+  <p>Visual automation system with 28 node types, 10 condition operators, and 3 error actions. See <a href="#flow-chains-guide">Flow Chains step-by-step</a> for the full walkthrough.</p>
+
+  <h3 id="settings">Settings</h3>
+  <p>Configure all Coclico aspects: language, theme, accent color (default <code>#6366F1</code> Indigo), cleaning categories, AI &amp; Audit mode, security policy, and notifications.</p>
+
+  <h2 id="flow-chains-guide">Flow Chains — Step by step</h2>
+
+  <h3>Step 1 — Create a new chain</h3>
+  <p>In the Flow Chains module, click <strong>"New chain"</strong>. Give it a name and description. Each chain contains an ordered list of <strong>nodes (PipelineNode)</strong>.</p>
+
+  <h3>Step 2 — Add nodes</h3>
+  <p>Click <strong>"+ Add node"</strong> to open the type selector. The <strong>28 available node types</strong> (<code>NodeType</code> enum) cover process management, registry, files, cleaning, memory, network, and control flow.</p>
+
+  <h3>Step 3 — Configure conditions</h3>
+  <p>Each node can have an execution condition with <strong>10 operators</strong>: <code>Equals</code>, <code>NotEquals</code>, <code>GreaterThan</code>, <code>LessThan</code>, <code>GreaterOrEqual</code>, <code>LessOrEqual</code>, <code>Contains</code>, <code>NotContains</code>, <code>IsEmpty</code>, <code>IsNotEmpty</code>.</p>
+
+  <h3>Step 4 — Set OnErrorAction</h3>
+  <ul>
+    <li><code>ContinueNext</code> (default) — log error and continue to next node</li>
+    <li><code>StopChain</code> — immediately stop chain execution</li>
+    <li><code>SkipToEnd</code> — skip all intermediate nodes, execute only the last node</li>
+  </ul>
+
+  <h3>Step 5 — Run and monitor</h3>
+  <p>Click <strong>"Run"</strong>. Real-time progress shows each node's status (Pending / Running / Success / Error). Schedule automatic execution via the <strong>"Schedule"</strong> menu.</p>
+
+  <h2 id="coclico-ai">Coclico AI</h2>
+  <p>Coclico embeds a fully local AI assistant based on <strong>LLamaSharp 0.26</strong>. No data leaves your machine (<strong>Zero Cloud</strong>).</p>
+  <p>Two isolated LLM contexts (<strong>dual-executor</strong>) ensure background optimization tasks never slow down your interactive chat:</p>
+  <ul>
+    <li><strong>Chat context</strong> (<code>_chatCtx</code>) — dedicated to user chat in <code>AiChatView</code></li>
+    <li><strong>Engine context</strong> (<code>_engineCtx</code>) — dedicated to background <code>OptimizationEngineService</code> tasks (every 30s)</li>
+  </ul>
+
+  <h2 id="shortcuts">Keyboard shortcuts</h2>
+  <ul>
+    <li><kbd>Ctrl</kbd> + <kbd>1–8</kbd> — Navigate to modules 1 through 8</li>
+    <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> — Quick clean from anywhere</li>
+    <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> — Quick RAM free</li>
+    <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>A</kbd> — Open AI chat</li>
+    <li><kbd>Escape</kbd> — Close active panel/dialog</li>
+  </ul>
+
+  <h2 id="files-data">Files & Data</h2>
+  <p>All Coclico data lives in <code>%APPDATA%\Coclico\</code>: settings, flow chains, audit logs, Serilog logs, rollback snapshots, and the AI model. No data is sent to external servers.</p>
+
+</DocLayout>

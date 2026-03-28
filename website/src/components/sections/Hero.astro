@@ -1,0 +1,425 @@
+---
+import type { Lang } from '../../i18n/index';
+import { useTranslations, getLocalePath } from '../../i18n/index';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="hero" id="hero" aria-label="Hero">
+  <!-- Canvas background particle -->
+  <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+  <!-- Orbs décoratifs -->
+  <div class="hero-orb orb-1" aria-hidden="true"></div>
+  <div class="hero-orb orb-2" aria-hidden="true"></div>
+  <div class="hero-orb orb-3" aria-hidden="true"></div>
+
+  <div class="container hero-content">
+    <!-- Badge version -->
+    <div class="hero-badge gsap-fade-up" id="hero-badge">
+      <span class="badge-pulse"></span>
+      <span class="badge">{t('hero_badge')}</span>
+    </div>
+
+    <!-- Titre principal -->
+    <h1 class="hero-title gsap-fade-up" id="hero-title">
+      <span class="hero-line1">{t('hero_title_line1')}</span>
+      <span class="hero-accent">{t('hero_title_accent')}</span>
+      <span class="hero-line2">{t('hero_title_line2')}</span>
+    </h1>
+
+    <!-- Sous-titre -->
+    <p class="hero-sub gsap-fade-up" id="hero-sub">
+      {t('hero_sub')}
+    </p>
+
+    <!-- CTA buttons -->
+    <div class="hero-ctas gsap-fade-up" id="hero-ctas">
+      <a href="#download" class="btn-primary hero-btn-dl">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        {t('hero_cta_download')}
+      </a>
+      <a href="#modules" class="btn-outline hero-btn-discover">
+        {t('hero_cta_discover')}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Stats rapides -->
+    <div class="hero-stats gsap-fade-up" id="hero-stats" role="list">
+      {[
+        { value: '8',    key: 'stat_modules' },
+        { value: '28',   key: 'stat_nodes' },
+        { value: '10',   key: 'stat_conditions' },
+        { value: '8',    key: 'stat_sources' },
+        { value: '100%', key: 'stat_local' },
+      ].map(({ value, key }) => (
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-value">{value}</span>
+          <span class="hero-stat-label">{t(key as any)}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="hero-scroll" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span>{t('hero_scroll')}</span>
+  </div>
+</section>
+
+<style>
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 0 80px;
+  overflow: hidden;
+}
+
+/* Canvas background */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Orbs lumineux */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.orb-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
+  top: -100px; left: -150px;
+  animation: orbFloat1 8s ease-in-out infinite;
+}
+.orb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%);
+  top: 20%; right: -100px;
+  animation: orbFloat2 10s ease-in-out infinite;
+}
+.orb-3 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);
+  bottom: 0; left: 30%;
+  animation: orbFloat3 12s ease-in-out infinite;
+}
+
+@keyframes orbFloat1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(30px, 40px) scale(1.05); }
+}
+@keyframes orbFloat2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(-20px, 30px) scale(0.95); }
+}
+@keyframes orbFloat3 {
+  0%,100% { transform: translate(0,0); }
+  50% { transform: translate(20px,-20px); }
+}
+
+/* Contenu */
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+/* Badge */
+.hero-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-pulse {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 0 rgba(34,197,94,0.4);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+
+/* Titre */
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 900px;
+}
+
+.hero-line1, .hero-line2 {
+  display: block;
+  color: var(--text);
+}
+
+.hero-accent {
+  display: block;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Sub */
+.hero-sub {
+  max-width: 580px;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* CTAs */
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hero-btn-dl {
+  font-size: 1rem;
+  padding: 0.8rem 1.8rem;
+}
+
+.hero-btn-discover {
+  font-size: 1rem;
+  padding: 0.8rem 1.8rem;
+}
+
+/* Stats */
+.hero-stats {
+  display: flex;
+  gap: 0.5rem 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(10px);
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.hero-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent-hover) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-stat-label {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+/* Séparateur entre stats */
+.hero-stat:not(:last-child) {
+  padding-right: 2rem;
+  border-right: 1px solid var(--border);
+}
+
+/* Scroll indicator */
+.hero-scroll {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-3);
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+}
+
+@keyframes scrollBounce {
+  0%,100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+  50%      { opacity: 1;   transform: translateX(-50%) translateY(6px); }
+}
+
+@media (max-width: 640px) {
+  .hero-stat:not(:last-child) {
+    padding-right: 0;
+    border-right: none;
+  }
+  .hero-stats { gap: 1rem; }
+}
+</style>
+
+<script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (prefersReducedMotion) {
+  document.querySelectorAll('.gsap-fade-up, .gsap-fade-in, .gsap-scale-in').forEach(el => {
+    (el as HTMLElement).style.opacity = '1';
+    (el as HTMLElement).style.transform = 'none';
+  });
+} else {
+  // ── Animations d'entrée Hero ──────────────────────────────────────
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+  tl.fromTo('#hero-badge',  { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 })
+    .fromTo('#hero-title',  { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.3')
+    .fromTo('#hero-sub',    { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7 }, '-=0.5')
+    .fromTo('#hero-ctas',   { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+    .fromTo('#hero-stats',  { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7 }, '-=0.3');
+
+  // ── Canvas particles ──────────────────────────────────────────────
+  const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
+  if (canvas) {
+    const ctx = canvas.getContext('2d')!;
+    let W = 0, H = 0;
+    const particles: {x:number; y:number; vx:number; vy:number; r:number; a:number}[] = [];
+
+    const resize = () => {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    };
+
+    const init = () => {
+      particles.length = 0;
+      const count = Math.min(Math.floor((W * H) / 12000), 80);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          r: Math.random() * 1.5 + 0.5,
+          a: Math.random() * 0.6 + 0.2,
+        });
+      }
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(99,102,241,${p.a})`;
+        ctx.fill();
+      }
+      // Grid spatial pour connexions O(n)
+      const CELL_SIZE = 120;
+      const gridCols = Math.ceil(W / CELL_SIZE);
+      const gridRows = Math.ceil(H / CELL_SIZE);
+      const grid: number[][] = Array.from({ length: gridCols * gridRows }, () => []);
+
+      for (let i = 0; i < particles.length; i++) {
+        const col = Math.min(gridCols - 1, Math.floor(particles[i].x / CELL_SIZE));
+        const row = Math.min(gridRows - 1, Math.floor(particles[i].y / CELL_SIZE));
+        grid[row * gridCols + col].push(i);
+      }
+
+      for (let row = 0; row < gridRows; row++) {
+        for (let col = 0; col < gridCols; col++) {
+          const cellIdx = row * gridCols + col;
+          const cell = grid[cellIdx];
+          const neighbors = [cellIdx];
+          if (col + 1 < gridCols) neighbors.push(cellIdx + 1);
+          if (row + 1 < gridRows) neighbors.push(cellIdx + gridCols);
+          if (col + 1 < gridCols && row + 1 < gridRows) neighbors.push(cellIdx + gridCols + 1);
+
+          for (const i of cell) {
+            for (const nIdx of neighbors) {
+              for (const j of grid[nIdx]) {
+                if (j <= i) continue;
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                  ctx.beginPath();
+                  ctx.moveTo(particles[i].x, particles[i].y);
+                  ctx.lineTo(particles[j].x, particles[j].y);
+                  ctx.strokeStyle = `rgba(99,102,241,${0.12 * (1 - dist / 120)})`;
+                  ctx.lineWidth = 0.5;
+                  ctx.stroke();
+                }
+              }
+            }
+          }
+        }
+      }
+      requestAnimationFrame(draw);
+    };
+
+    resize();
+    init();
+    draw();
+    window.addEventListener('resize', () => { resize(); init(); });
+  }
+}
+</script>

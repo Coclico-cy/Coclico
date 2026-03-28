@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coclico -- Rapport Technique v1.0.4 -- Mars 2026</title>
+<style>
+  /* ====================================================================
+     PRINT & LAYOUT — A4 optimized
+     ==================================================================== */
+  @page {
+    size: A4;
+    margin: 22mm 20mm 24mm 20mm;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', 'Noto Serif', serif;
+    line-height: 1.65;
+    color: #1a1a1a;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+    max-width: 210mm;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ====================================================================
+     PAGE BREAKS
+     ==================================================================== */
+  .page-break { page-break-after: always; break-after: page; }
+  .no-break   { page-break-inside: avoid; break-inside: avoid; }
+  h2 { page-break-after: avoid; break-after: avoid; }
+  h3 { page-break-after: avoid; break-after: avoid; }
+
+  /* ====================================================================
+     COVER PAGE
+     ==================================================================== */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 60px 40px;
+  }
+
+  .cover-rule {
+    width: 120px;
+    height: 3px;
+    background: #1a1a2e;
+    margin: 28px auto;
+    border: none;
+  }
+
+  .cover h1 {
+    font-size: 2.6em;
+    font-weight: 700;
+    color: #0d0d1a;
+    letter-spacing: 0.06em;
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+  }
+
+  .cover .subtitle {
+    font-size: 1.35em;
+    color: #333;
+    font-weight: 400;
+    margin: 8px 0 0 0;
+  }
+
+  .cover .doc-type {
+    font-size: 1.05em;
+    color: #555;
+    font-style: italic;
+    margin-top: 32px;
+    letter-spacing: 0.04em;
+  }
+
+  .cover .meta-block {
+    margin-top: 60px;
+    font-size: 0.92em;
+    color: #444;
+    line-height: 1.9;
+  }
+
+  .cover .meta-block strong {
+    color: #1a1a2e;
+  }
+
+  .cover .classification {
+    margin-top: 48px;
+    padding: 10px 28px;
+    border: 2px solid #1a1a2e;
+    font-size: 0.85em;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1a1a2e;
+  }
+
+  /* ====================================================================
+     TABLE OF CONTENTS
+     ==================================================================== */
+  .toc {
+    padding: 40px 0;
+  }
+
+  .toc h2 {
+    font-size: 1.5em;
+    color: #1a1a2e;
+    border-bottom: 2px solid #1a1a2e;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+
+  .toc ol {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: toc-section;
+  }
+
+  .toc > ol > li {
+    counter-increment: toc-section;
+    margin-bottom: 6px;
+  }
+
+  .toc > ol > li::before {
+    content: counter(toc-section) ".";
+    display: inline-block;
+    width: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .toc > ol > li > a {
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 1.02em;
+  }
+
+  .toc > ol > li > a:hover {
+    text-decoration: underline;
+  }
+
+  .toc .toc-sub {
+    list-style: none;
+    padding-left: 36px;
+    margin-top: 3px;
+    counter-reset: toc-subsection;
+  }
+
+  .toc .toc-sub li {
+    counter-increment: toc-subsection;
+    margin-bottom: 2px;
+    font-size: 0.94em;
+  }
+
+  .toc .toc-sub li::before {
+    content: counter(toc-section) "." counter(toc-subsection) " ";
+    display: inline-block;
+    width: 36px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .toc .toc-sub li a {
+    text-decoration: none;
+    color: #333;
+  }
+
+  /* ====================================================================
+     HEADINGS
+     ==================================================================== */
+  h2 {
+    font-size: 1.5em;
+    color: #ffffff;
+    background: #1a1a2e;
+    padding: 10px 16px;
+    margin: 36px 0 18px 0;
+    letter-spacing: 0.03em;
+  }
+
+  h3 {
+    font-size: 1.18em;
+    color: #1a1a2e;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    margin: 26px 0 12px 0;
+  }
+
+  h4 {
+    font-size: 1.04em;
+    color: #2a2a4e;
+    margin: 18px 0 8px 0;
+    font-weight: 700;
+  }
+
+  /* ====================================================================
+     TEXT
+     ==================================================================== */
+  p {
+    margin: 0 0 10px 0;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  strong { color: #1a1a2e; }
+
+  /* ====================================================================
+     TABLES
+     ==================================================================== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 18px 0;
+    font-size: 0.92em;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    background: #1a1a2e;
+    color: #ffffff;
+  }
+
+  thead th {
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.92em;
+    letter-spacing: 0.02em;
+  }
+
+  tbody tr { border-bottom: 1px solid #ddd; }
+  tbody tr:nth-child(even) { background: #f8f8fb; }
+
+  td {
+    padding: 7px 10px;
+    vertical-align: top;
+  }
+
+  /* ====================================================================
+     CODE BLOCKS
+     ==================================================================== */
+  code {
+    font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
+    font-size: 0.88em;
+    background: #f0f0f5;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #2d2d5e;
+  }
+
+  pre {
+    background: #0d0d1a;
+    color: #d4d4ec;
+    padding: 14px 18px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.55;
+    margin: 12px 0 16px 0;
+    page-break-inside: avoid;
+  }
+
+  pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  /* ====================================================================
+     LISTS
+     ==================================================================== */
+  ul, ol {
+    margin: 6px 0 12px 0;
+    padding-left: 24px;
+  }
+
+  li { margin-bottom: 4px; }
+
+  /* ====================================================================
+     FIGURE / DIAGRAM PLACEHOLDERS
+     ==================================================================== */
+  .diagram-box {
+    border: 1px solid #ccc;
+    background: #fafafa;
+    padding: 18px;
+    margin: 14px 0;
+    text-align: center;
+    font-size: 0.88em;
+    color: #555;
+    page-break-inside: avoid;
+  }
+
+  .diagram-box .diagram-title {
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+    font-size: 0.95em;
+  }
+
+  .diagram-box pre {
+    text-align: left;
+    background: #f5f5f8;
+    color: #1a1a2e;
+    font-size: 0.82em;
+    margin: 8px 0 0 0;
+  }
+
+  /* ====================================================================
+     FOOTER
+     ==================================================================== */
+  .doc-footer {
+    margin-top: 60px;
+    padding-top: 14px;
+    border-top: 2px solid #1a1a2e;
+    font-size: 0.82em;
+    color: #666;
+    text-align: center;
+  }
+
+  /* ====================================================================
+     SECTION NUMBER PREFIX
+     ==================================================================== */
+  .section-ref {
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  /* Utility */
+  .text-center { text-align: center; }
+  .mt-0 { margin-top: 0; }
+  .mb-0 { margin-bottom: 0; }
+
+  /* Screen-only padding */
+  @media screen {
+    body { padding: 24px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================================================================
+     PAGE DE GARDE
+     ==================================================================== -->
+<div class="cover">
+  <h1>Coclico</h1>
+  <div class="subtitle">Rapport Technique v1.0.4</div>
+  <hr class="cover-rule">
+  <div class="doc-type">Document de Reference Technique</div>
+
+  <div class="meta-block">
+    <strong>Version :</strong> 1.0.4<br>
+    <strong>Date :</strong> Mars 2026<br>
+    <strong>Classification :</strong> Technique -- Usage Interne et Partenaires<br>
+    <strong>Framework :</strong> .NET 10 / C# (LangVersion Preview) / WPF-UI 4.x<br>
+    <strong>Plateforme cible :</strong> Windows 10 22H2+ / Windows 11<br>
+    <strong>IA locale :</strong> LLamaSharp 0.26 -- Zero Cloud<br>
+  </div>
+
+  <div class="classification">Documentation Technique Open Source — coclico-cy</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     HISTORIQUE DES REVISIONS
+     ==================================================================== -->
+<h2>Historique des revisions</h2>
+
+<table>
+  <thead>
+    <tr><th>Version</th><th>Date</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1.0.0</td><td>Janvier 2025</td><td>Version initiale -- modules de base (Dashboard, Applications, Nettoyage, RAM Cleaner).</td></tr>
+    <tr><td>1.0.1</td><td>Juin 2025</td><td>Phase 3.2 -- Integration LLamaSharp dual-executor, AiChatService, Flow Chains v2.</td></tr>
+    <tr><td>1.0.2</td><td>Octobre 2025</td><td>Phase 3.3 -- SourceAnalyzer (Roslyn AST), StateValidator (Clone Numerique), metriques Halstead.</td></tr>
+    <tr><td>1.0.3</td><td>Janvier 2026</td><td>Phase 3.4 -- CodePatcherService, workflow d'approbation humaine, audit NDJSON, Isolation Forest.</td></tr>
+    <tr><td>1.0.4</td><td>Mars 2026</td><td>Corrections post-audit expert, refactoring axes 1-6, algorithmes avances, site web multi-langue.</td></tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     TABLE DES MATIERES
+     ==================================================================== -->
+<div class="toc">
+<h2>Table des matieres</h2>
+<ol>
+  <li><a href="#sec1">Resume executif</a></li>
+
+  <li><a href="#sec2">Presentation generale</a>
+    <ul class="toc-sub">
+      <li><a href="#sec2-1">Philosophie du projet</a></li>
+      <li><a href="#sec2-2">Perimetre fonctionnel</a></li>
+      <li><a href="#sec2-3">Public cible</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec3">Architecture technique detaillee</a>
+    <ul class="toc-sub">
+      <li><a href="#sec3-1">Pile technologique</a></li>
+      <li><a href="#sec3-2">Cycle de vie de l'application</a></li>
+      <li><a href="#sec3-3">Injection de dependances</a></li>
+      <li><a href="#sec3-4">Structure MVVM</a></li>
+      <li><a href="#sec3-5">Optimisations du runtime</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec4">Modules fonctionnels</a>
+    <ul class="toc-sub">
+      <li><a href="#sec4-1">Tableau de Bord</a></li>
+      <li><a href="#sec4-2">Applications</a></li>
+      <li><a href="#sec4-3">Flow Chains</a></li>
+      <li><a href="#sec4-4">Installeur Rapide</a></li>
+      <li><a href="#sec4-5">Nettoyage Systeme</a></li>
+      <li><a href="#sec4-6">Scanner</a></li>
+      <li><a href="#sec4-7">RAM Cleaner</a></li>
+      <li><a href="#sec4-8">Coclico AI</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec5">Intelligence artificielle locale</a>
+    <ul class="toc-sub">
+      <li><a href="#sec5-1">Architecture LLamaSharp dual-executor</a></li>
+      <li><a href="#sec5-2">Liberation memoire automatique</a></li>
+      <li><a href="#sec5-3">RAG integre</a></li>
+      <li><a href="#sec5-4">Parametres d'inference</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec6">Noyau autonome</a>
+    <ul class="toc-sub">
+      <li><a href="#sec6-1">OptimizationEngine -- Pipeline 3 etapes</a></li>
+      <li><a href="#sec6-2">SourceAnalyzer -- Roslyn AST</a></li>
+      <li><a href="#sec6-3">StateValidator -- Clone Numerique</a></li>
+      <li><a href="#sec6-4">CodePatcher -- Workflow d'approbation</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec7">Securite et conformite</a>
+    <ul class="toc-sub">
+      <li><a href="#sec7-1">Principe Zero Cloud</a></li>
+      <li><a href="#sec7-2">Rollback Safety</a></li>
+      <li><a href="#sec7-3">Politique de securite</a></li>
+      <li><a href="#sec7-4">Piste d'audit</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec8">Telemetrie et observabilite</a>
+    <ul class="toc-sub">
+      <li><a href="#sec8-1">DynamicTracerService</a></li>
+      <li><a href="#sec8-2">Algorithmes statistiques</a></li>
+      <li><a href="#sec8-3">Journalisation Serilog</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec9">Site web</a>
+    <ul class="toc-sub">
+      <li><a href="#sec9-1">Architecture Astro</a></li>
+      <li><a href="#sec9-2">Internationalisation</a></li>
+      <li><a href="#sec9-3">Deploiement</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec10">Prerequis et deploiement</a>
+    <ul class="toc-sub">
+      <li><a href="#sec10-1">Configuration materielle et logicielle</a></li>
+      <li><a href="#sec10-2">Installation et premiere execution</a></li>
+      <li><a href="#sec10-3">Commandes de compilation</a></li>
+    </ul>
+  </li>
+
+  <li><a href="#sec11">Annexe : Structure des repertoires</a></li>
+</ol>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     1. RESUME EXECUTIF
+     ==================================================================== -->
+<h2 id="sec1">1. Resume executif</h2>
+
+<p>Coclico est une plateforme de gestion systeme Windows de classe entreprise, concue pour operer integralement en local, sans aucune connexion vers un service cloud. La version 1.0.4 represente l'aboutissement de quatre phases majeures de developpement, couvrant la gestion des processus, l'automatisation par chaines visuelles, le nettoyage systeme avance, et un noyau autonome pilote par intelligence artificielle locale.</p>
+
+<p>L'application repose sur le framework <strong>.NET 10</strong> avec le langage C# en mode <code>preview</code>, une interface graphique construite sur <strong>WPF-UI 4.2</strong> (Fluent Design), et un moteur d'inference IA local base sur <strong>LLamaSharp 0.26</strong>. L'ensemble du traitement, y compris les decisions d'optimisation prises par le modele de langage, s'execute exclusivement sur la machine de l'utilisateur.</p>
+
+<p>Le noyau autonome constitue la particularite principale de Coclico. Il implemente une boucle d'observation, d'analyse et d'action en trois etapes pipelinisees. Le composant <strong>OptimizationEngine</strong> collecte les metriques systeme toutes les 30 secondes, les soumet au modele d'inference pour decision, puis execute les actions validees avec creation systematique d'un point de restauration. En parallele, le composant <strong>SourceAnalyzer</strong> analyse le code source C# a l'aide de Roslyn pour identifier les hotspots de complexite, tandis que le <strong>Clone Numerique</strong> (StateValidator) valide que toute modification proposee par l'IA ne degrade pas les metriques de qualite logicielle.</p>
+
+<p>La version 1.0.4 integre les corrections issues d'un audit expert complet, un refactoring sur six axes structurels (elimination du code mort, injection de dependances exclusive, decouplage par interfaces, algorithmes statistiques avances), ainsi qu'un site web multi-langue deploye sur GitHub Pages.</p>
+
+<p><strong>Chiffres cles de l'application :</strong></p>
+<ul>
+  <li>8 modules fonctionnels operationnels</li>
+  <li>28 types de noeuds d'automatisation dans les Flow Chains</li>
+  <li>10 operateurs conditionnels pour la logique de branchement</li>
+  <li>18 operations natives P/Invoke pour le nettoyage memoire</li>
+  <li>10 langues supportees dans l'interface utilisateur</li>
+  <li>Inference IA 100% locale -- zero donnee envoyee a l'exterieur</li>
+  <li>Pipeline d'optimisation autonome a 3 etages avec canaux bornes</li>
+  <li>Analyse statique Roslyn avec 5 metriques de complexite par methode</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     2. PRESENTATION GENERALE
+     ==================================================================== -->
+<h2 id="sec2">2. Presentation generale</h2>
+
+<h3 id="sec2-1">2.1 Philosophie du projet</h3>
+
+<p>Coclico incarne une vision d'autonomie numerique totale. L'objectif est de fournir a l'utilisateur un outil capable de gerer, optimiser et auditer son systeme Windows sans jamais deleguer une seule operation a un service exterieur. Cette philosophie se materialise par le principe architectural <strong>Zero Cloud</strong> : toute l'inference IA, toute la telemetrie, tout le stockage de donnees s'executent exclusivement sur la machine locale.</p>
+
+<p>La trajectoire de developpement suit une progression methodique vers l'autonomie. Les premieres phases ont etabli les fondations (telemetrie, gestion de la qualite de service, mecanisme de restauration). Les phases intermediaires ont introduit l'intelligence artificielle locale avec un double contexte d'execution isole. Les phases actuelles visent la capacite d'auto-amelioration du code source par analyse statique et patching automatique, le tout supervise par un clone numerique qui garantit la non-regression de la qualite.</p>
+
+<h3 id="sec2-2">2.2 Perimetre fonctionnel</h3>
+
+<p>Le perimetre fonctionnel de Coclico couvre huit domaines principaux :</p>
+
+<table>
+  <thead>
+    <tr><th>Domaine</th><th>Description</th><th>Module</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Supervision</td><td>Metriques temps reel CPU, RAM, disque, uptime, processus</td><td>Tableau de Bord</td></tr>
+    <tr><td>Gestion logicielle</td><td>Bibliotheque universelle multi-sources avec categorisation</td><td>Applications</td></tr>
+    <tr><td>Automatisation</td><td>Chaines visuelles de taches avec 28 types de noeuds</td><td>Flow Chains</td></tr>
+    <tr><td>Deploiement</td><td>Installation via Winget en interface graphique</td><td>Installeur Rapide</td></tr>
+    <tr><td>Maintenance</td><td>Nettoyage avance de 10 categories systeme</td><td>Nettoyage Systeme</td></tr>
+    <tr><td>Audit</td><td>Inventaire complet des applications installees</td><td>Scanner</td></tr>
+    <tr><td>Optimisation memoire</td><td>18 operations natives de liberation memoire</td><td>RAM Cleaner</td></tr>
+    <tr><td>Assistance IA</td><td>Chat local avec RAG et connaissance contextuelle</td><td>Coclico AI</td></tr>
+  </tbody>
+</table>
+
+<h3 id="sec2-3">2.3 Public cible</h3>
+
+<p>Coclico s'adresse a trois profils d'utilisateurs complementaires. Les administrateurs systeme y trouvent un outil de supervision et de maintenance centralise. Les developpeurs beneficient des capacites d'analyse de code et d'auto-optimisation du noyau autonome. Les utilisateurs avances exploitent les Flow Chains pour automatiser leurs taches quotidiennes sans ecrire de code.</p>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     3. ARCHITECTURE TECHNIQUE DETAILLEE
+     ==================================================================== -->
+<h2 id="sec3">3. Architecture technique detaillee</h2>
+
+<h3 id="sec3-1">3.1 Pile technologique</h3>
+
+<table>
+  <thead>
+    <tr><th>Composant</th><th>Technologie</th><th>Version</th><th>Role</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Runtime</td><td>.NET</td><td>10.0</td><td>Framework d'execution principal</td></tr>
+    <tr><td>Langage</td><td>C#</td><td>Preview (LangVersion)</td><td>Constructeurs primaires, expressions de collection</td></tr>
+    <tr><td>Interface graphique</td><td>WPF + WPF-UI</td><td>4.2.0</td><td>Fluent Design, Mica backdrop, TitleBar etendue</td></tr>
+    <tr><td>MVVM</td><td>CommunityToolkit.Mvvm</td><td>8.4.0</td><td>Generateurs de source pour ViewModels</td></tr>
+    <tr><td>IA locale</td><td>LLamaSharp + Backend CPU</td><td>0.26.0</td><td>Inference LLM locale, double contexte isole</td></tr>
+    <tr><td>Analyse AST</td><td>Microsoft.CodeAnalysis.CSharp</td><td>4.12.0</td><td>Analyse Roslyn, calcul CC, metriques Halstead</td></tr>
+    <tr><td>Injection de dependances</td><td>Microsoft.Extensions.DependencyInjection</td><td>10.0.0</td><td>Conteneur DI avec validation au build</td></tr>
+    <tr><td>Journalisation</td><td>Serilog + Sinks.File</td><td>4.2.0 / 6.0.0</td><td>Journaux rotatifs quotidiens, retention 14 jours</td></tr>
+    <tr><td>Cache</td><td>Microsoft.Extensions.Caching.Memory</td><td>10.0.0</td><td>Cache en memoire pour donnees applicatives</td></tr>
+    <tr><td>HTTP</td><td>Microsoft.Extensions.Http</td><td>10.0.0</td><td>HttpClientFactory pour appels reseau</td></tr>
+    <tr><td>Extensions reactives</td><td>System.Reactive</td><td>6.0.1</td><td>Flux observables pour evenements systeme</td></tr>
+    <tr><td>Acces materiel</td><td>System.Management</td><td>10.0.0</td><td>WMI pour metriques hardware</td></tr>
+    <tr><td>Services Windows</td><td>System.ServiceProcess.ServiceController</td><td>10.0.0</td><td>Controle des services systeme</td></tr>
+    <tr><td>Serialisation</td><td>System.Text.Json</td><td>Natif .NET 10</td><td>JSON haute performance, FrozenSet</td></tr>
+  </tbody>
+</table>
+
+<h4>Optimisations de compilation</h4>
+
+<p>Le fichier projet (<code>Coclico.csproj</code>) active les optimisations suivantes au niveau du runtime :</p>
+
+<table>
+  <thead>
+    <tr><th>Directive</th><th>Valeur</th><th>Effet</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>TieredPGO</code></td><td>true</td><td>Profile-Guided Optimization par niveaux</td></tr>
+    <tr><td><code>TieredCompilation</code></td><td>true</td><td>Compilation JIT progressive</td></tr>
+    <tr><td><code>OptimizationPreference</code></td><td>Speed</td><td>Privilege la vitesse d'execution</td></tr>
+    <tr><td><code>ConcurrentGarbageCollection</code></td><td>true</td><td>GC concurrent pour reduire les pauses</td></tr>
+    <tr><td><code>ServerGarbageCollection</code></td><td>false</td><td>Mode Workstation GC pour application desktop</td></tr>
+  </tbody>
+</table>
+
+<h3 id="sec3-2">3.2 Cycle de vie de l'application</h3>
+
+<p>Le demarrage de Coclico suit une sequence rigoureusement ordonnee, implementee dans <code>App.xaml.cs</code>. Chaque etape est condiditonnelle et journalisee.</p>
+
+<h4>Sequence de demarrage (<code>App.OnStartup</code>)</h4>
+
+<ol>
+  <li><strong>Verification d'elevation</strong> -- Le processus verifie s'il s'execute avec les privileges administrateur via <code>WindowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator)</code>. Si ce n'est pas le cas, une fenetre <code>AdminPromptWindow</code> propose a l'utilisateur de redemarrer avec elevation UAC. En cas de refus, l'application s'arrete.</li>
+  <li><strong>Configuration du runtime</strong> -- Le mode de rendu est fixe a <code>RenderMode.Default</code>, le pool de threads est calibre sur le nombre de coeurs processeur (<code>Environment.ProcessorCount</code>), le GC est place en mode <code>SustainedLowLatency</code>, et le taux d'images des animations WPF est fixe a 60 FPS.</li>
+  <li><strong>Construction du conteneur DI</strong> -- <code>ServiceContainer.Build()</code> est appele avec une lambda de configuration qui enregistre l'ensemble des services. La validation est activee (<code>ValidateOnBuild = true</code>), ce qui provoque une erreur immediate si une dependance est manquante.</li>
+  <li><strong>Affichage du Splash Screen</strong> -- <code>SplashWindow</code> est affichee pendant l'initialisation des services en arriere-plan (<code>RunStartupAsync</code>).</li>
+  <li><strong>Elagage de l'audit</strong> -- Le service <code>IAuditLog</code> execute un nettoyage des entrees depassant la duree de retention configuree (par defaut : 90 jours).</li>
+  <li><strong>Configuration du premier lancement</strong> -- Si <code>Settings.FirstRun</code> est vrai, la fenetre <code>LauncherWindow</code> s'affiche pour permettre la configuration du mode de demarrage (Normal, Minimise, Tray), du demarrage automatique avec Windows et de la reduction dans la zone de notification.</li>
+  <li><strong>Creation de la fenetre principale</strong> -- <code>MainWindow</code> est instanciee et affichee selon le mode configure.</li>
+  <li><strong>Application du theme</strong> -- <code>ThemeService.ApplyCurrentSettings()</code> applique la couleur d'accent, l'opacite des cartes et le mode sombre/clair.</li>
+  <li><strong>Nettoyage memoire initial</strong> -- <code>MemoryCleanerService.TrimSelfWorkingSet()</code> est execute en arriere-plan pour reduire l'empreinte memoire du processus.</li>
+  <li><strong>Demarrage du service de mise a jour</strong> -- <code>UpdateCheckService</code> est initialise et verifie les mises a jour toutes les 5 minutes.</li>
+</ol>
+
+<h4>Sequence d'arret (<code>App.OnExit</code>)</h4>
+
+<p>L'arret procede au nettoyage ordonne des ressources. Chaque etape est protegee par un bloc try/catch independant pour garantir la robustesse :</p>
+
+<ol>
+  <li>Arret et liberation de <code>ResourceGuardService</code></li>
+  <li>Liberation de <code>ThemeService</code></li>
+  <li>Liberation de <code>IAiService</code> (decharge le modele LLM de la memoire)</li>
+  <li>Liberation de <code>ProcessWatcherService</code></li>
+  <li>Liberation de <code>NetworkMonitorService</code></li>
+  <li>Flush de la telemetrie (<code>IDynamicTracer.FlushToDisk</code>)</li>
+  <li>Arret du conteneur DI (<code>ServiceContainer.Shutdown</code>), qui appelle <code>Log.CloseAndFlush()</code> pour Serilog</li>
+</ol>
+
+<h3 id="sec3-3">3.3 Injection de dependances</h3>
+
+<p>Le conteneur de dependances est encapsule dans la classe statique <code>ServiceContainer</code>, un wrapper thread-safe autour de <code>IServiceProvider</code> utilisant <code>Lazy&lt;T&gt;</code> avec <code>LazyThreadSafetyMode.ExecutionAndPublication</code>.</p>
+
+<h4>API du conteneur</h4>
+
+<table>
+  <thead>
+    <tr><th>Methode</th><th>Signature</th><th>Comportement</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Build</code></td><td><code>Build(Action&lt;IServiceCollection&gt;)</code></td><td>Construit le conteneur avec journalisation Serilog, cache memoire, audit et HttpClient</td></tr>
+    <tr><td><code>GetRequired&lt;T&gt;</code></td><td><code>T GetRequired&lt;T&gt;()</code></td><td>Resout le service ou leve une exception</td></tr>
+    <tr><td><code>GetOptional&lt;T&gt;</code></td><td><code>T? GetOptional&lt;T&gt;()</code></td><td>Resout le service ou retourne null</td></tr>
+    <tr><td><code>CreateScope</code></td><td><code>IServiceScope CreateScope()</code></td><td>Cree un scope DI pour les services transitoires</td></tr>
+    <tr><td><code>Shutdown</code></td><td><code>void Shutdown()</code></td><td>Dispose le provider et ferme Serilog</td></tr>
+  </tbody>
+</table>
+
+<h4>Registrations des services</h4>
+
+<p>Les services sont enregistres selon trois categories :</p>
+
+<p><strong>Services avec contrat d'interface (Singletons) :</strong></p>
+<table>
+  <thead>
+    <tr><th>Interface</th><th>Implementation</th><th>Responsabilite</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ISecurityPolicy</code></td><td><code>SecurityPolicyService</code></td><td>Politique de securite avec patterns bloques</td></tr>
+    <tr><td><code>ICacheService</code></td><td><code>CacheService</code></td><td>Abstraction du cache en memoire</td></tr>
+    <tr><td><code>IDynamicTracer</code></td><td><code>DynamicTracerService</code></td><td>Telemetrie et metriques de performance</td></tr>
+    <tr><td><code>IResourceAllocator</code></td><td><code>ResourceAllocatorService</code></td><td>Gestion QoS des processus (priorite, affinite)</td></tr>
+    <tr><td><code>IRollbackService</code></td><td><code>RollbackService</code></td><td>Points de restauration chiffres (DPAPI)</td></tr>
+    <tr><td><code>ISourceAnalyzer</code></td><td><code>SourceAnalyzerService</code></td><td>Analyse statique Roslyn</td></tr>
+    <tr><td><code>IStateValidator</code></td><td><code>StateValidatorService</code></td><td>Clone Numerique -- validation des patches</td></tr>
+    <tr><td><code>ICodePatcher</code></td><td><code>CodePatcherService</code></td><td>Application de patches avec approbation</td></tr>
+    <tr><td><code>IOptimizationEngine</code></td><td><code>OptimizationEngineService</code></td><td>Pipeline d'optimisation autonome</td></tr>
+    <tr><td><code>IAiService</code></td><td><code>AiChatService</code></td><td>Inference LLM locale double contexte</td></tr>
+    <tr><td><code>IAuditLog</code></td><td><code>AuditLogService</code></td><td>Piste d'audit NDJSON</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Services concrets (Singletons) :</strong> <code>SettingsService</code>, <code>InstalledProgramsService</code>, <code>ProfileService</code>, <code>ProcessWatcherService</code>, <code>WorkflowService</code>, <code>ThemeService</code>, <code>LocalizationService</code>, <code>ResourceGuardService</code>, <code>NetworkMonitorService</code>, <code>KeyboardShortcutsService</code>, <code>StartupService</code>, <code>FeatureExecutionEngine</code>.</p>
+
+<p><strong>Services transitoires :</strong> <code>CleaningService</code>, <code>InstallerService</code>, <code>StartupHealthService</code>, <code>UserAccountService</code>.</p>
+
+<h3 id="sec3-4">3.4 Structure MVVM</h3>
+
+<p>L'application suit le patron <strong>Model-View-ViewModel</strong> avec une separation stricte des responsabilites :</p>
+
+<table>
+  <thead>
+    <tr><th>Couche</th><th>Repertoire</th><th>Elements</th><th>Convention</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Models</td><td><code>Models/</code></td><td><code>WorkflowPipeline</code>, <code>PipelineStep</code>, <code>PipelineConnection</code>, <code>LaunchMode</code></td><td>Records immutables pour DTOs, classes <code>INotifyPropertyChanged</code> pour les modeles editables</td></tr>
+    <tr><td>Views</td><td><code>Views/</code></td><td>16 vues XAML dont <code>DashboardView</code>, <code>ProgramsView</code>, <code>WorkflowPipelinesView</code>, <code>CleaningView</code>, <code>ScannerView</code>, <code>RamCleanerView</code>, <code>AiChatView</code>, <code>InstallerView</code>, <code>SettingsView</code></td><td>Pas de logique metier dans le code-behind</td></tr>
+    <tr><td>ViewModels</td><td><code>ViewModels/</code></td><td><code>DashboardViewModel</code>, <code>CleaningViewModel</code>, <code>ScannerViewModel</code>, <code>SettingsViewModel</code>, <code>WorkflowPipelinesViewModel</code></td><td>Injection par constructeur, CommunityToolkit.Mvvm</td></tr>
+    <tr><td>Services</td><td><code>Services/</code></td><td>50+ fichiers de service</td><td>Injection par constructeur, ConfigureAwait(false) pour les services de fond</td></tr>
+  </tbody>
+</table>
+
+<p>Les mises a jour de l'interface utilisateur depuis les services de fond respectent la contrainte WPF de thread-affinity via <code>Dispatcher.InvokeAsync</code>. Aucun service n'attend de maniere synchrone une reponse du modele LLM depuis le thread UI.</p>
+
+<h3 id="sec3-5">3.5 Optimisations du runtime</h3>
+
+<p>Au demarrage, l'application configure le runtime pour minimiser les latences :</p>
+
+<ul>
+  <li><strong>Thread pool</strong> -- Le nombre minimum de threads est fixe a <code>Environment.ProcessorCount</code> pour eviter les delais de montee en charge.</li>
+  <li><strong>GC</strong> -- Le mode <code>SustainedLowLatency</code> reduit les pauses de collection pendant les operations interactives.</li>
+  <li><strong>Animations</strong> -- Le frame rate WPF est fixe a 60 FPS via <code>Timeline.DesiredFrameRateProperty</code>.</li>
+  <li><strong>Rendu</strong> -- Le mode de rendu est <code>RenderMode.Default</code> pour compatibilite maximale avec l'acceleration materielle.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     4. MODULES FONCTIONNELS
+     ==================================================================== -->
+<h2 id="sec4">4. Modules fonctionnels</h2>
+
+<h3 id="sec4-1">4.1 Tableau de Bord</h3>
+
+<p>Le Tableau de Bord est la page d'accueil de Coclico. Il affiche en temps reel, avec un intervalle de rafraichissement de 3 secondes, les metriques systeme essentielles :</p>
+
+<table>
+  <thead>
+    <tr><th>Metrique</th><th>Source</th><th>Format</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Utilisation CPU</td><td><code>MemoryCleanerService.GetSystemCpuPercent()</code></td><td>Pourcentage</td></tr>
+    <tr><td>RAM utilisee / totale</td><td><code>MemoryCleanerService.GetRamInfo()</code></td><td>Go / Go</td></tr>
+    <tr><td>Disque C: libre / total</td><td>API .NET <code>DriveInfo</code></td><td>Go / Go</td></tr>
+    <tr><td>Uptime Windows</td><td><code>Environment.TickCount64</code></td><td>jours:heures:minutes</td></tr>
+    <tr><td>Processus actifs</td><td><code>Process.GetProcesses()</code></td><td>Nombre entier</td></tr>
+    <tr><td>Applications installees</td><td><code>InstalledProgramsService</code></td><td>Nombre entier</td></tr>
+  </tbody>
+</table>
+
+<p>L'implementation utilise <code>DashboardViewModel</code> qui met a jour les proprietes liees via le <code>Dispatcher</code> pour respecter le modele de threading WPF.</p>
+
+<h3 id="sec4-2">4.2 Applications</h3>
+
+<p>Le module Applications fournit une bibliotheque exhaustive de tous les logiciels et jeux installes sur le systeme. La detection s'appuie sur de multiples sources :</p>
+
+<table>
+  <thead>
+    <tr><th>Source</th><th>Methode de detection</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Registre Windows</td><td>Balayage de <code>HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</code> et <code>HKCU</code></td></tr>
+    <tr><td>Steam</td><td>Parsing des fichiers <code>appmanifest_*.acf</code> (regex <code>"name"\s+"([^"]+)"</code>)</td></tr>
+    <tr><td>Epic Games</td><td>Parsing des manifests JSON (<code>DisplayName</code>, <code>InstallLocation</code>, <code>LaunchExecutable</code>)</td></tr>
+    <tr><td>GOG Galaxy</td><td>Detection via les repertoires d'installation</td></tr>
+    <tr><td>Ubisoft Connect</td><td>Detection via le registre et les repertoires standards</td></tr>
+    <tr><td>EA App</td><td>Detection via les repertoires d'installation</td></tr>
+    <tr><td>Rockstar Games</td><td>Detection via le registre et les repertoires</td></tr>
+    <tr><td>Microsoft Store (MSIX)</td><td>Enumeration des packages installes</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Fonctionnalites avancees :</strong></p>
+<ul>
+  <li>Double-clic pour lancer directement une application</li>
+  <li>Renommage personnalise (sauvegarde dans <code>custom_apps_data.json</code>)</li>
+  <li>Changement de categorie personnalise</li>
+  <li>Ajout manuel d'un executif (.exe)</li>
+  <li>Filtrage et recherche instantanee</li>
+  <li>Cache de 6 heures via <code>ICacheService</code> pour des performances optimales</li>
+</ul>
+
+<p>Le service <code>InstalledProgramsService</code> utilise des <code>SearchValues&lt;string&gt;</code> (.NET 8+) et des <code>FrozenSet&lt;string&gt;</code> pour filtrer efficacement les utilitaires systeme et drivers de la liste affichee. Des expressions regulieres generees a la compilation (<code>[GeneratedRegex]</code>) optimisent le parsing des manifests.</p>
+
+<h3 id="sec4-3">4.3 Flow Chains</h3>
+
+<p>Les Flow Chains constituent le moteur d'automatisation visuelle de Coclico. L'utilisateur compose des chaines de taches par glisser-deposer dans un editeur graphique a noeuds connectes.</p>
+
+<h4>Types de noeuds disponibles (28)</h4>
+
+<table>
+  <thead>
+    <tr><th>Categorie</th><th>Noeuds</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Controle de flux</td><td><code>Start</code>, <code>End</code>, <code>Condition</code>, <code>Loop</code>, <code>Parallel</code>, <code>Delay</code></td><td>Structure et ordonnancement des chaines</td></tr>
+    <tr><td>Applications</td><td><code>OpenApp</code>, <code>CloseApp</code>, <code>KillProcess</code>, <code>KillByMemory</code>, <code>SetProcessPriority</code></td><td>Controle du cycle de vie des processus</td></tr>
+    <tr><td>Commandes</td><td><code>RunCommand</code>, <code>RunPowerShell</code></td><td>Execution de commandes systeme et scripts</td></tr>
+    <tr><td>Reseau</td><td><code>HttpRequest</code>, <code>OpenUrl</code></td><td>Requetes HTTP et ouverture d'URL</td></tr>
+    <tr><td>Fichiers</td><td><code>FileOperation</code>, <code>CompressFile</code>, <code>Screenshot</code></td><td>Operations sur le systeme de fichiers</td></tr>
+    <tr><td>Systeme</td><td><code>SystemCheck</code>, <code>CleanTemp</code>, <code>RamClean</code>, <code>EmptyRecycleBin</code></td><td>Operations de maintenance systeme</td></tr>
+    <tr><td>Interface</td><td><code>Notification</code>, <code>SetVolume</code>, <code>MuteAudio</code>, <code>ClipboardSet</code>, <code>SendKeys</code>, <code>TriggerShortcut</code></td><td>Interaction avec l'environnement utilisateur</td></tr>
+  </tbody>
+</table>
+
+<h4>Operateurs conditionnels (10)</h4>
+
+<table>
+  <thead>
+    <tr><th>Operateur</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ProcessRunning</code> / <code>ProcessNotRunning</code></td><td>Verifie l'etat d'execution d'un processus</td></tr>
+    <tr><td><code>FileExists</code> / <code>FileNotExists</code></td><td>Teste l'existence d'un fichier</td></tr>
+    <tr><td><code>TimeAfter</code> / <code>TimeBefore</code></td><td>Condition basee sur l'heure</td></tr>
+    <tr><td><code>CpuBelow</code> / <code>CpuAbove</code></td><td>Seuil d'utilisation CPU</td></tr>
+    <tr><td><code>RamBelow</code> / <code>RamAbove</code></td><td>Seuil d'utilisation memoire</td></tr>
+  </tbody>
+</table>
+
+<h4>Gestion des erreurs par noeud</h4>
+
+<p>Chaque <code>PipelineStep</code> possede une propriete <code>OnErrorAction</code> qui determine le comportement en cas d'echec :</p>
+<ul>
+  <li><code>ContinueNext</code> (defaut) -- Passe au noeud suivant</li>
+  <li><code>StopChain</code> -- Arrete immediatement la chaine</li>
+  <li><code>SkipToEnd</code> -- Saute directement au noeud End</li>
+</ul>
+
+<p>Les chaines sont persistees au format JSON dans <code>%AppData%\Coclico\flow_chains.json</code>. Un mecanisme de migration automatique (<code>ApplyV2MigrationAsync</code>) gere la transition vers le format v2. Les declencheurs supportes incluent les raccourcis clavier globaux (<code>Ctrl+(Alt+)Touche</code>) et les intervalles temporels configurables (minimum 10 secondes).</p>
+
+<h3 id="sec4-4">4.4 Installeur Rapide</h3>
+
+<p>L'Installeur Rapide fournit une interface graphique pour <strong>Windows Package Manager (Winget)</strong>, permettant l'installation de logiciels en un clic sans recourir a la ligne de commande.</p>
+
+<p><strong>Categories de logiciels disponibles :</strong></p>
+<ul>
+  <li><strong>Internet</strong> -- Navigateurs, clients VPN, clients de messagerie</li>
+  <li><strong>Runtimes</strong> -- .NET, Visual C++ Redistributables, Java Runtime</li>
+  <li><strong>Developpement</strong> -- IDE (Visual Studio, VS Code), Git, Docker, Node.js</li>
+  <li><strong>Gaming</strong> -- Plateformes de jeux (Steam, Epic, GOG)</li>
+  <li><strong>Creation</strong> -- Outils de design, montage video, audio</li>
+  <li><strong>Systeme</strong> -- Utilitaires systeme, archiveurs, lecteurs multimedia</li>
+</ul>
+
+<p>La portee d'installation (<code>Scope</code>) est configurable entre <code>Machine</code> (tous les utilisateurs) et <code>User</code> (utilisateur courant) via les parametres de l'application.</p>
+
+<h3 id="sec4-5">4.5 Nettoyage Systeme</h3>
+
+<p>Le module de Nettoyage Systeme fournit un moteur de maintenance professionnel avec estimation prealable de l'espace recuperable. Le service <code>CleaningService</code> implemente deux niveaux de nettoyage :</p>
+
+<h4>Categories de nettoyage (10)</h4>
+
+<table>
+  <thead>
+    <tr><th>Categorie</th><th>Chemins cibles</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Fichiers temporaires Windows</td><td><code>%Temp%</code>, <code>C:\Windows\Temp</code></td></tr>
+    <tr><td>Cache navigateurs</td><td>Chrome, Firefox, Edge -- dossiers de cache respectifs</td></tr>
+    <tr><td>Journaux systeme</td><td>Fichiers <code>.log</code> dans les repertoires systeme</td></tr>
+    <tr><td>Corbeille</td><td><code>$Recycle.Bin</code></td></tr>
+    <tr><td>Fichiers temporaires utilisateur</td><td><code>%UserProfile%\AppData\Local\Temp</code></td></tr>
+    <tr><td>Cache miniatures</td><td><code>thumbcache_*.db</code></td></tr>
+    <tr><td>Rapports d'erreur Windows</td><td>Windows Error Reporting</td></tr>
+    <tr><td>Anciens installers/mises a jour</td><td>SoftwareDistribution, anciens packages</td></tr>
+    <tr><td>Cache DNS</td><td>Appel natif <code>DnsFlushResolverCache()</code></td></tr>
+    <tr><td>Prefetch</td><td><code>C:\Windows\Prefetch</code></td></tr>
+  </tbody>
+</table>
+
+<p>Le mode <strong>Deep Clean</strong> ajoute un nettoyage intensif couvrant les fichiers orphelins, les caches applicatifs etendus et les artefacts de mise a jour Windows. Le resultat de chaque operation est encapsule dans un objet <code>CleaningResult</code> contenant le nombre de fichiers supprimes, l'espace libere en octets, la duree d'execution et la liste des erreurs eventuelles.</p>
+
+<h3 id="sec4-6">4.6 Scanner</h3>
+
+<p>Le Scanner realise un audit complet de l'ensemble des applications installees. Pour chaque application detectee, il restitue :</p>
+
+<ul>
+  <li>Nom de l'application</li>
+  <li>Version installee</li>
+  <li>Editeur</li>
+  <li>Taille sur disque</li>
+  <li>Chemin d'installation complet</li>
+  <li>Source de detection (Registre, Steam, Epic, etc.)</li>
+  <li>Date d'installation</li>
+</ul>
+
+<p>Les resultats sont triables et filtrables en temps reel. Le <code>ScannerViewModel</code> orchestre l'analyse et presente les resultats dans une vue tabulaire avec possibilite d'export.</p>
+
+<h3 id="sec4-7">4.7 RAM Cleaner</h3>
+
+<p>Le module RAM Cleaner est le composant le plus profond du point de vue systeme. Il exploite 18 operations natives Windows via P/Invoke pour optimiser l'utilisation de la memoire vive.</p>
+
+<h4>Informations affichees</h4>
+<ul>
+  <li><strong>RAM physique</strong> -- Utilisee / Totale (via <code>GlobalMemoryStatusEx</code>)</li>
+  <li><strong>Memoire virtuelle</strong> -- Commit Charge (Total PageFile - Available PageFile)</li>
+  <li><strong>Pagefile</strong> -- Taille totale et disponible</li>
+</ul>
+
+<h4>Operations P/Invoke natives</h4>
+
+<table>
+  <thead>
+    <tr><th>#</th><th>Operation</th><th>API Native</th><th>Effet</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Empty Working Sets</td><td><code>NtSetSystemInformation(80, cmd=2)</code></td><td>Vide les Working Sets de tous les processus</td></tr>
+    <tr><td>2</td><td>Flush Modified Page List</td><td><code>NtSetSystemInformation(80, cmd=3)</code></td><td>Ecrit les pages modifiees sur disque</td></tr>
+    <tr><td>3</td><td>Purge Standby List</td><td><code>NtSetSystemInformation(80, cmd=4)</code></td><td>Libere la Standby List</td></tr>
+    <tr><td>4</td><td>Purge Low Priority Standby</td><td><code>NtSetSystemInformation(80, cmd=5)</code></td><td>Libere les pages Standby basse priorite</td></tr>
+    <tr><td>5</td><td>Memory Combine</td><td><code>NtSetSystemInformation(130)</code></td><td>Combine les pages memoire identiques</td></tr>
+    <tr><td>6</td><td>GC .NET</td><td><code>GC.Collect</code> + <code>GC.WaitForPendingFinalizers</code></td><td>Force la collection du GC managee</td></tr>
+    <tr><td>7</td><td>System File Cache</td><td><code>SetSystemFileCacheSize</code></td><td>Reduit le cache fichier systeme</td></tr>
+    <tr><td>8</td><td>DNS Cache</td><td><code>DnsFlushResolverCache</code></td><td>Vide le cache DNS</td></tr>
+    <tr><td>9</td><td>ARP Cache</td><td><code>FlushIpNetTable</code></td><td>Vide la table ARP</td></tr>
+    <tr><td>10</td><td>Registry Flush</td><td><code>RegFlushKey(HKLM)</code></td><td>Force l'ecriture du registre sur disque</td></tr>
+    <tr><td>11</td><td>Process WS Trim</td><td><code>SetProcessWorkingSetSize(-1, -1)</code></td><td>Reduit le Working Set de chaque processus</td></tr>
+    <tr><td>12</td><td>Heap Compact</td><td><code>HeapCompact</code></td><td>Compacte le heap du processus</td></tr>
+    <tr><td>13</td><td>Clipboard Clear</td><td><code>OpenClipboard</code> + <code>EmptyClipboard</code></td><td>Vide le presse-papiers</td></tr>
+    <tr><td>14-18</td><td>Operations combinees</td><td>Sequences des precedentes</td><td>Nettoyage complet en sequence</td></tr>
+  </tbody>
+</table>
+
+<p>Chaque operation requiert l'acquisition prealable des privileges <code>SeDebugPrivilege</code> et <code>SeIncreaseQuotaPrivilege</code> via <code>AdjustTokenPrivileges</code>. Le mode automatique permet le declenchement sur intervalle de temps ou des qu'un seuil d'utilisation RAM est depasse.</p>
+
+<h3 id="sec4-8">4.8 Coclico AI</h3>
+
+<p>Coclico AI est l'assistant conversationnel integre. Il s'appuie sur le modele GGUF local et dispose d'une connaissance complete des 8 modules de l'application, des fonctionnalites transversales et des donnees utilisateur. L'assistant est capable de guider l'utilisateur etape par etape, de repondre dans la langue de l'utilisateur (detection automatique parmi 10 langues) et de s'appuyer sur la documentation interne via le systeme RAG. Le detail de l'architecture IA est presente dans la section 5.</p>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     5. INTELLIGENCE ARTIFICIELLE LOCALE
+     ==================================================================== -->
+<h2 id="sec5">5. Intelligence artificielle locale</h2>
+
+<h3 id="sec5-1">5.1 Architecture LLamaSharp dual-executor</h3>
+
+<p>L'architecture IA de Coclico repose sur un design a <strong>double contexte d'execution isole</strong>, implemente dans <code>AiChatService</code>. Ce design garantit que les interactions utilisateur et les decisions du noyau autonome ne s'interferent jamais.</p>
+
+<div class="diagram-box no-break">
+  <div class="diagram-title">Architecture Dual-Executor LLamaSharp</div>
+<pre>
+                    +------------------+
+                    |  LLamaWeights    |
+                    |  (modele GGUF)   |
+                    +--------+---------+
+                             |
+               +-------------+-------------+
+               |                           |
+     +---------+---------+       +---------+---------+
+     |  Chat Context     |       |  Engine Context   |
+     |  (_chatCtx)       |       |  (_engineCtx)     |
+     +-------------------+       +-------------------+
+     | ContextSize: 2048 |       | ContextSize: 512  |
+     | Threads: N-1 (max6)|      | Threads: N/2      |
+     | BatchSize: 256    |       | BatchSize: 128    |
+     | FlashAttention: ON|       | FlashAttention: ON|
+     +--------+----------+       +--------+----------+
+              |                            |
+     +--------+----------+       +--------+----------+
+     | InteractiveExecutor|      | InteractiveExecutor|
+     +--------+----------+       +--------+----------+
+              |                            |
+     +--------+----------+       +--------+----------+
+     | _chatSem (1,1)    |       | _engineSem (1,1)  |
+     | Semaphore          |      | Semaphore          |
+     +--------+----------+       +--------+----------+
+              |                            |
+     +--------+----------+       +--------+----------+
+     | AiChatView        |       | OptimizationEngine |
+     | (User-facing)     |       | (Background)       |
+     +--------------------+      +--------------------+
+</pre>
+</div>
+
+<h4>Modele de concurrence</h4>
+
+<p>Chaque contexte possede son propre <code>SemaphoreSlim(1, 1)</code> qui garantit l'acces exclusif. Le pattern <strong>Immutable Context Swap</strong> est utilise pour les reinitialisation : <code>Interlocked.Exchange</code> remplace atomiquement le contexte tout en disposant l'ancien, sans bloquer les consommateurs en cours d'attente.</p>
+
+<h4>Strategie GPU / CPU</h4>
+
+<p>L'initialisation tente d'abord un chargement avec 8 couches GPU (<code>GpuLayerCount = 8</code>). En cas d'echec (materiel incompatible, drivers absents), le service bascule automatiquement sur le mode CPU pur (<code>GpuLayerCount = 0</code>). Le nombre de couches GPU actives est expose via la propriete <code>ActiveGpuLayers</code>.</p>
+
+<h4>Gestion de la memoire conversationnelle</h4>
+
+<p>Le service maintient une memoire a court terme de <strong>4 echanges</strong> (configurable via <code>MaxMemoryTurns</code>). Apres 6 tours de conversation (<code>AutoResetAfterTurns</code>), le contexte est automatiquement reinitialise pour eviter la degradation de la qualite des reponses. La memoire recente est injectee dans le prompt sous forme de bloc structure :</p>
+
+<pre><code>[Memoire recente]
+T1 U:"question1..." A:"reponse1..."
+T2 U:"question2..." A:"reponse2..."</code></pre>
+
+<h3 id="sec5-2">5.2 Liberation memoire automatique</h3>
+
+<p>Pour eviter que le modele LLM (estimee a environ 2,5 Go de RAM) ne reste charge indefiniment en memoire, un mecanisme de dechargement automatique est integre.</p>
+
+<table>
+  <thead>
+    <tr><th>Parametre</th><th>Valeur par defaut</th><th>Configuration</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Delai d'inactivite</td><td>5 minutes</td><td><code>Settings.AiIdleTimeoutMinutes</code></td></tr>
+    <tr><td>Protection contre les appels concurrents</td><td><code>Interlocked.CompareExchange</code></td><td>Champ <code>_unloading</code></td></tr>
+    <tr><td>Sequence de dechargement</td><td>Acquire _initLock -> _chatSem -> _engineSem -> Dispose</td><td>Ordre strict pour eviter les deadlocks</td></tr>
+    <tr><td>Nettoyage post-dechargement</td><td><code>MemoryCleanerService.ForceGcCollect()</code></td><td>Force la collection du GC apres liberation</td></tr>
+  </tbody>
+</table>
+
+<p>Le rechargement est transparent : toute nouvelle requete via <code>SendMessageAsync</code> ou <code>SendSystemPromptAsync</code> declenche automatiquement <code>InitializeAsync</code> si le modele n'est pas en memoire.</p>
+
+<h3 id="sec5-3">5.3 RAG integre</h3>
+
+<p>Coclico integre un systeme de <strong>Retrieval-Augmented Generation (RAG)</strong> implementee dans <code>RagService</code>. Ce systeme permet a l'assistant de s'appuyer sur la documentation interne stockee dans le repertoire <code>resource/docs/</code>.</p>
+
+<h4>Pipeline de traitement</h4>
+
+<ol>
+  <li><strong>Indexation</strong> -- Les fichiers Markdown sont decoupes en chunks base sur les en-tetes (<code>#{1,3}</code>). Chaque chunk d'au moins 40 caracteres est indexe.</li>
+  <li><strong>Tokenisation</strong> -- Les textes sont tokenises avec elimination des mots vides (stopwords) et racinisation (stemming) via <code>SimpleStemmer</code>.</li>
+  <li><strong>Calcul TF-IDF</strong> -- Chaque chunk recoit un vecteur TF-IDF normalise. La formule IDF utilisee est : <code>log((N - df + 0.5) / (df + 0.5) + 1)</code>.</li>
+  <li><strong>Recherche hybride</strong> -- Les requetes sont evaluees par une combinaison ponderee de deux scores :
+    <ul>
+      <li><strong>BM25</strong> (poids 0.6) avec parametres k1=1.5, b=0.75</li>
+      <li><strong>Similarite cosinus TF-IDF</strong> (poids 0.4)</li>
+    </ul>
+  </li>
+  <li><strong>Extraction</strong> -- Les <code>topK</code> meilleurs chunks (defaut : 2) sont retournes avec une limite de 350 caracteres par chunk.</li>
+</ol>
+
+<h3 id="sec5-4">5.4 Parametres d'inference</h3>
+
+<p>Deux jeux de parametres d'inference distincts sont utilises selon le contexte d'execution :</p>
+
+<table>
+  <thead>
+    <tr><th>Parametre</th><th>Chat (Utilisateur)</th><th>Engine (Systeme)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>MaxTokens</td><td>512</td><td>256</td></tr>
+    <tr><td>Temperature</td><td>0.4</td><td>0.1</td></tr>
+    <tr><td>TopP</td><td>0.90</td><td>0.95</td></tr>
+    <tr><td>TopK</td><td>30</td><td>10</td></tr>
+    <tr><td>RepeatPenalty</td><td>1.1</td><td>1.0</td></tr>
+    <tr><td>ContextSize</td><td>2048</td><td>512</td></tr>
+    <tr><td>AntiPrompts</td><td colspan="2"><code>&lt;|end|&gt;</code>, <code>&lt;|user|&gt;</code>, <code>&lt;|endoftext|&gt;</code></td></tr>
+  </tbody>
+</table>
+
+<p>Le contexte Engine utilise une temperature tres basse (0.1) et un TopK reduit (10) pour maximiser le determinisme des decisions d'optimisation systeme. Le contexte Chat utilise des valeurs plus elevees pour permettre des reponses plus naturelles et variees.</p>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     6. NOYAU AUTONOME
+     ==================================================================== -->
+<h2 id="sec6">6. Noyau autonome</h2>
+
+<p>Le noyau autonome de Coclico implemente une boucle <strong>Observe-Analyze-Act-Validate</strong> decomposee en quatre services complementaires. Cette architecture est le coeur de la vision d'auto-gouvernance du systeme.</p>
+
+<h3 id="sec6-1">6.1 OptimizationEngine -- Pipeline 3 etapes</h3>
+
+<p>Le service <code>OptimizationEngineService</code> implemente un pipeline asynchrone a trois etapes connectees par des <code>Channel&lt;T&gt;</code> bornes. Ce design decouple la collecte des metriques, la prise de decision et l'execution des actions.</p>
+
+<div class="diagram-box no-break">
+  <div class="diagram-title">Pipeline OptimizationEngine</div>
+<pre>
++------------------+    Channel&lt;SystemMetrics&gt;    +------------------+    Channel&lt;string&gt;    +------------------+
+|  Stage 1         |  (Bounded, DropOldest, 1)    |  Stage 2         | (Bounded, DropOldest, 1) |  Stage 3         |
+|  COLLECTE        | ---------------------------&gt; |  DECISION        | ----------------------&gt; |  EXECUTION       |
+|                  |                              |                  |                         |                  |
+| CollectMetrics() |                              | Cognitive (LLM)  |                         | ExtractAction()  |
+| - CPU %          |                              | ou               |                         | - CreateSnapshot |
+| - RAM Usage      |                              | Fallback (Rules) |                         | - SetPriority()  |
+| - Top 5 procs    |                              |                  |                         | - Audit Log      |
+| - Anomalies IF   |                              | + Audit Entry    |                         | - RCA Summary    |
++------------------+                              +------------------+                         +------------------+
+      |                                                                                              |
+      +--- Cycle: 30 secondes -----------------------------------------------------------------------+
+</pre>
+</div>
+
+<h4>Stage 1 : Collecte (<code>Stage1CollectAsync</code>)</h4>
+
+<p>Toutes les 30 secondes, cette etape collecte un snapshot complet de l'etat systeme :</p>
+
+<table>
+  <thead>
+    <tr><th>Metrique</th><th>Type</th><th>Source</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>CpuPercent</code></td><td><code>double</code></td><td><code>MemoryCleanerService.GetSystemCpuPercent()</code></td></tr>
+    <tr><td><code>RamUsedMb</code> / <code>RamTotalMb</code></td><td><code>long</code></td><td><code>MemoryCleanerService.GetRamInfo()</code></td></tr>
+    <tr><td><code>RamUsedPercent</code></td><td><code>double</code></td><td>Calcule a partir de RamInfo</td></tr>
+    <tr><td><code>MemCleanP95Ms</code></td><td><code>double?</code></td><td>Percentile 95 via <code>IDynamicTracer</code></td></tr>
+    <tr><td><code>TopProcesses</code></td><td><code>IReadOnlyList</code></td><td>Top 5 processus par memoire</td></tr>
+    <tr><td><code>EwmaAnomalies</code></td><td><code>IReadOnlyList&lt;string&gt;</code></td><td>Detection via Isolation Forest</td></tr>
+  </tbody>
+</table>
+
+<p>Le detecteur d'anomalies <code>IsolationForestDetector</code> analyse les trois dimensions (CPU, RAM, DiskIO) et retourne un score d'anomalie. Le seuil est fixe a 0.65.</p>
+
+<h4>Stage 2 : Decision (<code>Stage2DecideAsync</code>)</h4>
+
+<p>Si le service IA est initialise, le prompt systeme est construit a partir des metriques et soumis au contexte Engine. Le modele repond exclusivement en JSON avec le format :</p>
+
+<pre><code>{
+  "ProcessId": 1234,
+  "ProcessName": "chrome",
+  "TargetPriority": "BelowNormal",
+  "Reason": "...",
+  "RcaSummary": "analyse causale courte",
+  "NoAction": false
+}</code></pre>
+
+<p>Si le modele IA n'est pas disponible, un moteur de regles deterministes prend le relais. Le <strong>Adaptive Scorer</strong> calcule un score composite pondere (CPU: 0.4, RAM: 0.3, Disk: 0.2, History: 0.1) et declenche une action si le score depasse le seuil de 0.6. Les poids s'ajustent automatiquement en fonction de l'efficacite des actions passees.</p>
+
+<p>Chaque decision est enregistree dans la piste d'audit avec le contexte IA complet (<code>AiDecisionContext</code> : prompt, reponse brute, mode de decision).</p>
+
+<h4>Stage 3 : Execution (<code>Stage3ExecuteAsync</code>)</h4>
+
+<p>L'action extraite de la reponse JSON est executee selon la sequence suivante :</p>
+<ol>
+  <li>Lecture de la priorite actuelle du processus cible via <code>IResourceAllocator</code></li>
+  <li>Creation d'un snapshot de restauration via <code>IRollbackService.CreateSnapshot()</code></li>
+  <li>Application du changement de priorite via <code>IResourceAllocator.SetProcessPriority()</code></li>
+  <li>Enregistrement du resultat dans le journal et le rapport</li>
+</ol>
+
+<p>Les processus critiques (<code>system</code>, <code>smss</code>, <code>csrss</code>, <code>wininit</code>, <code>winlogon</code>, <code>lsass</code>, <code>services</code>, <code>svchost</code>, <code>explorer</code>, <code>coclico</code>) sont proteges par une liste de blocage et ne peuvent jamais etre cibles par le moteur.</p>
+
+<h3 id="sec6-2">6.2 SourceAnalyzer -- Roslyn AST</h3>
+
+<p>Le service <code>SourceAnalyzerService</code> implemente une analyse statique complete du code source C# en utilisant l'API Roslyn (<code>Microsoft.CodeAnalysis.CSharp</code>). Pour chaque methode analysee, cinq metriques de qualite sont calculees.</p>
+
+<h4>Metriques calculees par methode</h4>
+
+<table>
+  <thead>
+    <tr><th>Metrique</th><th>Algorithme</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Complexite Cyclomatique (CC)</td><td>McCabe 1976</td><td>Nombre de chemins d'execution independants. Comptage des <code>if</code>, <code>while</code>, <code>for</code>, <code>foreach</code>, <code>do</code>, <code>case</code>, <code>catch</code>, <code>?:</code>, <code>&amp;&amp;</code>, <code>||</code>.</td></tr>
+    <tr><td>Complexite Cognitive (CogCC)</td><td>SonarSource</td><td>Complexite percue par le developpeur. Increments de nesting, penalites pour imbrication. Implemente via un <code>CSharpSyntaxWalker</code> avec suivi du niveau d'imbrication.</td></tr>
+    <tr><td>Volume de Halstead (V)</td><td>Halstead 1977</td><td><code>V = N * log2(eta)</code> ou N = nombre total d'operateurs et operandes, eta = nombre d'operateurs et operandes distincts.</td></tr>
+    <tr><td>Difficulte de Halstead (D)</td><td>Halstead 1977</td><td><code>D = (eta1 / 2) * (n2 / eta2)</code></td></tr>
+    <tr><td>Effort de Halstead (E)</td><td>Halstead 1977</td><td><code>E = D * V</code></td></tr>
+    <tr><td>Indice de Maintenabilite (MI)</td><td>Coleman 1994</td><td><code>MI = max(0, (171 - 5.2*ln(V) - 0.23*CC - 16.2*ln(LOC)) / 171 * 100)</code></td></tr>
+  </tbody>
+</table>
+
+<h4>Classification de severite</h4>
+
+<table>
+  <thead>
+    <tr><th>CC</th><th>Severite</th><th>Rang</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1 -- 5</td><td>Low</td><td>1</td></tr>
+    <tr><td>6 -- 10</td><td>Medium</td><td>2</td></tr>
+    <tr><td>11 -- 20</td><td>High</td><td>3</td></tr>
+    <tr><td>21+</td><td>Critical</td><td>4</td></tr>
+  </tbody>
+</table>
+
+<p>La severite est rehaussee d'un cran si le nombre de lignes de la methode depasse 80. Les methodes classees "Low" avec moins de 20 lignes sont exclues du rapport pour reduire le bruit. Le rapport final (<code>SourceAnalysisReport</code>) est un record immutable contenant la liste triee des hotspots (par severite decroissante, puis par CC decroissant).</p>
+
+<h3 id="sec6-3">6.3 StateValidator -- Clone Numerique</h3>
+
+<p>Le <code>StateValidatorService</code> constitue le <strong>Clone Numerique</strong> de l'application. Il maintient un index complet de tous les fichiers source C# avec leur hash SHA-256 (tronque a 16 caracteres) et leurs metriques de complexite. Cet index sert de reference pour valider que toute modification proposee par l'IA ne degrade pas la qualite du code.</p>
+
+<h4>Mecanisme d'indexation</h4>
+
+<ol>
+  <li>Balayage recursif de tous les fichiers <code>.cs</code> (exclusion de <code>obj/</code> et <code>bin/</code>)</li>
+  <li>Calcul du hash SHA-256 de chaque fichier</li>
+  <li>Comparaison avec le hash mis en cache -- si identique, le fichier est saute</li>
+  <li>Analyse des hotspots via <code>ISourceAnalyzer</code></li>
+  <li>Stockage du snapshot (<code>CodeFileSnapshot</code>) et du source brut dans un <code>ConcurrentDictionary</code></li>
+  <li>Suppression des entrees correspondant a des fichiers supprimes</li>
+</ol>
+
+<h4>Simulation de patch (<code>SimulatePatch</code>)</h4>
+
+<p>Avant toute modification du code, le Clone Numerique simule l'impact du patch en calculant un <strong>score composite multi-metriques</strong> :</p>
+
+<pre><code>score = 0.35 * normCC
+      + 0.15 * normLines
+      + 0.20 * normVolume
+      + 0.15 * normDifficulty
+      + 0.15 * normEffort</code></pre>
+
+<p>Chaque composante <code>norm_X</code> est calculee comme <code>-(delta_X) / (original_X + 1)</code>, de sorte qu'une amelioration (reduction) produit un score positif. Le patch n'est accepte que si le score composite depasse le seuil d'amelioration (<code>ImprovementThreshold = 0.05</code>).</p>
+
+<h3 id="sec6-4">6.4 CodePatcher -- Workflow d'approbation</h3>
+
+<p>Le <code>CodePatcherService</code> orchestre l'application de patches sur le code source avec un workflow d'approbation configurable.</p>
+
+<h4>Flux d'execution</h4>
+
+<div class="diagram-box no-break">
+  <div class="diagram-title">Workflow CodePatcher</div>
+<pre>
+  Patch propose
+       |
+       v
+  +--------------------+
+  | SimulatePatch()    |  --- Score &lt;= 0.05 ---&gt;  [REJETE : "CloneRejected"]
+  | (StateValidator)   |
+  +---------+----------+
+            |
+      Score &gt; 0.05
+            |
+            v
+  +---------+----------+
+  | AuditOnly mode ?   |  --- Oui ---&gt;  [PROPOSITION EN ATTENTE]
+  |                    |                   + GetPendingProposals()
+  +---------+----------+                   + ApproveAndApplyAsync()
+            |                              + RejectProposalAsync()
+          Non
+            |
+            v
+  +---------+----------+
+  | Fichier existe ?   |  --- Non ---&gt;  [ECHEC : "FileNotFound"]
+  +---------+----------+
+            |
+          Oui
+            |
+            v
+  +---------+----------+
+  | Source drift ?     |  --- Oui ---&gt;  [ECHEC : "SourceDrift"]
+  +---------+----------+
+            |
+          Non
+            |
+            v
+  +---------+----------+
+  | CreateSnapshot()   |  --- Echec ---&gt;  [ECHEC : "SnapshotFailed"]
+  | (IRollbackService) |
+  +---------+----------+
+            |
+          OK
+            |
+            v
+  +---------+----------+
+  | MethodReplacer     |
+  | (Roslyn AST)       |  --- Introuvable ---&gt;  [ECHEC : "AstNotFound"]
+  +---------+----------+
+            |
+          OK
+            |
+            v
+  +---------+----------+
+  | File.WriteAllText  |
+  | + Audit Entry      |
+  +--------------------+
+       |
+       v
+    [SUCCES]
+</pre>
+</div>
+
+<h4>Mode Audit (defaut entreprise)</h4>
+
+<p>Par defaut, le parametre <code>CodePatcherAuditOnly</code> est a <code>true</code>. Dans ce mode, les patches valides par le Clone Numerique ne sont pas appliques automatiquement. Ils sont stockes en tant que propositions dans une liste accessible via <code>GetPendingProposals()</code>. Un operateur humain peut alors :</p>
+
+<ul>
+  <li><strong>Approuver</strong> via <code>ApproveAndApplyAsync()</code> -- le patch est re-valide par le Clone puis applique</li>
+  <li><strong>Rejeter</strong> via <code>RejectProposalAsync()</code> -- la proposition est retiree et l'evenement est audite</li>
+</ul>
+
+<p>L'historique des patches (acceptes, rejetes, echoues) est maintenu dans un buffer circulaire de 100 entrees.</p>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     7. SECURITE ET CONFORMITE
+     ==================================================================== -->
+<h2 id="sec7">7. Securite et conformite</h2>
+
+<h3 id="sec7-1">7.1 Principe Zero Cloud</h3>
+
+<p>Le principe Zero Cloud est la contrainte architecturale fondamentale de Coclico. <strong>Aucune donnee, aucune metrique, aucun prompt IA n'est jamais transmis a un service exterieur.</strong> Cela inclut :</p>
+
+<ul>
+  <li><strong>Inference IA</strong> -- Le modele GGUF est charge localement. LLamaSharp effectue l'inference sur le CPU/GPU local.</li>
+  <li><strong>Telemetrie</strong> -- Toutes les metriques sont stockees dans <code>%AppData%\Coclico\telemetry\</code>.</li>
+  <li><strong>Audit</strong> -- Les pistes d'audit sont des fichiers NDJSON locaux.</li>
+  <li><strong>Parametres</strong> -- Stockage exclusif dans <code>settings.json</code> local.</li>
+  <li><strong>Snapshots de rollback</strong> -- Chiffres via DPAPI et stockes localement.</li>
+</ul>
+
+<p>La seule communication reseau autorisee est la verification de mise a jour (appel HTTPS vers le depot GitHub) et les operations explicitement declenchees par l'utilisateur (Winget, HttpRequest dans les Flow Chains).</p>
+
+<h3 id="sec7-2">7.2 Rollback Safety</h3>
+
+<p>Le service <code>RollbackService</code> implemente un mecanisme de points de restauration a double couche :</p>
+
+<h4>Couche memoire</h4>
+<ul>
+  <li>Stockage dans un <code>ConcurrentDictionary&lt;string, (SnapshotMetadata, string)&gt;</code></li>
+  <li>Capacite : 50 snapshots en memoire (FIFO)</li>
+  <li>Acces en O(1) pour la restauration</li>
+</ul>
+
+<h4>Couche disque</h4>
+<ul>
+  <li>Repertoire : <code>%AppData%\Coclico\snapshots\</code></li>
+  <li>Chiffrement : <strong>DPAPI</strong> (<code>ProtectedData.Protect</code> avec <code>DataProtectionScope.CurrentUser</code>)</li>
+  <li>Format : Enveloppe JSON contenant les metadonnees et l'etat serialise</li>
+  <li>Nettoyage automatique : les snapshots de plus de 30 jours sont supprimes a la fermeture</li>
+</ul>
+
+<p>Chaque snapshot est identifie par un GUID sans tirets (32 caracteres hexadecimaux) et contient les metadonnees suivantes : identifiant, nom du contexte, horodatage UTC, type .NET de l'etat sauvegarde, et taille en octets.</p>
+
+<h3 id="sec7-3">7.3 Politique de securite</h3>
+
+<p>Le service <code>SecurityPolicyService</code> implemente une politique de securite a deux niveaux : des <strong>regles par defaut non-supprimables</strong> et des <strong>regles d'entreprise fusionnables</strong> chargees depuis <code>%AppData%\Coclico\security-policy.json</code>.</p>
+
+<h4>Patterns de commandes bloquees (par defaut)</h4>
+
+<table>
+  <thead>
+    <tr><th>Categorie</th><th>Exemples de patterns</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Destruction de donnees</td><td><code>format</code>, <code>rd /s /q</code>, <code>rmdir /s /q</code>, <code>del /f /s /q</code>, <code>rm -rf</code>, <code>cipher /w:</code></td></tr>
+    <tr><td>Configuration critique</td><td><code>bcdedit</code>, <code>diskpart</code>, <code>reg delete hklm</code>, <code>sc delete</code></td></tr>
+    <tr><td>Gestion des comptes</td><td><code>net user</code>, <code>net localgroup administrators</code>, <code>icacls</code>, <code>takeown</code></td></tr>
+  </tbody>
+</table>
+
+<h4>Patterns PowerShell bloques (par defaut)</h4>
+
+<table>
+  <thead>
+    <tr><th>Categorie</th><th>Exemples de patterns</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Execution de code arbitraire</td><td><code>invoke-expression</code>, <code>iex</code>, <code>-encodedcommand</code>, <code>frombase64string</code></td></tr>
+    <tr><td>Telechargement</td><td><code>downloadstring</code>, <code>downloadfile</code>, <code>invoke-webrequest</code>, <code>net.webclient</code></td></tr>
+    <tr><td>Chargement d'assemblies</td><td><code>assembly::load</code>, <code>assembly::loadfrom</code>, <code>reflection.assembly</code></td></tr>
+    <tr><td>Securite systeme</td><td><code>set-mppreference</code>, <code>disable-windowsoptionalfeature</code></td></tr>
+    <tr><td>Destruction</td><td><code>format-volume</code>, <code>clear-disk</code>, <code>remove-item -recurse</code></td></tr>
+  </tbody>
+</table>
+
+<h4>Chemins proteges</h4>
+
+<p>Les operations de fichiers via les Flow Chains sont bloquees sur les segments de chemin suivants : <code>\windows\</code>, <code>\program files\</code>, <code>\program files (x86)\</code>, <code>\programdata\microsoft\</code>, <code>\system volume information\</code>, <code>\$recycle.bin\</code>, <code>\recovery\</code>, <code>\boot\</code>, <code>\efi\</code>.</p>
+
+<p>L'implementation utilise des <code>FrozenSet&lt;string&gt;</code> pour un matching a haute performance en O(1) amortie. Les wildcards PowerShell sont compiles en <code>Regex</code> avec un timeout de 100ms par pattern pour prevenir les attaques ReDoS.</p>
+
+<h3 id="sec7-4">7.4 Piste d'audit</h3>
+
+<p>Le service <code>AuditLogService</code> maintient une piste d'audit <strong>append-only</strong> au format NDJSON (Newline Delimited JSON). Chaque entree contient :</p>
+
+<table>
+  <thead>
+    <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Timestamp</code></td><td><code>DateTimeOffset</code></td><td>Horodatage UTC de l'evenement</td></tr>
+    <tr><td><code>Actor</code></td><td><code>string</code></td><td>Origine de l'action (OptimizationEngine, CodePatcher, Human)</td></tr>
+    <tr><td><code>Action</code></td><td><code>string</code></td><td>Type d'action (AiDecision, PatchApplied, PatchRejected, ProposalApproved, etc.)</td></tr>
+    <tr><td><code>Target</code></td><td><code>string</code></td><td>Cible de l'action (SystemMetrics, fichier::methode)</td></tr>
+    <tr><td><code>Success</code></td><td><code>bool</code></td><td>Resultat de l'operation</td></tr>
+    <tr><td><code>Details</code></td><td><code>string?</code></td><td>Details supplementaires</td></tr>
+    <tr><td><code>AiDecision</code></td><td><code>AiDecisionContext?</code></td><td>Tracabilite IA : prompt, reponse brute, mode de decision</td></tr>
+  </tbody>
+</table>
+
+<p>Les fichiers d'audit sont nommes <code>audit-YYYY-MM-DD.log</code> et stockes dans <code>%AppData%\Coclico\audit\</code>. L'elagage automatique est execute au demarrage selon la duree de retention configuree (defaut : 90 jours). La lecture des entrees recentes s'effectue en parcours inverse (fin vers debut) avec un buffer de 4096 octets emprunte a <code>ArrayPool&lt;byte&gt;.Shared</code>.</p>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     8. TELEMETRIE ET OBSERVABILITE
+     ==================================================================== -->
+<h2 id="sec8">8. Telemetrie et observabilite</h2>
+
+<h3 id="sec8-1">8.1 DynamicTracerService</h3>
+
+<p>Le service <code>DynamicTracerService</code> fournit l'infrastructure de telemetrie de l'application. Il collecte les metriques de performance de toutes les operations instrumentees.</p>
+
+<h4>Specifications techniques</h4>
+
+<table>
+  <thead>
+    <tr><th>Parametre</th><th>Valeur</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Capacite du buffer</td><td>2000 snapshots</td><td>Buffer circulaire <code>ConcurrentQueue</code> avec eviction FIFO</td></tr>
+    <tr><td>Intervalle de flush</td><td>30 secondes</td><td>Timer periodique qui ecrit sur disque</td></tr>
+    <tr><td>Retention</td><td>14 fichiers</td><td>Les fichiers les plus anciens sont supprimes</td></tr>
+    <tr><td>Format de sortie</td><td>JSON</td><td><code>metrics-YYYY-MM-DD.json</code> dans <code>%AppData%\Coclico\telemetry\</code></td></tr>
+  </tbody>
+</table>
+
+<h4>API d'instrumentation</h4>
+
+<p>Deux modes d'instrumentation sont disponibles :</p>
+
+<p><strong>Mode Span</strong> -- Pour mesurer la duree d'un bloc de code :</p>
+<pre><code>using var span = tracer.BeginOperation("Feature.Operation", "Category");
+// ... code mesure ...
+// La duree est enregistree automatiquement au Dispose</code></pre>
+
+<p><strong>Mode Direct</strong> -- Pour enregistrer une mesure ponctuelle :</p>
+<pre><code>tracer.Record("Feature.Operation", elapsed, "Category", tags);</code></pre>
+
+<h4>Agregats statistiques</h4>
+
+<p>La methode <code>GetAggregate(string operationName)</code> retourne un objet <code>MetricAggregate</code> contenant :</p>
+<ul>
+  <li>Nombre d'echantillons</li>
+  <li>Minimum, Maximum, Moyenne</li>
+  <li><strong>Percentile 95</strong> (via T-Digest si au moins 5 echantillons, sinon calcul exact)</li>
+  <li>Derniere observation</li>
+</ul>
+
+<h3 id="sec8-2">8.2 Algorithmes statistiques</h3>
+
+<h4>T-Digest (estimation de quantiles en streaming)</h4>
+
+<p>L'implementation dans <code>Algorithms/TDigest.cs</code> suit l'algorithme de Dunning et Ertl (2019). Ce structure de donnees permet l'estimation de quantiles (P50, P95, P99) sur un flux de donnees en streaming avec une complexite memoire bornee.</p>
+
+<table>
+  <thead>
+    <tr><th>Parametre</th><th>Valeur</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Compression</td><td>100</td><td>Controle la precision vs. la taille memoire</td></tr>
+    <tr><td>Buffer d'accumulation</td><td>200 valeurs</td><td>Flush automatique dans les centroides</td></tr>
+    <tr><td>Precision estimee</td><td>~1% aux extremes</td><td>Meilleure precision pour P50, bonne pour P95/P99</td></tr>
+  </tbody>
+</table>
+
+<h4>Isolation Forest (detection d'anomalies)</h4>
+
+<p>L'implementation dans <code>Algorithms/IsolationForestDetector.cs</code> suit l'algorithme de Liu et al. (2008), adapte pour un usage en streaming incremental.</p>
+
+<table>
+  <thead>
+    <tr><th>Parametre</th><th>Valeur</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Nombre d'arbres</td><td>100</td><td>Foret d'arbres d'isolation</td></tr>
+    <tr><td>Taille du sous-echantillon</td><td>64</td><td>Echantillonnage avec remplacement</td></tr>
+    <tr><td>Seuil d'anomalie</td><td>0.65</td><td>Score au-dessus duquel un point est classe anomal</td></tr>
+    <tr><td>Minimum pour l'entrainement</td><td>20 observations</td><td>Nombre de points avant le premier fit</td></tr>
+    <tr><td>Re-entrainement</td><td>Tous les 50 points</td><td>Mise a jour incrementale de la foret</td></tr>
+    <tr><td>Taille maximale du buffer</td><td>500 observations</td><td>Fenetre glissante</td></tr>
+  </tbody>
+</table>
+
+<p>Lorsqu'une anomalie est detectee, le service identifie les features responsables en calculant le Z-score de chaque dimension et en reportant celles depassant un seuil de 2.0 ecarts-types.</p>
+
+<h4>Adaptive Scorer</h4>
+
+<p>Le composant <code>AdaptiveScorer</code> integre au <code>OptimizationEngineService</code> calcule un score d'urgence pour le mode fallback deterministe. Les poids sont auto-ajustables : lorsqu'une action s'avere inefficace, le poids CPU augmente et les autres diminuent, avec renormalisation pour maintenir la somme a 1.0.</p>
+
+<h3 id="sec8-3">8.3 Journalisation Serilog</h3>
+
+<p>La journalisation est configuree au niveau du conteneur DI avec les parametres suivants :</p>
+
+<table>
+  <thead>
+    <tr><th>Parametre</th><th>Valeur</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Niveau minimum</td><td>Debug</td></tr>
+    <tr><td>Repertoire</td><td><code>%AppData%\Coclico\logs\</code></td></tr>
+    <tr><td>Rotation</td><td>Quotidienne (<code>RollingInterval.Day</code>)</td></tr>
+    <tr><td>Retention</td><td>14 fichiers</td></tr>
+    <tr><td>Nommage</td><td><code>coclico-YYYYMMDD.log</code></td></tr>
+    <tr><td>Template de sortie</td><td><code>[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}</code></td></tr>
+    <tr><td>Enrichissement</td><td><code>Enrich.FromLogContext()</code></td></tr>
+  </tbody>
+</table>
+
+<p>L'API publique est exposee via la classe statique <code>LoggingService</code> avec les methodes <code>LogInfo</code>, <code>LogError</code> et <code>LogException</code>. La convention impose qu'aucune exception ne soit absorbee silencieusement -- chaque catch doit produire au minimum une entree de journal.</p>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     9. SITE WEB
+     ==================================================================== -->
+<h2 id="sec9">9. Site web</h2>
+
+<h3 id="sec9-1">9.1 Architecture Astro</h3>
+
+<p>Le site web de Coclico est construit avec le framework <strong>Astro</strong>, un generateur de sites statiques axe sur la performance. L'architecture technique est la suivante :</p>
+
+<table>
+  <thead>
+    <tr><th>Composant</th><th>Technologie</th><th>Role</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Framework</td><td>Astro</td><td>Generation statique, rendu au build</td></tr>
+    <tr><td>Styles</td><td>Tailwind CSS</td><td>Utility-first CSS, styles personnalises dans <code>global.css</code></td></tr>
+    <tr><td>Animations</td><td>GSAP</td><td>Animations cote client (configure en <code>noExternal</code> pour le SSR)</td></tr>
+    <tr><td>SEO</td><td>@astrojs/sitemap</td><td>Generation automatique du sitemap</td></tr>
+  </tbody>
+</table>
+
+<h4>Structure du projet</h4>
+
+<pre><code>website/
+  src/
+    components/
+      layout/          -- Composants de mise en page
+      sections/        -- Sections reutilisables
+    i18n/
+      index.ts         -- Logique de traduction
+      locales/         -- Fichiers de traduction par langue
+    layouts/           -- Templates de page
+    pages/
+      index.astro      -- Page d'accueil (francais, defaut)
+      changelog/       -- Notes de version
+      docs/            -- Documentation technique
+      faq/             -- Questions frequentes
+      guide/           -- Guides utilisateur
+      wiki/            -- Wiki du projet
+      en/              -- Pages anglaises
+      de/              -- Pages allemandes
+      es/              -- Pages espagnoles
+      fr/              -- Pages francaises
+    styles/            -- Feuilles de style globales
+  public/              -- Ressources statiques (favicon, images)
+  astro.config.mjs     -- Configuration Astro
+  tailwind.config.mjs  -- Configuration Tailwind
+</code></pre>
+
+<h3 id="sec9-2">9.2 Internationalisation</h3>
+
+<p>Le site supporte quatre langues avec le systeme i18n natif d'Astro :</p>
+
+<table>
+  <thead>
+    <tr><th>Langue</th><th>Code</th><th>Prefixe URL</th><th>Role</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Francais</td><td><code>fr</code></td><td><code>/</code> (racine, defaut)</td><td>Locale par defaut, pas de prefixe</td></tr>
+    <tr><td>Anglais</td><td><code>en</code></td><td><code>/en/</code></td><td>Fallback vers le francais pour les pages manquantes</td></tr>
+    <tr><td>Allemand</td><td><code>de</code></td><td><code>/de/</code></td><td>Fallback vers le francais</td></tr>
+    <tr><td>Espagnol</td><td><code>es</code></td><td><code>/es/</code></td><td>Fallback vers le francais</td></tr>
+  </tbody>
+</table>
+
+<p>La configuration impose un <code>trailingSlash: 'always'</code> pour la coherence des URL et le bon fonctionnement du deploiement GitHub Pages.</p>
+
+<h3 id="sec9-3">9.3 Deploiement</h3>
+
+<p>Le site est deploye sur <strong>GitHub Pages</strong> a l'adresse <code>https://coclico-cy.github.io/Coclico/</code>. La configuration de base (<code>base: '/Coclico'</code>) assure le bon fonctionnement des liens relatifs dans le contexte d'un sous-repertoire GitHub Pages. Le repertoire de sortie est configure a <code>../docs</code> pour etre servi directement depuis le depot.</p>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     10. PREREQUIS ET DEPLOIEMENT
+     ==================================================================== -->
+<h2 id="sec10">10. Prerequis et deploiement</h2>
+
+<h3 id="sec10-1">10.1 Configuration materielle et logicielle</h3>
+
+<table>
+  <thead>
+    <tr><th>Element</th><th>Minimum</th><th>Recommande</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Systeme d'exploitation</td><td>Windows 10 22H2 (build 22621)</td><td>Windows 11 23H2+</td></tr>
+    <tr><td>Runtime</td><td>.NET 10 Desktop Runtime</td><td>.NET 10 Desktop Runtime</td></tr>
+    <tr><td>RAM (sans IA)</td><td>4 Go</td><td>8 Go</td></tr>
+    <tr><td>RAM (avec IA)</td><td>8 Go</td><td>16 Go</td></tr>
+    <tr><td>Espace disque</td><td>500 Mo (application)</td><td>3 Go (application + modele IA)</td></tr>
+    <tr><td>CPU</td><td>4 coeurs</td><td>6+ coeurs (inference IA optimale)</td></tr>
+    <tr><td>GPU (optionnel)</td><td>-</td><td>Vulkan compatible (acceleration IA)</td></tr>
+    <tr><td>Privileges</td><td colspan="2">Administrateur requis (UAC prompt automatique)</td></tr>
+    <tr><td>Winget</td><td colspan="2">Necessaire pour le module Installeur Rapide</td></tr>
+  </tbody>
+</table>
+
+<h3 id="sec10-2">10.2 Installation et premiere execution</h3>
+
+<ol>
+  <li>Installer le runtime .NET 10 Desktop si non present</li>
+  <li>Executer l'installeur Coclico (genere via <code>Coclico_Setup.iss</code> -- InnoSetup)</li>
+  <li>Au premier lancement, accepter l'elevation UAC</li>
+  <li>Configurer le mode de demarrage dans le Launcher (Normal, Minimise, Tray)</li>
+  <li>Optionnel : placer le modele GGUF dans <code>resource/model/IA-support-chat.gguf</code> pour activer l'IA</li>
+</ol>
+
+<h4>Stockage des donnees utilisateur</h4>
+
+<p>Toutes les donnees sont centralisees dans <code>%AppData%\Coclico\</code> :</p>
+
+<table>
+  <thead>
+    <tr><th>Fichier / Repertoire</th><th>Contenu</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>settings.json</code></td><td>Parametres de l'application</td></tr>
+    <tr><td><code>flow_chains.json</code></td><td>Definitions des chaines d'automatisation</td></tr>
+    <tr><td><code>custom_apps_data.json</code></td><td>Personnalisations des noms et categories d'applications</td></tr>
+    <tr><td><code>manual_apps.json</code></td><td>Applications ajoutees manuellement</td></tr>
+    <tr><td><code>avatar.png</code></td><td>Avatar de l'utilisateur</td></tr>
+    <tr><td><code>security-policy.json</code></td><td>Politique de securite entreprise (optionnel)</td></tr>
+    <tr><td><code>logs/</code></td><td>Journaux Serilog rotatifs</td></tr>
+    <tr><td><code>audit/</code></td><td>Piste d'audit NDJSON</td></tr>
+    <tr><td><code>telemetry/</code></td><td>Metriques de performance</td></tr>
+    <tr><td><code>snapshots/</code></td><td>Points de restauration chiffres DPAPI</td></tr>
+  </tbody>
+</table>
+
+<h3 id="sec10-3">10.3 Commandes de compilation</h3>
+
+<pre><code># Compilation
+dotnet build Coclico/Coclico.csproj
+
+# Execution (necessite elevation administrateur)
+dotnet run --project Coclico/Coclico.csproj
+
+# Tests unitaires
+dotnet test
+
+# Tests filtres par classe
+dotnet test --filter "FullyQualifiedName~ServiceCore"
+
+# Restauration des packages
+dotnet restore
+
+# Nettoyage complet
+dotnet clean</code></pre>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     11. ANNEXE : STRUCTURE DES REPERTOIRES
+     ==================================================================== -->
+<h2 id="sec11">11. Annexe : Structure des repertoires</h2>
+
+<pre><code>Coclico/                            -- Racine du depot
+  Coclico.slnx                      -- Solution .NET
+  Coclico_Setup.iss                  -- Script InnoSetup (installeur)
+  LICENSE                            -- Open source (MIT)
+  README.md                          -- Documentation en anglais
+  README.fr.md                       -- Documentation en francais
+  CLAUDE.md                          -- Instructions pour IA assistante
+
+  Coclico/                           -- Projet principal (.NET 10 WPF)
+    Coclico.csproj                   -- Fichier projet
+    App.xaml / App.xaml.cs           -- Point d'entree, sequence de demarrage
+    MainWindow.xaml / .cs            -- Fenetre principale Fluent Design
+    AssemblyInfo.cs                  -- Metadonnees d'assemblage
+    app.manifest                     -- Manifeste UAC
+
+    Models/
+      WorkflowPipeline.cs            -- Modeles Flow Chain (28 NodeTypes)
+      LaunchMode.cs                  -- Modes de demarrage
+
+    Views/
+      DashboardView.xaml             -- Tableau de bord temps reel
+      ProgramsView.xaml              -- Bibliotheque d'applications
+      WorkflowPipelinesView.xaml     -- Editeur Flow Chains
+      InstallerView.xaml             -- Installeur Rapide (Winget)
+      CleaningView.xaml              -- Nettoyage systeme
+      ScannerView.xaml               -- Audit d'applications
+      RamCleanerView.xaml            -- Nettoyage memoire
+      AiChatView.xaml                -- Chat IA local
+      SettingsView.xaml              -- Parametres
+      HelpView.xaml                  -- Aide
+      SplashWindow.xaml              -- Ecran de demarrage
+      LauncherWindow.xaml            -- Configuration premier lancement
+      ProfileWindow.xaml             -- Profil utilisateur
+      AdminPromptWindow.xaml         -- Invite d'elevation UAC
+      AvatarCropWindow.xaml          -- Recadrage d'avatar
+      RuleSelectionDialog.xaml       -- Selection de regles
+
+    ViewModels/
+      DashboardViewModel.cs          -- VM Tableau de Bord
+      CleaningViewModel.cs           -- VM Nettoyage
+      ScannerViewModel.cs            -- VM Scanner
+      SettingsViewModel.cs           -- VM Parametres
+      WorkflowPipelinesViewModel.cs  -- VM Flow Chains
+
+    Services/
+      ServiceContainer.cs            -- Conteneur DI statique
+      AiChatService.cs               -- IA locale dual-executor
+      OptimizationEngineService.cs   -- Pipeline autonome 3 etages
+      SourceAnalyzerService.cs       -- Analyse Roslyn AST
+      StateValidatorService.cs       -- Clone Numerique
+      CodePatcherService.cs          -- AutoPatcher avec approbation
+      RollbackService.cs             -- Points de restauration DPAPI
+      AuditLogService.cs             -- Piste d'audit NDJSON
+      SecurityPolicyService.cs       -- Politique de securite
+      DynamicTracerService.cs        -- Telemetrie et metriques
+      MemoryCleanerService.cs        -- 18 operations P/Invoke
+      FeatureExecutionEngine.cs      -- Moteur d'execution avec circuit-breaker
+      ResourceAllocatorService.cs    -- QoS processus
+      RagService.cs                  -- RAG BM25 + Cosinus TF-IDF
+      CleaningService.cs             -- Nettoyage systeme
+      InstalledProgramsService.cs    -- Detection multi-sources
+      WorkflowService.cs             -- CRUD + execution Flow Chains
+      SettingsService.cs             -- Persistance des parametres
+      InstallerService.cs            -- Interface Winget
+      ThemeService.cs                -- Themes et couleurs
+      LocalizationService.cs         -- Internationalisation (10 langues)
+      ProfileService.cs              -- Profil utilisateur
+      ProcessWatcherService.cs       -- Surveillance des processus
+      NetworkMonitorService.cs       -- Surveillance reseau
+      StartupService.cs              -- Demarrage automatique Windows
+      KeyboardShortcutsService.cs    -- Raccourcis clavier globaux
+      LoggingService.cs              -- Abstraction Serilog
+      ToastService.cs                -- Notifications toast
+      CacheService.cs                -- Abstraction du cache
+      ResourceGuardService.cs        -- Gardien de ressources
+      SecretScanService.cs           -- Detection de secrets
+      SeverityClassifier.cs          -- Classification de severite
+      UpdateCheckService.cs          -- Verification de mise a jour
+      UpdateManager.cs               -- Gestionnaire de mise a jour
+      StartupHealthService.cs        -- Verification de sante au demarrage
+      UserAccountService.cs          -- Gestion des comptes
+      TrayService.Win32.cs           -- Integration zone de notification
+
+      Algorithms/
+        IsolationForestDetector.cs   -- Detection d'anomalies (Liu et al. 2008)
+        TDigest.cs                   -- Estimation de quantiles (Dunning 2019)
+        MethodReplacer.cs            -- Remplacement AST de methodes
+        SimpleStemmer.cs             -- Racinisation pour le RAG
+
+      Interfaces (I*.cs)
+        IAiService.cs                -- Contrat service IA
+        IAuditLog.cs                 -- Contrat piste d'audit
+        ICacheService.cs             -- Contrat cache
+        ICodePatcher.cs              -- Contrat auto-patcher
+        IDynamicTracer.cs            -- Contrat telemetrie
+        IOptimizationEngine.cs       -- Contrat moteur d'optimisation
+        IResourceAllocator.cs        -- Contrat QoS
+        IRollbackService.cs          -- Contrat rollback
+        ISecurityPolicy.cs           -- Contrat politique de securite
+        ISourceAnalyzer.cs           -- Contrat analyseur statique
+        IStateValidator.cs           -- Contrat clone numerique
+
+    Resources/                       -- Ressources embarquees (icones, traductions)
+    Converters/                      -- Convertisseurs XAML
+    Properties/                      -- Proprietes d'assemblage
+    resource/
+      model/                         -- Modele GGUF pour LLamaSharp
+      docs/                          -- Documentation pour le RAG
+
+  Coclico.Tests/                     -- Projet de tests (xUnit + Moq)
+
+  website/                           -- Site web (Astro + Tailwind)
+    src/
+      pages/                         -- Pages multi-langues
+      components/                    -- Composants reutilisables
+      i18n/                          -- Traductions
+      layouts/                       -- Templates
+      styles/                        -- CSS global
+    public/                          -- Ressources statiques
+
+  docs/                              -- Sortie du build Astro (GitHub Pages)
+  Installer/                         -- Artefacts d'installation
+</code></pre>
+
+<div class="page-break"></div>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<div class="doc-footer">
+  <p><strong>Coclico -- Rapport Technique v1.0.4</strong> -- Mars 2026</p>
+  <p>Ce document est genere a partir de l'analyse exhaustive du code source de l'application.</p>
+  <p>2026 Coclico</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+---
+import type { Lang } from '../../i18n/index';
+import { useTranslations, getLocalePath } from '../../i18n/index';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const requirements = [
+  { key: 'download_req1', icon: '🪟' },
+  { key: 'download_req2', icon: '⚙' },
+  { key: 'download_req3', icon: '💾' },
+  { key: 'download_req4', icon: '🧠' },
+] as const;
+---
+
+<section class="download-section" id="download" aria-labelledby="download-heading">
+  <!-- Glow de fond -->
+  <div class="dl-glow" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="dl-inner">
+      <!-- Badge -->
+      <div class="dl-badge gsap-fade-up">
+        <span class="badge">{t('download_badge')}</span>
+      </div>
+
+      <!-- Titre -->
+      <h2 id="download-heading" class="dl-title gsap-fade-up">
+        {t('download_title')}
+      </h2>
+
+      <!-- Sous-titre -->
+      <p class="dl-sub gsap-fade-up">{t('download_sub')}</p>
+
+      <!-- Boutons -->
+      <div class="dl-ctas gsap-fade-up">
+        <a
+          href="https://github.com/Coclico-cy/Coclico/releases/latest"
+          class="btn-primary dl-btn-main"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${t('download_btn')} (ouvre GitHub)`}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          {t('download_btn')}
+        </a>
+        <a href={getLocalePath('/docs/', lang)} class="btn-outline dl-btn-docs">
+          {t('download_docs_btn')}
+        </a>
+      </div>
+
+      <!-- Requirements -->
+      <div class="dl-reqs gsap-fade-up" role="list" aria-label="Configuration requise">
+        {requirements.map(({ key, icon }) => (
+          <div class="dl-req" role="listitem">
+            <span class="dl-req-icon" aria-hidden="true">{icon}</span>
+            <span>{t(key)}</span>
+          </div>
+        ))}
+      </div>
+
+      <!-- Rapports techniques -->
+      <div class="dl-reports gsap-fade-up">
+        <a href="/Coclico/rapport-technique-coclico-fr.html" target="_blank" rel="noopener" class="dl-report-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Rapport technique (FR)
+        </a>
+        <a href="/Coclico/technical-report-coclico-en.html" target="_blank" rel="noopener" class="dl-report-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Technical Report (EN)
+        </a>
+      </div>
+
+      <!-- Note admin -->
+      <div class="dl-admin-note gsap-fade-up" role="note">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>Coclico.exe requiert les droits <strong>Administrateur</strong> (UAC) — aucun installeur, aucun cloud.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.download-section {
+  position: relative;
+  padding: 8rem 0;
+  overflow: hidden;
+}
+
+.dl-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.dl-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.dl-title {
+  max-width: 600px;
+}
+
+.dl-sub {
+  max-width: 500px;
+  font-size: 1rem;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.dl-ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.dl-btn-main {
+  font-size: 1.05rem;
+  padding: 0.85rem 2rem;
+  box-shadow: 0 6px 30px var(--accent-glow);
+}
+
+.dl-btn-docs {
+  font-size: 1.05rem;
+  padding: 0.85rem 2rem;
+}
+
+/* Requirements */
+.dl-reqs {
+  display: flex;
+  gap: 0.5rem 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1.25rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  margin-top: 0.5rem;
+}
+
+.dl-req {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.dl-req-icon { font-size: 0.95rem; }
+
+/* Admin note */
+.dl-admin-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-3);
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  max-width: 480px;
+}
+
+.dl-admin-note strong { color: var(--text-2); }
+
+/* Report links */
+.dl-reports {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.dl-report-link {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: color var(--duration-fast), border-color var(--duration-fast), background var(--duration-fast);
+}
+.dl-report-link:hover {
+  color: var(--accent-hover);
+  border-color: var(--border-accent);
+  background: var(--accent-dim);
+}
+.dl-report-link svg { flex-shrink: 0; }
+</style>
+
+<script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
+
+gsap.fromTo('.dl-inner > *', { opacity: 0, y: 24 }, {
+  opacity: 1, y: 0,
+  duration: 0.6,
+  stagger: 0.1,
+  ease: 'power3.out',
+  scrollTrigger: { trigger: '.download-section', start: 'top 80%', once: true },
+});
+</script>

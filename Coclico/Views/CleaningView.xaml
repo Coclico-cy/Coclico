@@ -1,0 +1,385 @@
+<UserControl x:Class="Coclico.Views.CleaningView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{DynamicResource BgBaseBrush}" d:DesignHeight="800" d:DesignWidth="1000"
+             RenderOptions.BitmapScalingMode="HighQuality">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        
+        <Style x:Key="CleanProgressBar" TargetType="ProgressBar">
+            <Setter Property="Height"          Value="6"/>
+            <Setter Property="Maximum"         Value="100"/>
+            <Setter Property="Background"      Value="#18FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border CornerRadius="3" Background="{TemplateBinding Background}"
+                                Height="{TemplateBinding Height}">
+                            <Border x:Name="PART_Indicator" CornerRadius="3"
+                                    Background="{TemplateBinding Foreground}"
+                                    HorizontalAlignment="Left"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <!-- Fade in plus doux -->
+                    <DoubleAnimation Storyboard.TargetName="PageRoot"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.45">
+                        <DoubleAnimation.EasingFunction><QuinticEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <!-- Slide Y légèrement plus ample -->
+                    <DoubleAnimation Storyboard.TargetName="PageSlide"
+                                     Storyboard.TargetProperty="Y"
+                                     From="20" To="0" Duration="0:0:0.45">
+                        <DoubleAnimation.EasingFunction><QuinticEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <!-- Scale subtil : de 0.98 à 1 pour un effet "pop" -->
+                    <DoubleAnimation Storyboard.TargetName="PageScale"
+                                     Storyboard.TargetProperty="ScaleX"
+                                     From="0.98" To="1" Duration="0:0:0.45">
+                        <DoubleAnimation.EasingFunction><QuinticEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="PageScale"
+                                     Storyboard.TargetProperty="ScaleY"
+                                     From="0.98" To="1" Duration="0:0:0.45">
+                        <DoubleAnimation.EasingFunction><QuinticEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid x:Name="PageRoot" Margin="32,28,32,32" Opacity="0"
+          RenderTransformOrigin="0.5,0.5">
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform x:Name="PageScale" ScaleX="1" ScaleY="1"/>
+                <TranslateTransform x:Name="PageSlide" Y="0"/>
+            </TransformGroup>
+        </Grid.RenderTransform>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        
+        <StackPanel Grid.Row="0" Margin="0,0,0,28">
+            <TextBlock Text="{DynamicResource Cleaning_Title}" FontSize="26" FontWeight="Bold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock Text="{DynamicResource Cleaning_Subtitle}" FontSize="12"
+                       Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            
+            <Border Grid.Column="0" CornerRadius="{DynamicResource CornerCard}"
+                    BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#0D0818" Offset="0"/>
+                        <GradientStop Color="#08050F" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Grid>
+                    
+                    <Grid Panel.ZIndex="10"
+                          Visibility="{Binding IsCleaning, Converter={StaticResource BoolToVis}}">
+                        <Border Background="#EE08050F"
+                                CornerRadius="{DynamicResource CornerCard}"/>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    MinWidth="360">
+                            <TextBlock Text="{Binding StatusMessage}"
+                                       HorizontalAlignment="Center" FontSize="15"
+                                       FontWeight="SemiBold" Margin="0,0,0,20"
+                                       Foreground="{DynamicResource SecondaryBrush}"/>
+                            <ProgressBar Style="{StaticResource CleanProgressBar}"
+                                         Value="{Binding Progress}"
+                                         Foreground="{DynamicResource PrimaryBrush}"/>
+                            <Button Content="Annuler" Click="BtnCancelCleaning_Click"
+                                    HorizontalAlignment="Center" Padding="28,9" Margin="0,20,0,0"
+                                    Background="Transparent"
+                                    Foreground="{DynamicResource TextMutedBrush}"
+                                    BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                    BorderThickness="1">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    
+                    <Grid Margin="32,28,32,28">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        
+                        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,24">
+                            <Border Width="72" Height="72" CornerRadius="36"
+                                    HorizontalAlignment="Center" Margin="0,0,0,14">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#1A0A30" Offset="0"/>
+                                        <GradientStop Color="#120B22" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.BorderBrush>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#4A1FA8" Offset="0"/>
+                                        <GradientStop Color="#BE185D" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.BorderBrush>
+                                <Border.BorderThickness>1</Border.BorderThickness>
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#7C3AED" BlurRadius="18"
+                                                      Opacity="0.3" ShadowDepth="0"/>
+                                </Border.Effect>
+                                <ui:SymbolIcon Symbol="Delete24" FontSize="30"
+                                               Foreground="{DynamicResource SecondaryBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{DynamicResource Cleaning_DeepClean}"
+                                       FontSize="18" FontWeight="Bold"
+                                       HorizontalAlignment="Center" Margin="0,0,0,4"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Cleaning_Description}"
+                                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" TextAlignment="Center"
+                                       TextWrapping="Wrap" MaxWidth="400"/>
+                        </StackPanel>
+
+                        
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Categories}" Margin="0,0,0,24">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="4" Padding="14,10"
+                                            CornerRadius="{DynamicResource CornerSmall}"
+                                            BorderThickness="1">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#0F0A1E" Offset="0"/>
+                                                <GradientStop Color="#130B20" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#2A1848" Opacity="0.5"/>
+                                        </Border.BorderBrush>
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox IsChecked="{Binding IsSelected}"
+                                                      VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                            <TextBlock Text="{Binding Icon}" FontSize="16"
+                                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding Name}" FontSize="12"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Style="{StaticResource PrimaryButton}"
+                                    Click="BtnStartDeepCleaning_Click"
+                                    Padding="28,12" Margin="0,0,12,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Delete24" Margin="0,0,8,0" FontSize="16"/>
+                                    <TextBlock Text="{DynamicResource Cleaning_DeepClean}"
+                                               FontWeight="SemiBold" FontSize="13"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="BtnStartCleaning_Click" Padding="22,12"
+                                    BorderThickness="1">
+                                <Button.Background>Transparent</Button.Background>
+                                <Button.Foreground>
+                                    <SolidColorBrush Color="#8B7AAE"/>
+                                </Button.Foreground>
+                                <Button.BorderBrush>
+                                    <SolidColorBrush Color="#2A1848" Opacity="0.6"/>
+                                </Button.BorderBrush>
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="10"/>
+                                    </Style>
+                                </Button.Resources>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Broom24" Margin="0,0,8,0" FontSize="16"/>
+                                    <TextBlock Text="{DynamicResource Cleaning_StartBtn}"
+                                               FontWeight="SemiBold" FontSize="13"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            
+            <StackPanel Grid.Column="2">
+
+                
+                <Border CornerRadius="{DynamicResource CornerCard}"
+                        BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1"
+                        Padding="20,18" Margin="0,0,0,14">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#14082A" Offset="0"/>
+                            <GradientStop Color="#0E0620" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Effect>
+                        <DropShadowEffect Color="#BE185D" BlurRadius="20"
+                                          Opacity="0.1" ShadowDepth="0"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource DeepCleaning_Estimate}"
+                                   FontSize="9" FontWeight="Black"
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding EstimatedSpace}"
+                                   FontSize="32" FontWeight="Black"
+                                   FontFamily="Consolas, Courier New, monospace"
+                                   Foreground="{DynamicResource SecondaryBrush}"/>
+                        
+                        <Border Height="3" Margin="0,12,0,0" CornerRadius="2">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#BE185D" Offset="0"/>
+                                    <GradientStop Color="#F97316" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                
+                <Border CornerRadius="{DynamicResource CornerCard}"
+                        BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1"
+                        Padding="20,18" Margin="0,0,0,14">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#0D0818" Offset="0"/>
+                            <GradientStop Color="#08050F" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource Cleaning_Tips}"
+                                   FontSize="9" FontWeight="Black"
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   Margin="0,0,0,16"/>
+
+                        
+                        <StackPanel Margin="0,0,0,14">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Border Width="24" Height="24" CornerRadius="6" Margin="0,0,10,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#1A0A30" Offset="0"/>
+                                            <GradientStop Color="#2A1048" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Info24" FontSize="12"
+                                                   Foreground="{DynamicResource SecondaryBrush}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{DynamicResource Cleaning_SafeExec}"
+                                           FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="{DynamicResource Cleaning_SafeExecDesc}"
+                                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                                       TextWrapping="Wrap" Margin="34,0,0,0"/>
+                        </StackPanel>
+
+                        
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Border Width="24" Height="24" CornerRadius="6" Margin="0,0,10,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#0A1A0A" Offset="0"/>
+                                            <GradientStop Color="#0A200A" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="12"
+                                                   Foreground="{DynamicResource SuccessBrush}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{DynamicResource Cleaning_AdminRights}"
+                                           FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="{DynamicResource Cleaning_AdminRightsDesc}"
+                                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                                       TextWrapping="Wrap" Margin="34,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                
+                <Border CornerRadius="{DynamicResource CornerCard}" Padding="20,18">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#6B2FD9" Offset="0"/>
+                            <GradientStop Color="#BE185D" Offset="0.6"/>
+                            <GradientStop Color="#F97316" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Effect>
+                        <DropShadowEffect Color="#7C3AED" BlurRadius="24"
+                                          Opacity="0.25" ShadowDepth="0"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource Cleaning_SystemState}"
+                                   FontSize="9" FontWeight="Black"
+                                   Foreground="White" Opacity="0.7" Margin="0,0,0,8"/>
+                        <TextBlock Text="{DynamicResource Cleaning_Optimize}"
+                                   FontSize="15" FontWeight="Bold"
+                                   Foreground="White" Margin="0,0,0,4"/>
+                        <TextBlock Text="{DynamicResource Cleaning_OptimizeDesc}"
+                                   FontSize="11" Foreground="White"
+                                   Opacity="0.8" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
+

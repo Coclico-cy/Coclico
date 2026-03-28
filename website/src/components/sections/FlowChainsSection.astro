@@ -1,0 +1,365 @@
+---
+import type { Lang } from '../../i18n/index';
+import { useTranslations, getLocalePath } from '../../i18n/index';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// 28 types de nœuds — vérifiés dans WorkflowPipeline.cs enum NodeType
+const nodes = [
+  { label: 'START',       color: '#22c55e', icon: '▶' },
+  { label: 'OUVRIR APP',  color: '#6366f1', icon: '⊕' },
+  { label: 'FERMER APP',  color: '#f97316', icon: '⊗' },
+  { label: 'COMMANDE',    color: '#a855f7', icon: '⌨' },
+  { label: 'POWERSHELL',  color: '#5b21b6', icon: '⚙' },
+  { label: 'CONDITION',   color: '#eab308', icon: '❓' },
+  { label: 'BOUCLE',      color: '#14b8a6', icon: '🔄' },
+  { label: 'PARALLÈLE',   color: '#8b5cf6', icon: '⫸' },
+  { label: 'HTTP',        color: '#06b6d4', icon: '🌐' },
+  { label: 'FICHIER',     color: '#84cc16', icon: '📁' },
+  { label: 'DÉLAI',       color: '#0ea5e9', icon: '⏱' },
+  { label: 'NOTIF.',      color: '#f472b6', icon: '🔔' },
+  { label: 'RAM CLEAN',   color: '#0e7490', icon: '🧠' },
+  { label: 'TEMP',        color: '#a16207', icon: '🧹' },
+  { label: 'VOLUME',      color: '#7dd3fc', icon: '🔊' },
+  { label: 'MUET',        color: '#64748b', icon: '🔇' },
+  { label: 'SCREENSHOT',  color: '#db2777', icon: '📷' },
+  { label: 'TOUCHES',     color: '#7c3aed', icon: '⌨' },
+  { label: 'CORBEILLE',   color: '#6b7280', icon: '🗑' },
+  { label: 'COMPRESSER',  color: '#ca8a04', icon: '🗜' },
+  { label: 'PRIORITÉ',    color: '#fb923c', icon: '⬆' },
+  { label: 'TUE PROC.',   color: '#dc2626', icon: '⚡' },
+  { label: 'TUE+RAM',     color: '#b91c1c', icon: '💀' },
+  { label: 'PRESSE-PAP.', color: '#0891b2', icon: '📋' },
+  { label: 'SYSTÈME',     color: '#f59e0b', icon: '🔍' },
+  { label: 'URL',         color: '#0284c7', icon: '🔗' },
+  { label: 'RACCOURCI',   color: '#ec4899', icon: '⌨️' },
+  { label: 'END',         color: '#ef4444', icon: '⏹' },
+];
+
+// 10 opérateurs de condition — vérifiés dans ConditionOperator enum
+const conditions = [
+  'ProcessRunning', 'ProcessNotRunning',
+  'FileExists', 'FileNotExists',
+  'TimeAfter', 'TimeBefore',
+  'CpuBelow', 'CpuAbove',
+  'RamBelow', 'RamAbove',
+];
+---
+
+<section class="flowchains-section" id="flowchains" aria-labelledby="flowchains-heading">
+  <div class="container">
+    <div class="fc-layout">
+
+      <!-- Colonne gauche — texte -->
+      <div class="fc-text gsap-fade-up">
+        <div class="section-tag">
+          <span class="badge">Flow Chains</span>
+        </div>
+        <h2 id="flowchains-heading">{t('flowchains_title')}</h2>
+        <p class="fc-desc">{t('flowchains_desc')}</p>
+
+        <!-- Features list -->
+        <ul class="fc-features" role="list">
+          {[
+            { icon: '◆', key: 'flowchains_feat_nodes'      },
+            { icon: '◆', key: 'flowchains_feat_conditions' },
+            { icon: '◆', key: 'flowchains_feat_trigger'    },
+            { icon: '◆', key: 'flowchains_feat_save'       },
+            { icon: '◆', key: 'flowchains_feat_error'      },
+          ].map(({ icon, key }) => (
+            <li class="fc-feature" role="listitem">
+              <span class="fc-feature-icon" aria-hidden="true">{icon}</span>
+              <span>{t(key as any)}</span>
+            </li>
+          ))}
+        </ul>
+
+        <a href={getLocalePath('/wiki/', lang)} class="btn-outline fc-doc-link">
+          {t('flowchains_doc_link')}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Colonne droite — démo visuelle des nœuds -->
+      <div class="fc-visual gsap-fade-up" aria-label="Visualisation des types de nœuds Flow Chains">
+        <div class="fc-panel">
+          <div class="fc-panel-header">
+            <div class="fc-dots" aria-hidden="true">
+              <span style="background:#ef4444"></span>
+              <span style="background:#eab308"></span>
+              <span style="background:#22c55e"></span>
+            </div>
+            <span class="fc-panel-title">Flow Chains Editor</span>
+            <span class="badge" style="font-size:0.6rem">v1.0.4</span>
+          </div>
+
+          <!-- Grille des 28 nœuds -->
+          <div class="nodes-grid" role="list" aria-label="28 types de nœuds disponibles">
+            {nodes.map((node) => (
+              <div
+                class="node-chip"
+                role="listitem"
+                title={node.label}
+                style={`--node-color: ${node.color};`}
+              >
+                <span class="node-icon" aria-hidden="true">{node.icon}</span>
+                <span class="node-label">{node.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <!-- Conditions -->
+          <div class="fc-conditions">
+            <p class="fc-cond-label">10 opérateurs de condition</p>
+            <div class="cond-chips">
+              {conditions.map(c => (
+                <span class="cond-chip">{c}</span>
+              ))}
+            </div>
+          </div>
+
+          <!-- Exemple de chaîne simple -->
+          <div class="fc-chain-demo" aria-label="Exemple de chaîne">
+            {['▶ START', '⊕ App', '⏱ Delay', '🧠 RAM', '⏹ END'].map((step, i, arr) => (
+              <div class="chain-demo-wrap">
+                <div class="chain-step">{step}</div>
+                {i < arr.length - 1 && (
+                  <div class="chain-arrow" aria-hidden="true">
+                    <svg width="16" height="10" viewBox="0 0 16 10">
+                      <path d="M0 5H14M10 1L14 5L10 9" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+.flowchains-section {
+  padding: 7rem 0;
+}
+
+.fc-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .fc-layout { grid-template-columns: 1fr 1.2fr; gap: 5rem; }
+}
+
+/* Texte */
+.fc-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fc-desc {
+  font-size: 1rem;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.fc-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.fc-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.fc-feature-icon {
+  color: var(--accent);
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.fc-doc-link {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+}
+
+/* Panel visuel */
+.fc-panel {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.fc-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.fc-dots {
+  display: flex;
+  gap: 5px;
+}
+.fc-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.fc-panel-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-3);
+  flex: 1;
+}
+
+/* Grille des nœuds */
+.nodes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.35rem;
+  padding: 1rem;
+}
+
+.node-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.5rem;
+  background: color-mix(in srgb, var(--node-color) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--node-color) 25%, transparent);
+  border-radius: var(--radius-sm);
+  cursor: default;
+  transition: background var(--duration-fast), transform var(--duration-fast) var(--ease-spring);
+}
+
+.node-chip:hover {
+  background: color-mix(in srgb, var(--node-color) 20%, transparent);
+  transform: scale(1.04);
+}
+
+.node-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.node-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--node-color) 90%, white);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Conditions */
+.fc-conditions {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.fc-cond-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.cond-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.cond-chip {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.2em 0.5em;
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-full);
+}
+
+/* Demo chaîne */
+.fc-chain-demo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.chain-demo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chain-step {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+</style>
+
+<script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
+
+gsap.fromTo('.fc-text', { opacity: 0, x: -30 }, {
+  opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+  scrollTrigger: { trigger: '.flowchains-section', start: 'top 75%', once: true },
+});
+
+gsap.fromTo('.fc-visual', { opacity: 0, x: 30 }, {
+  opacity: 1, x: 0, duration: 0.8, ease: 'power3.out', delay: 0.15,
+  scrollTrigger: { trigger: '.flowchains-section', start: 'top 75%', once: true },
+});
+
+// Animation stagger des nœuds
+gsap.fromTo('.node-chip', { opacity: 0, scale: 0.8 }, {
+  opacity: 1, scale: 1,
+  duration: 0.3,
+  stagger: { amount: 0.8, from: 'start' },
+  ease: 'back.out(1.2)',
+  scrollTrigger: { trigger: '.nodes-grid', start: 'top 85%', once: true },
+});
+</script>

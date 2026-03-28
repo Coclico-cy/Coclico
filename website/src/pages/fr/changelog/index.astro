@@ -1,0 +1,261 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+const lang = 'fr' as const;
+---
+
+<PageLayout
+  title="Nouveautés — Coclico"
+  description="Historique des versions et nouveautés de Coclico. Découvrez les dernières fonctionnalités, corrections et améliorations."
+  lang={lang}
+  currentPath="/changelog/"
+>
+  <section class="changelog-hero">
+    <div class="changelog-hero-inner">
+      <span class="changelog-badge">Changelog</span>
+      <h1>Nouveautés</h1>
+      <p>Toutes les évolutions de Coclico, version par version.</p>
+    </div>
+  </section>
+
+  <section class="changelog-content">
+    <div class="changelog-inner">
+
+      <article class="version-block latest">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.4</span>
+            <span class="version-label">Dernière version</span>
+          </div>
+          <time class="version-date">Mars 2026</time>
+        </div>
+
+        <div class="changes-grid">
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Architecture & Qualit&eacute;
+            </h3>
+            <ul>
+              <li><strong>DI exclusif</strong> &mdash; &Eacute;limination compl&egrave;te des singletons statiques. Tous les services passent par l'injection de d&eacute;pendances.</li>
+              <li><strong>Interface IAiService</strong> &mdash; D&eacute;couplage de l'OptimizationEngine du service IA concret. L'engine retombe en mode d&eacute;terministe si l'IA est absente.</li>
+              <li><strong>Nettoyage code mort</strong> &mdash; Suppression de RelayCommand, PluginOrchestrator, RunOptimizationCycleAsync. Fusion DeepCleaning + 3 services Workflow en WorkflowService.</li>
+              <li><strong>Tests &amp; couverture</strong> &mdash; Nouveaux tests unitaires pour les services refactor&eacute;s (xUnit + Moq).</li>
+            </ul>
+          </div>
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Nouvelles fonctionnalit&eacute;s
+            </h3>
+            <ul>
+              <li><strong>Lib&eacute;ration m&eacute;moire IA automatique</strong> &mdash; Apr&egrave;s 5 min d'inactivit&eacute; (configurable), le mod&egrave;le LLamaSharp (~2.5 Go) est automatiquement d&eacute;charg&eacute; de la RAM. Rechargement transparent au prochain message.</li>
+              <li><strong>Setting <code>aiIdleTimeoutMinutes</code></strong> &mdash; Nouveau param&egrave;tre dans settings.json (d&eacute;faut: 5 min, 0 = d&eacute;sactiv&eacute;).</li>
+              <li><strong>Site web Coclico</strong> &mdash; Site multi-langue (FR, EN, DE, ES) avec documentation, guide, wiki, FAQ.</li>
+            </ul>
+          </div>
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Corrections
+            </h3>
+            <ul>
+              <li><strong>Audit expert v1.0.3</strong> &mdash; Corrections compl&egrave;tes post-audit : algorithmes avanc&eacute;s, d&eacute;couplage, patterns DI.</li>
+              <li><strong>UI Refactor &amp; i18n</strong> &mdash; Dashboard, Programs, FlowChains, RamCleaner, Scanner, Settings tous refactoris&eacute;s avec localisation compl&egrave;te.</li>
+            </ul>
+          </div>
+
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.3</span>
+          </div>
+          <time class="version-date">Mars 2026</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Fonctionnalit&eacute;s
+            </h3>
+            <ul>
+              <li><strong>Phase 3.2 &mdash; Dual-executor LLM</strong> &mdash; Isolation des contextes LLama : contexte chat s&eacute;par&eacute; du contexte moteur autonome.</li>
+              <li><strong>Phase 2-3 &mdash; Noyau Autonome</strong> &mdash; T&eacute;l&eacute;m&eacute;trie, QoS, Rollback, OptimizationEngine int&eacute;gr&eacute;s.</li>
+              <li><strong>Lien t&eacute;l&eacute;chargement GitHub</strong> &mdash; Bouton de t&eacute;l&eacute;chargement redirige vers GitHub Releases.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+.changelog-hero {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+}
+.changelog-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.changelog-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  background: var(--accent-dim);
+  border: 1px solid var(--border-accent);
+  padding: 0.3em 0.9em;
+  border-radius: var(--radius-full);
+}
+.changelog-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0;
+}
+.changelog-hero p {
+  color: var(--text-2);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.changelog-content {
+  padding: 4rem 1.5rem 8rem;
+}
+.changelog-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Version block */
+.version-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  transition: border-color var(--duration-fast);
+}
+.version-block.latest {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.version-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-hover);
+}
+.version-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.version-number {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-hover);
+}
+.version-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--green, #22c55e);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  padding: 0.2em 0.6em;
+  border-radius: var(--radius-full);
+}
+.version-date {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+
+.changes-grid {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.change-category h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.75rem;
+}
+.change-category h3 svg {
+  color: var(--accent-hover);
+  flex-shrink: 0;
+}
+.change-category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.change-category li {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.65;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.change-category li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.5;
+}
+.change-category li strong {
+  color: var(--text);
+}
+.change-category code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--surface-hover);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  color: var(--accent-hover);
+}
+
+@media (max-width: 640px) {
+  .changelog-hero { padding: 3.5rem 1.25rem 3rem; }
+  .changelog-content { padding: 2.5rem 1.25rem 6rem; }
+  .version-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .changes-grid { padding: 1rem; }
+}
+</style>

@@ -1,0 +1,1 @@
+import{g as r,S as o}from"./ScrollTrigger.C0eCJjti.js";r.registerPlugin(o);r.fromTo(".dl-inner > *",{opacity:0,y:24},{opacity:1,y:0,duration:.6,stagger:.1,ease:"power3.out",scrollTrigger:{trigger:".download-section",start:"top 80%",once:!0}});

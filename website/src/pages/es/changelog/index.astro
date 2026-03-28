@@ -1,0 +1,349 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+const lang = 'es' as const;
+---
+
+<PageLayout
+  title="Novedades &mdash; Coclico"
+  description="Historial de versiones y novedades de Coclico. Descubre las nuevas funciones, correcciones y mejoras."
+  lang={lang}
+  currentPath="/changelog/"
+>
+  <section class="changelog-hero">
+    <div class="changelog-hero-inner">
+      <span class="changelog-badge">Changelog</span>
+      <h1>Novedades</h1>
+      <p>Todas las evoluciones de Coclico, versi&oacute;n por versi&oacute;n.</p>
+    </div>
+  </section>
+
+  <section class="changelog-content">
+    <div class="changelog-inner">
+
+      <article class="version-block latest">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.4</span>
+            <span class="version-label">&Uacute;ltima versi&oacute;n</span>
+          </div>
+          <time class="version-date">Marzo 2026</time>
+        </div>
+
+        <div class="changes-grid">
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Arquitectura y Calidad
+            </h3>
+            <ul>
+              <li><strong>DI exclusiva</strong> &mdash; Eliminaci&oacute;n completa de singletons est&aacute;ticos. Todos los servicios usan inyecci&oacute;n de dependencias. <code>ServiceContainer.GetRequired&lt;T&gt;()</code> y <code>GetOptional&lt;T&gt;()</code> son los &uacute;nicos puntos de acceso.</li>
+              <li><strong>Interfaz IAiService</strong> &mdash; Desacoplamiento del OptimizationEngine del servicio IA concreto. El engine vuelve al modo determinista si la IA no est&aacute; disponible.</li>
+              <li><strong>Limpieza de c&oacute;digo muerto</strong> &mdash; Eliminaci&oacute;n de RelayCommand, PluginOrchestrator, RunOptimizationCycleAsync. Fusi&oacute;n de DeepCleaning + 3 servicios Workflow en un WorkflowService unificado.</li>
+              <li><strong>Tests y cobertura</strong> &mdash; Nuevos tests unitarios para los servicios refactorizados (xUnit + Moq). <code>ValidateOnBuild</code> garantiza la ausencia de dependencias faltantes al inicio.</li>
+            </ul>
+          </div>
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Nuevas funcionalidades
+            </h3>
+            <ul>
+              <li><strong>Liberaci&oacute;n autom&aacute;tica de memoria IA</strong> &mdash; Despu&eacute;s de 5 min de inactividad (configurable v&iacute;a <code>aiIdleTimeoutMinutes</code>), el modelo LLamaSharp (~2,5 GB) se descarga autom&aacute;ticamente de la RAM. Recarga transparente en el pr&oacute;ximo mensaje.</li>
+              <li><strong>Par&aacute;metro <code>aiIdleTimeoutMinutes</code></strong> &mdash; Nuevo par&aacute;metro en settings.json (por defecto: 5 min, 0 = desactivado).</li>
+              <li><strong>Sitio web Coclico</strong> &mdash; Sitio multi-idioma (FR, EN, DE, ES) con documentaci&oacute;n, gu&iacute;a, wiki, FAQ, changelog.</li>
+              <li><strong>Deep Clean mejorado</strong> &mdash; Estimaci&oacute;n de espacio antes de la limpieza, interruptores por categor&iacute;a, informe detallado.</li>
+              <li><strong>Atajos de teclado</strong> &mdash; Atajos globales mediante KeyboardShortcutsService (Ctrl+1-8 para m&oacute;dulos, Ctrl+Shift+C/R/A para acciones r&aacute;pidas).</li>
+            </ul>
+          </div>
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Correcciones
+            </h3>
+            <ul>
+              <li><strong>Auditor&iacute;a experta v1.0.3</strong> &mdash; Correcciones completas post-auditor&iacute;a: algoritmos avanzados, desacoplamiento, patrones DI.</li>
+              <li><strong>UI refactor e i18n</strong> &mdash; Dashboard, Programas, FlowChains, RamCleaner, Scanner, Ajustes &mdash; todos los m&oacute;dulos refactorizados con localizaci&oacute;n completa (FR/EN/DE/ES).</li>
+              <li><strong>Modo auditor&iacute;a AutoPatcher</strong> &mdash; Modo solo-auditor&iacute;a por defecto. Los parches se registran pero no se aplican sin aprobaci&oacute;n expl&iacute;cita.</li>
+            </ul>
+          </div>
+
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.3</span>
+          </div>
+          <time class="version-date">Marzo 2026</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Funcionalidades
+            </h3>
+            <ul>
+              <li><strong>Fase 3.2 &mdash; Dual-executor LLM</strong> &mdash; Aislamiento de contextos LLama: contexto de chat separado del contexto del motor aut&oacute;nomo. Patr&oacute;n Immutable Context Swap.</li>
+              <li><strong>Fase 2-3 &mdash; N&uacute;cleo Aut&oacute;nomo</strong> &mdash; Telemetr&iacute;a (DynamicTracerService), QoS, Rollback (basado en snapshots), OptimizationEngine (ciclo de 30s con buffers ArrayPool).</li>
+              <li><strong>Fase 3.3 &mdash; An&aacute;lisis AST</strong> &mdash; SourceAnalyzerService con Roslyn. M&eacute;tricas Halstead (V, D, E) e &Iacute;ndice de Mantenibilidad por m&eacute;todo.</li>
+              <li><strong>Fase 3.4 &mdash; AutoPatcher</strong> &mdash; CodePatcherService con API de aprobaci&oacute;n: <code>GetPendingProposals()</code>, <code>ApproveAndApplyAsync()</code>, <code>RejectProposalAsync()</code>.</li>
+              <li><strong>Enlace de descarga GitHub</strong> &mdash; El bot&oacute;n de descarga redirige a GitHub Releases.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.2</span>
+          </div>
+          <time class="version-date">Febrero 2026</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Funcionalidades
+            </h3>
+            <ul>
+              <li><strong>Flow Chains</strong> &mdash; Editor visual de automatizaci&oacute;n con arrastrar y soltar. 28 tipos de nodos, 10 operadores de condici&oacute;n, 3 OnErrorActions.</li>
+              <li><strong>Quick Installer</strong> &mdash; Instalador gr&aacute;fico basado en Winget con 6 categor&iacute;as.</li>
+              <li><strong>Aplicaciones</strong> &mdash; Detecci&oacute;n completa de bibliotecas desde 8 fuentes (Registro, Steam, Epic, GOG, Ubisoft, EA, Rockstar, MS Store).</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.1</span>
+          </div>
+          <time class="version-date">Enero 2026</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Funcionalidades
+            </h3>
+            <ul>
+              <li><strong>RAM Cleaner</strong> &mdash; Limpiador de memoria basado en P/Invoke con 3 perfiles (R&aacute;pido, Normal, Profundo).</li>
+              <li><strong>Deep Clean</strong> &mdash; 10 categor&iacute;as de limpieza con preestimaci&oacute;n.</li>
+              <li><strong>App Scanner</strong> &mdash; Auditor&iacute;a completa de aplicaciones con detecci&oacute;n multi-fuente.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.0</span>
+            <span class="version-label-initial">Versi&oacute;n inicial</span>
+          </div>
+          <time class="version-date">Diciembre 2025</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Funcionalidades
+            </h3>
+            <ul>
+              <li><strong>Dashboard</strong> &mdash; Monitorizaci&oacute;n del sistema en tiempo real (CPU, RAM, Disco, Red).</li>
+              <li><strong>Ajustes</strong> &mdash; Personalizaci&oacute;n del tema, color de acento, selecci&oacute;n de idioma (4 idiomas).</li>
+              <li><strong>Coclico AI</strong> &mdash; Asistente de chat local LLamaSharp con modelo GGUF.</li>
+              <li><strong>Seguridad</strong> &mdash; SecurityPolicy, AuditLog (NDJSON), sistema de Rollback.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+.changelog-hero {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+}
+.changelog-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.changelog-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  background: var(--accent-dim);
+  border: 1px solid var(--border-accent);
+  padding: 0.3em 0.9em;
+  border-radius: var(--radius-full);
+}
+.changelog-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0;
+}
+.changelog-hero p {
+  color: var(--text-2);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.changelog-content {
+  padding: 4rem 1.5rem 8rem;
+}
+.changelog-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* Version block */
+.version-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  transition: border-color var(--duration-fast);
+}
+.version-block.latest {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.version-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-hover);
+}
+.version-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.version-number {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-hover);
+}
+.version-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--green, #22c55e);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  padding: 0.2em 0.6em;
+  border-radius: var(--radius-full);
+}
+.version-label-initial {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  padding: 0.2em 0.6em;
+  border-radius: var(--radius-full);
+}
+.version-date {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+
+.changes-grid {
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+.change-category h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1rem;
+}
+.change-category h3 svg {
+  color: var(--accent-hover);
+  flex-shrink: 0;
+}
+.change-category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.change-category li {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.7;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.change-category li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.5;
+}
+.change-category li strong {
+  color: var(--text);
+}
+.change-category code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--surface-hover);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  color: var(--accent-hover);
+}
+
+@media (max-width: 640px) {
+  .changelog-hero { padding: 3.5rem 1.25rem 3rem; }
+  .changelog-content { padding: 2.5rem 1.25rem 6rem; }
+  .changelog-inner { gap: 3rem; }
+  .version-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .changes-grid { padding: 1.25rem 1rem; }
+}
+</style>

@@ -1,0 +1,196 @@
+---
+import DocLayout from '../../../layouts/DocLayout.astro';
+const lang = 'en' as const;
+
+const sidebarLinks = [
+  { group: 'API Reference', label: 'Overview', href: '#overview' },
+  { group: 'API Reference', label: 'ICacheService', href: '#api-cache' },
+  { group: 'API Reference', label: 'IDynamicTracer', href: '#api-tracer' },
+  { group: 'API Reference', label: 'IRollbackService', href: '#api-rollback' },
+  { group: 'API Reference', label: 'IOptimizationEngine', href: '#api-optimization' },
+  { group: 'API Reference', label: 'ISourceAnalyzer', href: '#api-source-analyzer' },
+  { group: 'API Reference', label: 'IAuditLog', href: '#api-audit' },
+  { group: 'API Reference', label: 'ISecurityPolicy', href: '#api-security' },
+  { group: 'Configuration', label: 'AppSettings', href: '#app-settings' },
+  { group: 'WorkflowPipeline', label: 'NodeType (28)', href: '#node-types' },
+  { group: 'WorkflowPipeline', label: 'ConditionOperator', href: '#condition-operators' },
+  { group: 'WorkflowPipeline', label: 'OnErrorAction', href: '#on-error' },
+  { group: 'Deep Clean', label: 'Categories (10)', href: '#deep-clean-categories' },
+  { group: 'Applications', label: 'Sources (8)', href: '#app-sources' },
+  { group: 'Data & Files', label: 'File structure', href: '#file-structure' },
+  { group: 'Data & Files', label: 'Audit NDJSON format', href: '#audit-format' },
+];
+
+const tocLinks = [
+  { label: 'Overview', href: '#overview', level: 2 as const },
+  { label: 'ICacheService', href: '#api-cache', level: 2 as const },
+  { label: 'IDynamicTracer', href: '#api-tracer', level: 2 as const },
+  { label: 'IRollbackService', href: '#api-rollback', level: 2 as const },
+  { label: 'IOptimizationEngine', href: '#api-optimization', level: 2 as const },
+  { label: 'ISourceAnalyzer', href: '#api-source-analyzer', level: 2 as const },
+  { label: 'IAuditLog', href: '#api-audit', level: 2 as const },
+  { label: 'ISecurityPolicy', href: '#api-security', level: 2 as const },
+  { label: 'AppSettings', href: '#app-settings', level: 2 as const },
+  { label: 'NodeType (28)', href: '#node-types', level: 2 as const },
+  { label: 'ConditionOperator', href: '#condition-operators', level: 2 as const },
+  { label: 'OnErrorAction', href: '#on-error', level: 2 as const },
+  { label: 'Deep Clean categories', href: '#deep-clean-categories', level: 2 as const },
+  { label: 'Application sources', href: '#app-sources', level: 2 as const },
+  { label: 'File structure', href: '#file-structure', level: 2 as const },
+  { label: 'Audit NDJSON format', href: '#audit-format', level: 2 as const },
+];
+---
+
+<DocLayout
+  title="API Documentation — Coclico"
+  description="Complete Coclico API reference: services, AppSettings, WorkflowPipeline nodes, Deep Clean categories and file format."
+  lang={lang}
+  currentPath="/docs/"
+  sidebarLinks={sidebarLinks}
+  tocLinks={tocLinks}
+  heroTitle="API Documentation"
+  heroBadge="Reference v1.0.4"
+  heroDesc="Complete reference for service interfaces, data models, WorkflowPipeline node types and Coclico 1.0.4 configuration."
+>
+
+  <!-- Cross-links to complementary sections -->
+  <nav class="doc-crosslinks" aria-label="Complementary sections">
+    <a href="/Coclico/en/guide/" class="crosslink-card">
+      <span class="crosslink-icon">📖</span>
+      <span class="crosslink-label">Guide &amp; Tutorial</span>
+      <span class="crosslink-desc">Installation, modules and Flow Chains step by step</span>
+    </a>
+    <a href="/Coclico/en/wiki/" class="crosslink-card">
+      <span class="crosslink-icon">⚙️</span>
+      <span class="crosslink-label">Developer Wiki</span>
+      <span class="crosslink-desc">Internal architecture, MVVM, DI and autonomous system</span>
+    </a>
+    <a href="/Coclico/en/faq/" class="crosslink-card">
+      <span class="crosslink-icon">❓</span>
+      <span class="crosslink-label">FAQ</span>
+      <span class="crosslink-desc">Frequently asked questions about installation and usage</span>
+    </a>
+  </nav>
+
+  <h2 id="overview">Overview</h2>
+  <p>This documentation covers all public Coclico interfaces. Current version: <strong>1.0.4</strong>.</p>
+  <ul>
+    <li><strong>Main namespace:</strong> <code>Coclico.Services</code></li>
+    <li><strong>Models:</strong> <code>Coclico.Models</code></li>
+    <li><strong>ViewModels:</strong> <code>Coclico.ViewModels</code></li>
+    <li><strong>Framework:</strong> .NET 10, C# preview, WPF-UI 4.2</li>
+  </ul>
+
+  <h2 id="api-cache">ICacheService</h2>
+  <p>Thread-safe in-memory cache with per-entry TTL. Implemented by <code>CacheService</code> (singleton).</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">ICacheService</span>
+&#123;
+    T? <span class="tok-fn">Get</span>&lt;T&gt;(<span class="tok-type">string</span> key);
+    <span class="tok-kw">void</span> <span class="tok-fn">Set</span>&lt;T&gt;(<span class="tok-type">string</span> key, T value, <span class="tok-type">TimeSpan</span>? ttl = <span class="tok-kw">null</span>);
+    <span class="tok-kw">bool</span> <span class="tok-fn">TryGet</span>&lt;T&gt;(<span class="tok-type">string</span> key, <span class="tok-kw">out</span> T? value);
+    <span class="tok-kw">void</span> <span class="tok-fn">Invalidate</span>(<span class="tok-type">string</span> key);
+    <span class="tok-kw">void</span> <span class="tok-fn">InvalidateAll</span>();
+&#125;</code></pre>
+
+  <h2 id="api-tracer">IDynamicTracer</h2>
+  <p>Real-time system telemetry. Implemented by <code>DynamicTracerService</code> (singleton).</p>
+
+  <pre><code><span class="tok-kw">public record</span> <span class="tok-type">TelemetrySnapshot</span>(
+    <span class="tok-type">DateTimeOffset</span> Timestamp,
+    <span class="tok-type">double</span> CpuPercent,      <span class="tok-cmt">// 0.0 – 100.0</span>
+    <span class="tok-type">long</span> RamUsedMb,
+    <span class="tok-type">long</span> RamTotalMb,
+    <span class="tok-type">double</span> NetworkInKbps,
+    <span class="tok-type">double</span> NetworkOutKbps
+);</code></pre>
+
+  <h2 id="api-rollback">IRollbackService</h2>
+  <p>Snapshot management for AI patch rollback. Must be called before any <code>File.WriteAllText</code> triggered by AI.</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IRollbackService</span>
+&#123;
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">Guid</span>&gt; <span class="tok-fn">CreateSnapshotAsync</span>(<span class="tok-type">string</span> filePath, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+    <span class="tok-type">Task</span> <span class="tok-fn">RestoreAsync</span>(<span class="tok-type">Guid</span> snapshotId, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+    <span class="tok-type">IReadOnlyList</span>&lt;<span class="tok-type">SnapshotInfo</span>&gt; <span class="tok-fn">GetSnapshots</span>();
+    <span class="tok-type">Task</span> <span class="tok-fn">PruneAsync</span>(<span class="tok-type">TimeSpan</span> maxAge);
+&#125;</code></pre>
+
+  <h2 id="api-optimization">IOptimizationEngine</h2>
+  <p>Autonomous optimization engine (Phase 2). Runs a 30-second cycle loop in the background.</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IOptimizationEngine</span>
+&#123;
+    <span class="tok-type">Task</span> <span class="tok-fn">StartAsync</span>(<span class="tok-type">CancellationToken</span> ct);
+    <span class="tok-type">Task</span> <span class="tok-fn">StopAsync</span>();
+    <span class="tok-type">OptimizationResult</span>? LastResult &#123; <span class="tok-kw">get</span>; &#125;
+    <span class="tok-type">event</span> <span class="tok-type">Action</span>&lt;<span class="tok-type">OptimizationResult</span>&gt;? CycleCompleted;
+&#125;</code></pre>
+
+  <h2 id="api-source-analyzer">ISourceAnalyzer</h2>
+  <p>Roslyn-based AST analysis of C# source (Phase 3.3). Computes CC, Halstead metrics and Maintainability Index per method.</p>
+
+  <pre><code><span class="tok-kw">public record</span> <span class="tok-type">MethodMetrics</span>(
+    <span class="tok-type">string</span> MethodName,
+    <span class="tok-type">int</span> CyclomaticComplexity,   <span class="tok-cmt">// CC alert threshold: > 10</span>
+    <span class="tok-type">double</span> HalsteadVolume,
+    <span class="tok-type">double</span> HalsteadDifficulty,
+    <span class="tok-type">double</span> HalsteadEffort,
+    <span class="tok-type">double</span> MaintainabilityIndex  <span class="tok-cmt">// 0–100, higher is better</span>
+);</code></pre>
+
+  <h2 id="api-audit">IAuditLog</h2>
+  <p>Append-only NDJSON audit journal including full AI decision context for LLM traceability.</p>
+
+  <h2 id="api-security">ISecurityPolicy</h2>
+  <p>Controls which operations Flow Chain nodes are allowed to perform. Non-suppressible hardcoded defaults cannot be overridden by configuration.</p>
+
+  <h2 id="app-settings">AppSettings</h2>
+  <p>Main configuration model. Managed by <code>SettingsService</code>, persisted to <code>%APPDATA%\Coclico\settings.json</code>.</p>
+
+  <pre><code><span class="tok-kw">public class</span> <span class="tok-type">AppSettings</span>
+&#123;
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> Language &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">"en"</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> Theme &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">"Dark"</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> AccentColor &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">"#6366F1"</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">LaunchMode</span> LaunchMode &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-type">LaunchMode</span>.Manual;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> AutoPatcherAuditOnly &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">int</span> AuditRetentionDays &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">90</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> UseVulkanAcceleration &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+&#125;</code></pre>
+
+  <h2 id="node-types">NodeType — 28 node types</h2>
+  <p>Process (KillProcess, LaunchProcess, RestartService, StopService, StartService), Registry (SetRegistryValue, DeleteRegistryKey), Files (CreateDirectory, DeleteFile, MoveFile, CopyFile), Scripts (RunScript), Cleaning (CleanTemp, EmptyRecycleBin, FlushDns, ClearBrowserCache, ClearEventLogs, ClearPrefetch, ClearThumbnailCache, ClearWindowsErrorReports), Memory (FreeRam, SetWorkingSet), Network (PingHost, DisableNetworkAdapter, EnableNetworkAdapter), Control (Wait, Condition, Log, Notification).</p>
+
+  <h2 id="condition-operators">ConditionOperator — 10 operators</h2>
+  <p><code>Equals</code>, <code>NotEquals</code>, <code>GreaterThan</code>, <code>LessThan</code>, <code>GreaterOrEqual</code>, <code>LessOrEqual</code>, <code>Contains</code>, <code>NotContains</code>, <code>IsEmpty</code>, <code>IsNotEmpty</code>.</p>
+
+  <h2 id="on-error">OnErrorAction</h2>
+  <ul>
+    <li><code>ContinueNext</code> (default) — log error, continue to next node</li>
+    <li><code>StopChain</code> — stop execution immediately</li>
+    <li><code>SkipToEnd</code> — skip intermediate nodes, execute only the last node</li>
+  </ul>
+
+  <h2 id="deep-clean-categories">Deep Clean categories — 10</h2>
+  <p>Windows Temp, Browser Cache, System Logs, Recycle Bin, User Temp, Thumbnail Cache, Windows Error Reports, Old Installers, DNS Cache (dnsapi.dll), Prefetch files.</p>
+
+  <h2 id="app-sources">Application sources — 8</h2>
+  <p>Registry HKLM, Registry HKCU, Steam (libraryfolders.vdf), Epic Games (JSON manifests), GOG Galaxy (SQLite), Ubisoft Connect, EA App (XML manifests), Rockstar Games Launcher, Microsoft Store (AppX packages via PowerShell).</p>
+
+  <h2 id="file-structure">File structure</h2>
+
+  <pre><code>%APPDATA%\Coclico\
+├── settings.json
+├── security-policy.json
+├── flow-chains\        <span class="tok-cmt"># WorkflowPipeline definitions</span>
+├── audit\              <span class="tok-cmt"># NDJSON audit log</span>
+├── logs\               <span class="tok-cmt"># Serilog rolling daily (14 days)</span>
+├── rollback\           <span class="tok-cmt"># IRollbackService snapshots</span>
+└── resource\model\
+    └── IA-support-chat.gguf</code></pre>
+
+  <h2 id="audit-format">Audit NDJSON format</h2>
+  <p>Each line is an independent JSON object including timestamp, action type, AI context (model, prompt hash, response tokens, latency), and patch validation result (original CC, patched CC, Digital Twin approval).</p>
+
+</DocLayout>

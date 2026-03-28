@@ -1,0 +1,21 @@
+{
+  "name": "coclico-website",
+  "type": "module",
+  "version": "2.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.0",
+    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^5.1.0",
+    "fuse.js": "^7.0.0",
+    "gsap": "^3.12.5",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.7.0"
+  }
+}

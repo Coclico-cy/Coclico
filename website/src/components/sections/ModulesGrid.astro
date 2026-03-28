@@ -1,0 +1,342 @@
+---
+import type { Lang } from '../../i18n/index';
+import { useTranslations } from '../../i18n/index';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Données exactes — vérifiées dans WorkflowPipeline.cs, DeepCleaningService.cs, InstalledProgramsService.cs
+const modules = [
+  {
+    id: 'dashboard',
+    icon: '⬡',
+    color: '#6366f1',
+    title: t('mod_dashboard_title'),
+    desc:  t('mod_dashboard_desc'),
+    tags:  [t('mod_dashboard_tag1'), t('mod_dashboard_tag2'), t('mod_dashboard_tag3')],
+  },
+  {
+    id: 'cleaning',
+    icon: '🧹',
+    color: '#10b981',
+    title: t('mod_cleaning_title'),
+    desc:  t('mod_cleaning_desc'),
+    tags:  [t('mod_cleaning_tag1'), t('mod_cleaning_tag2'), t('mod_cleaning_tag3')],
+  },
+  {
+    id: 'ram',
+    icon: '🧠',
+    color: '#06b6d4',
+    title: t('mod_ram_title'),
+    desc:  t('mod_ram_desc'),
+    tags:  [t('mod_ram_tag1'), t('mod_ram_tag2'), t('mod_ram_tag3')],
+  },
+  {
+    id: 'scanner',
+    icon: '🔍',
+    color: '#f97316',
+    title: t('mod_scanner_title'),
+    desc:  t('mod_scanner_desc'),
+    tags:  [t('mod_scanner_tag1'), t('mod_scanner_tag2'), t('mod_scanner_tag3')],
+  },
+  {
+    id: 'installer',
+    icon: '⚡',
+    color: '#eab308',
+    title: t('mod_installer_title'),
+    desc:  t('mod_installer_desc'),
+    tags:  [t('mod_installer_tag1'), t('mod_installer_tag2'), t('mod_installer_tag3')],
+  },
+  {
+    id: 'programs',
+    icon: '📦',
+    color: '#a855f7',
+    title: t('mod_programs_title'),
+    desc:  t('mod_programs_desc'),
+    tags:  [t('mod_programs_tag1'), t('mod_programs_tag2'), t('mod_programs_tag3')],
+  },
+  {
+    id: 'flowchains',
+    icon: '⫸',
+    color: '#ec4899',
+    title: t('mod_flowchains_title'),
+    desc:  t('mod_flowchains_desc'),
+    tags:  [t('mod_flowchains_tag1'), t('mod_flowchains_tag2'), t('mod_flowchains_tag3')],
+    featured: true,
+  },
+  {
+    id: 'settings',
+    icon: '⚙',
+    color: '#64748b',
+    title: t('mod_settings_title'),
+    desc:  t('mod_settings_desc'),
+    tags:  [t('mod_settings_tag1'), t('mod_settings_tag2'), t('mod_settings_tag3')],
+  },
+] as const;
+---
+
+<section class="modules-section" id="modules" aria-labelledby="modules-heading">
+  <div class="container">
+    <!-- Header section -->
+    <div class="section-header gsap-fade-up">
+      <div class="section-tag">
+        <span class="badge">8 Modules</span>
+      </div>
+      <h2 id="modules-heading">{t('section_modules_title')}</h2>
+      <p class="section-sub">{t('section_modules_sub')}</p>
+    </div>
+
+    <!-- Numéro de module (indicateur visuel) -->
+    <div class="modules-grid" role="list">
+      {modules.map((mod, i) => (
+        <article
+          class:list={['module-card gsap-fade-up', { featured: mod.featured }]}
+          data-module={mod.id}
+          role="listitem"
+          style={`--mod-color: ${mod.color};`}
+        >
+          <!-- Numéro -->
+          <span class="mod-num">0{i + 1}</span>
+
+          <!-- Icône -->
+          <div class="mod-icon" aria-hidden="true">
+            <span class="mod-icon-inner">{mod.icon}</span>
+          </div>
+
+          <!-- Contenu -->
+          <div class="mod-body">
+            <h3 class="mod-title">{mod.title}</h3>
+            <p class="mod-desc">{mod.desc}</p>
+            <div class="mod-tags" aria-label="Caractéristiques">
+              {mod.tags.map(tag => (
+                <span class="mod-tag">{tag}</span>
+              ))}
+            </div>
+          </div>
+
+          <!-- Featured ribbon -->
+          {mod.featured && (
+            <div class="mod-featured-badge" aria-label="Fonctionnalité phare">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              Featured
+            </div>
+          )}
+
+          <!-- Hover glow -->
+          <div class="mod-glow" aria-hidden="true"></div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+.modules-section {
+  padding: 7rem 0;
+}
+
+/* Section header */
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-tag { margin-bottom: 0.25rem; }
+
+.section-sub {
+  max-width: 520px;
+  font-size: 1.05rem;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* Grid */
+.modules-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .modules-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 1024px) {
+  .modules-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Carte module */
+.module-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem;
+  cursor: default;
+  overflow: hidden;
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.module-card:hover {
+  background: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--mod-color) 40%, transparent);
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    0 0 0 1px color-mix(in srgb, var(--mod-color) 20%, transparent),
+    0 0 30px color-mix(in srgb, var(--mod-color) 10%, transparent);
+}
+
+.module-card.featured {
+  grid-column: span 2;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--mod-color) 8%, var(--surface)) 0%,
+    var(--surface) 100%);
+  border-color: color-mix(in srgb, var(--mod-color) 25%, transparent);
+}
+
+@media (max-width: 1023px) {
+  .module-card.featured { grid-column: span 1; }
+}
+
+/* Numéro */
+.mod-num {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-4);
+  letter-spacing: 0.05em;
+}
+
+/* Icône */
+.mod-icon {
+  width: 44px; height: 44px;
+  background: color-mix(in srgb, var(--mod-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mod-color) 25%, transparent);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: transform var(--duration-base) var(--ease-spring);
+}
+
+.module-card:hover .mod-icon {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.mod-icon-inner {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+/* Corps */
+.mod-body { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.mod-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.module-card.featured .mod-title { font-size: 1.15rem; }
+
+.mod-desc {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.mod-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+/* Featured badge */
+.mod-featured-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mod-color);
+  background: color-mix(in srgb, var(--mod-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mod-color) 30%, transparent);
+  padding: 0.25em 0.6em;
+  border-radius: var(--radius-full);
+}
+
+/* Glow hover */
+.mod-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 50% 0%,
+    color-mix(in srgb, var(--mod-color) 8%, transparent) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.module-card:hover .mod-glow { opacity: 1; }
+</style>
+
+<script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
+
+// Animation staggered au scroll
+gsap.fromTo('.module-card', {
+  opacity: 0, y: 40, scale: 0.96,
+}, {
+  opacity: 1, y: 0, scale: 1,
+  duration: 0.6,
+  stagger: 0.08,
+  ease: 'power3.out',
+  scrollTrigger: {
+    trigger: '.modules-grid',
+    start: 'top 80%',
+    once: true,
+  },
+});
+
+gsap.fromTo('.section-header', {
+  opacity: 0, y: 30,
+}, {
+  opacity: 1, y: 0,
+  duration: 0.8,
+  ease: 'power3.out',
+  scrollTrigger: {
+    trigger: '.modules-section',
+    start: 'top 80%',
+    once: true,
+  },
+});
+</script>

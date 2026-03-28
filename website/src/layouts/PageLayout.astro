@@ -1,0 +1,28 @@
+---
+/**
+ * PageLayout.astro — Layout complet avec Header + Footer
+ * Utilisé par toutes les pages publiques
+ */
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import type { Lang } from '../i18n/index';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  ogImage?: string;
+  currentPath?: string;
+}
+
+const { title, description, lang, ogImage, currentPath = '/' } = Astro.props;
+---
+
+<BaseLayout {title} {description} {lang} {ogImage} {currentPath}>
+  <Header {lang} {currentPath} />
+  <main id="main-content">
+    <slot />
+  </main>
+  <Footer {lang} />
+</BaseLayout>

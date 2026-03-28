@@ -1,0 +1,417 @@
+<ui:FluentWindow x:Class="Coclico.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:views="clr-namespace:Coclico.Views"
+        Title="{DynamicResource App_Title}" Height="800" Width="1200"
+        Loaded="MainWindow_Loaded"
+        MinHeight="640" MinWidth="960"
+        Icon="/Resources/icone/plage.ico"
+        Background="#07040E"
+        Opacity="0"
+        WindowStartupLocation="CenterScreen"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowState="Maximized">
+
+    <Window.Resources>
+        <Duration x:Key="NavDuration">0:0:0.15</Duration>
+    </Window.Resources>
+
+    <Border Background="#07040E">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="2"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="28"/>
+            </Grid.RowDefinitions>
+
+            <ui:TitleBar x:Name="TitleBar" Grid.Row="0"
+                         Title="{DynamicResource App_Title}"
+                         ShowMaximize="True" ShowMinimize="True">
+                <ui:TitleBar.Header>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,8,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="UserNameText" VerticalAlignment="Center"
+                                   FontSize="11" FontWeight="Medium"
+                                   Foreground="#4A3475" Margin="0,0,12,0"/>
+                        <ui:Button x:Name="UpdateCheckButton" Appearance="Transparent"
+                                   ToolTip="Vérifier les mises à jour"
+                                   Click="UpdateCheckButton_Click" Padding="7">
+                            <ui:SymbolIcon Symbol="ArrowSync24" FontSize="15" Foreground="#4A3475"/>
+                        </ui:Button>
+                        <ui:Button Appearance="Transparent" ToolTip="{DynamicResource Profile_Title}"
+                                   Click="ProfileBorder_MouseDown" Padding="7">
+                            <ui:SymbolIcon Symbol="Person24" FontSize="15" Foreground="#4A3475"/>
+                        </ui:Button>
+                    </StackPanel>
+                </ui:TitleBar.Header>
+            </ui:TitleBar>
+
+            <Border Grid.Row="1" Opacity="0.7">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="Transparent" Offset="0"/>
+                        <GradientStop Color="#5B21B6"     Offset="0.25"/>
+                        <GradientStop Color="#7C3AED"     Offset="0.45"/>
+                        <GradientStop Color="#DB2777"     Offset="0.65"/>
+                        <GradientStop Color="#9D174D"     Offset="0.82"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="SidebarColumn" Width="210"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="NavBorder" Grid.Column="0" Tag="False"
+                        Background="#0A0617"
+                        BorderBrush="#19102E" BorderThickness="0,0,1,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border x:Name="SidebarHeaderBorder" Grid.Row="0" Padding="14,16,14,12" BorderBrush="#19102E" BorderThickness="0,0,0,1">
+                            <Grid x:Name="HeaderGrid">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Image x:Name="SidebarLogoImage" Source="/Resources/icone/plage.png" Grid.Row="0" Grid.Column="0"
+                                       Width="28" Height="28"
+                                       VerticalAlignment="Center"
+                                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <TextBlock x:Name="BrandLabel" Grid.Row="0" Grid.Column="1"
+                                           Text="Coclico" FontSize="15" FontWeight="ExtraBold"
+                                           Foreground="#D4C8FF" VerticalAlignment="Center"
+                                           Margin="10,0,0,0"
+                                           TextOptions.TextFormattingMode="Display"/>
+                                <Button x:Name="SidebarToggleBtn" Grid.Row="0" Grid.Column="2"
+                                        Click="SidebarToggle_Click"
+                                        Background="Transparent" BorderThickness="0"
+                                        Padding="6,4" Cursor="Hand"
+                                        ToolTip="{DynamicResource Sidebar_Collapse}"
+                                        HorizontalAlignment="Right">
+                                    <ui:SymbolIcon x:Name="ToggleIcon" Symbol="Navigation24" FontSize="14"
+                                                   Foreground="#3D256A"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="6,14,6,0" x:Name="NavMainStack">
+                            <TextBlock x:Name="NavSectionLbl"
+                                       Text="NAVIGATION" FontSize="8" FontWeight="Black"
+                                       Foreground="#251640" Margin="14,0,0,8"
+                                       TextOptions.TextFormattingMode="Display"/>
+
+                            <RadioButton x:Name="NavHome" Tag="Home" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}" IsChecked="True"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_Dashboard}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition x:Name="LabelCol0" Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="Home24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavHome_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_Dashboard}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <RadioButton x:Name="NavPrograms" Tag="Programs" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_Programs}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="Apps24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavPrograms_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_Programs}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <RadioButton x:Name="NavWorkflowPipelines" Tag="WorkflowPipelines" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_WorkflowPipelines}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="Branch24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavWorkflowPipelines_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_WorkflowPipelines}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <RadioButton x:Name="NavInstaller" Tag="Installer" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_Installer}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="ArrowDownload24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavInstaller_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_Installer}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <RadioButton x:Name="NavCleaning" Tag="Cleaning" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_Cleaning}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="Delete24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavCleaning_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_Cleaning}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <RadioButton x:Name="NavScanner" Tag="Scanner" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_Scanner}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="Search24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavScanner_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_Scanner}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <RadioButton x:Name="NavRamCleaner" Tag="RamCleaner" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_RamCleaner}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="Memory16" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavRamCleaner_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_RamCleaner}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Margin="6,0,6,12">
+                            <Border Height="1" Margin="10,0,10,8">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="Transparent" Offset="0"/>
+                                        <GradientStop Color="#2A1848"     Offset="0.5"/>
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+
+                            <RadioButton x:Name="NavSettings" Tag="Settings" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_Settings}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="Settings24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavSettings_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_Settings}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <RadioButton x:Name="NavHelp" Tag="Help" GroupName="NavGroup"
+                                         Style="{StaticResource NavItemStyle}"
+                                         Click="NavItem_Click"
+                                         ToolTip="{DynamicResource Menu_Help}">
+                                <RadioButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ui:SymbolIcon Symbol="QuestionCircle24" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="NavHelp_Lbl" Grid.Column="1"
+                                                   Text="{DynamicResource Menu_Help}"
+                                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </RadioButton.Content>
+                            </RadioButton>
+
+                            <Border Height="1" Margin="10,8,10,8">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="Transparent" Offset="0"/>
+                                        <GradientStop Color="#2A1848"     Offset="0.5"/>
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+
+                            <Button x:Name="BtnAiChat"
+                                    Click="BtnAiChat_Click"
+                                    Margin="4,0" Padding="10,8"
+                                    Background="Transparent" BorderThickness="0"
+                                    HorizontalContentAlignment="Left"
+                                    Cursor="Hand" ToolTip="Coclico AI">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="AiBg" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#1A0A30" Offset="0"/>
+                                                    <GradientStop Color="#2A1048" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="AiBg" Property="Opacity" Value="0.7"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="22" Height="22" CornerRadius="7">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#6B2FD9" Offset="0"/>
+                                                <GradientStop Color="#9D174D" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="#7C3AED" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
+                                        </Border.Effect>
+                                        <ui:SymbolIcon Symbol="Bot24" FontSize="11"
+                                                       Foreground="White"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock x:Name="NavAi_Lbl"
+                                               Text="Coclico AI" FontSize="12.5" FontWeight="SemiBold"
+                                               Foreground="#C9BBFF"
+                                               Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Column="1">
+                    <Border Background="#07040E">
+                        <ContentControl x:Name="MainContentFrame"/>
+                    </Border>
+
+                    <Border x:Name="AiChatOverlay"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Panel.ZIndex="100"
+                            Visibility="Collapsed"
+                            Width="420">
+                        <Border.RenderTransform>
+                                <TranslateTransform X="420"/>
+                        </Border.RenderTransform>
+                        <views:AiChatView x:Name="AiChatPanel"
+                                          CloseRequested="AiChatPanel_CloseRequested"
+                                          ActionRequested="AiChatPanel_ActionRequested"/>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <Border Grid.Row="3" Background="#060310"
+                    BorderBrush="#140C26" BorderThickness="0,1,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Logo + nom -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                        <Border Width="5" Height="5" CornerRadius="3" Margin="0,0,6,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#7C3AED" Offset="0"/>
+                                    <GradientStop Color="#DB2777" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#7C3AED" BlurRadius="4" ShadowDepth="0" Opacity="0.8"/>
+                            </Border.Effect>
+                        </Border>
+                        <TextBlock Text="Coclico System Manager" FontSize="9.5" Foreground="#2E1D52"
+                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Version à droite -->
+                    <TextBlock Grid.Column="2" Text="v1.0.4"
+                               FontSize="9.5" Foreground="#221540"
+                               FontWeight="Medium"
+                               VerticalAlignment="Center" Margin="0,0,14,0"/>
+                </Grid>
+            </Border>
+
+            <ui:SnackbarPresenter x:Name="RootSnackbarPresenter"
+                                  Grid.Row="2" Panel.ZIndex="9999"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Bottom"
+                                  Margin="0,0,0,24"/>
+        </Grid>
+    </Border>
+</ui:FluentWindow>
+

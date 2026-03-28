@@ -1,0 +1,128 @@
+[
+  {
+    "Category": "Navigateurs Web",
+    "Items": [
+      { "Name": "Google Chrome",       "WingetId": "Google.Chrome",             "Description": "Navigateur rapide de Google" },
+      { "Name": "Mozilla Firefox",     "WingetId": "Mozilla.Firefox",           "Description": "Navigateur libre et open-source" },
+      { "Name": "Microsoft Edge",      "WingetId": "Microsoft.Edge",            "Description": "Navigateur intégré à Windows" },
+      { "Name": "Opera",               "WingetId": "Opera.Opera",               "Description": "Navigateur avec VPN intégré" },
+      { "Name": "Brave",               "WingetId": "Brave.Brave",               "Description": "Navigateur orienté confidentialité" },
+      { "Name": "Vivaldi",             "WingetId": "VivaldiTechnologies.Vivaldi","Description": "Navigateur hautement personnalisable" }
+    ]
+  },
+  {
+    "Category": "Développement",
+    "Items": [
+      { "Name": "Visual Studio Code",  "WingetId": "Microsoft.VisualStudioCode","Description": "Éditeur de code léger et puissant" },
+      { "Name": "Visual Studio 2022",  "WingetId": "Microsoft.VisualStudio.2022.Community", "Description": "IDE complet Microsoft" },
+      { "Name": "JetBrains Rider",     "WingetId": "JetBrains.Rider",           "Description": "IDE .NET / C# par JetBrains" },
+      { "Name": "JetBrains IntelliJ",  "WingetId": "JetBrains.IntelliJIDEA.Community", "Description": "IDE Java / Kotlin" },
+      { "Name": "Git",                 "WingetId": "Git.Git",                   "Description": "Système de contrôle de version" },
+      { "Name": "Node.js (LTS)",       "WingetId": "OpenJS.NodeJS.LTS",         "Description": "Environnement d'exécution JavaScript" },
+      { "Name": "Python 3",            "WingetId": "Python.Python.3.12",        "Description": "Langage de programmation Python" },
+      { "Name": "Docker Desktop",      "WingetId": "Docker.DockerDesktop",      "Description": "Plateforme de conteneurs" },
+      { "Name": "Postman",             "WingetId": "Postman.Postman",           "Description": "Client API REST & test d'endpoints" },
+      { "Name": "Windows Terminal",    "WingetId": "Microsoft.WindowsTerminal", "Description": "Terminal moderne pour Windows" },
+      { "Name": "PowerShell 7",        "WingetId": "Microsoft.PowerShell",      "Description": "Shell cross-platform Microsoft" },
+      { "Name": "GitHub Desktop",      "WingetId": "GitHub.GitHubDesktop",      "Description": "Client Git graphique" },
+      { "Name": "Notepad++",           "WingetId": "Notepad++.Notepad++",       "Description": "Éditeur texte avancé" },
+      { "Name": "HeidiSQL",            "WingetId": "HeidiSQL.HeidiSQL",         "Description": "Client MySQL / MariaDB / PostgreSQL" },
+      { "Name": "Insomnia",            "WingetId": "Insomnia.Insomnia",         "Description": "Client REST / GraphQL / gRPC" }
+    ]
+  },
+  {
+    "Category": "Jeux & Gaming",
+    "Items": [
+      { "Name": "Steam",               "WingetId": "Valve.Steam",               "Description": "Plateforme de jeux Valve" },
+      { "Name": "Epic Games Launcher", "WingetId": "EpicGames.EpicGamesLauncher","Description": "Plateforme Epic Games" },
+      { "Name": "GOG Galaxy",          "WingetId": "GOG.Galaxy",                "Description": "Plateforme GOG" },
+      { "Name": "EA App",              "WingetId": "ElectronicArts.EADesktop",  "Description": "Lanceur EA / Origin" },
+      { "Name": "Ubisoft Connect",     "WingetId": "Ubisoft.UbisoftConnect",    "Description": "Lanceur Ubisoft" },
+      { "Name": "Battle.net",          "WingetId": "Blizzard.BattleNet",        "Description": "Lanceur Blizzard" },
+      { "Name": "Discord",             "WingetId": "Discord.Discord",           "Description": "Chat et voix pour gamers" },
+      { "Name": "MSI Afterburner",     "WingetId": "MSI.Afterburner",           "Description": "Overclocking GPU et monitoring" },
+      { "Name": "RTSS (RivaTuner)",    "WingetId": "MirillisMod.RivaTunerStatisticsServer", "Description": "Overlay FPS & statistiques" }
+    ]
+  },
+  {
+    "Category": "Multimédia & Création",
+    "Items": [
+      { "Name": "VLC Media Player",    "WingetId": "VideoLAN.VLC",              "Description": "Lecteur multimédia universel" },
+      { "Name": "OBS Studio",          "WingetId": "OBSProject.OBSStudio",      "Description": "Enregistrement et streaming" },
+      { "Name": "Spotify",             "WingetId": "Spotify.Spotify",           "Description": "Streaming musical" },
+      { "Name": "GIMP",                "WingetId": "GIMP.GIMP",                 "Description": "Éditeur d'images open-source" },
+      { "Name": "Inkscape",            "WingetId": "Inkscape.Inkscape",         "Description": "Éditeur SVG vectoriel" },
+      { "Name": "Blender",             "WingetId": "BlenderFoundation.Blender", "Description": "Modélisation 3D open-source" },
+      { "Name": "Figma",               "WingetId": "Figma.Figma",               "Description": "Design UI/UX collaboratif" },
+      { "Name": "DaVinci Resolve",     "WingetId": "Blackmagic.DaVinciResolve", "Description": "Montage vidéo professionnel" },
+      { "Name": "Audacity",            "WingetId": "Audacity.Audacity",         "Description": "Éditeur audio open-source" },
+      { "Name": "HandBrake",           "WingetId": "HandBrake.HandBrake",       "Description": "Convertisseur vidéo open-source" },
+      { "Name": "MPC-BE",              "WingetId": "MPC-BE.MPC-BE",             "Description": "Lecteur vidéo léger avancé" }
+    ]
+  },
+  {
+    "Category": "Bureautique & Productivité",
+    "Items": [
+      { "Name": "LibreOffice",         "WingetId": "TheDocumentFoundation.LibreOffice", "Description": "Suite bureautique open-source" },
+      { "Name": "Microsoft Teams",     "WingetId": "Microsoft.Teams",          "Description": "Collaboration et réunions Microsoft" },
+      { "Name": "Slack",               "WingetId": "SlackTechnologies.Slack",  "Description": "Messagerie d'équipe" },
+      { "Name": "Notion",              "WingetId": "Notion.Notion",             "Description": "Notes, wikis et bases de données" },
+      { "Name": "Obsidian",            "WingetId": "Obsidian.Obsidian",         "Description": "Prise de notes liées (PKM)" },
+      { "Name": "Zoom",                "WingetId": "Zoom.Zoom",                 "Description": "Visioconférence" },
+      { "Name": "PDF24 Creator",       "WingetId": "geek-soft.PDF24",           "Description": "Créateur et éditeur PDF gratuit" },
+      { "Name": "Foxit PDF Reader",    "WingetId": "Foxit.FoxitReader",         "Description": "Lecteur PDF léger" }
+    ]
+  },
+  {
+    "Category": "Utilitaires Système",
+    "Items": [
+      { "Name": "7-Zip",               "WingetId": "7zip.7zip",                 "Description": "Archiveur open-source" },
+      { "Name": "WinRAR",              "WingetId": "RARLab.WinRAR",             "Description": "Archiveur populaire" },
+      { "Name": "Everything",          "WingetId": "voidtools.Everything",      "Description": "Recherche de fichiers ultra rapide" },
+      { "Name": "TreeSize Free",       "WingetId": "JAM-Software.TreeSize.Free","Description": "Analyse de l'espace disque" },
+      { "Name": "CPU-Z",               "WingetId": "CPUID.CPU-Z",               "Description": "Informations sur le processeur" },
+      { "Name": "GPU-Z",               "WingetId": "TechPowerUp.GPU-Z",         "Description": "Informations sur la carte graphique" },
+      { "Name": "HWiNFO64",            "WingetId": "REALiX.HWiNFO",            "Description": "Monitoring matériel complet" },
+      { "Name": "CrystalDiskInfo",     "WingetId": "CrystalDewWorld.CrystalDiskInfo", "Description": "Santé des disques durs / SSD" },
+      { "Name": "CrystalDiskMark",     "WingetId": "CrystalDewWorld.CrystalDiskMark","Description": "Benchmark de disque" },
+      { "Name": "Speccy",              "WingetId": "Piriform.Speccy",           "Description": "Infos système détaillées" },
+      { "Name": "Rufus",               "WingetId": "Rufus.Rufus",               "Description": "Création de clés USB bootables" },
+      { "Name": "Etcher",              "WingetId": "Balena.Etcher",             "Description": "Flasher des images sur clé USB / SD" },
+      { "Name": "qBittorrent",         "WingetId": "qBittorrent.qBittorrent",   "Description": "Client BitTorrent open-source" },
+      { "Name": "ShareX",              "WingetId": "ShareX.ShareX",             "Description": "Capture d'écran et enregistrement avancé" }
+    ]
+  },
+  {
+    "Category": "Sécurité & Réseau",
+    "Items": [
+      { "Name": "Bitwarden",           "WingetId": "Bitwarden.Bitwarden",       "Description": "Gestionnaire de mots de passe open-source" },
+      { "Name": "KeePassXC",           "WingetId": "KeePassXCTeam.KeePassXC",  "Description": "Gestionnaire de mots de passe local" },
+      { "Name": "Malwarebytes",        "WingetId": "Malwarebytes.Malwarebytes", "Description": "Anti-malware complémentaire" },
+      { "Name": "Wireshark",           "WingetId": "WiresharkFoundation.Wireshark", "Description": "Analyseur de trafic réseau" },
+      { "Name": "Tailscale",           "WingetId": "tailscale.tailscale",       "Description": "VPN mesh personnel" },
+      { "Name": "ProtonVPN",           "WingetId": "ProtonTechnologies.ProtonVPN","Description": "VPN sécurisé open-source" },
+      { "Name": "NordVPN",             "WingetId": "NordVPN.NordVPN",           "Description": "VPN commercial populaire" }
+    ]
+  },
+  {
+    "Category": "Communication",
+    "Items": [
+      { "Name": "WhatsApp",            "WingetId": "9NKSQGP7F2NH",             "Description": "Messagerie WhatsApp (Microsoft Store)" },
+      { "Name": "Telegram",            "WingetId": "Telegram.TelegramDesktop",  "Description": "Messagerie chiffrée" },
+      { "Name": "Signal",              "WingetId": "OpenWhisperSystems.Signal",  "Description": "Messagerie ultra-sécurisée" },
+      { "Name": "Thunderbird",         "WingetId": "Mozilla.Thunderbird",       "Description": "Client email open-source" }
+    ]
+  },
+  {
+    "Category": "Pilotes & Matériel",
+    "Items": [
+      { "Name": "NVIDIA App",          "WingetId": "Nvidia.NvidiaApp",          "Description": "Pilotes et panneau de contrôle NVIDIA" },
+      { "Name": "AMD Software Adrenalin","WingetId": "AMD.AdrenalinEdition",    "Description": "Pilotes AMD Radeon" },
+      { "Name": "Intel Driver Assistant","WingetId": "Intel.IntelDriverAndSupportAssistant","Description": "Mise à jour pilotes Intel" },
+      { "Name": "Logitech G HUB",      "WingetId": "Logitech.GHUB",             "Description": "Software périphériques Logitech G" },
+      { "Name": "Razer Synapse",       "WingetId": "RazerInc.RazerSynapse",     "Description": "Software périphériques Razer" },
+      { "Name": "SteelSeries GG",      "WingetId": "SteelSeries.GG",            "Description": "Software périphériques SteelSeries" },
+      { "Name": "Corsair iCUE",        "WingetId": "Corsair.iCUE.5",            "Description": "Software RGB et périphériques Corsair" }
+    ]
+  }
+]

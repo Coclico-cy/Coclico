@@ -1,0 +1,29 @@
+---
+/**
+ * Page d'accueil — Français (langue par défaut, pas de préfixe)
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import ModulesGrid from '../components/sections/ModulesGrid.astro';
+import FlowChainsSection from '../components/sections/FlowChainsSection.astro';
+import AiSection from '../components/sections/AiSection.astro';
+import DownloadSection from '../components/sections/DownloadSection.astro';
+import { useTranslations } from '../i18n/index';
+
+const lang = 'fr' as const;
+const t = useTranslations(lang);
+const description = t('home_meta_desc');
+---
+
+<PageLayout
+  title="Coclico"
+  {description}
+  {lang}
+  currentPath="/"
+>
+  <Hero {lang} />
+  <ModulesGrid {lang} />
+  <FlowChainsSection {lang} />
+  <AiSection {lang} />
+  <DownloadSection {lang} />
+</PageLayout>

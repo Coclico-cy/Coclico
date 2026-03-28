@@ -1,0 +1,99 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources\icone\plage.ico</ApplicationIcon>
+    <Version>1.0.4</Version>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
+    <InformationalVersion>1.0.4</InformationalVersion>
+    <Company>Coclico</Company>
+    <Product>Coclico System Manager</Product>
+    <Description>Enterprise-grade Windows system management, automation, and cyber defense platform.</Description>
+    <Copyright>© 2026 Coclico</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+
+    <!-- .NET 10 Performance Optimizations -->
+    <TieredPGO>true</TieredPGO>
+    <TieredCompilation>true</TieredCompilation>
+    <OptimizationPreference>Speed</OptimizationPreference>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+    <PublishTrimmed>false</PublishTrimmed>
+    <InvariantGlobalization>false</InvariantGlobalization>
+
+    <!-- Security Hardening -->
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\icone\plage.ico" />
+    <Resource Include="Resources\icone\plage.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ressource-ext\**" />
+    <EmbeddedResource Remove="ressource-ext\**" />
+    <None Remove="ressource-ext\**" />
+    <Page Remove="ressource-ext\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\software_list.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resource\docs\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resource\model\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Core Framework -->
+    <PackageReference Include="LLamaSharp" Version="0.26.0" />
+    <!--
+        Backends disponibles :
+          LLamaSharp.Backend.Cpu    → universel, tous les PC (actif par défaut)
+          LLamaSharp.Backend.Vulkan → iGPU/dGPU Intel/AMD/NVIDIA via Vulkan (plus rapide)
+        Pour activer le GPU : remplace Cpu par Vulkan ci-dessous.
+        L'application détecte automatiquement et retombe sur CPU si le GPU échoue.
+    -->
+    <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.26.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+
+    <!-- Logging -->
+    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+
+    <!-- System & Hardware -->
+    <PackageReference Include="System.Management" Version="10.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.0" />
+
+    <!-- Reactive Extensions -->
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
+
+    <!-- UI -->
+    <PackageReference Include="WPF-UI" Version="4.2.0" />
+
+    <!-- Serialization — System.Text.Json is included natively in .NET 10, no explicit ref needed -->
+
+    <!-- Phase 3.3 — Analyse AST & Clone Numérique -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+  </ItemGroup>
+
+</Project>

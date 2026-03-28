@@ -1,0 +1,248 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+const lang = 'fr' as const;
+---
+
+<PageLayout
+  title="FAQ — Coclico"
+  description="Questions fréquentes sur Coclico : installation, utilisation, IA locale, Flow Chains, performance et sécurité."
+  lang={lang}
+  currentPath="/fr/faq/"
+>
+  <section class="faq-hero">
+    <div class="faq-hero-inner">
+      <span class="faq-badge">FAQ</span>
+      <h1>Foire Aux Questions</h1>
+      <p>Trouvez les réponses aux questions les plus fréquentes sur Coclico. Utilisez les filtres de catégorie pour naviguer rapidement.</p>
+    </div>
+  </section>
+
+  <section class="faq-content">
+    <div class="faq-inner">
+
+      <nav class="faq-nav" aria-label="Catégories FAQ">
+        <a href="#installation" class="faq-cat">Installation</a>
+        <a href="#usage" class="faq-cat">Utilisation</a>
+        <a href="#ai" class="faq-cat">IA Locale</a>
+        <a href="#flow-chains" class="faq-cat">Flow Chains</a>
+        <a href="#performance" class="faq-cat">Performance</a>
+      </nav>
+
+      <!-- INSTALLATION -->
+      <div class="faq-group" id="installation">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Installation
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Quelle est la configuration requise pour Coclico ?</summary>
+          <div class="faq-a">
+            <ul>
+              <li><strong>OS :</strong> Windows 10 21H2 (64 bits) ou Windows 11</li>
+              <li><strong>RAM :</strong> 4 Go minimum, 8 Go recommandé (pour le module IA)</li>
+              <li><strong>Disque :</strong> 500 Mo pour l'application + ~4 Go pour le modèle GGUF si vous utilisez l'IA</li>
+              <li><strong>Permissions :</strong> Compte administrateur — Coclico demande une élévation UAC au démarrage</li>
+              <li><strong>GPU (optionnel) :</strong> Carte compatible Vulkan pour accélérer l'inférence IA locale</li>
+            </ul>
+            <p>Le runtime .NET 10 est inclus dans l'installeur — rien d'autre à installer.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Windows bloque l'installeur avec SmartScreen. Est-ce normal ?</summary>
+          <div class="faq-a">
+            <p>Oui, c'est normal pour un logiciel dont la signature de code n'est pas encore reconnue par Microsoft. Coclico est open-source et vous pouvez inspecter son code source sur GitHub. Pour continuer :</p>
+            <ol>
+              <li>Cliquez sur <strong>« Informations complémentaires »</strong> dans la fenêtre SmartScreen</li>
+              <li>Cliquez sur <strong>« Exécuter quand même »</strong></li>
+            </ol>
+            <p>Alternativement, compilez Coclico directement depuis les sources avec <code>dotnet build</code> après avoir cloné le dépôt.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Puis-je installer Coclico sans droits administrateur ?</summary>
+          <div class="faq-a">
+            <p>Non. Coclico nécessite des droits administrateur pour accéder aux API Windows bas niveau : WMI, mémoire noyau (ntdll), registre système et gestion des processus. L'élévation UAC est demandée une seule fois au démarrage. Une version « mode utilisateur » à fonctionnalités réduites est prévue pour une version future.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- UTILISATION -->
+      <div class="faq-group" id="usage">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+          Utilisation
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Le RAM Cleaner peut-il endommager mon système ?</summary>
+          <div class="faq-a">
+            <p>Non. Le RAM Cleaner utilise les API Windows officielles pour réduire les working sets des processus et vider les listes standby — la même opération que Windows effectue en interne sous pression mémoire. Les applications en cours continuent normalement. Les pages mémoire réduites sont paginées sur disque et rechargées à la demande. L'effet visible est une réduction immédiate de la RAM utilisée avec une légère augmentation temporaire des I/O disque si des applications sont actuellement inactives.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Le Nettoyage profond peut-il supprimer des fichiers importants ?</summary>
+          <div class="faq-a">
+            <p>Coclico supprime uniquement des catégories de fichiers connues comme sûres (temp, cache navigateur, logs, corbeille, prefetch, etc.). Aucun document personnel ni fichier système critique n'est ciblé. Chaque catégorie peut être activée/désactivée individuellement avant l'exécution. Un rapport détaillé liste les fichiers à supprimer avant toute action.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Comment configurer la couleur d'accentuation de l'interface ?</summary>
+          <div class="faq-a">
+            <p>Allez dans <strong>Paramètres → Apparence</strong>. La couleur d'accentuation par défaut est <code>#6366F1</code> (Indigo). Saisissez n'importe quelle valeur hexadécimale ou choisissez parmi les préréglages. Les modifications sont appliquées immédiatement sans redémarrage via <code>ThemeService</code> qui met à jour dynamiquement les ressources WPF.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- IA LOCALE -->
+      <div class="faq-group" id="ai">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><circle cx="18" cy="6" r="4"/><path d="M16 6h4M18 4v4"/></svg>
+          IA Locale
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Mes données sont-elles envoyées dans le cloud lors de l'utilisation de l'IA ?</summary>
+          <div class="faq-a">
+            <p><strong>Non, absolument pas.</strong> Coclico applique un principe <strong>Zero Cloud</strong> : toute l'inférence IA tourne localement sur votre machine via <strong>LLamaSharp 0.26</strong> avec un modèle GGUF. Aucune requête réseau n'est effectuée pour l'IA. Vos données système, conversations et Flow Chains ne quittent jamais votre machine.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Quel modèle GGUF est recommandé pour Coclico IA ?</summary>
+          <div class="faq-a">
+            <p>Coclico fonctionne avec des modèles GGUF quantifiés (Q4_K_M ou Q5_K_M). Modèles recommandés :</p>
+            <ul>
+              <li><strong>Llama 3.2 3B Q5_K_M</strong> — léger, rapide sur CPU, bonne qualité pour les tâches système</li>
+              <li><strong>Mistral 7B Q4_K_M</strong> — meilleure qualité, nécessite 8 Go RAM</li>
+              <li><strong>Phi-3 Mini 3.8B Q5</strong> — excellent rapport performance/qualité sur CPU</li>
+            </ul>
+            <p>Placez le fichier dans <code>%APPDATA%\Coclico\resource\model\</code> et nommez-le <code>IA-support-chat.gguf</code>. L'accélération GPU Vulkan est automatique si supportée.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Qu'est-ce que le mode « AutoPatcher Audit uniquement » ?</summary>
+          <div class="faq-a">
+            <p>L'<strong>AutoPatcher</strong> est le système autonome de Coclico qui peut proposer des patches de code pour s'améliorer lui-même (Phase 3.4). En mode <strong>Audit uniquement</strong> (par défaut), les patches générés par l'IA sont consignés dans le journal d'audit mais jamais appliqués automatiquement. Vous devez les approuver manuellement via <code>ApproveAndApplyAsync()</code>. Chaque patch est validé par le <strong>Digital Twin</strong> (vérification de la complexité cyclomatique) et un snapshot de rollback est créé avant toute écriture disque.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- FLOW CHAINS -->
+      <div class="faq-group" id="flow-chains">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Flow Chains
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Combien de nœuds peut contenir une Flow Chain ?</summary>
+          <div class="faq-a">
+            <p>Il n'y a pas de limite stricte dans le code. En pratique, les chaînes de plus de 100 nœuds deviennent difficiles à maintenir. Coclico fournit 28 types de nœuds (<code>NodeType</code> enum). Pour les automatisations complexes, créez plusieurs chaînes modulaires et reliez-les via des appels inter-chaînes.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Que se passe-t-il si un nœud échoue dans une Flow Chain ?</summary>
+          <div class="faq-a">
+            <p>Le comportement dépend de la propriété <code>OnErrorAction</code> configurée sur chaque nœud :</p>
+            <ul>
+              <li><code>ContinueNext</code> (par défaut) — l'erreur est consignée, l'exécution continue avec le nœud suivant</li>
+              <li><code>StopChain</code> — l'exécution s'arrête immédiatement, aucun nœud suivant ne s'exécute</li>
+              <li><code>SkipToEnd</code> — tous les nœuds intermédiaires sont sautés, seul le dernier nœud de la chaîne s'exécute</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Les Flow Chains peuvent-elles accéder au registre Windows ?</summary>
+          <div class="faq-a">
+            <p>Oui, via les nœuds <code>SetRegistryValue</code> et <code>DeleteRegistryKey</code>. Cependant, chaque opération passe par <code>WorkflowPipelineExecutionService</code> qui applique <code>ISecurityPolicy</code> avant l'exécution. Par défaut, les modifications de <code>HKLM\SYSTEM\CurrentControlSet</code> et d'autres clés sensibles sont bloquées. Personnalisez la politique via <code>%APPDATA%\Coclico\security-policy.json</code>.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- PERFORMANCE -->
+      <div class="faq-group" id="performance">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Performance
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Coclico ralentit-il mon PC en utilisation normale ?</summary>
+          <div class="faq-a">
+            <p>Non. En mode inactif (icône dans la barre système), Coclico consomme moins de 20 Mo RAM et moins de 0,1% CPU. Le service de télémétrie (<code>DynamicTracerService</code>) échantillonne le système une fois par seconde avec un overhead négligeable. L'<code>OptimizationEngine</code> tourne toutes les 30 secondes en utilisant des buffers <code>ArrayPool</code> pour éviter les allocations GC.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Le module IA gèle-t-il l'interface pendant l'inférence ?</summary>
+          <div class="faq-a">
+            <p>Non. Coclico utilise deux contextes LLM <strong>entièrement isolés</strong> (dual-executor) : un pour le chat utilisateur, un pour l'OptimizationEngine en arrière-plan. Le thread UI ne bloque jamais en attendant une réponse LLM — les résultats sont retournés via <code>async/await</code> et les mises à jour UI utilisent <code>Dispatcher.InvokeAsync</code>. L'inférence peut prendre 5 à 30 secondes selon le modèle et le matériel, sans jamais geler l'interface.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Comment réduire la consommation de ressources de Coclico ?</summary>
+          <div class="faq-a">
+            <p>Plusieurs options dans <strong>Paramètres → Général</strong> :</p>
+            <ul>
+              <li>Désactiver le rafraîchissement automatique du Dashboard (passer de 1s à 5s)</li>
+              <li>Réduire la fréquence de l'OptimizationEngine (60s au lieu de 30s)</li>
+              <li>Désactiver le module IA si inutilisé (décharge le modèle GGUF de la mémoire)</li>
+              <li>Désactiver les notifications toast pour réduire les redessinages UI</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+.faq-hero {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+}
+.faq-hero-inner { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.faq-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-hover); background: var(--accent-dim); border: 1px solid var(--border-accent); padding: 0.3em 0.9em; border-radius: var(--radius-full); }
+.faq-hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0; }
+.faq-hero p { color: var(--text-2); font-size: 1.05rem; line-height: 1.7; margin: 0; }
+.faq-content { padding: 4rem 1.5rem 8rem; }
+.faq-inner { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }
+.faq-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.faq-cat { font-size: 0.82rem; font-weight: 500; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); padding: 0.35em 0.9em; border-radius: var(--radius-full); text-decoration: none; transition: color var(--duration-fast), background var(--duration-fast), border-color var(--duration-fast); }
+.faq-cat:hover { color: var(--accent-hover); background: var(--accent-dim); border-color: var(--border-accent); }
+.faq-group { display: flex; flex-direction: column; gap: 0.75rem; }
+.faq-group-title { display: flex; align-items: center; gap: 0.6rem; font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 0 0 0.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+.faq-group-title svg { color: var(--accent-hover); flex-shrink: 0; }
+.faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; transition: border-color var(--duration-fast), box-shadow var(--duration-fast); }
+.faq-item:hover { border-color: var(--border-hover); }
+.faq-item[open] { border-color: var(--border-accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.faq-q { display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; padding: 1.1rem 1.25rem; font-size: 0.95rem; font-weight: 600; color: var(--text); list-style: none; user-select: none; transition: color var(--duration-fast), background var(--duration-fast); }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-q::after { content: '+'; font-size: 1.2rem; font-weight: 300; color: var(--text-3); flex-shrink: 0; }
+.faq-item[open] > .faq-q::after { content: '−'; color: var(--accent-hover); }
+.faq-item[open] > .faq-q { color: var(--accent-hover); background: var(--accent-dim); }
+.faq-a { padding: 0 1.25rem 1.25rem; color: var(--text-2); font-size: 0.9rem; line-height: 1.75; border-top: 1px solid var(--border); }
+.faq-a p { margin: 0.75rem 0 0; }
+.faq-a ul, .faq-a ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+.faq-a li { margin-bottom: 0.35rem; }
+.faq-a code { font-family: var(--font-mono); font-size: 0.82em; background: var(--surface-hover); padding: 0.15em 0.4em; border-radius: var(--radius-sm); color: var(--accent-hover); }
+.faq-a strong { color: var(--text); }
+@media (max-width: 640px) {
+  .faq-hero { padding: 3.5rem 1.25rem 3rem; }
+  .faq-content { padding: 2.5rem 1.25rem 6rem; }
+  .faq-q { font-size: 0.88rem; padding: 0.9rem 1rem; }
+  .faq-a { padding: 0 1rem 1rem; }
+}
+</style>

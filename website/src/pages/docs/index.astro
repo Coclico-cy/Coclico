@@ -1,0 +1,580 @@
+---
+import DocLayout from '../../layouts/DocLayout.astro';
+const lang = 'fr' as const;
+
+const sidebarLinks = [
+  { group: 'Référence API', label: 'Vue d\'ensemble', href: '#overview' },
+  { group: 'Référence API', label: 'ICacheService', href: '#api-cache' },
+  { group: 'Référence API', label: 'IDynamicTracer', href: '#api-tracer' },
+  { group: 'Référence API', label: 'IRollbackService', href: '#api-rollback' },
+  { group: 'Référence API', label: 'IOptimizationEngine', href: '#api-optimization' },
+  { group: 'Référence API', label: 'IResourceAllocator', href: '#api-resource' },
+  { group: 'Référence API', label: 'ISourceAnalyzer', href: '#api-source-analyzer' },
+  { group: 'Référence API', label: 'IAuditLog', href: '#api-audit' },
+  { group: 'Référence API', label: 'ISecurityPolicy', href: '#api-security' },
+  { group: 'Configuration', label: 'AppSettings', href: '#app-settings' },
+  { group: 'Configuration', label: 'security-policy.json', href: '#security-policy-json' },
+  { group: 'WorkflowPipeline', label: 'NodeType (28 types)', href: '#node-types' },
+  { group: 'WorkflowPipeline', label: 'ConditionOperator', href: '#condition-operators' },
+  { group: 'WorkflowPipeline', label: 'OnErrorAction', href: '#on-error' },
+  { group: 'Deep Clean', label: 'Catégories (10)', href: '#deep-clean-categories' },
+  { group: 'Deep Clean', label: 'Paramètres de nettoyage', href: '#clean-settings' },
+  { group: 'Applications', label: 'Sources (8)', href: '#app-sources' },
+  { group: 'Données & Fichiers', label: 'Structure des fichiers', href: '#file-structure' },
+  { group: 'Données & Fichiers', label: 'Format d\'audit NDJSON', href: '#audit-format' },
+];
+
+const tocLinks = [
+  { label: 'Vue d\'ensemble', href: '#overview', level: 2 as const },
+  { label: 'ICacheService', href: '#api-cache', level: 2 as const },
+  { label: 'IDynamicTracer', href: '#api-tracer', level: 2 as const },
+  { label: 'IRollbackService', href: '#api-rollback', level: 2 as const },
+  { label: 'IOptimizationEngine', href: '#api-optimization', level: 2 as const },
+  { label: 'IResourceAllocator', href: '#api-resource', level: 2 as const },
+  { label: 'ISourceAnalyzer', href: '#api-source-analyzer', level: 2 as const },
+  { label: 'IAuditLog', href: '#api-audit', level: 2 as const },
+  { label: 'ISecurityPolicy', href: '#api-security', level: 2 as const },
+  { label: 'AppSettings', href: '#app-settings', level: 2 as const },
+  { label: 'security-policy.json', href: '#security-policy-json', level: 3 as const },
+  { label: 'NodeType (28 types)', href: '#node-types', level: 2 as const },
+  { label: 'ConditionOperator', href: '#condition-operators', level: 2 as const },
+  { label: 'OnErrorAction', href: '#on-error', level: 2 as const },
+  { label: 'Catégories Deep Clean', href: '#deep-clean-categories', level: 2 as const },
+  { label: 'Sources Applications', href: '#app-sources', level: 2 as const },
+  { label: 'Structure des fichiers', href: '#file-structure', level: 2 as const },
+  { label: 'Format d\'audit NDJSON', href: '#audit-format', level: 2 as const },
+];
+---
+
+<DocLayout
+  title="Documentation API — Coclico"
+  description="Référence complète de l'API Coclico : services, AppSettings, WorkflowPipeline nodes, catégories Deep Clean et format des fichiers."
+  lang={lang}
+  currentPath="/docs/"
+  sidebarLinks={sidebarLinks}
+  tocLinks={tocLinks}
+  heroTitle="Documentation API"
+  heroBadge="Référence v1.0.4"
+  heroDesc="Référence complète des interfaces de service, modèles de données, types de nœuds WorkflowPipeline et configuration de Coclico 1.0.4."
+>
+
+  <h2 id="overview">Vue d'ensemble</h2>
+  <p>Cette documentation couvre l'ensemble des interfaces publiques de Coclico. La version actuelle est <strong>1.0.4</strong>. Les interfaces préfixées par <code>I</code> sont enregistrées dans le DI et peuvent être injectées dans n'importe quel service ou ViewModel.</p>
+  <ul>
+    <li><strong>Namespace principal :</strong> <code>Coclico.Services</code></li>
+    <li><strong>Modèles :</strong> <code>Coclico.Models</code></li>
+    <li><strong>ViewModels :</strong> <code>Coclico.ViewModels</code></li>
+    <li><strong>Framework :</strong> .NET 10, C# preview, WPF-UI 4.2</li>
+  </ul>
+
+  <!-- ─────────────────────────── SERVICES ─────────────────────────── -->
+
+  <h2 id="api-cache">ICacheService</h2>
+  <p>Cache in-memory thread-safe avec TTL par entrée. Implémenté par <code>CacheService</code> (singleton).</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">ICacheService</span>
+&#123;
+    <span class="tok-cmt">/// Récupère une valeur. Retourne null si absente ou expirée.</span>
+    T? <span class="tok-fn">Get</span>&lt;T&gt;(<span class="tok-type">string</span> key);
+
+    <span class="tok-cmt">/// Stocke une valeur. ttl=null = pas d'expiration.</span>
+    <span class="tok-kw">void</span> <span class="tok-fn">Set</span>&lt;T&gt;(<span class="tok-type">string</span> key, T value, <span class="tok-type">TimeSpan</span>? ttl = <span class="tok-kw">null</span>);
+
+    <span class="tok-cmt">/// Pattern TryGet pour éviter la double lookup.</span>
+    <span class="tok-kw">bool</span> <span class="tok-fn">TryGet</span>&lt;T&gt;(<span class="tok-type">string</span> key, <span class="tok-kw">out</span> T? value);
+
+    <span class="tok-cmt">/// Invalide une entrée spécifique.</span>
+    <span class="tok-kw">void</span> <span class="tok-fn">Invalidate</span>(<span class="tok-type">string</span> key);
+
+    <span class="tok-cmt">/// Vide le cache entièrement.</span>
+    <span class="tok-kw">void</span> <span class="tok-fn">InvalidateAll</span>();
+&#125;</code></pre>
+
+  <h2 id="api-tracer">IDynamicTracer</h2>
+  <p>Service de télémétrie temps-réel. Collecte CPU, RAM, réseau, disque. Implémenté par <code>DynamicTracerService</code> (singleton).</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IDynamicTracer</span>
+&#123;
+    <span class="tok-cmt">/// Snapshot ponctuel de la télémétrie système.</span>
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">TelemetrySnapshot</span>&gt; <span class="tok-fn">GetSnapshotAsync</span>(<span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Remplit un buffer de télémétrie (évite les allocations — pour OptimizationEngine).</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">FillTelemetryBufferAsync</span>(<span class="tok-type">Memory</span>&lt;<span class="tok-type">byte</span>&gt; buffer, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Historique glissant (60 derniers snapshots).</span>
+    <span class="tok-type">IReadOnlyList</span>&lt;<span class="tok-type">TelemetrySnapshot</span>&gt; History &#123; <span class="tok-kw">get</span>; &#125;
+&#125;
+
+<span class="tok-kw">public record</span> <span class="tok-type">TelemetrySnapshot</span>(
+    <span class="tok-type">DateTimeOffset</span> Timestamp,
+    <span class="tok-type">double</span> CpuPercent,       <span class="tok-cmt">// 0.0 – 100.0</span>
+    <span class="tok-type">long</span> RamUsedMb,
+    <span class="tok-type">long</span> RamTotalMb,
+    <span class="tok-type">double</span> NetworkInKbps,
+    <span class="tok-type">double</span> NetworkOutKbps
+);</code></pre>
+
+  <h2 id="api-rollback">IRollbackService</h2>
+  <p>Gestion des snapshots pour rollback des patches IA. Implémenté par <code>RollbackService</code> (singleton).</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IRollbackService</span>
+&#123;
+    <span class="tok-cmt">/// Crée un snapshot du fichier avant modification. Retourne l'ID du snapshot.</span>
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">Guid</span>&gt; <span class="tok-fn">CreateSnapshotAsync</span>(<span class="tok-type">string</span> filePath, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Restaure un fichier depuis son snapshot.</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">RestoreAsync</span>(<span class="tok-type">Guid</span> snapshotId, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Liste tous les snapshots disponibles.</span>
+    <span class="tok-type">IReadOnlyList</span>&lt;<span class="tok-type">SnapshotInfo</span>&gt; <span class="tok-fn">GetSnapshots</span>();
+
+    <span class="tok-cmt">/// Supprime les snapshots plus vieux que maxAge.</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">PruneAsync</span>(<span class="tok-type">TimeSpan</span> maxAge);
+&#125;</code></pre>
+
+  <h2 id="api-optimization">IOptimizationEngine</h2>
+  <p>Moteur d'optimisation autonome (Phase 2). Exécute un cycle analyse/action toutes les 30 secondes. Implémenté par <code>OptimizationEngineService</code>.</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IOptimizationEngine</span>
+&#123;
+    <span class="tok-cmt">/// Démarre la boucle d'optimisation en arrière-plan.</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">StartAsync</span>(<span class="tok-type">CancellationToken</span> ct);
+
+    <span class="tok-cmt">/// Arrête proprement la boucle.</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">StopAsync</span>();
+
+    <span class="tok-cmt">/// Résultat du dernier cycle d'optimisation.</span>
+    <span class="tok-type">OptimizationResult</span>? LastResult &#123; <span class="tok-kw">get</span>; &#125;
+
+    <span class="tok-cmt">/// Événement déclenché après chaque cycle.</span>
+    <span class="tok-type">event</span> <span class="tok-type">Action</span>&lt;<span class="tok-type">OptimizationResult</span>&gt;? CycleCompleted;
+&#125;</code></pre>
+
+  <h2 id="api-resource">IResourceAllocator</h2>
+  <p>Allocation et libération des ressources système (threads, handles, mémoire poolée). Implémenté par <code>ResourceAllocatorService</code>.</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IResourceAllocator</span>
+&#123;
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">ResourceHandle</span>&gt; <span class="tok-fn">AcquireAsync</span>(<span class="tok-type">ResourceType</span> type, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+    <span class="tok-kw">void</span> <span class="tok-fn">Release</span>(<span class="tok-type">ResourceHandle</span> handle);
+    <span class="tok-type">ResourceUsageReport</span> <span class="tok-fn">GetUsageReport</span>();
+&#125;</code></pre>
+
+  <h2 id="api-source-analyzer">ISourceAnalyzer</h2>
+  <p>Analyse AST Roslyn du code source C# (Phase 3.3). Calcule complexité cyclomatique, métriques Halstead et Maintainability Index.</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">ISourceAnalyzer</span>
+&#123;
+    <span class="tok-cmt">/// Analyse complète d'un fichier C#.</span>
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">AnalysisReport</span>&gt; <span class="tok-fn">AnalyzeFileAsync</span>(<span class="tok-type">string</span> filePath, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Métriques d'une méthode spécifique.</span>
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">MethodMetrics</span>&gt; <span class="tok-fn">GetMethodMetricsAsync</span>(<span class="tok-type">string</span> filePath, <span class="tok-type">string</span> methodName);
+&#125;
+
+<span class="tok-kw">public record</span> <span class="tok-type">MethodMetrics</span>(
+    <span class="tok-type">string</span> MethodName,
+    <span class="tok-type">int</span> CyclomaticComplexity,   <span class="tok-cmt">// CC — seuil d'alerte : &gt; 10</span>
+    <span class="tok-type">double</span> HalsteadVolume,       <span class="tok-cmt">// V = N × log2(n)</span>
+    <span class="tok-type">double</span> HalsteadDifficulty,   <span class="tok-cmt">// D = (n1/2) × (N2/n2)</span>
+    <span class="tok-type">double</span> HalsteadEffort,       <span class="tok-cmt">// E = D × V</span>
+    <span class="tok-type">double</span> MaintainabilityIndex  <span class="tok-cmt">// MI = 171 - 5.2×ln(V) - 0.23×CC - 16.2×ln(LOC)</span>
+);</code></pre>
+
+  <h2 id="api-audit">IAuditLog</h2>
+  <p>Journal d'audit append-only en format NDJSON. Inclut le contexte de chaque décision IA. Implémenté par <code>AuditLogService</code>.</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IAuditLog</span>
+&#123;
+    <span class="tok-cmt">/// Enregistre une entrée d'audit.</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">WriteAsync</span>(<span class="tok-type">AuditEntry</span> entry, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Écrit une décision IA avec son contexte complet.</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">WriteAiDecisionAsync</span>(<span class="tok-type">AiDecisionContext</span> ctx, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Supprime les entrées plus vieilles que retentionDays.</span>
+    <span class="tok-type">Task</span> <span class="tok-fn">PruneAsync</span>(<span class="tok-type">int</span> retentionDays);
+&#125;</code></pre>
+
+  <h2 id="api-security">ISecurityPolicy</h2>
+  <p>Politique de sécurité qui contrôle quelles opérations sont autorisées dans les Flow Chains. Les defaults hardcodés ne peuvent pas être supprimés par la configuration JSON.</p>
+
+  <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">ISecurityPolicy</span>
+&#123;
+    <span class="tok-cmt">/// Retourne true si le type de nœud est autorisé.</span>
+    <span class="tok-kw">bool</span> <span class="tok-fn">IsNodeAllowed</span>(<span class="tok-type">NodeType</span> nodeType);
+
+    <span class="tok-cmt">/// Retourne true si la clé de registre cible est autorisée.</span>
+    <span class="tok-kw">bool</span> <span class="tok-fn">IsRegistryPathAllowed</span>(<span class="tok-type">string</span> registryPath);
+
+    <span class="tok-cmt">/// Retourne true si le chemin de fichier est dans une zone autorisée.</span>
+    <span class="tok-kw">bool</span> <span class="tok-fn">IsFilePathAllowed</span>(<span class="tok-type">string</span> filePath);
+&#125;</code></pre>
+
+  <!-- ─────────────────────────── SETTINGS ─────────────────────────── -->
+
+  <h2 id="app-settings">AppSettings</h2>
+  <p>Modèle de configuration principale. Géré par <code>SettingsService</code>, persisté dans <code>%APPDATA%\Coclico\settings.json</code>.</p>
+
+  <pre><code><span class="tok-kw">public class</span> <span class="tok-type">AppSettings</span>
+&#123;
+    <span class="tok-cmt">// Général</span>
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> Language &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">"fr"</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> Theme &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">"Dark"</span>;          <span class="tok-cmt">// "Light" | "Dark" | "System"</span>
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> AccentColor &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">"#6366F1"</span>;   <span class="tok-cmt">// Indigo par défaut</span>
+    <span class="tok-kw">public</span> <span class="tok-type">LaunchMode</span> LaunchMode &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-type">LaunchMode</span>.Manual;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> MinimizeToTray &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+
+    <span class="tok-cmt">// Nettoyage</span>
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanWindowsTemp &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanBrowserCache &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanSystemLogs &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">false</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanRecycleBin &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanPrefetch &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">false</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanThumbnailCache &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanErrorReports &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> CleanOldInstallers &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">false</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> FlushDns &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+
+    <span class="tok-cmt">// IA & Audit</span>
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> AutoPatcherAuditOnly &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;  <span class="tok-cmt">// Défaut enterprise</span>
+    <span class="tok-kw">public</span> <span class="tok-type">int</span> AuditRetentionDays &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">90</span>;
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> AiModelPath &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-str">""</span>;            <span class="tok-cmt">// Vide = chemin par défaut</span>
+    <span class="tok-kw">public</span> <span class="tok-type">bool</span> UseVulkanAcceleration &#123; <span class="tok-kw">get</span>; <span class="tok-kw">set</span>; &#125; = <span class="tok-kw">true</span>;
+&#125;
+
+<span class="tok-kw">public enum</span> <span class="tok-type">LaunchMode</span>
+&#123;
+    Manual,         <span class="tok-cmt">// Lancement manuel uniquement</span>
+    WithWindows,    <span class="tok-cmt">// Démarrage automatique avec Windows</span>
+    MinimizedTray   <span class="tok-cmt">// Démarrage minimisé dans le tray</span>
+&#125;</code></pre>
+
+  <h3 id="security-policy-json">security-policy.json</h3>
+  <p>Fichier de politique de sécurité chargé au démarrage. Les valeurs ci-dessous sont les défauts hardcodés (non-suppressibles) :</p>
+
+  <pre><code>&#123;
+  <span class="tok-str">"blockedNodeTypes"</span>: [<span class="tok-str">"DeleteRegistryKey"</span>],
+  <span class="tok-str">"blockedRegistryPaths"</span>: [
+    <span class="tok-str">"HKLM\\SYSTEM\\CurrentControlSet"</span>,
+    <span class="tok-str">"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"</span>
+  ],
+  <span class="tok-str">"allowedFileWriteZones"</span>: [
+    <span class="tok-str">"%APPDATA%\\Coclico\\"</span>,
+    <span class="tok-str">"%TEMP%\\"</span>
+  ],
+  <span class="tok-str">"maxPipelineNodesPerRun"</span>: <span class="tok-str">200</span>,
+  <span class="tok-str">"requireApprovalForRegistryWrite"</span>: <span class="tok-kw">true</span>
+&#125;</code></pre>
+
+  <!-- ─────────────────────────── WORKFLOW ─────────────────────────── -->
+
+  <h2 id="node-types">NodeType — 28 types de nœuds</h2>
+  <p>Enumération complète des types de nœuds disponibles dans les WorkflowPipeline :</p>
+
+  <div class="doc-table-wrap">
+    <table class="doc-table">
+      <thead>
+        <tr><th>Valeur enum</th><th>Catégorie</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>KillProcess</code></td><td>Processus</td><td>Termine un processus par nom ou PID</td></tr>
+        <tr><td><code>LaunchProcess</code></td><td>Processus</td><td>Lance un exécutable avec arguments</td></tr>
+        <tr><td><code>RestartService</code></td><td>Services Windows</td><td>Arrête puis redémarre un service Windows</td></tr>
+        <tr><td><code>StopService</code></td><td>Services Windows</td><td>Arrête un service Windows</td></tr>
+        <tr><td><code>StartService</code></td><td>Services Windows</td><td>Démarre un service Windows</td></tr>
+        <tr><td><code>SetRegistryValue</code></td><td>Registre</td><td>Écrit une valeur dans le registre Windows</td></tr>
+        <tr><td><code>DeleteRegistryKey</code></td><td>Registre</td><td>Supprime une clé de registre (restreint par policy)</td></tr>
+        <tr><td><code>CreateDirectory</code></td><td>Fichiers</td><td>Crée un dossier (et les parents si nécessaire)</td></tr>
+        <tr><td><code>DeleteFile</code></td><td>Fichiers</td><td>Supprime un fichier ou un dossier</td></tr>
+        <tr><td><code>MoveFile</code></td><td>Fichiers</td><td>Déplace un fichier ou dossier</td></tr>
+        <tr><td><code>CopyFile</code></td><td>Fichiers</td><td>Copie un fichier ou dossier</td></tr>
+        <tr><td><code>RunScript</code></td><td>Scripts</td><td>Exécute un script PowerShell ou batch</td></tr>
+        <tr><td><code>CleanTemp</code></td><td>Nettoyage</td><td>Vide les dossiers temporaires Windows</td></tr>
+        <tr><td><code>EmptyRecycleBin</code></td><td>Nettoyage</td><td>Vide la corbeille de tous les lecteurs</td></tr>
+        <tr><td><code>FlushDns</code></td><td>Nettoyage</td><td>Vide le cache DNS via <code>DnsFlushResolverCache</code></td></tr>
+        <tr><td><code>ClearBrowserCache</code></td><td>Nettoyage</td><td>Supprime le cache des navigateurs détectés</td></tr>
+        <tr><td><code>ClearEventLogs</code></td><td>Nettoyage</td><td>Efface les journaux d'événements Windows</td></tr>
+        <tr><td><code>ClearPrefetch</code></td><td>Nettoyage</td><td>Supprime les fichiers de prefetch Windows</td></tr>
+        <tr><td><code>ClearThumbnailCache</code></td><td>Nettoyage</td><td>Supprime le cache de miniatures et icônes</td></tr>
+        <tr><td><code>ClearWindowsErrorReports</code></td><td>Nettoyage</td><td>Efface les rapports d'erreur WER</td></tr>
+        <tr><td><code>FreeRam</code></td><td>Mémoire</td><td>Libère la RAM via P/Invoke ntdll + advapi32</td></tr>
+        <tr><td><code>SetWorkingSet</code></td><td>Mémoire</td><td>Écrête le working set d'un processus spécifique</td></tr>
+        <tr><td><code>PingHost</code></td><td>Réseau</td><td>Vérifie la connectivité vers un hôte</td></tr>
+        <tr><td><code>DisableNetworkAdapter</code></td><td>Réseau</td><td>Désactive une interface réseau par nom</td></tr>
+        <tr><td><code>EnableNetworkAdapter</code></td><td>Réseau</td><td>Active une interface réseau par nom</td></tr>
+        <tr><td><code>Wait</code></td><td>Contrôle</td><td>Pause d'une durée en millisecondes</td></tr>
+        <tr><td><code>Condition</code></td><td>Contrôle</td><td>Branchement conditionnel sur une valeur système</td></tr>
+        <tr><td><code>Log</code></td><td>Contrôle</td><td>Écrit un message dans le journal Serilog</td></tr>
+        <tr><td><code>Notification</code></td><td>Contrôle</td><td>Affiche un toast à l'utilisateur</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="condition-operators">ConditionOperator — 10 opérateurs</h2>
+  <p>Opérateurs disponibles pour les conditions de nœuds (<code>NodeCondition.Operator</code>) :</p>
+
+  <div class="doc-table-wrap">
+    <table class="doc-table">
+      <thead>
+        <tr><th>Valeur</th><th>Type</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>Equals</code></td><td>Universel</td><td>Égalité stricte (string ou numérique)</td></tr>
+        <tr><td><code>NotEquals</code></td><td>Universel</td><td>Différent de</td></tr>
+        <tr><td><code>GreaterThan</code></td><td>Numérique</td><td>Strictement supérieur à</td></tr>
+        <tr><td><code>LessThan</code></td><td>Numérique</td><td>Strictement inférieur à</td></tr>
+        <tr><td><code>GreaterOrEqual</code></td><td>Numérique</td><td>Supérieur ou égal à</td></tr>
+        <tr><td><code>LessOrEqual</code></td><td>Numérique</td><td>Inférieur ou égal à</td></tr>
+        <tr><td><code>Contains</code></td><td>String</td><td>La valeur contient la sous-chaîne</td></tr>
+        <tr><td><code>NotContains</code></td><td>String</td><td>La valeur ne contient pas la sous-chaîne</td></tr>
+        <tr><td><code>IsEmpty</code></td><td>String</td><td>La valeur est vide ou null</td></tr>
+        <tr><td><code>IsNotEmpty</code></td><td>String</td><td>La valeur est non-vide et non-null</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="on-error">OnErrorAction</h2>
+  <p>Comportement d'un nœud en cas d'échec :</p>
+  <ul>
+    <li><code>ContinueNext</code> (valeur par défaut) — L'erreur est loguée, l'exécution continue avec le nœud suivant.</li>
+    <li><code>StopChain</code> — L'exécution s'arrête immédiatement. Aucun nœud suivant ne s'exécute.</li>
+    <li><code>SkipToEnd</code> — Tous les nœuds intermédiaires sont ignorés. Seul le dernier nœud de la chaîne s'exécute.</li>
+  </ul>
+
+  <!-- ─────────────────────────── DEEP CLEAN ─────────────────────────── -->
+
+  <h2 id="deep-clean-categories">Catégories Deep Clean — 10 catégories</h2>
+
+  <div class="doc-table-wrap">
+    <table class="doc-table">
+      <thead>
+        <tr><th>#</th><th>Catégorie</th><th>Chemins ciblés</th><th>API Windows</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Fichiers temporaires Windows</strong></td>
+          <td><code>%TEMP%</code>, <code>C:\Windows\Temp</code></td>
+          <td>File.Delete, Directory.Delete</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Cache des navigateurs</strong></td>
+          <td>Chrome, Edge, Firefox, Opera — profils détectés</td>
+          <td>Directory.Delete (AppData\Local)</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Logs système</strong></td>
+          <td>Journaux Windows, logs IIS, WindowsUpdate.log</td>
+          <td>EventLog.Clear, File.Delete</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Corbeille</strong></td>
+          <td>Tous les lecteurs (<code>$Recycle.Bin</code>)</td>
+          <td>SHEmptyRecycleBin (shell32)</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Fichiers temp utilisateur</strong></td>
+          <td><code>AppData\Local\Temp</code> (tous profils)</td>
+          <td>Directory.Delete</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Cache des miniatures</strong></td>
+          <td><code>AppData\Local\Microsoft\Windows\Explorer</code> (thumbcache_*.db)</td>
+          <td>File.Delete</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Rapports d'erreur Windows</strong></td>
+          <td><code>AppData\Local\Microsoft\Windows\WER</code>, <code>ProgramData\Microsoft\Windows\WER</code></td>
+          <td>Directory.Delete</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>Anciens installeurs</strong></td>
+          <td><code>C:\Windows\Installer\$PatchCache$</code></td>
+          <td>Directory.Delete</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>Cache DNS</strong></td>
+          <td>Résolveur DNS Windows</td>
+          <td>DnsFlushResolverCache (dnsapi.dll)</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><strong>Prefetch</strong></td>
+          <td><code>C:\Windows\Prefetch\*.pf</code></td>
+          <td>File.Delete (requiert admin)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ─────────────────────────── APPLICATIONS ─────────────────────────── -->
+
+  <h2 id="app-sources">Sources Applications — 8 sources</h2>
+
+  <div class="doc-table-wrap">
+    <table class="doc-table">
+      <thead>
+        <tr><th>Source</th><th>Mécanisme de détection</th><th>Données récupérées</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Registry HKLM</strong></td>
+          <td><code>HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</code></td>
+          <td>Nom, version, éditeur, taille, date d'installation, chemin de désinstallation</td>
+        </tr>
+        <tr>
+          <td><strong>Registry HKCU</strong></td>
+          <td><code>HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</code></td>
+          <td>Applications installées par l'utilisateur courant</td>
+        </tr>
+        <tr>
+          <td><strong>Steam</strong></td>
+          <td><code>libraryfolders.vdf</code> → dossiers de bibliothèque → <code>appmanifest_*.acf</code></td>
+          <td>AppId, nom, taille installée, dossier d'installation</td>
+        </tr>
+        <tr>
+          <td><strong>Epic Games</strong></td>
+          <td><code>%ProgramData%\Epic\EpicGamesLauncher\Data\Manifests\*.item</code> (JSON)</td>
+          <td>AppId, nom du jeu, version, dossier d'installation</td>
+        </tr>
+        <tr>
+          <td><strong>GOG Galaxy</strong></td>
+          <td>Base de données SQLite locale de GOG Galaxy</td>
+          <td>Titre, version, chemin d'installation, taille</td>
+        </tr>
+        <tr>
+          <td><strong>Ubisoft Connect</strong></td>
+          <td>Registre Ubisoft + dossier d'installation</td>
+          <td>Nom du jeu, chemin, version</td>
+        </tr>
+        <tr>
+          <td><strong>EA App</strong></td>
+          <td>Manifestes XML dans le dossier EA (<code>%ProgramData%\EA Desktop</code>)</td>
+          <td>Nom, version, chemin d'installation</td>
+        </tr>
+        <tr>
+          <td><strong>Rockstar Games</strong></td>
+          <td>Dossier de données Rockstar Games Launcher</td>
+          <td>Nom du jeu, statut d'installation</td>
+        </tr>
+        <tr>
+          <td><strong>Microsoft Store</strong></td>
+          <td><code>Get-AppxPackage</code> via PowerShell (System.Management.Automation)</td>
+          <td>PackageFamilyName, DisplayName, version, taille</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ─────────────────────────── FICHIERS ─────────────────────────── -->
+
+  <h2 id="file-structure">Structure des fichiers</h2>
+  <p>Tous les fichiers de Coclico résident dans <code>%APPDATA%\Coclico\</code> :</p>
+
+  <pre><code>%APPDATA%\Coclico\
+├── settings.json              <span class="tok-cmt"># AppSettings sérialisées (JSON)</span>
+├── security-policy.json       <span class="tok-cmt"># Politique de sécurité personnalisée</span>
+├── flow-chains\               <span class="tok-cmt"># Définitions WorkflowPipeline</span>
+│   ├── &#123;guid&#125;.json            <span class="tok-cmt"># Une chaîne par fichier</span>
+│   └── ...
+├── audit\                     <span class="tok-cmt"># Journal d'audit (IAuditLog)</span>
+│   ├── audit-2024-01.ndjson
+│   └── ...
+├── logs\                      <span class="tok-cmt"># Logs Serilog (rolling daily, 14 jours)</span>
+│   ├── coclico-20240101.log
+│   └── ...
+├── rollback\                  <span class="tok-cmt"># Snapshots IRollbackService</span>
+│   ├── &#123;snapshotId&#125;\
+│   │   ├── metadata.json
+│   │   └── original_file.bak
+│   └── ...
+└── resource\
+    └── model\
+        └── IA-support-chat.gguf  <span class="tok-cmt"># Modèle LLM GGUF local</span></code></pre>
+
+  <h2 id="audit-format">Format d'audit NDJSON</h2>
+  <p>Chaque ligne du fichier d'audit est un objet JSON indépendant. Exemple d'entrée de décision IA :</p>
+
+  <pre><code>&#123;
+  <span class="tok-str">"timestamp"</span>: <span class="tok-str">"2024-01-15T14:32:00.000Z"</span>,
+  <span class="tok-str">"type"</span>: <span class="tok-str">"AiDecision"</span>,
+  <span class="tok-str">"level"</span>: <span class="tok-str">"Info"</span>,
+  <span class="tok-str">"action"</span>: <span class="tok-str">"PatchProposal"</span>,
+  <span class="tok-str">"userId"</span>: <span class="tok-str">"local"</span>,
+  <span class="tok-str">"aiContext"</span>: &#123;
+    <span class="tok-str">"model"</span>: <span class="tok-str">"IA-support-chat.gguf"</span>,
+    <span class="tok-str">"promptHash"</span>: <span class="tok-str">"sha256:a3f..."</span>,
+    <span class="tok-str">"responseTokens"</span>: <span class="tok-str">312</span>,
+    <span class="tok-str">"latencyMs"</span>: <span class="tok-str">4820</span>,
+    <span class="tok-str">"approved"</span>: <span class="tok-kw">false</span>
+  &#125;,
+  <span class="tok-str">"patch"</span>: &#123;
+    <span class="tok-str">"proposalId"</span>: <span class="tok-str">"3fa85f64-5717-4562-b3fc-2c963f66afa6"</span>,
+    <span class="tok-str">"targetFile"</span>: <span class="tok-str">"Services/OptimizationEngineService.cs"</span>,
+    <span class="tok-str">"originalCC"</span>: <span class="tok-str">8</span>,
+    <span class="tok-str">"patchedCC"</span>: <span class="tok-str">7</span>,
+    <span class="tok-str">"validatedByDigitalTwin"</span>: <span class="tok-kw">true</span>
+  &#125;
+&#125;</code></pre>
+
+</DocLayout>
+
+<style>
+.doc-table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.doc-table thead {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+}
+
+.doc-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.doc-table td {
+  padding: 0.65rem 1rem;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.doc-table tbody tr:last-child td { border-bottom: none; }
+
+.doc-table tbody tr:hover td {
+  background: var(--surface-hover);
+}
+
+.doc-table code {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  background: var(--surface-hover);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+  color: var(--accent-hover);
+}
+</style>

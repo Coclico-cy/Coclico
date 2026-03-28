@@ -1,0 +1,182 @@
+---
+import DocLayout from '../../../layouts/DocLayout.astro';
+const lang = 'de' as const;
+
+const sidebarLinks = [
+  { group: 'Erste Schritte', label: 'Installation', href: '#installation' },
+  { group: 'Erste Schritte', label: 'Erster Start', href: '#first-launch' },
+  { group: 'Erste Schritte', label: 'Hauptoberfläche', href: '#interface' },
+  { group: 'Module', label: 'Dashboard', href: '#dashboard' },
+  { group: 'Module', label: 'Bereinigung', href: '#cleaning' },
+  { group: 'Module', label: 'RAM Cleaner', href: '#ram-cleaner' },
+  { group: 'Module', label: 'App Scanner', href: '#scanner' },
+  { group: 'Module', label: 'Schnell-Installer', href: '#installer' },
+  { group: 'Module', label: 'Anwendungen', href: '#applications' },
+  { group: 'Module', label: 'Flow Chains', href: '#flow-chains' },
+  { group: 'Module', label: 'Einstellungen', href: '#settings' },
+  { group: 'Erweitert', label: 'Flow Chains Schritt für Schritt', href: '#flow-chains-guide' },
+  { group: 'Erweitert', label: 'Coclico KI', href: '#coclico-ai' },
+  { group: 'Erweitert', label: 'Tastenkürzel', href: '#shortcuts' },
+  { group: 'Erweitert', label: 'Dateien & Daten', href: '#files-data' },
+];
+
+const tocLinks = [
+  { label: 'Installation', href: '#installation', level: 2 as const },
+  { label: 'Systemanforderungen', href: '#requirements', level: 3 as const },
+  { label: 'Installationsschritte', href: '#install-steps', level: 3 as const },
+  { label: 'Erster Start', href: '#first-launch', level: 2 as const },
+  { label: 'Hauptoberfläche', href: '#interface', level: 2 as const },
+  { label: 'Die 8 Module', href: '#modules', level: 2 as const },
+  { label: 'Dashboard', href: '#dashboard', level: 3 as const },
+  { label: 'Bereinigung', href: '#cleaning', level: 3 as const },
+  { label: 'RAM Cleaner', href: '#ram-cleaner', level: 3 as const },
+  { label: 'App Scanner', href: '#scanner', level: 3 as const },
+  { label: 'Schnell-Installer', href: '#installer', level: 3 as const },
+  { label: 'Anwendungen', href: '#applications', level: 3 as const },
+  { label: 'Flow Chains', href: '#flow-chains', level: 3 as const },
+  { label: 'Einstellungen', href: '#settings', level: 3 as const },
+  { label: 'Flow Chains Schritt für Schritt', href: '#flow-chains-guide', level: 2 as const },
+  { label: 'Coclico KI', href: '#coclico-ai', level: 2 as const },
+  { label: 'Tastenkürzel', href: '#shortcuts', level: 2 as const },
+  { label: 'Dateien & Daten', href: '#files-data', level: 2 as const },
+];
+---
+
+<DocLayout
+  title="Anleitung & Tutorial — Coclico"
+  description="Vollständige Coclico-Benutzeranleitung: Installation, Module, Flow Chains, lokale KI und Tastenkürzel."
+  lang={lang}
+  currentPath="/guide/"
+  sidebarLinks={sidebarLinks}
+  tocLinks={tocLinks}
+  heroTitle="Anleitung & Tutorial"
+  heroBadge="Benutzerhandbuch"
+  heroDesc="Alles, was Sie brauchen, um Coclico zu installieren, zu konfigurieren und zu beherrschen — vom ersten Start bis zu erweiterten Automatisierungen."
+>
+
+  <blockquote>
+    <strong>Hinweis:</strong> Diese Seite ist größtenteils auf Französisch verfügbar. Eine vollständige deutsche Übersetzung folgt in Kürze.
+  </blockquote>
+
+  <!-- Querverweise zu ergänzenden Abschnitten -->
+  <nav class="doc-crosslinks" aria-label="Ergänzende Abschnitte">
+    <a href="/Coclico/de/docs/" class="crosslink-card">
+      <span class="crosslink-icon">📚</span>
+      <span class="crosslink-label">API-Dokumentation</span>
+      <span class="crosslink-desc">Vollständige Referenz der Interfaces, Services und Modelle</span>
+    </a>
+    <a href="/Coclico/de/wiki/" class="crosslink-card">
+      <span class="crosslink-icon">⚙️</span>
+      <span class="crosslink-label">Entwickler-Wiki</span>
+      <span class="crosslink-desc">Interne Architektur, MVVM, DI und autonomes System</span>
+    </a>
+    <a href="/Coclico/de/faq/" class="crosslink-card">
+      <span class="crosslink-icon">❓</span>
+      <span class="crosslink-label">FAQ</span>
+      <span class="crosslink-desc">Häufige Fragen zu Installation und Nutzung</span>
+    </a>
+  </nav>
+
+  <h2 id="installation">Installation</h2>
+
+  <h3 id="requirements">Systemanforderungen</h3>
+  <p>Coclico ist eine native Windows-Anwendung auf Basis von .NET 10 und WPF. Stellen Sie sicher, dass Ihr System die Mindestanforderungen erfüllt:</p>
+  <ul>
+    <li><strong>Betriebssystem:</strong> Windows 10 21H2 oder Windows 11 (64-Bit)</li>
+    <li><strong>RAM:</strong> Mindestens 4 GB — 8 GB empfohlen (für das KI-Modul)</li>
+    <li><strong>Festplatte:</strong> 500 MB für die App + ca. 4 GB für das GGUF-Modell</li>
+    <li><strong>Berechtigungen:</strong> Administratorkonto erforderlich (UAC-Erhöhung beim Start)</li>
+    <li><strong>GPU (optional):</strong> Vulkan-kompatible Karte für KI-Beschleunigung</li>
+    <li><strong>Runtime:</strong> .NET 10 Runtime ist im Installationsprogramm enthalten</li>
+  </ul>
+
+  <h3 id="install-steps">Installationsschritte</h3>
+  <ol>
+    <li>Laden Sie den neuesten Installer <code>Coclico-Setup-x64.exe</code> von der Download-Seite herunter.</li>
+    <li>Doppelklicken Sie auf den Installer — Windows zeigt möglicherweise eine SmartScreen-Warnung an. Klicken Sie auf <strong>"Weitere Informationen" → "Trotzdem ausführen"</strong>.</li>
+    <li>Akzeptieren Sie die UAC-Erhöhung. Coclico wird in <code>%ProgramFiles%\Coclico\</code> installiert.</li>
+    <li>Beim ersten Start erscheint das <strong>LauncherWindow</strong> zur Konfiguration des Startmodus: manuell, mit Windows oder minimiert in der Taskleiste.</li>
+    <li>Um das KI-Modul zu nutzen, legen Sie Ihr GGUF-Modell in <code>%APPDATA%\Coclico\resource\model\</code> ab und benennen Sie es <code>IA-support-chat.gguf</code>.</li>
+  </ol>
+
+  <blockquote>
+    Coclico benötigt Administratorrechte für den Zugriff auf Windows-System-APIs (WMI, Registry, Kernel-Speicher). Die Erhöhung wird einmalig beim Start über UAC angefordert.
+  </blockquote>
+
+  <h2 id="first-launch">Erster Start</h2>
+  <p>Beim ersten Start führt Coclico eine erste Systemanalyse durch und zeigt einen Ladebildschirm (<strong>SplashWindow</strong>) an, während Dienste initialisiert werden. Dies dauert normalerweise 3 bis 8 Sekunden.</p>
+  <p>Das <strong>LauncherWindow</strong> erscheint dann zur Konfiguration von: Startmodus, Thema (Hell/Dunkel/System), Sprache und Benutzerprofil.</p>
+
+  <h2 id="interface">Hauptoberfläche</h2>
+  <p>Coclico verwendet eine <strong>WPF-UI 4.x</strong>-Oberfläche mit einer vertikalen Navigationsleiste links. Jedes Symbol entspricht einem Modul.</p>
+  <ul>
+    <li><strong>Navigation:</strong> Klicken Sie auf ein Symbol oder verwenden Sie Tastenkürzel</li>
+    <li><strong>Tray:</strong> Fenster schließen minimiert in die Taskleiste (Doppelklick zum Wiederherstellen)</li>
+    <li><strong>Thema:</strong> Sonne/Mond-Schaltfläche oben rechts zum Umschalten</li>
+    <li><strong>Benachrichtigungen:</strong> Toast-Nachrichten erscheinen unten rechts</li>
+  </ul>
+
+  <h2 id="modules">Die 8 Module</h2>
+
+  <h3 id="dashboard">Dashboard</h3>
+  <p>Die Startseite von Coclico zeigt in Echtzeit: CPU-Auslastung, RAM-Nutzung, Festplattenplatz, Netzwerkdurchsatz, System-Gesundheitsbewertung und Schnellaktionen.</p>
+
+  <h3 id="cleaning">Bereinigung (Deep Clean)</h3>
+  <p>Analysiert und entfernt unnötige Dateien aus dem System — <strong>10 Kategorien</strong>: Windows-Temp, Browser-Cache, Systemprotokolle, Papierkorb, Benutzer-Temp, Miniaturansichten-Cache, Fehlerberichte, alte Installer, DNS-Cache, Prefetch.</p>
+
+  <h3 id="ram-cleaner">RAM Cleaner</h3>
+  <p>Gibt physischen Arbeitsspeicher frei durch P/Invoke-Aufrufe an kernel32, ntdll, advapi32, dnsapi und iphlpapi. Benötigt das Privileg <code>SeIncreaseQuotaPrivilege</code>. Typischerweise werden 200 bis 800 MB freigegeben.</p>
+
+  <h3 id="scanner">App Scanner</h3>
+  <p>Analysiert installierte Anwendungen und identifiziert ungenutzte, große, doppelte oder veraltete Software.</p>
+
+  <h3 id="installer">Schnell-Installer</h3>
+  <p>Deployment gängiger Anwendungen mit einem Klick: stille Installation, Batch-Installationen, SHA256-Integritätsprüfung, automatisches Rollback bei Fehlern.</p>
+
+  <h3 id="applications">Anwendungen</h3>
+  <p>Listet <strong>alle</strong> installierten Anwendungen aus <strong>8 Quellen</strong>: Registry HKLM+HKCU, Steam, Epic Games, GOG Galaxy, Ubisoft Connect, EA App, Rockstar Games, Microsoft Store.</p>
+
+  <h3 id="flow-chains">Flow Chains</h3>
+  <p>Visuelles Automatisierungssystem mit 28 Knotentypen, 10 Bedingungsoperatoren und 3 Fehleraktionen. Siehe <a href="#flow-chains-guide">Schritt-für-Schritt-Anleitung</a>.</p>
+
+  <h3 id="settings">Einstellungen</h3>
+  <p>Konfigurieren Sie alle Aspekte von Coclico: Sprache, Thema, Akzentfarbe (Standard: <code>#6366F1</code> Indigo), Bereinigungskategorien, KI &amp; Audit-Modus und Sicherheitsrichtlinie.</p>
+
+  <h2 id="flow-chains-guide">Flow Chains — Schritt für Schritt</h2>
+
+  <h3>Schritt 1 — Neue Kette erstellen</h3>
+  <p>Klicken Sie im Flow Chains-Modul auf <strong>"Neue Kette"</strong> und geben Sie einen Namen und eine Beschreibung ein.</p>
+
+  <h3>Schritt 2 — Knoten hinzufügen</h3>
+  <p>Klicken Sie auf <strong>"+ Knoten hinzufügen"</strong>. Die <strong>28 Knotentypen</strong> (<code>NodeType</code>) umfassen: Prozesse, Registry, Dateien, Bereinigung, Arbeitsspeicher, Netzwerk und Steuerungsfluss.</p>
+
+  <h3>Schritt 3 — Bedingungen konfigurieren</h3>
+  <p>Jeder Knoten kann eine Ausführungsbedingung mit <strong>10 Operatoren</strong> haben: <code>Equals</code>, <code>NotEquals</code>, <code>GreaterThan</code>, <code>LessThan</code>, <code>GreaterOrEqual</code>, <code>LessOrEqual</code>, <code>Contains</code>, <code>NotContains</code>, <code>IsEmpty</code>, <code>IsNotEmpty</code>.</p>
+
+  <h3>Schritt 4 — OnErrorAction festlegen</h3>
+  <ul>
+    <li><code>ContinueNext</code> (Standard) — Fehler protokollieren, weiter mit dem nächsten Knoten</li>
+    <li><code>StopChain</code> — Ausführung sofort beenden</li>
+    <li><code>SkipToEnd</code> — alle Zwischenknoten überspringen, nur letzten Knoten ausführen</li>
+  </ul>
+
+  <h3>Schritt 5 — Ausführen und überwachen</h3>
+  <p>Klicken Sie auf <strong>"Ausführen"</strong>. Der Echtzeit-Fortschritt zeigt den Status jedes Knotens. Planen Sie die automatische Ausführung über das Menü <strong>"Planen"</strong>.</p>
+
+  <h2 id="coclico-ai">Coclico KI</h2>
+  <p>Coclico enthält einen vollständig lokalen KI-Assistenten auf Basis von <strong>LLamaSharp 0.26</strong>. Keine Daten verlassen Ihren Computer (<strong>Zero Cloud</strong>).</p>
+  <p>Zwei isolierte LLM-Kontexte (<strong>Dual-Executor</strong>): ein Kontext für den Benutzer-Chat, ein anderer für den OptimizationEngine-Hintergrundprozess (alle 30 Sekunden).</p>
+
+  <h2 id="shortcuts">Tastenkürzel</h2>
+  <ul>
+    <li><kbd>Strg</kbd> + <kbd>1–8</kbd> — Navigation zu den Modulen 1 bis 8</li>
+    <li><kbd>Strg</kbd> + <kbd>Umschalt</kbd> + <kbd>C</kbd> — Schnellbereinigung</li>
+    <li><kbd>Strg</kbd> + <kbd>Umschalt</kbd> + <kbd>R</kbd> — RAM schnell freigeben</li>
+    <li><kbd>Strg</kbd> + <kbd>Umschalt</kbd> + <kbd>A</kbd> — KI-Chat öffnen</li>
+    <li><kbd>Escape</kbd> — Aktives Panel/Dialog schließen</li>
+  </ul>
+
+  <h2 id="files-data">Dateien & Daten</h2>
+  <p>Alle Coclico-Daten befinden sich in <code>%APPDATA%\Coclico\</code>: Einstellungen, Flow Chains, Audit-Protokolle, Serilog-Protokolle, Rollback-Snapshots und das KI-Modell. Es werden keine Daten an externe Server gesendet.</p>
+
+</DocLayout>

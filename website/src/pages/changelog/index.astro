@@ -1,0 +1,349 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+const lang = 'fr' as const;
+---
+
+<PageLayout
+  title="Nouveaut&eacute;s &mdash; Coclico"
+  description="Historique des versions et nouveaut&eacute;s de Coclico. D&eacute;couvrez les derni&egrave;res fonctionnalit&eacute;s, corrections et am&eacute;liorations."
+  lang={lang}
+  currentPath="/changelog/"
+>
+  <section class="changelog-hero">
+    <div class="changelog-hero-inner">
+      <span class="changelog-badge">Changelog</span>
+      <h1>Nouveaut&eacute;s</h1>
+      <p>Toutes les &eacute;volutions de Coclico, version par version.</p>
+    </div>
+  </section>
+
+  <section class="changelog-content">
+    <div class="changelog-inner">
+
+      <article class="version-block latest">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.4</span>
+            <span class="version-label">Derni&egrave;re version</span>
+          </div>
+          <time class="version-date">Mars 2026</time>
+        </div>
+
+        <div class="changes-grid">
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Architecture &amp; Qualit&eacute;
+            </h3>
+            <ul>
+              <li><strong>DI exclusif</strong> &mdash; &Eacute;limination compl&egrave;te des singletons statiques. Tous les services passent par l'injection de d&eacute;pendances. <code>ServiceContainer.GetRequired&lt;T&gt;()</code> et <code>GetOptional&lt;T&gt;()</code> sont les seuls points d'acc&egrave;s.</li>
+              <li><strong>Interface IAiService</strong> &mdash; D&eacute;couplage de l'OptimizationEngine du service IA concret. L'engine retombe en mode d&eacute;terministe si l'IA est indisponible.</li>
+              <li><strong>Nettoyage code mort</strong> &mdash; Suppression de RelayCommand, PluginOrchestrator, RunOptimizationCycleAsync. Fusion de DeepCleaning + 3 services Workflow en un WorkflowService unifi&eacute;.</li>
+              <li><strong>Tests &amp; couverture</strong> &mdash; Nouveaux tests unitaires pour les services refactor&eacute;s (xUnit + Moq). <code>ValidateOnBuild</code> garantit l'absence de d&eacute;pendances manquantes au d&eacute;marrage.</li>
+            </ul>
+          </div>
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Nouvelles fonctionnalit&eacute;s
+            </h3>
+            <ul>
+              <li><strong>Lib&eacute;ration m&eacute;moire IA automatique</strong> &mdash; Apr&egrave;s 5 min d'inactivit&eacute; (configurable via <code>aiIdleTimeoutMinutes</code>), le mod&egrave;le LLamaSharp (~2,5 Go) est automatiquement d&eacute;charg&eacute; de la RAM. Rechargement transparent au prochain message.</li>
+              <li><strong>Setting <code>aiIdleTimeoutMinutes</code></strong> &mdash; Nouveau param&egrave;tre dans settings.json (d&eacute;faut : 5 min, 0 = d&eacute;sactiv&eacute;).</li>
+              <li><strong>Site web Coclico</strong> &mdash; Site multi-langue (FR, EN, DE, ES) avec documentation, guide, wiki, FAQ, changelog.</li>
+              <li><strong>Deep Clean am&eacute;lior&eacute;</strong> &mdash; Estimation de l'espace avant nettoyage, activation/d&eacute;sactivation par cat&eacute;gorie, rapport d&eacute;taill&eacute;.</li>
+              <li><strong>Raccourcis clavier</strong> &mdash; Raccourcis globaux via KeyboardShortcutsService (Ctrl+1-8 pour les modules, Ctrl+Shift+C/R/A pour les actions rapides).</li>
+            </ul>
+          </div>
+
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Corrections
+            </h3>
+            <ul>
+              <li><strong>Audit expert v1.0.3</strong> &mdash; Corrections compl&egrave;tes post-audit : algorithmes avanc&eacute;s, d&eacute;couplage, patterns DI.</li>
+              <li><strong>UI Refactor &amp; i18n</strong> &mdash; Dashboard, Programs, FlowChains, RamCleaner, Scanner, Settings tous refactoris&eacute;s avec localisation compl&egrave;te (FR/EN/DE/ES).</li>
+              <li><strong>Mode audit AutoPatcher</strong> &mdash; Mode audit-only par d&eacute;faut. Les patches sont journalis&eacute;s mais non appliqu&eacute;s sans approbation explicite.</li>
+            </ul>
+          </div>
+
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.3</span>
+          </div>
+          <time class="version-date">Mars 2026</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Fonctionnalit&eacute;s
+            </h3>
+            <ul>
+              <li><strong>Phase 3.2 &mdash; Dual-executor LLM</strong> &mdash; Isolation des contextes LLama : contexte chat s&eacute;par&eacute; du contexte moteur autonome. Pattern Immutable Context Swap.</li>
+              <li><strong>Phase 2-3 &mdash; Noyau Autonome</strong> &mdash; T&eacute;l&eacute;m&eacute;trie (DynamicTracerService), QoS, Rollback (snapshot-based), OptimizationEngine (cycle 30s avec buffers ArrayPool).</li>
+              <li><strong>Phase 3.3 &mdash; Analyse AST</strong> &mdash; SourceAnalyzerService avec Roslyn. M&eacute;triques Halstead (V, D, E) et Indice de Maintenabilit&eacute; par m&eacute;thode.</li>
+              <li><strong>Phase 3.4 &mdash; AutoPatcher</strong> &mdash; CodePatcherService avec API d'approbation : <code>GetPendingProposals()</code>, <code>ApproveAndApplyAsync()</code>, <code>RejectProposalAsync()</code>.</li>
+              <li><strong>Lien t&eacute;l&eacute;chargement GitHub</strong> &mdash; Le bouton de t&eacute;l&eacute;chargement redirige vers GitHub Releases.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.2</span>
+          </div>
+          <time class="version-date">F&eacute;vrier 2026</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Fonctionnalit&eacute;s
+            </h3>
+            <ul>
+              <li><strong>Flow Chains</strong> &mdash; &Eacute;diteur visuel d'automatisation drag-and-drop. 28 types de n&oelig;uds, 10 op&eacute;rateurs de condition, 3 OnErrorActions.</li>
+              <li><strong>Quick Installer</strong> &mdash; Installateur graphique bas&eacute; sur Winget avec 6 cat&eacute;gories.</li>
+              <li><strong>Applications</strong> &mdash; D&eacute;tection compl&egrave;te de la biblioth&egrave;que depuis 8 sources (Registre, Steam, Epic, GOG, Ubisoft, EA, Rockstar, MS Store).</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.1</span>
+          </div>
+          <time class="version-date">Janvier 2026</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Fonctionnalit&eacute;s
+            </h3>
+            <ul>
+              <li><strong>RAM Cleaner</strong> &mdash; Nettoyeur m&eacute;moire bas&eacute; sur P/Invoke avec 3 profils (Rapide, Normal, Profond).</li>
+              <li><strong>Deep Clean</strong> &mdash; 10 cat&eacute;gories de nettoyage avec pr&eacute;-estimation.</li>
+              <li><strong>App Scanner</strong> &mdash; Audit complet des applications avec d&eacute;tection multi-sources.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="version-block">
+        <div class="version-header">
+          <div class="version-tag">
+            <span class="version-number">v1.0.0</span>
+            <span class="version-label-initial">Version initiale</span>
+          </div>
+          <time class="version-date">D&eacute;cembre 2025</time>
+        </div>
+
+        <div class="changes-grid">
+          <div class="change-category">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Fonctionnalit&eacute;s
+            </h3>
+            <ul>
+              <li><strong>Dashboard</strong> &mdash; Monitoring syst&egrave;me en temps r&eacute;el (CPU, RAM, Disque, R&eacute;seau).</li>
+              <li><strong>Param&egrave;tres</strong> &mdash; Personnalisation du th&egrave;me, couleur d'accent, s&eacute;lection de la langue (4 langues).</li>
+              <li><strong>Coclico AI</strong> &mdash; Assistant chat local LLamaSharp avec mod&egrave;le GGUF.</li>
+              <li><strong>S&eacute;curit&eacute;</strong> &mdash; SecurityPolicy, AuditLog (NDJSON), syst&egrave;me de Rollback.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+.changelog-hero {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+}
+.changelog-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.changelog-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  background: var(--accent-dim);
+  border: 1px solid var(--border-accent);
+  padding: 0.3em 0.9em;
+  border-radius: var(--radius-full);
+}
+.changelog-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0;
+}
+.changelog-hero p {
+  color: var(--text-2);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.changelog-content {
+  padding: 4rem 1.5rem 8rem;
+}
+.changelog-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* Version block */
+.version-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  transition: border-color var(--duration-fast);
+}
+.version-block.latest {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.version-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-hover);
+}
+.version-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.version-number {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-hover);
+}
+.version-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--green, #22c55e);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  padding: 0.2em 0.6em;
+  border-radius: var(--radius-full);
+}
+.version-label-initial {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  padding: 0.2em 0.6em;
+  border-radius: var(--radius-full);
+}
+.version-date {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+
+.changes-grid {
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+.change-category h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1rem;
+}
+.change-category h3 svg {
+  color: var(--accent-hover);
+  flex-shrink: 0;
+}
+.change-category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.change-category li {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.7;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.change-category li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.5;
+}
+.change-category li strong {
+  color: var(--text);
+}
+.change-category code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--surface-hover);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  color: var(--accent-hover);
+}
+
+@media (max-width: 640px) {
+  .changelog-hero { padding: 3.5rem 1.25rem 3rem; }
+  .changelog-content { padding: 2.5rem 1.25rem 6rem; }
+  .changelog-inner { gap: 3rem; }
+  .version-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .changes-grid { padding: 1.25rem 1rem; }
+}
+</style>

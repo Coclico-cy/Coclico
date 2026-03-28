@@ -1,0 +1,787 @@
+<UserControl x:Class="Coclico.Views.RamCleanerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             d:DesignHeight="900" d:DesignWidth="1200"
+             Background="{DynamicResource BgBaseBrush}"
+             RenderOptions.BitmapScalingMode="HighQuality">
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="PageRoot"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.35"/>
+                    <DoubleAnimation Storyboard.TargetName="PageSlide"
+                                     Storyboard.TargetProperty="Y"
+                                     From="14" To="0" Duration="0:0:0.35">
+                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <Style x:Key="RC.Card" TargetType="Border">
+            <Setter Property="CornerRadius"     Value="{DynamicResource CornerCard}"/>
+            <Setter Property="Padding"          Value="20,16"/>
+            <Setter Property="Margin"           Value="0,0,0,12"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+        </Style>
+
+        <Style x:Key="RC.SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize"     Value="9.5"/>
+            <Setter Property="FontWeight"   Value="Black"/>
+            <Setter Property="Foreground"   Value="{DynamicResource TextHintBrush}"/>
+            <Setter Property="Margin"       Value="0,0,0,10"/>
+
+        </Style>
+
+        <Style x:Key="RC.Value" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#C4B5FD"/>
+        </Style>
+
+        <Style x:Key="RC.Label" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        </Style>
+
+        <Style x:Key="RC.Sep" TargetType="Border">
+            <Setter Property="Width"      Value="1"/>
+            <Setter Property="Margin"     Value="16,0"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#1A1030" Offset="0"/>
+                        <GradientStop Color="#08050F" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ProfileBtn" TargetType="Button">
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="Padding"          Value="8,12"/>
+            <Setter Property="FontSize"         Value="11"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#0C0618" Offset="0"/>
+                                    <GradientStop Color="#130B22" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#2A1848" Offset="0"/>
+                                    <GradientStop Color="#1A1030" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="BorderBrush">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#6B2FD9" Offset="0"/>
+                                            <GradientStop Color="#BE185D" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bg" Property="Opacity" Value="0.38"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="PageRoot" Margin="32,28,32,0" Opacity="0">
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="PageSlide" Y="0"/>
+        </Grid.RenderTransform>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{DynamicResource RamCleaner_Title}" FontSize="26" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <Border x:Name="PressureBorder"
+                            BorderBrush="{Binding PressureBorderColor, Mode=OneWay}"
+                            BorderThickness="1" CornerRadius="20" Padding="10,3" Margin="0,0,10,0">
+                        <Border.Background>
+                            <SolidColorBrush Color="#0A0418"/>
+                        </Border.Background>
+                        <TextBlock Text="{Binding PressureText, Mode=OneWay}"
+                                   FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{Binding PressureColor, Mode=OneWay}"/>
+                    </Border>
+                    <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center">
+                        <Run Text="{DynamicResource RamCleaner_AppLabel}"/>
+                        <Run Text=" "/>
+                        <Run Text="{Binding AppRamText, Mode=OneWay}" Foreground="#6EE7B7" FontWeight="SemiBold"/>
+                        <Run Text="  ·  " Foreground="{DynamicResource TextHintBrush}"/>
+                        <Run Text="{Binding AppCpuText, Mode=OneWay}" Foreground="#A78BFA" FontWeight="SemiBold"/>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button x:Name="BtnToggleNotif" Style="{StaticResource SecondaryButton}"
+                        Padding="12,8" Margin="0,0,8,0" FontSize="11"
+                        Content="{Binding NotifButtonLabel}"
+                        Click="BtnToggleNotif_Click"/>
+                <Button x:Name="BtnClean" Style="{StaticResource PrimaryButton}"
+                        Padding="20,11" FontSize="13" FontWeight="SemiBold"
+                        IsEnabled="{Binding IsNotCleaning}"
+                        Click="BtnClean_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="BrainCircuit24" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource RamCleaner_CleanBtn}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,4,32">
+            <StackPanel>
+
+                
+                <Border Style="{StaticResource RC.Card}" BorderBrush="{DynamicResource BorderDefaultBrush}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#0D0818" Offset="0"/>
+                            <GradientStop Color="#08050F" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <StackPanel Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="20" Height="20" CornerRadius="5" Margin="0,0,8,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#4A1FA8" Offset="0"/>
+                                            <GradientStop Color="#7C3AED" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Memory16" FontSize="10" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{DynamicResource RamCleaner_PhysMemory}" Style="{StaticResource RC.SectionTitle}" Margin="0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="{Binding PhysUsedText}" Style="{StaticResource RC.Value}" Foreground="#A78BFA"/>
+                                <TextBlock Text="{Binding PhysPercent}" HorizontalAlignment="Right"
+                                           FontSize="13" FontWeight="Bold" Foreground="#C4B5FD" VerticalAlignment="Bottom"/>
+                            </Grid>
+                            <ProgressBar Value="{Binding PhysUsedPercent, Mode=OneWay}"
+                                         Minimum="0" Maximum="100" Height="5" Margin="0,0,0,7"
+                                         Background="#0F0820" BorderThickness="0">
+                                <ProgressBar.Foreground>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#7C3AED" Offset="0"/>
+                                        <GradientStop Color="#DB2777" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </ProgressBar.Foreground>
+                            </ProgressBar>
+                            <Grid>
+                                <TextBlock Style="{StaticResource RC.Label}">
+                                    <Run Text="{DynamicResource RamCleaner_Free}"/><Run Text="{Binding PhysAvailText, Mode=OneWay}" Foreground="#6EE7B7"/>
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource RC.Label}" HorizontalAlignment="Right">
+                                    <Run Text="{DynamicResource RamCleaner_Total}"/><Run Text="{Binding PhysTotalText, Mode=OneWay}"/>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+
+                        <Border Grid.Column="1" Style="{StaticResource RC.Sep}"/>
+
+                        
+                        <StackPanel Grid.Column="2">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="20" Height="20" CornerRadius="5" Margin="0,0,8,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#0E4A6A" Offset="0"/>
+                                            <GradientStop Color="#0EA5E9" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="ChartMultiple24" FontSize="10" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{DynamicResource RamCleaner_CommitVirtual}" Style="{StaticResource RC.SectionTitle}" Margin="0" VerticalAlignment="Center"
+                                           ToolTip="{DynamicResource RamCleaner_CommitTooltip}"/>
+                            </StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="{Binding VirtUsedText}" Style="{StaticResource RC.Value}" Foreground="#F472B6"/>
+                                <TextBlock Text="{Binding VirtPercent}" HorizontalAlignment="Right"
+                                           FontSize="13" FontWeight="Bold" Foreground="#F472B6" VerticalAlignment="Bottom"/>
+                            </Grid>
+                            <ProgressBar Value="{Binding VirtUsedPercent, Mode=OneWay}"
+                                         Minimum="0" Maximum="100" Height="5" Margin="0,0,0,7"
+                                         Background="#0F0820" BorderThickness="0">
+                                <ProgressBar.Foreground>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#0EA5E9" Offset="0"/>
+                                        <GradientStop Color="#F472B6" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </ProgressBar.Foreground>
+                            </ProgressBar>
+                            <Grid>
+                                <TextBlock Style="{StaticResource RC.Label}">
+                                    <Run Text="{DynamicResource RamCleaner_Free}"/><Run Text="{Binding VirtAvailText, Mode=OneWay}" Foreground="#6EE7B7"/>
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource RC.Label}" HorizontalAlignment="Right">
+                                    <Run Text="{DynamicResource RamCleaner_Total}"/><Run Text="{Binding VirtTotalText, Mode=OneWay}"/>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+
+                        <Border Grid.Column="3" Style="{StaticResource RC.Sep}"/>
+
+                        
+                        <StackPanel Grid.Column="4">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="20" Height="20" CornerRadius="5" Margin="0,0,8,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#7A3010" Offset="0"/>
+                                            <GradientStop Color="#F97316" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Document24" FontSize="10" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="PAGEFILE.SYS" Style="{StaticResource RC.SectionTitle}" Margin="0" VerticalAlignment="Center"
+                                           ToolTip="{DynamicResource RamCleaner_PagefileTooltip}"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding PageUsedText}" Style="{StaticResource RC.Value}" FontSize="18" Foreground="#FB923C"/>
+                            <TextBlock Style="{StaticResource RC.Label}" Margin="0,4,0,0">
+                                <Run Text="{DynamicResource RamCleaner_Free}"/><Run Text="{Binding PageAvailText, Mode=OneWay}" Foreground="#6EE7B7"/>
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource RC.Label}">
+                                <Run Text="{DynamicResource RamCleaner_Capacity}"/><Run Text="{Binding PageTotalText, Mode=OneWay}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                
+                <Border Style="{StaticResource RC.Card}" BorderBrush="{DynamicResource BorderDefaultBrush}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#0D0818" Offset="0"/>
+                            <GradientStop Color="#08050F" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="200"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                            <Grid Margin="0,0,0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource RamCleaner_History}" Style="{StaticResource RC.SectionTitle}" Margin="0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding PhysPercent, Mode=OneWay}" HorizontalAlignment="Right"
+                                           FontSize="14" FontWeight="Bold" Foreground="#C4B5FD" VerticalAlignment="Center"/>
+                            </Grid>
+                            <Border CornerRadius="8" Height="70"
+                                    BorderThickness="1">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#06030F" Offset="0"/>
+                                        <GradientStop Color="#040210" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.BorderBrush>
+                                    <SolidColorBrush Color="#1A1030"/>
+                                </Border.BorderBrush>
+                                <Canvas x:Name="HistoryCanvas" Height="70"
+                                        SizeChanged="HistoryCanvas_SizeChanged"/>
+                            </Border>
+                            <Grid Margin="0,4,0,0">
+                                <TextBlock Text="0%" Style="{StaticResource RC.Label}" HorizontalAlignment="Left"/>
+                                <TextBlock Text="45s" Style="{StaticResource RC.Label}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="100%" Style="{StaticResource RC.Label}" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <Border CornerRadius="{DynamicResource CornerCard}" Padding="16,14" Margin="0,0,0,0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#0A1A0A" Offset="0"/>
+                                        <GradientStop Color="#0D200D" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.BorderBrush>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#16532A" Offset="0"/>
+                                        <GradientStop Color="#166534" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.BorderBrush>
+                                <Border.BorderThickness>1</Border.BorderThickness>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource RamCleaner_Session}" Style="{StaticResource RC.SectionTitle}"/>
+                                    <TextBlock Text="{Binding CumulativeFreedText, Mode=OneWay}"
+                                               FontSize="22" FontWeight="Bold" Foreground="#22C55E"/>
+                                    <TextBlock Text="{DynamicResource RamCleaner_SessionFreed}" Style="{StaticResource RC.Label}" Margin="0,2,0,8"/>
+                                    <TextBlock Text="{Binding LastCleanedText, Mode=OneWay}"
+                                               Style="{StaticResource RC.Label}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding GuardStatusText, Mode=OneWay}"
+                                               Style="{StaticResource RC.Label}"
+                                               Margin="0,5,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                
+                <Border Style="{StaticResource RC.Card}"
+                        BorderBrush="{DynamicResource BorderDefaultBrush}"
+                        Visibility="{Binding IsCleaning, Converter={StaticResource BoolToVis}}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#0D0818" Offset="0"/>
+                            <GradientStop Color="#08050F" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="36" Height="36" CornerRadius="10" Margin="0,0,14,0" VerticalAlignment="Center">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#3B0764" Offset="0"/>
+                                    <GradientStop Color="#7C3AED" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ui:ProgressRing IsIndeterminate="True" Width="18" Height="18" Foreground="White"/>
+                        </Border>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{DynamicResource RamCleaner_Cleaning}" Style="{StaticResource RC.SectionTitle}"/>
+                            <ProgressBar IsIndeterminate="True" Height="3" Background="#0F0820"
+                                         BorderThickness="0" Margin="0,0,0,6">
+                                <ProgressBar.Foreground>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#7C3AED" Offset="0"/>
+                                        <GradientStop Color="#DB2777" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </ProgressBar.Foreground>
+                            </ProgressBar>
+                            <TextBlock Text="{Binding CleaningStatus}" FontSize="11.5" Foreground="#A78BFA"
+                                       FontFamily="Consolas, Courier New"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                
+                <Border Style="{StaticResource RC.Card}"
+                        BorderBrush="{DynamicResource BorderDefaultBrush}"
+                        Visibility="{Binding HasResult, Converter={StaticResource BoolToVis}}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#0D0818" Offset="0"/>
+                            <GradientStop Color="#08050F" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <ui:SymbolIcon Symbol="CheckmarkCircle24" FontSize="14" Foreground="#22C55E" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource RamCleaner_LastResult}" Style="{StaticResource RC.SectionTitle}" Margin="0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Working Sets" Style="{StaticResource RC.Label}"/>
+                                <TextBlock Text="{Binding ResultWorkingSets}" FontSize="12" FontWeight="Bold" Foreground="#C4B5FD"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Standby" Style="{StaticResource RC.Label}"/>
+                                <TextBlock Text="{Binding ResultStandby}" FontSize="12" FontWeight="Bold" Foreground="#C4B5FD"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{DynamicResource RamCleaner_LowPri}" Style="{StaticResource RC.Label}"/>
+                                <TextBlock Text="{Binding ResultLowPriorityStandby}" FontSize="12" FontWeight="Bold" Foreground="#C4B5FD"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="3">
+                                <TextBlock Text="{DynamicResource RamCleaner_FileCache}" Style="{StaticResource RC.Label}"/>
+                                <TextBlock Text="{Binding ResultModifiedFileCache}" FontSize="12" FontWeight="Bold" Foreground="#C4B5FD"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Cache sys." Style="{StaticResource RC.Label}"/>
+                                <TextBlock Text="{Binding ResultSystemFileCache}" FontSize="12" FontWeight="Bold" Foreground="#C4B5FD"/>
+                            </StackPanel>
+                        </Grid>
+                        <Border Height="1" Margin="0,10">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#1A1030" Offset="0"/>
+                                    <GradientStop Color="Transparent" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="TOTAL LIBÉRÉ" FontSize="10" FontWeight="Black"
+                                       Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"
+                                       FontFamily="Consolas, Courier New"/>
+                            <TextBlock Text="{Binding ResultTotal}" FontSize="22" FontWeight="Bold"
+                                       Foreground="#22C55E" Margin="12,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="340"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+
+                        
+                        <Border Style="{StaticResource RC.Card}" BorderBrush="{DynamicResource BorderDefaultBrush}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#0D0818" Offset="0"/>
+                                    <GradientStop Color="#08050F" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource RamCleaner_ProfilesTitle}" Style="{StaticResource RC.SectionTitle}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="BtnQuickClean" Grid.Column="0"
+                                            Style="{StaticResource ProfileBtn}"
+                                            IsEnabled="{Binding IsNotCleaning}"
+                                            Click="BtnQuickClean_Click">
+                                        <StackPanel>
+                                            <ui:SymbolIcon Symbol="Flash24" FontSize="20" HorizontalAlignment="Center" Foreground="#A78BFA"/>
+                                            <TextBlock Text="{DynamicResource RamCleaner_ProfileQuick}" HorizontalAlignment="Center"
+                                                       Margin="0,6,0,0" FontSize="11" Foreground="#C4B5FD"/>
+                                            <TextBlock Text="~1–2 s" HorizontalAlignment="Center"
+                                                       FontSize="9" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button x:Name="BtnNormalClean" Grid.Column="2"
+                                            Style="{StaticResource ProfileBtn}"
+                                            IsEnabled="{Binding IsNotCleaning}"
+                                            Click="BtnNormalClean_Click">
+                                        <StackPanel>
+                                            <ui:SymbolIcon Symbol="Broom24" FontSize="20" HorizontalAlignment="Center" Foreground="#6EE7B7"/>
+                                            <TextBlock Text="{DynamicResource RamCleaner_ProfileNormal}" HorizontalAlignment="Center"
+                                                       Margin="0,6,0,0" FontSize="11" Foreground="#C4B5FD"/>
+                                            <TextBlock Text="~3–5 s" HorizontalAlignment="Center"
+                                                       FontSize="9" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button x:Name="BtnDeepClean" Grid.Column="4"
+                                            Style="{StaticResource ProfileBtn}"
+                                            IsEnabled="{Binding IsNotCleaning}"
+                                            Click="BtnDeepClean_Click">
+                                        <StackPanel>
+                                            <ui:SymbolIcon Symbol="Fire24" FontSize="20" HorizontalAlignment="Center" Foreground="#FB923C"/>
+                                            <TextBlock Text="{DynamicResource RamCleaner_ProfileDeep}" HorizontalAlignment="Center"
+                                                       Margin="0,6,0,0" FontSize="11" Foreground="#C4B5FD"/>
+                                            <TextBlock Text="~5–10 s" HorizontalAlignment="Center"
+                                                       FontSize="9" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Center">
+                                    <Border CornerRadius="4" Background="#1A0A30" Padding="8,4" Margin="0,0,6,0">
+                                        <TextBlock FontSize="9" Foreground="{DynamicResource TextMutedBrush}">
+                                            <Run FontWeight="SemiBold" Foreground="#A78BFA">⚡</Run>
+                                            <Run Foreground="{DynamicResource TextMutedBrush}"> ~1–2 s</Run>
+                                        </TextBlock>
+                                    </Border>
+                                    <Border CornerRadius="4" Background="#0A1A14" Padding="8,4" Margin="0,0,6,0">
+                                        <TextBlock FontSize="9" Foreground="{DynamicResource TextMutedBrush}">
+                                            <Run FontWeight="SemiBold" Foreground="#6EE7B7">✓</Run>
+                                            <Run Foreground="{DynamicResource TextMutedBrush}"> ~3–5 s</Run>
+                                        </TextBlock>
+                                    </Border>
+                                    <Border CornerRadius="4" Background="#1A0E06" Padding="8,4">
+                                        <TextBlock FontSize="9" Foreground="{DynamicResource TextMutedBrush}">
+                                            <Run FontWeight="SemiBold" Foreground="#FB923C">🔥</Run>
+                                            <Run Foreground="{DynamicResource TextMutedBrush}"> ~5–10 s</Run>
+                                        </TextBlock>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        
+                        <Border Style="{StaticResource RC.Card}" BorderBrush="{DynamicResource BorderDefaultBrush}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#0D0818" Offset="0"/>
+                                    <GradientStop Color="#08050F" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{DynamicResource RamCleaner_AutoSection}" Style="{StaticResource RC.SectionTitle}"/>
+                                    <CheckBox x:Name="ChkAutoClean" IsChecked="{Binding AutoCleanEnabled}"
+                                              Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,8"
+                                              Checked="ChkAutoClean_Changed" Unchecked="ChkAutoClean_Changed">
+                                        <TextBlock Text="{DynamicResource RamCleaner_EnableAuto}" FontWeight="SemiBold"/>
+                                    </CheckBox>
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="8"/>
+                                            <ColumnDefinition Width="110"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="CboAutoMode" Grid.Column="0" SelectedIndex="0"
+                                                  IsEnabled="{Binding AutoCleanEnabled}"
+                                                  SelectionChanged="CboAutoMode_Changed">
+                                            <ComboBoxItem Content="Par intervalle (min)"/>
+                                            <ComboBoxItem Content="Par seuil RAM (%)"/>
+                                        </ComboBox>
+                                        <Border Grid.Column="2" Background="{DynamicResource BgBaseBrush}"
+                                                CornerRadius="6" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                            <TextBox x:Name="TxtAutoValue"
+                                                     Text="{Binding AutoCleanValue}"
+                                                     IsEnabled="{Binding AutoCleanEnabled}"
+                                                     Background="Transparent" BorderThickness="0"
+                                                     Foreground="#C4B5FD" Padding="8,6" FontSize="12"/>
+                                        </Border>
+                                    </Grid>
+                                    <TextBlock x:Name="TxtAutoLabel" Text="Intervalle (min)"
+                                               Style="{StaticResource RC.Label}"/>
+                                    <TextBlock Text="{Binding AutoCleanStatusText}"
+                                               Style="{StaticResource RC.Label}"
+                                               TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                </StackPanel>
+
+                                <Border Grid.Column="1" Style="{StaticResource RC.Sep}"/>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{DynamicResource RamCleaner_GuardSection}" Style="{StaticResource RC.SectionTitle}"/>
+                                    <ComboBox x:Name="CboRefreshRate" SelectedIndex="1"
+                                              SelectionChanged="CboRefreshRate_Changed">
+                                        <ComboBoxItem Content="500 ms (rapide)"/>
+                                        <ComboBoxItem Content="1 s"/>
+                                        <ComboBoxItem Content="2 s"/>
+                                        <ComboBoxItem Content="5 s"/>
+                                        <ComboBoxItem Content="10 s (éco)"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                    </StackPanel>
+
+                    
+                    <Border Grid.Column="2" Style="{StaticResource RC.Card}" BorderBrush="{DynamicResource BorderDefaultBrush}"
+                            VerticalAlignment="Top">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#0D0818" Offset="0"/>
+                                <GradientStop Color="#08050F" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel>
+                            <TextBlock Text="SYSTÈME &amp; APPLICATION" Style="{StaticResource RC.SectionTitle}"/>
+
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="46"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22" Height="22" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#4A1FA8" Offset="0"/>
+                                            <GradientStop Color="#7C3AED" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Flash24" FontSize="11" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="6,0">
+                                    <TextBlock Text="CPU système" Style="{StaticResource RC.Label}" Margin="0,0,0,3"/>
+                                    <ProgressBar Value="{Binding SysCpuPercent, Mode=OneWay}"
+                                                 Minimum="0" Maximum="100" Height="4"
+                                                 Background="#0F0820" BorderThickness="0">
+                                        <ProgressBar.Foreground>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#7C3AED" Offset="0"/>
+                                                <GradientStop Color="#DB2777" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </ProgressBar.Foreground>
+                                    </ProgressBar>
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" Text="{Binding SysCpuText, Mode=OneWay}"
+                                           FontSize="11" FontWeight="Bold" Foreground="#A78BFA"
+                                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                                           FontFamily="Consolas, Courier New"/>
+                            </Grid>
+
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="46"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22" Height="22" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#065F46" Offset="0"/>
+                                            <GradientStop Color="#10B981" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Memory16" FontSize="11" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="6,0">
+                                    <TextBlock Text="RAM (app)" Style="{StaticResource RC.Label}" Margin="0,0,0,3"/>
+                                    <ProgressBar Value="{Binding AppRamPercent, Mode=OneWay}"
+                                                 Minimum="0" Maximum="100" Height="4"
+                                                 Background="#0F0820" BorderThickness="0">
+                                        <ProgressBar.Foreground>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#059669" Offset="0"/>
+                                                <GradientStop Color="#6EE7B7" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </ProgressBar.Foreground>
+                                    </ProgressBar>
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" Text="{Binding AppRamText, Mode=OneWay}"
+                                           FontSize="11" FontWeight="Bold" Foreground="#6EE7B7"
+                                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                                           FontFamily="Consolas, Courier New"/>
+                            </Grid>
+
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="46"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22" Height="22" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#7A3010" Offset="0"/>
+                                            <GradientStop Color="#F97316" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="TopSpeed24" FontSize="11" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="6,0">
+                                    <TextBlock Text="CPU (app)" Style="{StaticResource RC.Label}" Margin="0,0,0,3"/>
+                                    <ProgressBar Value="{Binding AppCpuPercent, Mode=OneWay}"
+                                                 Minimum="0" Maximum="100" Height="4"
+                                                 Background="#0F0820" BorderThickness="0">
+                                        <ProgressBar.Foreground>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#EA580C" Offset="0"/>
+                                                <GradientStop Color="#FBD38D" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </ProgressBar.Foreground>
+                                    </ProgressBar>
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" Text="{Binding AppCpuText, Mode=OneWay}"
+                                           FontSize="11" FontWeight="Bold" Foreground="#FB923C"
+                                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                                           FontFamily="Consolas, Courier New"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        
+        <StackPanel Visibility="Collapsed">
+            <CheckBox x:Name="ChkWorkingSets" IsChecked="True"/>
+            <CheckBox x:Name="ChkModifiedFileCache" IsChecked="True"/>
+            <CheckBox x:Name="ChkSystemFileCache" IsChecked="True"/>
+            <CheckBox x:Name="ChkRegistryCache" IsChecked="True"/>
+            <CheckBox x:Name="ChkStandby" IsChecked="True"/>
+            <CheckBox x:Name="ChkLowPriorityStandby" IsChecked="True"/>
+            <CheckBox x:Name="ChkCombinedPages" IsChecked="True"/>
+            <CheckBox x:Name="ChkModifiedPages" IsChecked="True"/>
+            <CheckBox x:Name="ChkDnsCache" IsChecked="True"/>
+            <CheckBox x:Name="ChkGcCollect" IsChecked="True"/>
+            <CheckBox x:Name="ChkStandbyFast" IsChecked="True"/>
+            <CheckBox x:Name="ChkKernelTrim" IsChecked="True"/>
+            <CheckBox x:Name="ChkArpCache" IsChecked="True"/>
+            <CheckBox x:Name="ChkNetBios" IsChecked="True"/>
+            <CheckBox x:Name="ChkAllSessions" IsChecked="True"/>
+            <CheckBox x:Name="ChkClipboard" IsChecked="True"/>
+            <CheckBox x:Name="ChkCompactHeaps" IsChecked="True"/>
+            <CheckBox x:Name="ChkSuperFetch" IsChecked="True"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
+

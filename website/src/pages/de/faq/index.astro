@@ -1,0 +1,240 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+const lang = 'de' as const;
+---
+
+<PageLayout
+  title="FAQ — Coclico"
+  description="Häufig gestellte Fragen zu Coclico: Installation, Nutzung, lokale KI, Flow Chains, Leistung und Sicherheit."
+  lang={lang}
+  currentPath="/faq/"
+>
+  <section class="faq-hero">
+    <div class="faq-hero-inner">
+      <span class="faq-badge">FAQ</span>
+      <h1>Häufig gestellte Fragen</h1>
+      <p>Finden Sie Antworten auf die häufigsten Fragen zu Coclico. Verwenden Sie die Kategorie-Filter für eine schnelle Navigation.</p>
+    </div>
+  </section>
+
+  <section class="faq-content">
+    <div class="faq-inner">
+
+      <nav class="faq-nav" aria-label="FAQ-Kategorien">
+        <a href="#installation" class="faq-cat">Installation</a>
+        <a href="#usage" class="faq-cat">Nutzung</a>
+        <a href="#ai" class="faq-cat">Lokale KI</a>
+        <a href="#flow-chains" class="faq-cat">Flow Chains</a>
+        <a href="#performance" class="faq-cat">Leistung</a>
+      </nav>
+
+      <!-- INSTALLATION -->
+      <div class="faq-group" id="installation">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Installation
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Was sind die Systemanforderungen für Coclico?</summary>
+          <div class="faq-a">
+            <ul>
+              <li><strong>Betriebssystem:</strong> Windows 10 21H2 (64-Bit) oder Windows 11</li>
+              <li><strong>RAM:</strong> Mindestens 4 GB, 8 GB empfohlen (für das KI-Modul)</li>
+              <li><strong>Festplatte:</strong> 500 MB für die App + ca. 4 GB für das GGUF-Modell bei KI-Nutzung</li>
+              <li><strong>Berechtigungen:</strong> Administratorkonto — Coclico fordert beim Start eine UAC-Erhöhung an</li>
+              <li><strong>GPU (optional):</strong> Vulkan-kompatible Karte zur Beschleunigung der lokalen KI-Inferenz</li>
+            </ul>
+            <p>Die .NET 10-Laufzeitumgebung ist im Installer enthalten — es muss nichts weiteres installiert werden.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Windows blockiert den Installer mit SmartScreen. Ist das normal?</summary>
+          <div class="faq-a">
+            <p>Ja, das ist normal für Software, deren Code-Signatur von Microsoft noch nicht erkannt wird. Coclico ist Open-Source und Sie können den Quellcode auf GitHub einsehen. Zum Fortfahren:</p>
+            <ol>
+              <li>Klicken Sie im SmartScreen-Fenster auf <strong>"Weitere Informationen"</strong></li>
+              <li>Klicken Sie auf <strong>"Trotzdem ausführen"</strong></li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Kann ich Coclico ohne Administratorrechte installieren?</summary>
+          <div class="faq-a">
+            <p>Nein. Coclico benötigt Administratorrechte für den Zugriff auf Windows-APIs auf niedriger Ebene: WMI, Kernel-Speicher (ntdll), Systemregistrierung und Prozessverwaltung. Die UAC-Erhöhung wird einmalig beim Start angefordert.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- NUTZUNG -->
+      <div class="faq-group" id="usage">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+          Nutzung
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Kann der RAM Cleaner mein System beschädigen?</summary>
+          <div class="faq-a">
+            <p>Nein. Der RAM Cleaner verwendet offizielle Windows-APIs, um Working Sets von Prozessen zu verkleinern und Standby-Listen des Kernels zu leeren — dieselbe Operation, die Windows intern bei Speicherdruck durchführt. Laufende Anwendungen arbeiten weiterhin normal. Freigabeergebnisse liegen typischerweise zwischen 200 und 800 MB.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Kann Deep Clean wichtige Dateien löschen?</summary>
+          <div class="faq-a">
+            <p>Coclico löscht nur bekannte sichere Dateikategorien (Temp, Browser-Cache, Protokolle, Papierkorb, Prefetch usw.). Keine persönlichen Dokumente oder kritischen Systemdateien werden angesteuert. Jede Kategorie kann einzeln aktiviert/deaktiviert werden. Ein detaillierter Bericht listet Dateien vor dem Löschen auf.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Wie ändere ich die Akzentfarbe der Oberfläche?</summary>
+          <div class="faq-a">
+            <p>Gehen Sie zu <strong>Einstellungen → Erscheinungsbild</strong>. Die Standard-Akzentfarbe ist <code>#6366F1</code> (Indigo). Geben Sie einen beliebigen Hex-Wert ein oder wählen Sie aus Voreinstellungen. Änderungen werden sofort ohne Neustart über <code>ThemeService</code> angewendet.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- LOKALE KI -->
+      <div class="faq-group" id="ai">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><circle cx="18" cy="6" r="4"/><path d="M16 6h4M18 4v4"/></svg>
+          Lokale KI
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Werden meine Daten in die Cloud gesendet, wenn ich die KI verwende?</summary>
+          <div class="faq-a">
+            <p><strong>Nein, absolut nicht.</strong> Coclico setzt das <strong>Zero Cloud</strong>-Prinzip durch: Alle KI-Inferenz läuft lokal auf Ihrem Computer über <strong>LLamaSharp 0.26</strong> mit einem GGUF-Modell. Für KI werden keine Netzwerkanfragen gestellt. Ihre Systemdaten, Gespräche und Flow Chains verlassen nie Ihren Computer.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Welches GGUF-Modell wird für Coclico KI empfohlen?</summary>
+          <div class="faq-a">
+            <p>Coclico funktioniert mit quantisierten GGUF-Modellen (Q4_K_M oder Q5_K_M). Empfohlene Modelle:</p>
+            <ul>
+              <li><strong>Llama 3.2 3B Q5_K_M</strong> — leicht, schnell auf CPU</li>
+              <li><strong>Mistral 7B Q4_K_M</strong> — bessere Qualität, benötigt 8 GB RAM</li>
+              <li><strong>Phi-3 Mini 3.8B Q5</strong> — ausgezeichnetes Leistungs-/Qualitätsverhältnis auf CPU</li>
+            </ul>
+            <p>Legen Sie die Datei in <code>%APPDATA%\Coclico\resource\model\</code> ab und benennen Sie sie <code>IA-support-chat.gguf</code>.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Was ist der "AutoPatcher Nur-Audit"-Modus?</summary>
+          <div class="faq-a">
+            <p>Der <strong>AutoPatcher</strong> ist Cocliicos autonomes System, das Code-Patches zur Selbstverbesserung vorschlagen kann (Phase 3.4). Im <strong>Nur-Audit</strong>-Modus (Standard) werden KI-generierte Patches im Audit-Protokoll erfasst, aber nie automatisch angewendet. Sie müssen sie manuell über <code>ApproveAndApplyAsync()</code> genehmigen. Jeder Patch wird vom <strong>Digital Twin</strong> validiert und ein Rollback-Snapshot wird vor jedem Schreiben auf Festplatte erstellt.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- FLOW CHAINS -->
+      <div class="faq-group" id="flow-chains">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Flow Chains
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Wie viele Knoten kann eine Flow Chain enthalten?</summary>
+          <div class="faq-a">
+            <p>Es gibt keine strenge Grenze im Code. In der Praxis werden Ketten mit mehr als 100 Knoten schwer zu warten. Coclico bietet 28 Knotentypen (<code>NodeType</code>). Für komplexe Automatisierungen erstellen Sie mehrere modulare Ketten.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Was passiert, wenn ein Knoten in einer Flow Chain fehlschlägt?</summary>
+          <div class="faq-a">
+            <p>Das Verhalten hängt von der <code>OnErrorAction</code>-Eigenschaft jedes Knotens ab:</p>
+            <ul>
+              <li><code>ContinueNext</code> (Standard) — Fehler protokollieren, mit dem nächsten Knoten fortfahren</li>
+              <li><code>StopChain</code> — Ausführung sofort beenden</li>
+              <li><code>SkipToEnd</code> — alle Zwischenknoten überspringen, nur den letzten Knoten ausführen</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Können Flow Chains auf die Windows-Registrierung zugreifen?</summary>
+          <div class="faq-a">
+            <p>Ja, über die Knoten <code>SetRegistryValue</code> und <code>DeleteRegistryKey</code>. Jede Operation wird jedoch durch den <code>WorkflowPipelineExecutionService</code> geleitet, der die <code>ISecurityPolicy</code> anwendet. Standardmäßig sind Änderungen an <code>HKLM\SYSTEM\CurrentControlSet</code> und anderen sensiblen Schlüsseln blockiert.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- LEISTUNG -->
+      <div class="faq-group" id="performance">
+        <h2 class="faq-group-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Leistung
+        </h2>
+
+        <details class="faq-item">
+          <summary class="faq-q">Verlangsamt Coclico meinen PC im normalen Betrieb?</summary>
+          <div class="faq-a">
+            <p>Nein. Im Standby-Modus (Taskleistensymbol) verbraucht Coclico weniger als 20 MB RAM und unter 0,1 % CPU. Der <code>DynamicTracerService</code> sampelt das System einmal pro Sekunde mit vernachlässigbarem Overhead. Die <code>OptimizationEngine</code> läuft alle 30 Sekunden mit <code>ArrayPool</code>-Puffern zur Vermeidung von GC-Allokationen.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Friert das KI-Modul die Oberfläche während der Inferenz ein?</summary>
+          <div class="faq-a">
+            <p>Nein. Coclico verwendet zwei <strong>vollständig isolierte</strong> LLM-Kontexte (Dual-Executor): einen für den Benutzer-Chat, einen für den Hintergrund-OptimizationEngine. Der UI-Thread blockiert nie auf eine LLM-Antwort — Ergebnisse werden über <code>async/await</code> zurückgegeben und UI-Updates verwenden <code>Dispatcher.InvokeAsync</code>.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-q">Wie kann ich den Ressourcenverbrauch von Coclico reduzieren?</summary>
+          <div class="faq-a">
+            <p>Optionen in <strong>Einstellungen → Allgemein</strong>:</p>
+            <ul>
+              <li>Automatische Dashboard-Aktualisierung deaktivieren (von 1s auf 5s)</li>
+              <li>OptimizationEngine-Frequenz reduzieren (60s statt 30s)</li>
+              <li>KI-Modul deaktivieren wenn nicht benötigt (entlädt GGUF-Modell aus Speicher)</li>
+              <li>Toast-Benachrichtigungen deaktivieren um UI-Neuzeichnungen zu reduzieren</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+.faq-hero { background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%); border-bottom: 1px solid var(--border); padding: 5rem 1.5rem 4rem; text-align: center; }
+.faq-hero-inner { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.faq-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-hover); background: var(--accent-dim); border: 1px solid var(--border-accent); padding: 0.3em 0.9em; border-radius: var(--radius-full); }
+.faq-hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0; }
+.faq-hero p { color: var(--text-2); font-size: 1.05rem; line-height: 1.7; margin: 0; }
+.faq-content { padding: 4rem 1.5rem 8rem; }
+.faq-inner { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }
+.faq-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.faq-cat { font-size: 0.82rem; font-weight: 500; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); padding: 0.35em 0.9em; border-radius: var(--radius-full); text-decoration: none; transition: color var(--duration-fast), background var(--duration-fast), border-color var(--duration-fast); }
+.faq-cat:hover { color: var(--accent-hover); background: var(--accent-dim); border-color: var(--border-accent); }
+.faq-group { display: flex; flex-direction: column; gap: 0.75rem; }
+.faq-group-title { display: flex; align-items: center; gap: 0.6rem; font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 0 0 0.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+.faq-group-title svg { color: var(--accent-hover); flex-shrink: 0; }
+.faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; transition: border-color var(--duration-fast), box-shadow var(--duration-fast); }
+.faq-item:hover { border-color: var(--border-hover); }
+.faq-item[open] { border-color: var(--border-accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.faq-q { display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; padding: 1.1rem 1.25rem; font-size: 0.95rem; font-weight: 600; color: var(--text); list-style: none; user-select: none; }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-q::after { content: '+'; font-size: 1.2rem; font-weight: 300; color: var(--text-3); flex-shrink: 0; }
+.faq-item[open] > .faq-q::after { content: '−'; color: var(--accent-hover); }
+.faq-item[open] > .faq-q { color: var(--accent-hover); background: var(--accent-dim); }
+.faq-a { padding: 0 1.25rem 1.25rem; color: var(--text-2); font-size: 0.9rem; line-height: 1.75; border-top: 1px solid var(--border); }
+.faq-a p { margin: 0.75rem 0 0; }
+.faq-a ul, .faq-a ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+.faq-a li { margin-bottom: 0.35rem; }
+.faq-a code { font-family: var(--font-mono); font-size: 0.82em; background: var(--surface-hover); padding: 0.15em 0.4em; border-radius: var(--radius-sm); color: var(--accent-hover); }
+.faq-a strong { color: var(--text); }
+@media (max-width: 640px) {
+  .faq-hero { padding: 3.5rem 1.25rem 3rem; }
+  .faq-content { padding: 2.5rem 1.25rem 6rem; }
+}
+</style>

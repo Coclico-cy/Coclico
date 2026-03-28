@@ -1,0 +1,162 @@
+name: Release — Build & Publish Installer
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write   # Requis pour créer une GitHub Release
+
+jobs:
+  release:
+    name: Build Release & Publish Installer
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore Coclico.slnx
+
+      - name: Build (Release)
+        run: dotnet build Coclico.slnx --configuration Release --no-restore
+
+      - name: Run tests
+        run: >
+          dotnet test Coclico.Tests/Coclico.Tests.csproj
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=test-results.trx"
+
+      - name: Publish application (win-x64, framework-dependent)
+        run: >
+          dotnet publish Coclico/Coclico.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained false
+          --output ./publish
+          -p:PublishSingleFile=false
+
+      # ── Détection du fichier Inno Setup ──────────────────────────
+      - name: Check for Inno Setup script
+        id: check_iss
+        shell: pwsh
+        run: |
+          $issFile = Get-ChildItem -Path . -Filter "*.iss" -Recurse `
+            -Exclude ".claude/**" | Select-Object -First 1
+          if ($issFile) {
+            Write-Output "found=true"  >> $env:GITHUB_OUTPUT
+            Write-Output "path=$($issFile.FullName)" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Output "found=false" >> $env:GITHUB_OUTPUT
+          }
+
+      # ── Compilation Inno Setup (si fichier .iss présent) ─────────
+      - name: Install Inno Setup
+        if: steps.check_iss.outputs.found == 'true'
+        run: choco install innosetup --yes --no-progress
+
+      - name: Compile Inno Setup installer
+        if: steps.check_iss.outputs.found == 'true'
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          $issPath = "${{ steps.check_iss.outputs.path }}"
+          & $iscc $issPath
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "ISCC.exe a échoué avec le code $LASTEXITCODE"
+            exit $LASTEXITCODE
+          }
+
+      - name: Locate installer output
+        if: steps.check_iss.outputs.found == 'true'
+        id: installer_path
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path ./Installer -Filter "*.exe" -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if (-not $exe) {
+            $exe = Get-ChildItem -Path . -Filter "*Setup*.exe" -Recurse `
+              -Exclude ".claude/**","publish/**" | Select-Object -First 1
+          }
+          if ($exe) {
+            Write-Output "path=$($exe.FullName)" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Output "path=" >> $env:GITHUB_OUTPUT
+          }
+
+      # ── Fallback : binaire publié ─────────────────────────────────
+      - name: Locate published binary (fallback)
+        if: steps.check_iss.outputs.found != 'true'
+        id: binary_path
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path ./publish -Filter "Coclico.exe" -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if ($exe) {
+            Write-Output "path=$($exe.FullName)" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Output "path=./publish/Coclico.exe" >> $env:GITHUB_OUTPUT
+          }
+
+      # ── Extraction de la version depuis le tag ───────────────────
+      - name: Extract version from tag
+        id: version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag -replace '^v', ''
+          Write-Output "version=$version" >> $env:GITHUB_OUTPUT
+
+      # ── Création de la GitHub Release (avec installeur) ──────────
+      - name: Create GitHub Release (with installer)
+        if: steps.check_iss.outputs.found == 'true' && steps.installer_path.outputs.path != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Coclico v${{ steps.version.outputs.version }}"
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          files: ${{ steps.installer_path.outputs.path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Création de la GitHub Release (binaire seul, fallback) ───
+      - name: Create GitHub Release (binary fallback)
+        if: steps.check_iss.outputs.found != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Coclico v${{ steps.version.outputs.version }}"
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          files: ${{ steps.binary_path.outputs.path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Upload artefacts de CI ────────────────────────────────────
+      - name: Upload publish folder as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Coclico-v${{ steps.version.outputs.version }}-publish
+          path: ./publish/
+          retention-days: 90

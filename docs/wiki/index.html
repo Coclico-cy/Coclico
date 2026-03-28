@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="fr" class="dark" dir="ltr"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#03030a" media="(prefers-color-scheme: dark)"><meta name="theme-color" content="#f8f8fc" media="(prefers-color-scheme: light)"><!-- SEO --><title>Wiki Développeur — Coclico | Coclico</title><meta name="description" content="Documentation technique de l'architecture Coclico : MVVM, ServiceContainer DI, Dual LLM Executor, Phase 3.x autonome, sécurité et conventions."><link rel="canonical" href="https://coclico-cy.github.io/Coclico/wiki/"><!-- Hreflang (i18n SEO) --><link rel="alternate" hreflang="fr" href="https://coclico-cy.github.io/Coclico/wiki/"><link rel="alternate" hreflang="en" href="https://coclico-cy.github.io/Coclico/en/wiki/"><link rel="alternate" hreflang="de" href="https://coclico-cy.github.io/Coclico/de/wiki/"><link rel="alternate" hreflang="es" href="https://coclico-cy.github.io/Coclico/es/wiki/"><link rel="alternate" hreflang="x-default" href="https://coclico-cy.github.io/"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://coclico-cy.github.io/Coclico/wiki/"><meta property="og:title" content="Wiki Développeur — Coclico | Coclico"><meta property="og:description" content="Documentation technique de l'architecture Coclico : MVVM, ServiceContainer DI, Dual LLM Executor, Phase 3.x autonome, sécurité et conventions."><meta property="og:image" content="https://coclico-cy.github.io/Coclico/og-default.png"><meta property="og:site_name" content="Coclico"><meta property="og:locale" content="fr_FR"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Wiki Développeur — Coclico | Coclico"><meta name="twitter:description" content="Documentation technique de l'architecture Coclico : MVVM, ServiceContainer DI, Dual LLM Executor, Phase 3.x autonome, sécurité et conventions."><meta name="twitter:image" content="https://coclico-cy.github.io/Coclico/og-default.png"><!-- Favicon --><link rel="icon" href="/Coclico/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/Coclico/apple-touch-icon.png"><!-- Fonts — Preconnect pour éviter le FOUT --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/Coclico/_astro/index.4vfDmpON.css">
+<link rel="stylesheet" href="/Coclico/_astro/index.H_EZRSMd.css"></head> <body class="bg-mesh">  <header class="nav" id="main-nav" role="banner" data-astro-cid-qlfjksao> <div class="nav-inner container" data-astro-cid-qlfjksao> <!-- Logo --> <a href="/Coclico/" class="nav-logo" aria-label="Coclico — Accueil" data-astro-cid-qlfjksao> <div class="nav-logo-icon" aria-hidden="true" data-astro-cid-qlfjksao> <img src="/Coclico/apple-touch-icon.png" alt="Coclico" width="32" height="32" style="border-radius:6px;" data-astro-cid-qlfjksao> </div> <span class="nav-logo-text" data-astro-cid-qlfjksao>Coclico</span> </a> <!-- Desktop Nav --> <nav class="nav-links" aria-label="Navigation principale" data-astro-cid-qlfjksao> <a href="/Coclico/#modules" class="nav-link" data-hash="#modules" data-astro-cid-qlfjksao> Modules </a><a href="/Coclico/#ai" class="nav-link" data-hash="#ai" data-astro-cid-qlfjksao> Intelligence IA </a><a href="/Coclico/faq/#performance" class="nav-link" data-astro-cid-qlfjksao> Performance </a><a href="/Coclico/docs/" class="nav-link" data-astro-cid-qlfjksao> Docs </a><a href="/Coclico/guide/" class="nav-link" data-astro-cid-qlfjksao> Guide </a><a href="/Coclico/wiki/" class="nav-link" data-astro-cid-qlfjksao> Wiki Dev </a><a href="/Coclico/faq/" class="nav-link" data-astro-cid-qlfjksao> FAQ </a><a href="/Coclico/changelog/" class="nav-link" data-astro-cid-qlfjksao> Nouveautés </a> </nav> <!-- Actions droite --> <div class="nav-actions" data-astro-cid-qlfjksao> <!-- Sélecteur de langue --> <div class="lang-selector" id="lang-selector" data-astro-cid-qlfjksao> <button class="lang-current" aria-expanded="false" aria-haspopup="listbox" aria-label="Changer de langue" data-astro-cid-qlfjksao> <span class="lang-flag" data-astro-cid-qlfjksao>🇫🇷</span> <span class="lang-code" data-astro-cid-qlfjksao>FR</span> <svg class="lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" data-astro-cid-qlfjksao> <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" data-astro-cid-qlfjksao></path> </svg> </button> <div class="lang-dropdown" role="listbox" aria-label="Langues disponibles" data-astro-cid-qlfjksao> <a href="/Coclico/wiki/" class="lang-option active" role="option" aria-selected="true" data-lang="fr" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇫🇷</span> <span data-astro-cid-qlfjksao>Français</span> </a><a href="/Coclico/en/wiki/" class="lang-option" role="option" aria-selected="false" data-lang="en" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇬🇧</span> <span data-astro-cid-qlfjksao>English</span> </a><a href="/Coclico/de/wiki/" class="lang-option" role="option" aria-selected="false" data-lang="de" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇩🇪</span> <span data-astro-cid-qlfjksao>Deutsch</span> </a><a href="/Coclico/es/wiki/" class="lang-option" role="option" aria-selected="false" data-lang="es" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇪🇸</span> <span data-astro-cid-qlfjksao>Español</span> </a> </div> </div> <!-- Toggle Dark/Light --> <button class="theme-toggle" id="theme-toggle" aria-label="Mode sombre" title="Mode sombre" data-astro-cid-qlfjksao> <!-- Icône soleil (mode clair) --> <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-qlfjksao> <circle cx="12" cy="12" r="5" data-astro-cid-qlfjksao></circle> <line x1="12" y1="1" x2="12" y2="3" data-astro-cid-qlfjksao></line> <line x1="12" y1="21" x2="12" y2="23" data-astro-cid-qlfjksao></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-qlfjksao></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-qlfjksao></line> <line x1="1" y1="12" x2="3" y2="12" data-astro-cid-qlfjksao></line> <line x1="21" y1="12" x2="23" y2="12" data-astro-cid-qlfjksao></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-qlfjksao></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-qlfjksao></line> </svg> <!-- Icône lune (mode sombre) --> <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-qlfjksao> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-qlfjksao></path> </svg> </button> <!-- Bouton téléchargement (desktop) --> <a href="/Coclico/#download" class="btn-primary nav-download hide-mobile" data-astro-cid-qlfjksao> Télécharger </a> <!-- Hamburger mobile --> <button class="hamburger hide-desktop" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao></span><span data-astro-cid-qlfjksao></span><span data-astro-cid-qlfjksao></span> </button> </div> </div> <!-- Menu mobile --> <div class="mobile-menu" id="mobile-menu" aria-hidden="true" role="dialog" aria-label="Menu de navigation" data-astro-cid-qlfjksao> <nav data-astro-cid-qlfjksao> <a href="/Coclico/#modules" class="mobile-link" data-hash="#modules" data-astro-cid-qlfjksao> Modules </a><a href="/Coclico/#ai" class="mobile-link" data-hash="#ai" data-astro-cid-qlfjksao> Intelligence IA </a><a href="/Coclico/faq/#performance" class="mobile-link" data-astro-cid-qlfjksao> Performance </a><a href="/Coclico/docs/" class="mobile-link" data-astro-cid-qlfjksao> Docs </a><a href="/Coclico/guide/" class="mobile-link" data-astro-cid-qlfjksao> Guide </a><a href="/Coclico/wiki/" class="mobile-link" data-astro-cid-qlfjksao> Wiki Dev </a><a href="/Coclico/faq/" class="mobile-link" data-astro-cid-qlfjksao> FAQ </a><a href="/Coclico/changelog/" class="mobile-link" data-astro-cid-qlfjksao> Nouveautés </a> </nav> <div class="mobile-menu-footer" data-astro-cid-qlfjksao> <a href="/Coclico/#download" class="btn-primary" style="width:100%;justify-content:center" data-astro-cid-qlfjksao> Télécharger </a> <div class="mobile-langs" data-astro-cid-qlfjksao> <a href="/Coclico/wiki/" class="mobile-lang active" data-lang="fr" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇫🇷</span> FR </a><a href="/Coclico/en/wiki/" class="mobile-lang" data-lang="en" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇬🇧</span> EN </a><a href="/Coclico/de/wiki/" class="mobile-lang" data-lang="de" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇩🇪</span> DE </a><a href="/Coclico/es/wiki/" class="mobile-lang" data-lang="es" data-astro-cid-qlfjksao> <span data-astro-cid-qlfjksao>🇪🇸</span> ES </a> </div> </div> </div> </header>  <script type="module">const i=document.getElementById("main-nav"),r=()=>i.classList.toggle("scrolled",window.scrollY>20);window.addEventListener("scroll",r,{passive:!0});r();const a=document.getElementById("hamburger"),s=document.getElementById("mobile-menu");a.addEventListener("click",()=>{const e=a.classList.toggle("open");s.classList.toggle("open",e),a.setAttribute("aria-expanded",String(e)),s.setAttribute("aria-hidden",String(!e))});s.querySelectorAll("a").forEach(e=>{e.addEventListener("click",()=>{a.classList.remove("open"),s.classList.remove("open"),a.setAttribute("aria-expanded","false"),s.setAttribute("aria-hidden","true")})});const n=document.getElementById("lang-selector"),o=n.querySelector(".lang-current");o.addEventListener("click",e=>{e.stopPropagation();const t=n.classList.toggle("open");o.setAttribute("aria-expanded",String(t))});document.addEventListener("click",e=>{n.contains(e.target)||(n.classList.remove("open"),o.setAttribute("aria-expanded","false"))});document.addEventListener("keydown",e=>{e.key==="Escape"&&(n.classList.remove("open"),o.setAttribute("aria-expanded","false"))});n.querySelectorAll("[data-lang]").forEach(e=>{e.addEventListener("click",()=>{localStorage.setItem("coclico-lang",e.dataset.lang)})});const d=document.getElementById("theme-toggle");d.addEventListener("click",()=>{const e=document.documentElement.classList.contains("dark");document.documentElement.classList.toggle("dark",!e),document.documentElement.classList.toggle("light",e),localStorage.setItem("coclico-theme",e?"light":"dark")});const m=window.location.pathname;document.querySelectorAll(".nav-link, .mobile-link").forEach(e=>{const t=e.getAttribute("href")??"";!t.startsWith("#")&&m.startsWith(t)&&t!=="/"&&e.classList.add("active")});document.querySelectorAll("[data-hash]").forEach(e=>{e.addEventListener("click",t=>{const c=e.dataset.hash;if(!c)return;const l=document.querySelector(c);l&&(t.preventDefault(),l.scrollIntoView({behavior:"smooth"}),history.replaceState(null,"",c))})});</script> <div class="doc-root" data-astro-cid-fz5pa65a> <!-- Sidebar gauche --> <aside class="doc-sidebar" id="doc-sidebar" role="navigation" aria-label="Navigation du document" data-astro-cid-fz5pa65a> <div class="sidebar-inner" data-astro-cid-fz5pa65a>  <a href="/Coclico/" class="sidebar-back" data-astro-cid-fz5pa65a> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" data-astro-cid-fz5pa65a> <line x1="19" y1="12" x2="5" y2="12" data-astro-cid-fz5pa65a></line> <polyline points="12 19 5 12 12 5" data-astro-cid-fz5pa65a></polyline> </svg>
+Retour au site
+</a>  <nav class="sidebar-nav" data-astro-cid-fz5pa65a> <p class="sidebar-group" data-astro-cid-fz5pa65a>Architecture</p><a href="#overview" class="sidebar-link" data-astro-cid-fz5pa65a> Vue d&#39;ensemble  </a> <a href="#startup-di" class="sidebar-link" data-astro-cid-fz5pa65a> Startup &amp; DI  </a> <a href="#service-container" class="sidebar-link" data-astro-cid-fz5pa65a> ServiceContainer  </a> <a href="#mvvm" class="sidebar-link" data-astro-cid-fz5pa65a> Pattern MVVM  </a> <p class="sidebar-group" data-astro-cid-fz5pa65a>Services Core</p><a href="#dual-llm" class="sidebar-link" data-astro-cid-fz5pa65a> Dual LLM Executor  </a> <a href="#feature-engine" class="sidebar-link" data-astro-cid-fz5pa65a> FeatureExecutionEngine  </a> <a href="#cache-service" class="sidebar-link" data-astro-cid-fz5pa65a> CacheService  </a> <a href="#rollback" class="sidebar-link" data-astro-cid-fz5pa65a> RollbackService  </a> <p class="sidebar-group" data-astro-cid-fz5pa65a>Automatisation</p><a href="#flow-chains-sys" class="sidebar-link" data-astro-cid-fz5pa65a> Flow Chains système  </a> <a href="#workflow-pipeline" class="sidebar-link" data-astro-cid-fz5pa65a> WorkflowPipeline  </a> <p class="sidebar-group" data-astro-cid-fz5pa65a>Phase 3.x Autonome</p><a href="#source-analyzer" class="sidebar-link" data-astro-cid-fz5pa65a> SourceAnalyzer (Roslyn)  </a> <a href="#digital-twin" class="sidebar-link" data-astro-cid-fz5pa65a> Digital Twin Gate  </a> <a href="#auto-patcher" class="sidebar-link" data-astro-cid-fz5pa65a> AutoPatcher  </a> <a href="#optimization-engine" class="sidebar-link" data-astro-cid-fz5pa65a> OptimizationEngine  </a> <p class="sidebar-group" data-astro-cid-fz5pa65a>Sécurité</p><a href="#security-policy" class="sidebar-link" data-astro-cid-fz5pa65a> SecurityPolicy  </a> <a href="#audit-log" class="sidebar-link" data-astro-cid-fz5pa65a> AuditLog  </a> <p class="sidebar-group" data-astro-cid-fz5pa65a>Conventions</p><a href="#conventions" class="sidebar-link" data-astro-cid-fz5pa65a> Conventions de code  </a>  </nav> </div> </aside>  <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true" data-astro-cid-fz5pa65a></div>  <main class="doc-main" id="main-content" data-astro-cid-fz5pa65a>  <div class="doc-hero" data-astro-cid-fz5pa65a> <span class="badge" data-astro-cid-fz5pa65a>Référence Technique</span> <h1 data-astro-cid-fz5pa65a>Wiki Développeur</h1> <p class="doc-hero-desc" data-astro-cid-fz5pa65a>Architecture interne, patterns, services core et système autonome de Coclico. Référence pour les contributeurs et intégrateurs.</p> </div> <div class="doc-body" data-astro-cid-fz5pa65a> <article class="doc-article prose" data-astro-cid-fz5pa65a>  <h2 id="overview">Vue d'ensemble</h2> <p>Coclico est architecturé autour d'une boucle autonome <strong>Observe → Analyze → Act → Validate</strong> :</p> <ul> <li><strong>Observe :</strong> <code>DynamicTracerService</code> collecte la télémétrie CPU/RAM/réseau</li> <li><strong>Analyze :</strong> <code>OptimizationEngineService</code> + <code>SourceAnalyzerService</code> (Roslyn AST)</li> <li><strong>Act :</strong> <code>AutoPatcherService</code> applique les patches validés</li> <li><strong>Validate :</strong> <code>DigitalTwinService</code> vérifie que la complexité cyclomatique ne croît pas</li> </ul> <p>Le framework est <strong>.NET 10 / C# (LangVersion: preview)</strong>, UI en <strong>WPF + WPF-UI 4.x</strong>, DI via <code>Microsoft.Extensions.DependencyInjection</code>.</p> <h2 id="startup-di">Startup & DI</h2> <p>Le point d'entrée est <code>App.xaml.cs</code>. La séquence de démarrage est :</p> <pre><code><span class="tok-cmt">// App.xaml.cs — séquence de démarrage simplifiée</span>
+<span class="tok-kw">protected override async</span> <span class="tok-type">void</span> <span class="tok-fn">OnStartup</span>(<span class="tok-type">StartupEventArgs</span> e)
+&#123;
+    <span class="tok-cmt">// 1. Élévation UAC obligatoire</span>
+    <span class="tok-kw">if</span> (!<span class="tok-type">ElevationHelper</span>.<span class="tok-fn">IsElevated</span>())
+        <span class="tok-type">ElevationHelper</span>.<span class="tok-fn">RestartAsAdmin</span>();
+
+    <span class="tok-cmt">// 2. Construction du conteneur DI</span>
+    <span class="tok-type">ServiceContainer</span>.<span class="tok-fn">Build</span>(services =&gt;
+    &#123;
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">ICacheService</span>, <span class="tok-type">CacheService</span>&gt;();
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">IDynamicTracer</span>, <span class="tok-type">DynamicTracerService</span>&gt;();
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">IRollbackService</span>, <span class="tok-type">RollbackService</span>&gt;();
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">IOptimizationEngine</span>, <span class="tok-type">OptimizationEngineService</span>&gt;();
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">AiChatService</span>&gt;();
+        services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-type">CleaningService</span>&gt;();
+        <span class="tok-cmt">// ... tous les services</span>
+    &#125;, validateOnBuild: <span class="tok-kw">true</span>);
+
+    <span class="tok-cmt">// 3. SplashWindow pendant le warm-up des services</span>
+    <span class="tok-kw">var</span> splash = <span class="tok-kw">new</span> <span class="tok-type">SplashWindow</span>();
+    splash.<span class="tok-fn">Show</span>();
+    <span class="tok-kw">await</span> <span class="tok-type">Task</span>.<span class="tok-fn">Delay</span>(<span class="tok-str">2000</span>).<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+
+    <span class="tok-cmt">// 4. MainWindow</span>
+    <span class="tok-kw">new</span> <span class="tok-type">MainWindow</span>().<span class="tok-fn">Show</span>();
+    splash.<span class="tok-fn">Close</span>();
+&#125;</code></pre> <p><code>ValidateOnBuild = true</code> garantit qu'une dépendance manquante fait crasher l'appli au démarrage, jamais en runtime.</p> <h2 id="service-container">ServiceContainer</h2> <p><code>ServiceContainer</code> est un wrapper statique thread-safe autour de <code>IServiceProvider</code>. Il expose deux méthodes principales :</p> <pre><code><span class="tok-cmt">// Services/ServiceContainer.cs</span>
+<span class="tok-kw">public static class</span> <span class="tok-type">ServiceContainer</span>
+&#123;
+    <span class="tok-kw">private static</span> <span class="tok-type">IServiceProvider</span>? _provider;
+
+    <span class="tok-cmt">/// Résolution obligatoire — lève une exception si absent</span>
+    <span class="tok-kw">public static</span> T <span class="tok-fn">GetRequired</span>&lt;T&gt;() <span class="tok-kw">where</span> T : <span class="tok-kw">notnull</span>
+        =&gt; _provider!.<span class="tok-fn">GetRequiredService</span>&lt;T&gt;();
+
+    <span class="tok-cmt">/// Résolution optionnelle — retourne null si absent</span>
+    <span class="tok-kw">public static</span> T? <span class="tok-fn">GetOptional</span>&lt;T&gt;() <span class="tok-kw">where</span> T : <span class="tok-kw">class</span>
+        =&gt; _provider!.<span class="tok-fn">GetService</span>&lt;T&gt;();
+
+    <span class="tok-kw">public static void</span> <span class="tok-fn">Build</span>(<span class="tok-type">Action</span>&lt;<span class="tok-type">IServiceCollection</span>&gt; configure,
+                               <span class="tok-type">bool</span> validateOnBuild = <span class="tok-kw">true</span>)
+    &#123;
+        <span class="tok-kw">var</span> services = <span class="tok-kw">new</span> <span class="tok-type">ServiceCollection</span>();
+        <span class="tok-fn">configure</span>(services);
+        _provider = services.<span class="tok-fn">BuildServiceProvider</span>(
+            <span class="tok-kw">new</span> <span class="tok-type">ServiceProviderOptions</span> &#123; ValidateOnBuild = validateOnBuild &#125;);
+    &#125;
+&#125;</code></pre> <blockquote>
+Préférez l'injection constructeur dans le nouveau code. <code>ServiceContainer.GetRequired&lt;T&gt;()</code> est réservé aux cas où l'injection est impossible (ex: handlers statiques, convertisseurs WPF).
+</blockquote> <h2 id="mvvm">Pattern MVVM</h2> <p>Coclico suit strictement le pattern MVVM avec <strong>CommunityToolkit.Mvvm 8.4</strong> :</p> <ul> <li><strong>Views</strong> (<code>Views/*.xaml</code>) — XAML pur, aucune logique métier</li> <li><strong>ViewModels</strong> (<code>ViewModels/*ViewModel.cs</code>) — <code>[ObservableProperty]</code>, <code>[RelayCommand]</code></li> <li><strong>Services</strong> (<code>Services/*.cs</code>) — logique métier, accès système, IA</li> </ul> <pre><code><span class="tok-cmt">// ViewModels/DashboardViewModel.cs</span>
+<span class="tok-kw">public partial class</span> <span class="tok-type">DashboardViewModel</span> : <span class="tok-type">ObservableObject</span>
+&#123;
+    <span class="tok-kw">private readonly</span> <span class="tok-type">IDynamicTracer</span> _tracer;
+    <span class="tok-kw">private readonly</span> <span class="tok-type">ICacheService</span> _cache;
+
+    [<span class="tok-type">ObservableProperty</span>] <span class="tok-kw">private double</span> _cpuUsage;
+    [<span class="tok-type">ObservableProperty</span>] <span class="tok-kw">private long</span> _ramUsedMb;
+    [<span class="tok-type">ObservableProperty</span>] <span class="tok-kw">private double</span> _healthScore;
+
+    <span class="tok-kw">public</span> <span class="tok-fn">DashboardViewModel</span>(<span class="tok-type">IDynamicTracer</span> tracer, <span class="tok-type">ICacheService</span> cache)
+    &#123;
+        _tracer = tracer;
+        _cache  = cache;
+    &#125;
+
+    [<span class="tok-type">RelayCommand</span>]
+    <span class="tok-kw">private async</span> <span class="tok-type">Task</span> <span class="tok-fn">RefreshAsync</span>()
+    &#123;
+        <span class="tok-kw">var</span> snap = <span class="tok-kw">await</span> _tracer.<span class="tok-fn">GetSnapshotAsync</span>().<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+        <span class="tok-cmt">// Toujours Dispatcher.InvokeAsync pour les mises à jour UI</span>
+        <span class="tok-kw">await</span> <span class="tok-type">Application</span>.Current.<span class="tok-fn">Dispatcher</span>
+            .<span class="tok-fn">InvokeAsync</span>(() =&gt; &#123; CpuUsage = snap.CpuPercent; &#125;);
+    &#125;
+&#125;</code></pre> <h2 id="dual-llm">Dual LLM Executor</h2> <p><code>AiChatService</code> maintient deux paires contexte/exécuteur LLamaSharp totalement isolées pour éviter la contention entre le chat utilisateur et l'engine d'optimisation :</p> <pre><code><span class="tok-cmt">// Services/AiChatService.cs — structure interne</span>
+<span class="tok-kw">public sealed class</span> <span class="tok-type">AiChatService</span>
+&#123;
+    <span class="tok-cmt">// Contexte dédié au chat utilisateur (AiChatView)</span>
+    <span class="tok-kw">private</span> <span class="tok-type">LLamaContext</span> _chatCtx;
+    <span class="tok-kw">private readonly</span> <span class="tok-type">SemaphoreSlim</span> _chatSem = <span class="tok-kw">new</span>(<span class="tok-str">1</span>, <span class="tok-str">1</span>);
+
+    <span class="tok-cmt">// Contexte dédié à l'OptimizationEngine (arrière-plan)</span>
+    <span class="tok-kw">private</span> <span class="tok-type">LLamaContext</span> _engineCtx;
+    <span class="tok-kw">private readonly</span> <span class="tok-type">SemaphoreSlim</span> _engineSem = <span class="tok-kw">new</span>(<span class="tok-str">1</span>, <span class="tok-str">1</span>);
+
+    <span class="tok-cmt">// Immutable Context Swap — reset sans bloquer les consommateurs</span>
+    <span class="tok-kw">public async</span> <span class="tok-type">Task</span> <span class="tok-fn">ResetChatContextAsync</span>()
+    &#123;
+        <span class="tok-kw">var</span> old = <span class="tok-type">Interlocked</span>.<span class="tok-fn">Exchange</span>(<span class="tok-kw">ref</span> _chatCtx, <span class="tok-kw">await</span> <span class="tok-fn">BuildContextAsync</span>());
+        old?.<span class="tok-fn">Dispose</span>();
+    &#125;
+
+    <span class="tok-kw">public async</span> <span class="tok-type">Task</span>&lt;<span class="tok-type">string</span>&gt; <span class="tok-fn">SendChatAsync</span>(<span class="tok-type">string</span> prompt)
+    &#123;
+        <span class="tok-kw">await</span> _chatSem.<span class="tok-fn">WaitAsync</span>().<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+        <span class="tok-kw">try</span> &#123; <span class="tok-kw">return await</span> <span class="tok-fn">InferAsync</span>(_chatCtx, prompt); &#125;
+        <span class="tok-kw">finally</span> &#123; _chatSem.<span class="tok-fn">Release</span>(); &#125;
+    &#125;
+&#125;</code></pre> <blockquote>
+Règle absolue : ne jamais appeler <code>WaitAsync()</code> sur <code>_chatSem</code> ou <code>_engineSem</code> depuis le thread UI. Toujours utiliser <code>ConfigureAwait(false)</code>.
+</blockquote> <h2 id="feature-engine">FeatureExecutionEngine</h2> <p>Toute action longue doit passer par <code>FeatureExecutionEngine.RunFeatureAsync</code> qui ajoute automatiquement :</p> <ul> <li><strong>Circuit-breaker</strong> — après 3 échecs consécutifs, la feature est désactivée temporairement</li> <li><strong>Télémétrie</strong> — durée, succès/échec, exception loguée via Serilog</li> <li><strong>Annulation</strong> — support de <code>CancellationToken</code> propagé</li> </ul> <pre><code><span class="tok-cmt">// Utilisation dans un ViewModel ou Service</span>
+<span class="tok-kw">await</span> _engine.<span class="tok-fn">RunFeatureAsync</span>(
+    featureId: <span class="tok-str">"deep-clean"</span>,
+    action: <span class="tok-kw">async</span> ct =&gt;
+    &#123;
+        <span class="tok-kw">await</span> _cleaningService.<span class="tok-fn">RunDeepCleanAsync</span>(ct).<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+    &#125;,
+    cancellationToken: token
+).<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);</code></pre> <h2 id="cache-service">CacheService</h2> <p><code>ICacheService</code> / <code>CacheService</code> fournit un cache in-memory thread-safe avec TTL configurable par entrée :</p> <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">ICacheService</span>
+&#123;
+    <span class="tok-type">T</span>? <span class="tok-fn">Get</span>&lt;<span class="tok-type">T</span>&gt;(<span class="tok-type">string</span> key);
+    <span class="tok-kw">void</span> <span class="tok-fn">Set</span>&lt;<span class="tok-type">T</span>&gt;(<span class="tok-type">string</span> key, <span class="tok-type">T</span> value, <span class="tok-type">TimeSpan</span>? ttl = <span class="tok-kw">null</span>);
+    <span class="tok-kw">bool</span> <span class="tok-fn">TryGet</span>&lt;<span class="tok-type">T</span>&gt;(<span class="tok-type">string</span> key, <span class="tok-kw">out</span> T? value);
+    <span class="tok-kw">void</span> <span class="tok-fn">Invalidate</span>(<span class="tok-type">string</span> key);
+    <span class="tok-kw">void</span> <span class="tok-fn">InvalidateAll</span>();
+&#125;</code></pre> <h2 id="rollback">RollbackService</h2> <p>Toute opération d'écriture déclenchée par l'IA doit être précédée d'un snapshot rollback :</p> <pre><code><span class="tok-cmt">// Pattern obligatoire avant File.WriteAllText</span>
+<span class="tok-kw">var</span> snapshotId = <span class="tok-kw">await</span> _rollback
+    .<span class="tok-fn">CreateSnapshotAsync</span>(targetFilePath)
+    .<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+<span class="tok-kw">try</span>
+&#123;
+    <span class="tok-type">File</span>.<span class="tok-fn">WriteAllText</span>(targetFilePath, newContent, <span class="tok-type">Encoding</span>.UTF8);
+&#125;
+<span class="tok-kw">catch</span>
+&#123;
+    <span class="tok-kw">await</span> _rollback.<span class="tok-fn">RestoreAsync</span>(snapshotId).<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+    <span class="tok-kw">throw</span>;
+&#125;</code></pre> <h2 id="flow-chains-sys">Flow Chains système</h2> <p>Le système de Flow Chains est constitué de trois services :</p> <ul> <li><code>WorkflowPipelineService</code> — CRUD des définitions de pipeline (JSON dans <code>%APPDATA%\Coclico\flow-chains\</code>)</li> <li><code>WorkflowPipelineExecutionService</code> — exécution séquentielle avec circuit-breaker</li> <li><code>WorkflowExecutionService</code> — orchestration de haut niveau, planification</li> </ul> <p>Toutes les opérations système (registre, WMI, fichiers) effectuées dans une Flow Chain passent obligatoirement par <code>WorkflowPipelineExecutionService</code> qui applique la <code>ISecurityPolicy</code> avant chaque nœud.</p> <h2 id="workflow-pipeline">WorkflowPipeline — Modèle de données</h2> <p>Le modèle <code>WorkflowPipeline</code> définit la structure d'un pipeline :</p> <pre><code><span class="tok-cmt">// Models/WorkflowPipeline.cs</span>
+<span class="tok-kw">public record</span> <span class="tok-type">WorkflowPipeline</span>
+&#123;
+    <span class="tok-kw">public</span> <span class="tok-type">Guid</span> Id &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = <span class="tok-type">Guid</span>.<span class="tok-fn">NewGuid</span>();
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> Name &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = <span class="tok-type">string</span>.Empty;
+    <span class="tok-kw">public</span> <span class="tok-type">List</span>&lt;<span class="tok-type">PipelineNode</span>&gt; Nodes &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = [];
+&#125;
+
+<span class="tok-kw">public record</span> <span class="tok-type">PipelineNode</span>
+&#123;
+    <span class="tok-kw">public</span> <span class="tok-type">NodeType</span> Type &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125;
+    <span class="tok-kw">public</span> <span class="tok-type">Dictionary</span>&lt;<span class="tok-type">string</span>, <span class="tok-type">string</span>&gt; Parameters &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = [];
+    <span class="tok-kw">public</span> <span class="tok-type">NodeCondition</span>? Condition &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125;
+    <span class="tok-kw">public</span> <span class="tok-type">OnErrorAction</span> OnError &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = <span class="tok-type">OnErrorAction</span>.ContinueNext;
+&#125;
+
+<span class="tok-kw">public enum</span> <span class="tok-type">NodeType</span>
+&#123;
+    KillProcess, LaunchProcess, RestartService, StopService, StartService,
+    SetRegistryValue, DeleteRegistryKey, CreateDirectory, DeleteFile,
+    MoveFile, CopyFile, RunScript, CleanTemp, EmptyRecycleBin, FlushDns,
+    ClearBrowserCache, ClearEventLogs, ClearPrefetch, ClearThumbnailCache,
+    ClearWindowsErrorReports, FreeRam, SetWorkingSet, PingHost,
+    DisableNetworkAdapter, EnableNetworkAdapter, Wait, Condition, Log, Notification
+&#125; <span class="tok-cmt">// 28 types</span>
+
+<span class="tok-kw">public enum</span> <span class="tok-type">ConditionOperator</span>
+&#123;
+    Equals, NotEquals, GreaterThan, LessThan, GreaterOrEqual, LessOrEqual,
+    Contains, NotContains, IsEmpty, IsNotEmpty
+&#125; <span class="tok-cmt">// 10 opérateurs</span>
+
+<span class="tok-kw">public enum</span> <span class="tok-type">OnErrorAction</span>
+&#123; ContinueNext, StopChain, SkipToEnd &#125;</code></pre> <h2 id="source-analyzer">SourceAnalyzer (Roslyn AST) — Phase 3.3</h2> <p><code>SourceAnalyzerService</code> utilise Roslyn pour analyser le code C# source de Coclico lui-même. Il calcule par méthode :</p> <ul> <li><strong>Complexité Cyclomatique (CC)</strong> — nombre de chemins d'exécution indépendants</li> <li><strong>Métriques de Halstead</strong> — Volume (V), Difficulté (D), Effort (E)</li> <li><strong>Maintainability Index (MI)</strong> — score de maintenabilité 0-100</li> </ul> <pre><code><span class="tok-cmt">// Services/SourceAnalyzerService.cs — interface</span>
+<span class="tok-kw">public interface</span> <span class="tok-type">ISourceAnalyzer</span>
+&#123;
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">AnalysisReport</span>&gt; <span class="tok-fn">AnalyzeFileAsync</span>(<span class="tok-type">string</span> filePath, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">MethodMetrics</span>&gt; <span class="tok-fn">GetMethodMetricsAsync</span>(<span class="tok-type">string</span> filePath, <span class="tok-type">string</span> methodName);
+&#125;
+
+<span class="tok-kw">public record</span> <span class="tok-type">MethodMetrics</span>(
+    <span class="tok-type">string</span> MethodName,
+    <span class="tok-type">int</span> CyclomaticComplexity,
+    <span class="tok-type">double</span> HalsteadVolume,
+    <span class="tok-type">double</span> HalsteadDifficulty,
+    <span class="tok-type">double</span> HalsteadEffort,
+    <span class="tok-type">double</span> MaintainabilityIndex
+);</code></pre> <h2 id="digital-twin">Digital Twin Gate — Phase 3.3</h2> <p>Avant d'appliquer tout patch généré par l'IA, <code>DigitalTwinService</code> valide que le patch ne dégrade pas la qualité du code :</p> <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IDigitalTwin</span>
+&#123;
+    <span class="tok-cmt">/// Retourne false si le CC du patch est supérieur à l'original</span>
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">ValidationResult</span>&gt; <span class="tok-fn">ValidatePatchAsync</span>(
+        <span class="tok-type">string</span> originalSource,
+        <span class="tok-type">string</span> patchedSource,
+        <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+&#125;
+
+<span class="tok-kw">public record</span> <span class="tok-type">ValidationResult</span>(
+    <span class="tok-type">bool</span> IsValid,
+    <span class="tok-type">string</span> Reason,
+    <span class="tok-type">int</span> OriginalCC,
+    <span class="tok-type">int</span> PatchedCC
+);</code></pre> <h2 id="auto-patcher">AutoPatcher — Phase 3.4</h2> <p><code>AutoPatcherService</code> gère le cycle de vie des patches IA avec approbation humaine :</p> <pre><code><span class="tok-kw">public interface</span> <span class="tok-type">IAutoPatcher</span>
+&#123;
+    <span class="tok-cmt">/// Retourne les patches en attente d'approbation</span>
+    <span class="tok-type">IReadOnlyList</span>&lt;<span class="tok-type">PatchProposal</span>&gt; <span class="tok-fn">GetPendingProposals</span>();
+
+    <span class="tok-cmt">/// Applique le patch (après validation DigitalTwin + Rollback snapshot)</span>
+    <span class="tok-type">Task</span>&lt;<span class="tok-type">ApplyResult</span>&gt; <span class="tok-fn">ApproveAndApplyAsync</span>(<span class="tok-type">Guid</span> proposalId, <span class="tok-type">CancellationToken</span> ct = <span class="tok-kw">default</span>);
+
+    <span class="tok-cmt">/// Rejette la proposition sans écrire sur le disque</span>
+    <span class="tok-kw">void</span> <span class="tok-fn">RejectProposalAsync</span>(<span class="tok-type">Guid</span> proposalId, <span class="tok-type">string</span> reason);
+&#125;</code></pre> <p>Par défaut, <code>AutoPatcherAuditOnly = true</code> dans les paramètres : les patches sont loggés mais jamais appliqués sans approbation explicite.</p> <h2 id="optimization-engine">OptimizationEngine — Phase 2</h2> <p><code>OptimizationEngineService</code> s'exécute toutes les <strong>30 secondes</strong> en arrière-plan. Règles de performance critiques :</p> <ul> <li>Utiliser <code>ArrayPool&lt;byte&gt;.Shared</code> pour les buffers de télémétrie (pas de <code>new byte[]</code>)</li> <li>Ne jamais allouer de closures dans la boucle principale</li> <li>Utiliser <code>_engineSem</code> (jamais <code>_chatSem</code>) pour l'inférence LLM</li> <li>Toujours <code>ConfigureAwait(false)</code> sur chaque <code>await</code></li> </ul> <pre><code><span class="tok-cmt">// Boucle d'optimisation — pattern ArrayPool</span>
+<span class="tok-kw">var</span> buffer = <span class="tok-type">ArrayPool</span>&lt;<span class="tok-type">byte</span>&gt;.Shared.<span class="tok-fn">Rent</span>(<span class="tok-str">4096</span>);
+<span class="tok-kw">try</span>
+&#123;
+    <span class="tok-kw">await</span> _tracer.<span class="tok-fn">FillTelemetryBufferAsync</span>(buffer, ct).<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+    <span class="tok-cmt">// Traitement du buffer...</span>
+&#125;
+<span class="tok-kw">finally</span>
+&#123;
+    <span class="tok-type">ArrayPool</span>&lt;<span class="tok-type">byte</span>&gt;.Shared.<span class="tok-fn">Return</span>(buffer);
+&#125;</code></pre> <h2 id="security-policy">SecurityPolicy & AuditLog</h2> <p><strong>SecurityPolicyService</strong> charge <code>%APPDATA%\Coclico\security-policy.json</code> et fusionne avec des valeurs par défaut non-suppressibles (hardcoded). Utilisé par <code>WorkflowPipelineExecutionService</code> pour autoriser/bloquer les nœuds.</p> <p><strong>AuditLogService</strong> écrit un journal NDJSON append-only incluant <code>AiDecisionContext</code> (prompt + réponse LLM) pour la traçabilité complète des décisions IA. La rétention est configurable via <code>AuditRetentionDays</code>.</p> <h2 id="conventions">Conventions de code</h2> <ul> <li><strong>Nommage :</strong> <code>PascalCase</code> pour classes/interfaces, <code>_camelCase</code> pour champs privés, suffixe <code>Async</code> pour méthodes asynchrones</li> <li><strong>Injection :</strong> Constructeur uniquement — jamais de service-locator dans un constructeur</li> <li><strong>Background :</strong> <code>ConfigureAwait(false)</code> systématique dans les services</li> <li><strong>Logs :</strong> <code>LoggingService.LogInfo</code> / <code>LoggingService.LogException</code> — jamais swallower une exception silencieusement</li> <li><strong>DTOs :</strong> Utiliser <code>record</code> pour l'immutabilité des snapshots et résultats</li> <li><strong>Secrets :</strong> Jamais en dur dans le code — utiliser <code>SettingsService</code> ou variables d'environnement</li> <li><strong>Primary constructors C# 12 :</strong> Utiliser pour les services simples avec peu de champs</li> <li><strong>Collection expressions :</strong> Utiliser <code>[]</code> au lieu de <code>new List&lt;T&gt;()</code> / <code>new T[]</code></li> </ul>  </article>  </div>   </main> </div> <footer class="footer" role="contentinfo" data-astro-cid-35ed7um5> <div class="footer-glow" aria-hidden="true" data-astro-cid-35ed7um5></div> <div class="container" data-astro-cid-35ed7um5> <div class="footer-top" data-astro-cid-35ed7um5> <!-- Brand --> <div class="footer-brand" data-astro-cid-35ed7um5> <a href="/Coclico/" class="footer-logo" data-astro-cid-35ed7um5> <img src="/Coclico/apple-touch-icon.png" alt="Coclico" width="32" height="32" style="border-radius:6px;" data-astro-cid-35ed7um5> <span data-astro-cid-35ed7um5>Coclico</span> </a> <p class="footer-tagline" data-astro-cid-35ed7um5>Gestion Windows souveraine. 8 modules. Un centre de commande.</p> <div class="footer-badges" data-astro-cid-35ed7um5> <span class="badge" data-astro-cid-35ed7um5>.NET 10</span> <span class="badge" data-astro-cid-35ed7um5>WPF-UI 4.2</span> <span class="badge" data-astro-cid-35ed7um5>LLamaSharp 0.26</span> </div> </div> <!-- Modules --> <div class="footer-col" data-astro-cid-35ed7um5> <h4 class="footer-col-title" data-astro-cid-35ed7um5>Modules</h4> <ul data-astro-cid-35ed7um5> <li data-astro-cid-35ed7um5><a href="#modules" data-astro-cid-35ed7um5>Tableau de Bord</a></li><li data-astro-cid-35ed7um5><a href="#modules" data-astro-cid-35ed7um5>Nettoyage</a></li><li data-astro-cid-35ed7um5><a href="#performance" data-astro-cid-35ed7um5>RAM Cleaner</a></li><li data-astro-cid-35ed7um5><a href="#modules" data-astro-cid-35ed7um5>App Scanner</a></li><li data-astro-cid-35ed7um5><a href="#modules" data-astro-cid-35ed7um5>Installeur</a></li><li data-astro-cid-35ed7um5><a href="#modules" data-astro-cid-35ed7um5>Applications</a></li><li data-astro-cid-35ed7um5><a href="#modules" data-astro-cid-35ed7um5>Flow Chains</a></li><li data-astro-cid-35ed7um5><a href="#ai" data-astro-cid-35ed7um5>Coclico IA</a></li> </ul> </div> <!-- Ressources --> <div class="footer-col" data-astro-cid-35ed7um5> <h4 class="footer-col-title" data-astro-cid-35ed7um5>Ressources</h4> <ul data-astro-cid-35ed7um5> <li data-astro-cid-35ed7um5> <a href="/Coclico/guide/" data-astro-cid-35ed7um5> Guide &amp; Tutoriel </a> </li><li data-astro-cid-35ed7um5> <a href="/Coclico/wiki/" data-astro-cid-35ed7um5> Wiki Développeur </a> </li><li data-astro-cid-35ed7um5> <a href="/Coclico/faq/" data-astro-cid-35ed7um5> FAQ </a> </li><li data-astro-cid-35ed7um5> <a href="#download" data-astro-cid-35ed7um5> Télécharger </a> </li> </ul> </div> <!-- Tech Stack (réel, depuis Coclico.csproj) --> <div class="footer-col" data-astro-cid-35ed7um5> <h4 class="footer-col-title" data-astro-cid-35ed7um5>Fonctionnalités</h4> <ul class="footer-tech" data-astro-cid-35ed7um5> <li data-astro-cid-35ed7um5> <span class="tech-dot" style="background:#6366f1" data-astro-cid-35ed7um5></span> <span data-astro-cid-35ed7um5>8 modules intégrés</span> </li> <li data-astro-cid-35ed7um5> <span class="tech-dot" style="background:#22c55e" data-astro-cid-35ed7um5></span> <span data-astro-cid-35ed7um5>100% local & privé</span> </li> <li data-astro-cid-35ed7um5> <span class="tech-dot" style="background:#06b6d4" data-astro-cid-35ed7um5></span> <span data-astro-cid-35ed7um5>IA GGUF LLamaSharp</span> </li> <li data-astro-cid-35ed7um5> <span class="tech-dot" style="background:#a855f7" data-astro-cid-35ed7um5></span> <span data-astro-cid-35ed7um5>28 types Flow Chains</span> </li> <li data-astro-cid-35ed7um5> <span class="tech-dot" style="background:#f97316" data-astro-cid-35ed7um5></span> <span data-astro-cid-35ed7um5>Windows 10/11 64-bit</span> </li> <li data-astro-cid-35ed7um5> <span class="tech-dot" style="background:#eab308" data-astro-cid-35ed7um5></span> <span data-astro-cid-35ed7um5>Admin + Serilog logs</span> </li> </ul> </div> </div> <!-- Ligne de séparation --> <div class="footer-sep" data-astro-cid-35ed7um5></div> <!-- Bottom bar --> <div class="footer-bottom" data-astro-cid-35ed7um5> <p class="footer-copy" data-astro-cid-35ed7um5>© 2026 Coclico</p> <p class="footer-built" data-astro-cid-35ed7um5>Construit avec .NET 10 &amp; WPF-UI 4.2 · Windows 10/11</p> </div> </div> </footer>   <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Ouvrir la navigation" aria-expanded="false" aria-controls="doc-sidebar" data-astro-cid-fz5pa65a> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" data-astro-cid-fz5pa65a> <line x1="3" y1="6" x2="21" y2="6" data-astro-cid-fz5pa65a></line> <line x1="3" y1="12" x2="21" y2="12" data-astro-cid-fz5pa65a></line> <line x1="3" y1="18" x2="21" y2="18" data-astro-cid-fz5pa65a></line> </svg> </button>  <!-- Script de préférence de thème — injecté avant le render pour éviter le flash --> <script>
+    (function () {
+      const stored = localStorage.getItem('coclico-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = stored ? stored === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+      document.documentElement.classList.toggle('light', !isDark);
+    })();
+  </script> <!-- Script de préférence de langue — redirect si nécessaire --> <script>
+    window.__COC_BASE = {JSON.stringify(basePath)};
+  </script> <script>
+    (function () {
+      const stored = localStorage.getItem('coclico-lang');
+      if (stored) return;
+      const BASE = window.__COC_BASE || '/';
+      const normalize = (p) => p.replace(/^\/+/, '').replace(/\/+$/, '');
+      const pathNorm = normalize(window.location.pathname);
+      const baseNorm = normalize(BASE);
+      if (pathNorm !== '' && pathNorm !== baseNorm) return;
+      const nav = (navigator.language || navigator.languages?.[0] || 'fr').slice(0, 2).toLowerCase();
+      const supported = ['fr','en','de','es'];
+      if (nav !== 'fr' && supported.includes(nav)) {
+        const target = BASE + nav + '/';
+        window.location.replace(target);
+      }
+    })();
+  </script> </body> </html>  <script type="module">const c=document.getElementById("doc-sidebar"),n=document.getElementById("sidebar-overlay"),s=document.getElementById("sidebar-toggle"),l=()=>{c.classList.add("open"),n.classList.add("open"),n.removeAttribute("aria-hidden"),s.setAttribute("aria-expanded","true"),document.body.style.overflow="hidden"},i=()=>{c.classList.remove("open"),n.classList.remove("open"),n.setAttribute("aria-hidden","true"),s.setAttribute("aria-expanded","false"),document.body.style.overflow=""};s.addEventListener("click",()=>c.classList.contains("open")?i():l());n.addEventListener("click",i);document.addEventListener("keydown",t=>t.key==="Escape"&&i());const r=document.querySelectorAll(".toc-link");if(r.length>0){const t=Array.from(r).map(o=>document.querySelector(o.getAttribute("href"))).filter(Boolean),e=new IntersectionObserver(o=>{o.forEach(a=>{a.isIntersecting&&(r.forEach(d=>d.classList.remove("active")),document.querySelector(`.toc-link[href="#${a.target.id}"]`)?.classList.add("active"))})},{rootMargin:"-68px 0px -60% 0px"});t.forEach(o=>e.observe(o))}document.querySelectorAll("pre").forEach(t=>{const e=document.createElement("button");e.className="copy-btn",e.textContent="Copier",e.setAttribute("aria-label","Copier le code"),e.addEventListener("click",async()=>{const o=t.querySelector("code")?.innerText??t.innerText;await navigator.clipboard.writeText(o),e.textContent="Copié !",setTimeout(()=>{e.textContent="Copier"},2e3)}),t.style.position="relative",t.appendChild(e)});</script> 

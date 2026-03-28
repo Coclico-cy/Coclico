@@ -1,0 +1,501 @@
+---
+/**
+ * DocLayout.astro — Layout avec sidebar sticky + Table of Contents
+ * Utilisé par : Guide, Wiki, Docs
+ */
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import type { Lang } from '../i18n/index';
+import { useTranslations, getLocalePath } from '../i18n/index';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  currentPath?: string;
+  sidebarLinks?: { label: string; href: string; group?: string; badge?: string }[];
+  tocLinks?: { label: string; href: string; level?: 2 | 3 }[];
+  heroTitle?: string;
+  heroBadge?: string;
+  heroDesc?: string;
+}
+
+const {
+  title, description, lang,
+  currentPath = '/',
+  sidebarLinks = [],
+  tocLinks = [],
+  heroTitle, heroBadge, heroDesc,
+} = Astro.props;
+
+const t = useTranslations(lang);
+---
+
+<BaseLayout {title} {description} {lang} {currentPath}>
+  <Header {lang} {currentPath} />
+
+  <div class="doc-root">
+
+    <!-- Sidebar gauche -->
+    <aside class="doc-sidebar" id="doc-sidebar" role="navigation" aria-label="Navigation du document">
+      <div class="sidebar-inner">
+        {/* Bouton retour */}
+        <a href={getLocalePath('/', lang)} class="sidebar-back">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Retour au site
+        </a>
+
+        {/* Liens de navigation groupés */}
+        {sidebarLinks.length > 0 ? (
+          <nav class="sidebar-nav">
+            {(() => {
+              let lastGroup = '';
+              return sidebarLinks.map(link => {
+                const showGroup = link.group && link.group !== lastGroup;
+                if (link.group) lastGroup = link.group;
+                return (
+                  <>
+                    {showGroup && <p class="sidebar-group">{link.group}</p>}
+                    <a
+                      href={link.href}
+                      class:list={['sidebar-link', { active: currentPath === link.href }]}
+                      aria-current={currentPath === link.href ? 'page' : undefined}
+                    >
+                      {link.label}
+                      {link.badge && <span class="sidebar-badge">{link.badge}</span>}
+                    </a>
+                  </>
+                );
+              });
+            })()}
+          </nav>
+        ) : (
+          <slot name="sidebar" />
+        )}
+      </div>
+    </aside>
+
+    {/* Overlay mobile */}
+    <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+    {/* Contenu principal */}
+    <main class="doc-main" id="main-content">
+      {/* Hero de page */}
+      {heroTitle && (
+        <div class="doc-hero">
+          {heroBadge && <span class="badge">{heroBadge}</span>}
+          <h1>{heroTitle}</h1>
+          {heroDesc && <p class="doc-hero-desc">{heroDesc}</p>}
+        </div>
+      )}
+
+      <div class="doc-body">
+        <article class="doc-article prose">
+          <slot />
+        </article>
+
+        {/* Table des matières droite — disabled (supprimée) */}
+      </div>
+
+      {/* Navigation prev/next */}
+      <slot name="nav" />
+    </main>
+
+  </div>
+
+  <Footer {lang} />
+
+  <!-- Bouton sidebar mobile -->
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Ouvrir la navigation" aria-expanded="false" aria-controls="doc-sidebar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+</BaseLayout>
+
+<style>
+/* ── Layout global ──────────────────────────────────────────────── */
+.doc-root {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 68px; /* hauteur du header */
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────── */
+.doc-sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  position: sticky;
+  top: 68px;
+  height: calc(100vh - 68px);
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  overscroll-behavior: contain;
+}
+
+.sidebar-inner {
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-3);
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+  transition: color var(--duration-fast), background var(--duration-fast);
+}
+.sidebar-back:hover { color: var(--text-2); background: var(--surface-hover); }
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 0.15rem; }
+
+.sidebar-group {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  padding: 1rem 0.5rem 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: var(--text-2);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: color var(--duration-fast), background var(--duration-fast);
+}
+.sidebar-link:hover { color: var(--text); background: var(--surface-hover); }
+.sidebar-link.active {
+  color: var(--accent-hover);
+  background: var(--accent-dim);
+  font-weight: 600;
+}
+
+.sidebar-badge {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  padding: 0.15em 0.45em;
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-accent);
+}
+
+/* ── Main content ────────────────────────────────────────────────── */
+.doc-main {
+  flex: 1;
+  min-width: 0;
+  padding: 3rem 2rem 6rem;
+  max-width: calc(var(--page-max) - var(--sidebar-w));
+}
+
+.doc-hero {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.doc-hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); }
+.doc-hero-desc { font-size: 1.05rem; color: var(--text-2); max-width: 600px; line-height: 1.7; }
+
+.doc-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 1280px) {
+  .doc-body { grid-template-columns: 1fr; }
+}
+
+/* ── Article prose ──────────────────────────────────────────────── */
+.doc-article {
+  min-width: 0;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose h3 {
+  font-size: 1.15rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose p { margin-bottom: 1rem; }
+.prose ul, .prose ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+.prose li { margin-bottom: 0.4rem; color: var(--text-2); font-size: 0.925rem; }
+.prose a { color: var(--accent-hover); }
+.prose a:hover { text-decoration: underline; }
+
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.75rem 1.25rem;
+  background: var(--accent-dim);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: 1.5rem 0;
+  color: var(--text-2);
+  font-style: italic;
+}
+
+/* ── TOC ────────────────────────────────────────────────────────── */
+.doc-toc {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .doc-toc {
+    display: block;
+    position: sticky;
+    top: 90px;
+    height: fit-content;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+}
+
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  margin-bottom: 0.75rem;
+}
+
+.toc-link {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-3);
+  padding: 0.3rem 0.5rem;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+  transition: color var(--duration-fast), border-color var(--duration-fast);
+  line-height: 1.4;
+}
+
+.toc-link:hover { color: var(--text-2); border-left-color: var(--border-hover); }
+.toc-link.active { color: var(--accent-hover); border-left-color: var(--accent); }
+.toc-h3 { padding-left: 1rem; font-size: 0.75rem; }
+
+/* ── Sidebar overlay mobile ──────────────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: calc(var(--z-nav) - 1);
+  backdrop-filter: blur(4px);
+}
+
+/* ── Mobile toggle ─────────────────────────────────────────────── */
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: var(--z-overlay);
+  width: 48px; height: 48px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px var(--accent-glow);
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.sidebar-toggle:hover { transform: scale(1.08); }
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .doc-sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: var(--z-nav);
+    transform: translateX(-100%);
+    transition: transform var(--duration-slow) var(--ease-out);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .doc-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay.open {
+    display: block;
+  }
+
+  .doc-main {
+    padding: 2rem 1.25rem 5rem;
+  }
+
+  .sidebar-toggle { display: flex; }
+}
+
+/* ── Liens croisés entre sections documentation ──────────────────── */
+.doc-crosslinks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.crosslink-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: border-color var(--duration-fast), background var(--duration-fast), box-shadow var(--duration-fast);
+  background: var(--bg);
+}
+
+.crosslink-card:hover {
+  border-color: var(--border-accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.crosslink-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.crosslink-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.crosslink-desc {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  line-height: 1.4;
+}
+</style>
+
+<script>
+// Sidebar mobile
+const sidebar = document.getElementById('doc-sidebar')!;
+const overlay = document.getElementById('sidebar-overlay')!;
+const toggle  = document.getElementById('sidebar-toggle')!;
+
+const open = () => {
+  sidebar.classList.add('open');
+  overlay.classList.add('open');
+  overlay.removeAttribute('aria-hidden');
+  toggle.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+};
+
+const close = () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  toggle.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+};
+
+toggle.addEventListener('click', () => sidebar.classList.contains('open') ? close() : open());
+overlay.addEventListener('click', close);
+document.addEventListener('keydown', e => e.key === 'Escape' && close());
+
+// TOC active link au scroll
+const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+if (tocLinks.length > 0) {
+  const headings = Array.from(tocLinks)
+    .map(l => document.querySelector(l.getAttribute('href')!))
+    .filter(Boolean) as Element[];
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const match = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+        match?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-68px 0px -60% 0px' });
+
+  headings.forEach(h => observer.observe(h));
+}
+
+// Copier les blocs de code
+document.querySelectorAll('pre').forEach(pre => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copier';
+  btn.setAttribute('aria-label', 'Copier le code');
+  btn.addEventListener('click', async () => {
+    const code = pre.querySelector('code')?.innerText ?? pre.innerText;
+    await navigator.clipboard.writeText(code);
+    btn.textContent = 'Copié !';
+    setTimeout(() => { btn.textContent = 'Copier'; }, 2000);
+  });
+  pre.style.position = 'relative';
+  pre.appendChild(btn);
+});
+</script>
+
+<style>
+/* Bouton copier */
+.copy-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.25em 0.65em;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--duration-fast), color var(--duration-fast);
+}
+
+pre:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { color: var(--text); }
+</style>

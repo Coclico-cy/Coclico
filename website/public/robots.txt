@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://coclico-cy.github.io/Coclico/sitemap-index.xml

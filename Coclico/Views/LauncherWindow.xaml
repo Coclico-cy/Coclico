@@ -1,0 +1,407 @@
+<Window x:Class="Coclico.Views.LauncherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Width="520" Height="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Icon="/Resources/icone/plage.ico">
+
+    <Window.Resources>
+
+        
+        <Style x:Key="ContinueButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#EDE9F7"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="10" SnapsToDevicePixels="True">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#6B2FD9" Offset="0"/>
+                                    <GradientStop Color="#BE185D" Offset="0.6"/>
+                                    <GradientStop Color="#D9621B" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#7C3AED" BlurRadius="14" ShadowDepth="0" Opacity="0.45"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.72"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        
+        <Style x:Key="ModeCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="#0D0818"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#2A1848"/>
+            <Setter Property="Padding" Value="10,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        
+        <Style x:Key="ToggleRowStyle" TargetType="Border">
+            <Setter Property="Background" Value="#0D0818"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#2A1848"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="RootCard"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.30">
+                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ThicknessAnimation Storyboard.TargetName="RootCard"
+                                        Storyboard.TargetProperty="Margin"
+                                        From="20,32,20,8" To="20,20,20,20"
+                                        Duration="0:0:0.38">
+                        <ThicknessAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    
+    <Border x:Name="RootCard" Margin="20" Opacity="0">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="48" ShadowDepth="0" Opacity="0.72"/>
+        </Border.Effect>
+
+        <Border CornerRadius="20" ClipToBounds="True"
+                Background="#08050F"
+                BorderBrush="#2A1848" BorderThickness="1">
+            <Grid>
+
+                
+                <Ellipse Width="420" Height="260" Opacity="0.055"
+                         HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#7C3AED" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                
+                <Ellipse Width="200" Height="200" Opacity="0.04"
+                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,0">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#F97316" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                
+                <Border Height="2" VerticalAlignment="Top" CornerRadius="20,20,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0"/>
+                            <GradientStop Color="#6B2FD9"     Offset="0.2"/>
+                            <GradientStop Color="#BE185D"     Offset="0.5"/>
+                            <GradientStop Color="#F97316"     Offset="0.8"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                
+                <Grid Margin="28,18,28,22">
+                    <Grid.RowDefinitions>
+                        
+                        <RowDefinition Height="52"/>
+                        
+                        <RowDefinition Height="Auto"/>
+                        
+                        <RowDefinition Height="Auto"/>
+                        
+                        <RowDefinition Height="Auto"/>
+                        
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    
+                    <Grid Grid.Row="0" VerticalAlignment="Center"
+                          MouseLeftButtonDown="Header_MouseLeftButtonDown" Cursor="SizeAll">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <Border Width="38" Height="38" CornerRadius="10"
+                                Background="#130B20" Margin="0,0,12,0" VerticalAlignment="Center">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#7C3AED" BlurRadius="14" ShadowDepth="0" Opacity="0.35"/>
+                            </Border.Effect>
+                            <Image Source="/Resources/icone/plage.png"
+                                   Width="26" Height="26"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Border>
+
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Coclico"
+                                       FontSize="20" FontWeight="Black"
+                                       Foreground="#EDE9F7" FontFamily="Segoe UI"
+                                       VerticalAlignment="Center"/>
+                            <Border Background="#130B20" BorderBrush="#2A1848"
+                                    BorderThickness="1" CornerRadius="999"
+                                    Padding="8,3" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="5" Height="5" Margin="0,0,5,0" VerticalAlignment="Center">
+                                        <Ellipse.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#7C3AED" Offset="0"/>
+                                                <GradientStop Color="#DB2777" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <TextBlock Text="v1.0.4"
+                                               FontSize="9" FontWeight="SemiBold"
+                                               Foreground="#5A4080" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    
+                    <StackPanel Grid.Row="1" Margin="0,0,0,14">
+                        <TextBlock Text="Comment souhaitez-vous démarrer ?"
+                                   FontSize="16" FontWeight="Bold"
+                                   Foreground="#EDE9F7" FontFamily="Segoe UI"
+                                   TextWrapping="Wrap" Margin="0,0,0,5"/>
+                        <TextBlock Text="Ces paramètres peuvent être modifiés à tout moment dans les Paramètres."
+                                   FontSize="11" Foreground="#5A4080"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    
+                    <Grid Grid.Row="2" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <Border x:Name="CardNormal" Grid.Column="0"
+                                Style="{StaticResource ModeCardStyle}"
+                                MouseLeftButtonDown="CardNormal_Click">
+                            
+                            <Border.Effect>
+                                <DropShadowEffect x:Name="GlowNormal" Color="#7C3AED"
+                                                  BlurRadius="12" ShadowDepth="0" Opacity="0.55"/>
+                            </Border.Effect>
+                            <StackPanel HorizontalAlignment="Center">
+                                <Border Width="34" Height="34" CornerRadius="8"
+                                        HorizontalAlignment="Center" Margin="0,0,0,7">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#2A1060" Offset="0"/>
+                                            <GradientStop Color="#1A0A40" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon x:Name="IconNormal" Symbol="WindowNew24"
+                                                   FontSize="16"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                        <ui:SymbolIcon.Foreground>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#A78BFA" Offset="0"/>
+                                                <GradientStop Color="#7C3AED" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </ui:SymbolIcon.Foreground>
+                                    </ui:SymbolIcon>
+                                </Border>
+                                <TextBlock x:Name="TitleNormal"
+                                           Text="Normalement" TextAlignment="Center"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="#EDE9F7" TextWrapping="Wrap"
+                                           Margin="0,0,0,3"/>
+                                <TextBlock Text="Ouvre l'application au premier plan"
+                                           FontSize="9" Foreground="#5A4080"
+                                           TextWrapping="Wrap" TextAlignment="Center"/>
+                                
+                                <RadioButton x:Name="RadioNormal" GroupName="LaunchMode"
+                                             IsChecked="True" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+
+                        
+                        <Border x:Name="CardMinimized" Grid.Column="2"
+                                Style="{StaticResource ModeCardStyle}"
+                                MouseLeftButtonDown="CardMinimized_Click">
+                            <Border.Effect>
+                                <DropShadowEffect x:Name="GlowMinimized" Color="#7C3AED"
+                                                  BlurRadius="0" ShadowDepth="0" Opacity="0"/>
+                            </Border.Effect>
+                            <StackPanel HorizontalAlignment="Center">
+                                <Border Width="34" Height="34" CornerRadius="8"
+                                        HorizontalAlignment="Center" Margin="0,0,0,7">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#2A1060" Offset="0"/>
+                                            <GradientStop Color="#1A0A40" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon x:Name="IconMinimized" Symbol="ArrowMinimize24"
+                                                   FontSize="16"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="#4A3870"/>
+                                </Border>
+                                <TextBlock x:Name="TitleMinimized"
+                                           Text="Minimisé" TextAlignment="Center"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="#5A4080" TextWrapping="Wrap"
+                                           Margin="0,0,0,3"/>
+                                <TextBlock Text="Démarre réduit dans la barre des tâches"
+                                           FontSize="9" Foreground="#5A4080"
+                                           TextWrapping="Wrap" TextAlignment="Center"/>
+                                <RadioButton x:Name="RadioMinimized" GroupName="LaunchMode"
+                                             IsChecked="False" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+
+                        
+                        <Border x:Name="CardTray" Grid.Column="4"
+                                Style="{StaticResource ModeCardStyle}"
+                                MouseLeftButtonDown="CardTray_Click">
+                            <Border.Effect>
+                                <DropShadowEffect x:Name="GlowTray" Color="#7C3AED"
+                                                  BlurRadius="0" ShadowDepth="0" Opacity="0"/>
+                            </Border.Effect>
+                            <StackPanel HorizontalAlignment="Center">
+                                <Border Width="34" Height="34" CornerRadius="8"
+                                        HorizontalAlignment="Center" Margin="0,0,0,7">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#2A1060" Offset="0"/>
+                                            <GradientStop Color="#1A0A40" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon x:Name="IconTray" Symbol="TrayItemAdd24"
+                                                   FontSize="16"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="#4A3870"/>
+                                </Border>
+                                <TextBlock x:Name="TitleTray"
+                                           Text="Dans le tray" TextAlignment="Center"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="#5A4080" TextWrapping="Wrap"
+                                           Margin="0,0,0,3"/>
+                                <TextBlock Text="Démarre discrètement dans la notification"
+                                           FontSize="9" Foreground="#5A4080"
+                                           TextWrapping="Wrap" TextAlignment="Center"/>
+                                <RadioButton x:Name="RadioTray" GroupName="LaunchMode"
+                                             IsChecked="False" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    
+                    <StackPanel Grid.Row="3" Margin="0,0,0,14">
+
+                        
+                        <Border Style="{StaticResource ToggleRowStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Lancer au démarrage de Windows"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="#EDE9F7"/>
+                                    <TextBlock Text="Démarrer Coclico automatiquement avec Windows"
+                                               FontSize="10" Foreground="#5A4080" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <ui:ToggleSwitch x:Name="ToggleLaunchAtStartup"
+                                                 Grid.Column="1"
+                                                 VerticalAlignment="Center"
+                                                 Click="ToggleLaunchAtStartup_Click"/>
+                            </Grid>
+                        </Border>
+
+                        
+                        <Border Style="{StaticResource ToggleRowStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Réduire dans le tray à la fermeture"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="#EDE9F7"/>
+                                    <TextBlock Text="Masquer dans la zone de notification au lieu de quitter"
+                                               FontSize="10" Foreground="#5A4080" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <ui:ToggleSwitch x:Name="ToggleMinimizeToTray"
+                                                 Grid.Column="1"
+                                                 VerticalAlignment="Center"
+                                                 Click="ToggleMinimizeToTray_Click"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    
+                    <Button Grid.Row="4"
+                            Style="{StaticResource ContinueButtonStyle}"
+                            Click="Continue_Click"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Continuer" VerticalAlignment="Center"
+                                       FontSize="14" FontWeight="SemiBold" Foreground="#EDE9F7"/>
+                            <ui:SymbolIcon Symbol="ArrowRight24" FontSize="14"
+                                           Foreground="#EDE9F7" Margin="8,0,0,0"
+                                           VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                </Grid>
+            </Grid>
+        </Border>
+    </Border>
+
+</Window>
+

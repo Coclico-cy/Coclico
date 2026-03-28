@@ -1,0 +1,247 @@
+---
+import type { Lang } from '../../i18n/index';
+import { useTranslations, getLocalePath } from '../../i18n/index';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const BASE = (import.meta.env.BASE_URL || '/');
+const t = useTranslations(lang);
+
+const modules = [
+  { key: 'footer_link_dashboard',  href: '#modules' },
+  { key: 'footer_link_cleaning',   href: '#modules' },
+  { key: 'footer_link_ram',        href: '#performance' },
+  { key: 'footer_link_scanner',    href: '#modules' },
+  { key: 'footer_link_installer',  href: '#modules' },
+  { key: 'footer_link_programs',   href: '#modules' },
+  { key: 'footer_link_flowchains', href: '#modules' },
+  { key: 'footer_link_ai',         href: '#ai' },
+] as const;
+
+const resources = [
+  { key: 'footer_link_guide',        page: '/guide/'    },
+  { key: 'footer_link_wiki',         page: '/wiki/'     },
+  { key: 'footer_link_faq',          page: '/faq/'      },
+  { key: 'footer_link_download',     page: '#download'  },
+] as const;
+---
+
+<footer class="footer" role="contentinfo">
+  <div class="footer-glow" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="footer-top">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <a href={getLocalePath('/', lang)} class="footer-logo">
+          <img src={BASE + 'apple-touch-icon.png'} alt="Coclico" width="32" height="32" style="border-radius:6px;" />
+          <span>Coclico</span>
+        </a>
+        <p class="footer-tagline">{t('footer_tagline')}</p>
+        <div class="footer-badges">
+          <span class="badge">.NET 10</span>
+          <span class="badge">WPF-UI 4.2</span>
+          <span class="badge">LLamaSharp 0.26</span>
+        </div>
+      </div>
+
+      <!-- Modules -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">{t('footer_col_modules')}</h4>
+        <ul>
+          {modules.map(({ key, href }) => (
+            <li><a href={href}>{t(key)}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Ressources -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">{t('footer_col_resources')}</h4>
+        <ul>
+          {resources.map(({ key, page }) => (
+            <li>
+              <a href={page.startsWith('#') ? page : getLocalePath(page, lang)}>
+                {t(key)}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Tech Stack (réel, depuis Coclico.csproj) -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">{t('footer_col_features')}</h4>
+        <ul class="footer-tech">
+          <li>
+            <span class="tech-dot" style="background:#6366f1"></span>
+            <span>8 modules intégrés</span>
+          </li>
+          <li>
+            <span class="tech-dot" style="background:#22c55e"></span>
+            <span>100% local & privé</span>
+          </li>
+          <li>
+            <span class="tech-dot" style="background:#06b6d4"></span>
+            <span>IA GGUF LLamaSharp</span>
+          </li>
+          <li>
+            <span class="tech-dot" style="background:#a855f7"></span>
+            <span>28 types Flow Chains</span>
+          </li>
+          <li>
+            <span class="tech-dot" style="background:#f97316"></span>
+            <span>Windows 10/11 64-bit</span>
+          </li>
+          <li>
+            <span class="tech-dot" style="background:#eab308"></span>
+            <span>Admin + Serilog logs</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Ligne de séparation -->
+    <div class="footer-sep"></div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <p class="footer-copy">{t('footer_copyright')}</p>
+      <p class="footer-built">{t('footer_built_with')}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+.footer {
+  position: relative;
+  margin-top: 8rem;
+  padding: 5rem 0 2.5rem;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.footer-glow {
+  position: absolute;
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(99,102,241,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .footer-top { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 1024px) {
+  .footer-top { grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 3rem; }
+}
+
+/* Brand */
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  margin-bottom: 0.8rem;
+}
+
+.footer-tagline {
+  font-size: 0.875rem;
+  color: var(--text-3);
+  line-height: 1.6;
+  max-width: 280px;
+  margin-bottom: 1rem;
+}
+
+.footer-badges {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.footer-badges .badge {
+  font-size: 0.65rem;
+  padding: 0.2em 0.6em;
+}
+
+/* Colonnes */
+.footer-col-title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 1rem;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.footer-col a {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out),
+              padding-left var(--duration-fast) var(--ease-out);
+}
+
+.footer-col a:hover {
+  color: var(--text);
+  padding-left: 4px;
+}
+
+/* Tech list */
+.footer-tech li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.tech-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Séparateur */
+.footer-sep {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+  margin: 2.5rem 0 1.5rem;
+}
+
+/* Bottom */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.footer-copy, .footer-built {
+  font-size: 0.78rem;
+  color: var(--text-4);
+}
+</style>

@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coclico -- Technical Reference Document v1.0.4</title>
+<style>
+  /* ─── Reset & Base ─────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: A4;
+    margin: 22mm 18mm 22mm 18mm;
+  }
+
+  body {
+    font-family: "Georgia", "Times New Roman", "Noto Serif", serif;
+    font-size: 10.5pt;
+    line-height: 1.62;
+    color: #1a1a1a;
+    background: #fff;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 18mm;
+  }
+
+  /* ─── Code / Monospace ─────────────────────────────────────────────── */
+  code, pre, .mono {
+    font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace;
+    font-size: 9pt;
+  }
+
+  code {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 3px;
+    padding: 1px 4px;
+  }
+
+  pre {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    margin: 10px 0;
+    line-height: 1.45;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  /* ─── Cover Page ───────────────────────────────────────────────────── */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+    text-align: center;
+    page-break-after: always;
+    border-bottom: none;
+  }
+
+  .cover-title {
+    font-size: 32pt;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .cover-subtitle {
+    font-size: 16pt;
+    font-weight: 400;
+    color: #374151;
+    margin-bottom: 40px;
+  }
+
+  .cover-meta {
+    font-size: 11pt;
+    color: #6b7280;
+    line-height: 2;
+  }
+
+  .cover-line {
+    width: 120px;
+    height: 3px;
+    background: #1e3a5f;
+    margin: 30px auto;
+  }
+
+  .cover-badge {
+    display: inline-block;
+    background: #1e3a5f;
+    color: #fff;
+    padding: 6px 22px;
+    border-radius: 4px;
+    font-size: 10pt;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 20px;
+  }
+
+  /* ─── Headings ─────────────────────────────────────────────────────── */
+  h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    color: #111827;
+    border-bottom: 3px solid #1e3a5f;
+    padding-bottom: 6px;
+    margin-top: 36px;
+    margin-bottom: 16px;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 15pt;
+    font-weight: 700;
+    color: #1e3a5f;
+    border-bottom: 1.5px solid #d1d5db;
+    padding-bottom: 4px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #374151;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #4b5563;
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+
+  /* ─── Paragraphs & Lists ───────────────────────────────────────────── */
+  p {
+    margin-bottom: 10px;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  ul, ol {
+    margin: 8px 0 12px 24px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  /* ─── Tables ───────────────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+
+  thead th {
+    background: #1e3a5f;
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 10px;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  tbody td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f9fafb;
+  }
+
+  tbody tr:hover {
+    background: #f0f4ff;
+  }
+
+  /* ─── TOC ──────────────────────────────────────────────────────────── */
+  .toc {
+    page-break-after: always;
+  }
+
+  .toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc > ul > li {
+    margin-bottom: 6px;
+    font-weight: 700;
+    font-size: 11pt;
+  }
+
+  .toc > ul > li > ul > li {
+    font-weight: 400;
+    font-size: 10pt;
+    margin-left: 20px;
+    margin-bottom: 3px;
+    color: #374151;
+  }
+
+  .toc a {
+    color: #1e3a5f;
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    text-decoration: underline;
+  }
+
+  .toc-num {
+    display: inline-block;
+    min-width: 32px;
+    color: #6b7280;
+  }
+
+  /* ─── Info boxes ───────────────────────────────────────────────────── */
+  .info-box {
+    border-left: 4px solid #1e3a5f;
+    background: #f0f4ff;
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .info-box p {
+    margin: 0;
+  }
+
+  .warn-box {
+    border-left: 4px solid #b45309;
+    background: #fffbeb;
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ─── Section separators & page breaks ─────────────────────────────── */
+  .page-break {
+    page-break-before: always;
+  }
+
+  .no-break {
+    page-break-inside: avoid;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #d1d5db;
+    margin: 24px 0;
+  }
+
+  /* ─── Footer ───────────────────────────────────────────────────────── */
+  .doc-footer {
+    margin-top: 40px;
+    padding-top: 12px;
+    border-top: 2px solid #1e3a5f;
+    font-size: 8.5pt;
+    color: #6b7280;
+    text-align: center;
+  }
+
+  /* ─── Diagram boxes ────────────────────────────────────────────────── */
+  .arch-diagram {
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 14px 0;
+    font-family: "Cascadia Code", "Consolas", monospace;
+    font-size: 8.5pt;
+    line-height: 1.4;
+    white-space: pre;
+    overflow-x: auto;
+    page-break-inside: avoid;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+  }
+
+  .metric-card {
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 10px 14px;
+    background: #fafbfc;
+  }
+
+  .metric-card strong {
+    display: block;
+    font-size: 9pt;
+    color: #1e3a5f;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  @media print {
+    body { padding: 0; max-width: none; }
+    .page-break { page-break-before: always; }
+    a { color: #1e3a5f !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     COVER PAGE
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-title">Coclico</div>
+  <div class="cover-subtitle">Technical Reference Document</div>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    Version 1.0.4<br>
+    March 2026<br><br>
+    Enterprise-Grade Windows System Management,<br>
+    Automation, and Autonomous Optimization Platform
+  </div>
+  <div class="cover-badge">Open Source Technical Documentation — coclico-cy</div>
+  <div style="margin-top:60px; font-size:9pt; color:#9ca3af;">
+    2026 Coclico<br>
+    .NET 10 &middot; C# Preview &middot; WPF-UI 4.2 &middot; LLamaSharp 0.26 &middot; Roslyn 4.12
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="toc">
+  <h1>Table of Contents</h1>
+  <ul>
+    <li><span class="toc-num">1.</span> <a href="#exec-summary">Executive Summary</a></li>
+    <li><span class="toc-num">2.</span> <a href="#overview">General Overview</a></li>
+    <li><span class="toc-num">3.</span> <a href="#architecture">Technical Architecture</a>
+      <ul>
+        <li><span class="toc-num">3.1</span> <a href="#stack">Technology Stack</a></li>
+        <li><span class="toc-num">3.2</span> <a href="#lifecycle">Application Lifecycle</a></li>
+        <li><span class="toc-num">3.3</span> <a href="#di">Dependency Injection Container</a></li>
+        <li><span class="toc-num">3.4</span> <a href="#mvvm">MVVM Pattern &amp; UI Architecture</a></li>
+        <li><span class="toc-num">3.5</span> <a href="#perf-tuning">Performance Tuning</a></li>
+      </ul>
+    </li>
+    <li><span class="toc-num">4.</span> <a href="#modules">Functional Modules</a>
+      <ul>
+        <li><span class="toc-num">4.1</span> <a href="#mod-dashboard">Dashboard</a></li>
+        <li><span class="toc-num">4.2</span> <a href="#mod-apps">Applications</a></li>
+        <li><span class="toc-num">4.3</span> <a href="#mod-flowchains">Flow Chains</a></li>
+        <li><span class="toc-num">4.4</span> <a href="#mod-installer">Quick Installer</a></li>
+        <li><span class="toc-num">4.5</span> <a href="#mod-cleaning">System Cleaning</a></li>
+        <li><span class="toc-num">4.6</span> <a href="#mod-scanner">Scanner</a></li>
+        <li><span class="toc-num">4.7</span> <a href="#mod-ram">RAM Cleaner</a></li>
+        <li><span class="toc-num">4.8</span> <a href="#mod-ai">AI Assistant</a></li>
+      </ul>
+    </li>
+    <li><span class="toc-num">5.</span> <a href="#local-ai">Local AI Engine</a>
+      <ul>
+        <li><span class="toc-num">5.1</span> <a href="#dual-executor">Dual-Executor Architecture</a></li>
+        <li><span class="toc-num">5.2</span> <a href="#idle-release">Automatic Memory Release</a></li>
+        <li><span class="toc-num">5.3</span> <a href="#rag">Retrieval-Augmented Generation</a></li>
+        <li><span class="toc-num">5.4</span> <a href="#inference-params">Inference Parameters</a></li>
+      </ul>
+    </li>
+    <li><span class="toc-num">6.</span> <a href="#autonomous">Autonomous Core</a>
+      <ul>
+        <li><span class="toc-num">6.1</span> <a href="#opt-engine">OptimizationEngine -- 3-Stage Pipeline</a></li>
+        <li><span class="toc-num">6.2</span> <a href="#source-analyzer">SourceAnalyzer -- Roslyn AST Analysis</a></li>
+        <li><span class="toc-num">6.3</span> <a href="#digital-twin">Digital Twin (StateValidator)</a></li>
+        <li><span class="toc-num">6.4</span> <a href="#autopatcher">AutoPatcher (CodePatcher)</a></li>
+      </ul>
+    </li>
+    <li><span class="toc-num">7.</span> <a href="#security">Security</a>
+      <ul>
+        <li><span class="toc-num">7.1</span> <a href="#zero-cloud">Zero Cloud Architecture</a></li>
+        <li><span class="toc-num">7.2</span> <a href="#rollback">Rollback Service &amp; DPAPI Encryption</a></li>
+        <li><span class="toc-num">7.3</span> <a href="#sec-policy">Security Policy Engine</a></li>
+        <li><span class="toc-num">7.4</span> <a href="#audit-log">Audit Log (NDJSON)</a></li>
+      </ul>
+    </li>
+    <li><span class="toc-num">8.</span> <a href="#telemetry">Telemetry &amp; Observability</a>
+      <ul>
+        <li><span class="toc-num">8.1</span> <a href="#serilog">Structured Logging (Serilog)</a></li>
+        <li><span class="toc-num">8.2</span> <a href="#dynamic-tracer">DynamicTracer -- EWMA &amp; Isolation Forest</a></li>
+        <li><span class="toc-num">8.3</span> <a href="#resource-guard">ResourceGuard -- Pressure Levels</a></li>
+      </ul>
+    </li>
+    <li><span class="toc-num">9.</span> <a href="#website">Website</a></li>
+    <li><span class="toc-num">10.</span> <a href="#prerequisites">Prerequisites &amp; Deployment</a></li>
+    <li><span class="toc-num">A.</span> <a href="#appendix-dir">Appendix: Directory Structure</a></li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     1. EXECUTIVE SUMMARY
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="exec-summary" class="page-break">1. Executive Summary</h1>
+
+<p>
+Coclico is an enterprise-grade Windows system management platform that combines real-time monitoring,
+workflow automation, deep system cleaning, and fully local artificial intelligence into a single,
+self-contained desktop application. Built on .NET 10 with the C# preview language version and the
+WPF-UI 4.2 design system, Coclico operates entirely offline -- executing all AI inference, telemetry
+analysis, and autonomous optimization on the local machine without any cloud dependency.
+</p>
+
+<p>
+At its core, Coclico implements a continuous autonomous loop:
+<strong>Observe</strong> (telemetry collection via DynamicTracer with EWMA and Isolation Forest anomaly detection),
+<strong>Analyze</strong> (LLM-based cognitive decision-making backed by Roslyn AST analysis),
+<strong>Act</strong> (AutoPatcher for validated code modifications, QoS priority adjustments), and
+<strong>Validate</strong> (Digital Twin simulation ensuring cyclomatic complexity never increases).
+This loop executes every 30 seconds through a lock-free 3-stage pipeline built on
+<code>System.Threading.Channels</code>.
+</p>
+
+<p>
+Version 1.0.4 (March 2026) represents a fully operational release across all architectural phases:
+dual-context LLamaSharp inference, Roslyn-powered source analysis with Halstead metrics, DPAPI-encrypted
+rollback snapshots, enterprise security policy enforcement, NDJSON audit trails with AI decision
+traceability, and a 28-node visual workflow automation editor.
+</p>
+
+<div class="metric-grid">
+  <div class="metric-card">
+    <strong>Runtime</strong>
+    .NET 10, C# preview, TieredPGO, ConcurrentGC
+  </div>
+  <div class="metric-card">
+    <strong>AI Inference</strong>
+    LLamaSharp 0.26, dual-context, ~2.5 GB VRAM/RAM
+  </div>
+  <div class="metric-card">
+    <strong>Automation</strong>
+    28 node types, 10 condition operators
+  </div>
+  <div class="metric-card">
+    <strong>Security</strong>
+    Zero Cloud, DPAPI, FrozenSet policy, NDJSON audit
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     2. GENERAL OVERVIEW
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="overview">2. General Overview</h1>
+
+<p>
+Coclico addresses the need for a comprehensive, privacy-first Windows system management tool that
+consolidates capabilities typically spread across dozens of separate utilities: process monitoring,
+application inventory, automated workflows, disk cleanup, memory optimization, software installation,
+and AI-assisted system administration.
+</p>
+
+<h3>Design Principles</h3>
+<ul>
+  <li><strong>Zero Cloud</strong> -- All data, inference, and telemetry remain on the local machine. No network calls are made for AI functionality.</li>
+  <li><strong>Isolation</strong> -- The UI thread never directly invokes AI/LLM operations. All long-running work passes through service abstractions.</li>
+  <li><strong>Rollback Safety</strong> -- Every file write triggered by the autonomous core is preceded by a DPAPI-encrypted snapshot.</li>
+  <li><strong>Immutability</strong> -- DTOs, telemetry snapshots, and metric records use C# <code>record</code> types for thread-safe, allocation-efficient data flow.</li>
+  <li><strong>Digital Twin Gate</strong> -- AI-proposed code patches are validated against a weighted multi-metric model (CC, Halstead V/D/E, Maintainability Index) before any disk write.</li>
+  <li><strong>Administrator Elevation</strong> -- The application enforces UAC elevation at startup, required for WMI queries, process priority manipulation, and kernel-level memory operations.</li>
+</ul>
+
+<h3>Supported Languages</h3>
+<p>
+The application UI ships with 10 runtime-switchable localizations: French, English, German, Spanish, Italian,
+Japanese, Korean, Portuguese, Russian, and Chinese. Language changes take effect immediately without restarting
+the application.
+</p>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     3. TECHNICAL ARCHITECTURE
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="architecture" class="page-break">3. Technical Architecture</h1>
+
+<h2 id="stack">3.1 Technology Stack</h2>
+
+<table>
+  <thead>
+    <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Runtime</td><td>.NET</td><td>10.0</td><td>Application framework, TieredPGO, ConcurrentGC</td></tr>
+    <tr><td>Language</td><td>C#</td><td>preview</td><td>Primary constructors, collection expressions, pattern matching</td></tr>
+    <tr><td>UI Framework</td><td>WPF + WPF-UI</td><td>4.2.0</td><td>Fluent Design system, dark/light themes</td></tr>
+    <tr><td>MVVM Toolkit</td><td>CommunityToolkit.Mvvm</td><td>8.4.0</td><td>ObservableObject, RelayCommand, source generators</td></tr>
+    <tr><td>Local AI</td><td>LLamaSharp + Backend.Cpu</td><td>0.26.0</td><td>GGUF model inference, dual-context isolation</td></tr>
+    <tr><td>AST Analysis</td><td>Microsoft.CodeAnalysis.CSharp</td><td>4.12.0</td><td>Roslyn syntax tree parsing, CC computation</td></tr>
+    <tr><td>Reactive</td><td>System.Reactive</td><td>6.0.1</td><td>Observable streams for ResourceGuard polling</td></tr>
+    <tr><td>Logging</td><td>Serilog + Serilog.Sinks.File</td><td>4.2.0 / 6.0.0</td><td>Structured rolling daily logs, 14-day retention</td></tr>
+    <tr><td>DI</td><td>Microsoft.Extensions.DependencyInjection</td><td>10.0.0</td><td>ValidateOnBuild, singleton/transient registration</td></tr>
+    <tr><td>Caching</td><td>Microsoft.Extensions.Caching.Memory</td><td>10.0.0</td><td>In-memory cache for installed programs (6h TTL)</td></tr>
+    <tr><td>System Access</td><td>System.Management</td><td>10.0.0</td><td>WMI queries for hardware telemetry</td></tr>
+    <tr><td>Services</td><td>System.ServiceProcess.ServiceController</td><td>10.0.0</td><td>Windows service state verification</td></tr>
+    <tr><td>Serialization</td><td>System.Text.Json</td><td>(built-in)</td><td>High-performance JSON, source-generated where applicable</td></tr>
+    <tr><td>Tests</td><td>xUnit + Moq</td><td>--</td><td>Unit and integration testing</td></tr>
+  </tbody>
+</table>
+
+<h3>Compiler &amp; Runtime Optimizations</h3>
+<p>The project file activates several .NET 10 performance features:</p>
+<ul>
+  <li><code>TieredPGO=true</code> -- Profile-Guided Optimization with tiered recompilation for hot methods.</li>
+  <li><code>TieredCompilation=true</code> -- Rapid startup via Tier-0 JIT, background promotion to optimized Tier-1.</li>
+  <li><code>OptimizationPreference=Speed</code> -- Compiler preference for execution speed over code size.</li>
+  <li><code>ConcurrentGarbageCollection=true</code> -- Background GC on dedicated threads to minimize UI pauses.</li>
+  <li><code>ServerGarbageCollection=false</code> -- Client-mode GC optimized for desktop workstation latency profiles.</li>
+</ul>
+
+<h2 id="lifecycle">3.2 Application Lifecycle</h2>
+
+<div class="arch-diagram">
+App.OnStartup()
+  |
+  +-- EnsureRunAsAdmin() -----------> UAC prompt if not elevated
+  |                                    -> AdminPromptWindow dialog
+  |                                    -> Process.Start(Verb="runas")
+  |
+  +-- GCSettings.LatencyMode = SustainedLowLatency
+  +-- ThreadPool.SetMinThreads(cpuCount, cpuCount)
+  +-- Timeline.DesiredFrameRate = 60
+  |
+  +-- ServiceContainer.Build(configure)
+  |     |
+  |     +-- Serilog.Logger configured (rolling daily, 14 files)
+  |     +-- AddMemoryCache()
+  |     +-- AddHttpClient()
+  |     +-- Interface bindings: ISecurityPolicy, ICacheService, IDynamicTracer,
+  |     |   IResourceAllocator, IRollbackService, ISourceAnalyzer, IStateValidator,
+  |     |   ICodePatcher, IOptimizationEngine, IAiService, IAuditLog
+  |     +-- Concrete singletons: SettingsService, ProfileService, ThemeService,
+  |     |   LocalizationService, ResourceGuardService, NetworkMonitorService, ...
+  |     +-- Transients: CleaningService, InstallerService, WorkflowService, ...
+  |     +-- BuildServiceProvider(ValidateOnBuild=true)
+  |
+  +-- SplashWindow.Show() + RunStartupAsync()
+  +-- AuditLog.Prune(retentionDays)
+  +-- FirstRun? -> LauncherWindow (Normal / Minimized / Tray)
+  +-- MainWindow.Show()
+  +-- ThemeService.ApplyCurrentSettings()
+  +-- SplashWindow.Close()
+  +-- MemoryCleanerService.TrimSelfWorkingSet() [background]
+  +-- UpdateCheckService.Start() [every 5 minutes]
+</div>
+
+<h3>Shutdown Sequence</h3>
+<p>
+The <code>App.OnExit</code> method performs orderly disposal in a fixed sequence: ResourceGuard stop and dispose,
+ThemeService dispose, AiChatService dispose (unloading the LLM model), ProcessWatcher dispose,
+NetworkMonitor dispose, DynamicTracer final flush-to-disk, and finally <code>ServiceContainer.Shutdown()</code>
+which disposes the underlying <code>IServiceProvider</code> and calls <code>Log.CloseAndFlush()</code>.
+Each disposal step is independently try-caught to ensure subsequent services are still properly released.
+</p>
+
+<h2 id="di">3.3 Dependency Injection Container</h2>
+
+<p>
+The DI container is managed by <code>ServiceContainer</code>, a static wrapper around a
+<code>Lazy&lt;IServiceProvider&gt;</code> initialized with <code>LazyThreadSafetyMode.ExecutionAndPublication</code>.
+This guarantees exactly-once initialization across all threads.
+</p>
+
+<h3>Service Registration Categories</h3>
+
+<table>
+  <thead>
+    <tr><th>Category</th><th>Lifetime</th><th>Registrations</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Interface-bound Singletons</td>
+      <td>Singleton</td>
+      <td>
+        <code>ISecurityPolicy</code> -> <code>SecurityPolicyService</code><br>
+        <code>ICacheService</code> -> <code>CacheService</code><br>
+        <code>IDynamicTracer</code> -> <code>DynamicTracerService</code><br>
+        <code>IResourceAllocator</code> -> <code>ResourceAllocatorService</code><br>
+        <code>IRollbackService</code> -> <code>RollbackService</code><br>
+        <code>ISourceAnalyzer</code> -> <code>SourceAnalyzerService</code><br>
+        <code>IStateValidator</code> -> <code>StateValidatorService</code><br>
+        <code>ICodePatcher</code> -> <code>CodePatcherService</code><br>
+        <code>IOptimizationEngine</code> -> <code>OptimizationEngineService</code><br>
+        <code>IAiService</code> -> <code>AiChatService</code><br>
+        <code>IAuditLog</code> -> <code>AuditLogService</code>
+      </td>
+    </tr>
+    <tr>
+      <td>Concrete Singletons</td>
+      <td>Singleton</td>
+      <td>
+        <code>SettingsService</code>, <code>InstalledProgramsService</code>,
+        <code>ProfileService</code>, <code>ProcessWatcherService</code>,
+        <code>ThemeService</code>, <code>LocalizationService</code>,
+        <code>ResourceGuardService</code>, <code>NetworkMonitorService</code>,
+        <code>KeyboardShortcutsService</code>, <code>StartupService</code>,
+        <code>FeatureExecutionEngine</code>, <code>WorkflowService</code>
+      </td>
+    </tr>
+    <tr>
+      <td>Transient Services</td>
+      <td>Transient</td>
+      <td>
+        <code>CleaningService</code>, <code>InstallerService</code>,
+        <code>WorkflowService</code>, <code>StartupHealthService</code>,
+        <code>UserAccountService</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="info-box">
+  <p><strong>Build-Time Validation</strong> -- The container is built with <code>ValidateOnBuild = true</code>,
+  which ensures all registered service dependencies are resolvable at startup. Any missing or circular dependency
+  causes an immediate, descriptive exception during <code>ServiceContainer.Build()</code> rather than a runtime
+  failure later.</p>
+</div>
+
+<h3>API Surface</h3>
+<ul>
+  <li><code>ServiceContainer.GetRequired&lt;T&gt;()</code> -- Returns the required service or throws <code>InvalidOperationException</code>.</li>
+  <li><code>ServiceContainer.GetOptional&lt;T&gt;()</code> -- Returns the service or <code>null</code> if not registered.</li>
+  <li><code>ServiceContainer.CreateScope()</code> -- Creates a new DI scope for scoped service resolution.</li>
+  <li><code>ServiceContainer.Shutdown()</code> -- Disposes the provider and flushes Serilog; replaces the lazy with a throwing sentinel.</li>
+</ul>
+
+<h2 id="mvvm" class="page-break">3.4 MVVM Pattern &amp; UI Architecture</h2>
+
+<p>
+Coclico follows the Model-View-ViewModel (MVVM) pattern using CommunityToolkit.Mvvm 8.4.0. Views are defined
+in XAML under the <code>Views/</code> directory, with corresponding ViewModels in <code>ViewModels/</code>.
+Services are injected into ViewModels via constructor injection.
+</p>
+
+<h3>View-ViewModel Mapping</h3>
+
+<table>
+  <thead>
+    <tr><th>View</th><th>ViewModel</th><th>Module</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>DashboardView.xaml</td><td>DashboardViewModel</td><td>System metrics dashboard</td></tr>
+    <tr><td>ProgramsView.xaml</td><td>(code-behind)</td><td>Application library</td></tr>
+    <tr><td>WorkflowPipelinesView.xaml</td><td>WorkflowPipelinesViewModel</td><td>Flow chain editor</td></tr>
+    <tr><td>InstallerView.xaml</td><td>(code-behind)</td><td>Winget GUI installer</td></tr>
+    <tr><td>CleaningView.xaml</td><td>CleaningViewModel</td><td>Disk cleanup</td></tr>
+    <tr><td>ScannerView.xaml</td><td>ScannerViewModel</td><td>Application audit</td></tr>
+    <tr><td>RamCleanerView.xaml</td><td>(code-behind)</td><td>Memory optimization</td></tr>
+    <tr><td>AiChatView.xaml</td><td>(code-behind)</td><td>AI chat assistant</td></tr>
+    <tr><td>SettingsView.xaml</td><td>SettingsViewModel</td><td>Application settings</td></tr>
+  </tbody>
+</table>
+
+<p>
+All UI-thread updates from background services use <code>Dispatcher.InvokeAsync</code>. The application
+explicitly sets the WPF animation frame rate to 60 FPS via <code>Timeline.DesiredFrameRateProperty</code>
+metadata override, and configures the minimum thread pool size to match <code>Environment.ProcessorCount</code>
+for optimal throughput.
+</p>
+
+<h2 id="perf-tuning">3.5 Performance Tuning</h2>
+
+<ul>
+  <li><strong>GC Latency</strong> -- <code>GCSettings.LatencyMode</code> is set to <code>SustainedLowLatency</code>
+  at startup, dynamically adjusted by ResourceGuard between <code>Interactive</code> and <code>SustainedLowLatency</code>
+  based on pressure levels.</li>
+  <li><strong>LOH Compaction</strong> -- Under <code>Critical</code> pressure, <code>GCLargeObjectHeapCompactionMode.CompactOnce</code>
+  is engaged for the next GC cycle.</li>
+  <li><strong>ArrayPool</strong> -- The audit log reader uses <code>ArrayPool&lt;byte&gt;.Shared</code> for buffer allocation
+  during reverse-reading of NDJSON files, avoiding GC pressure.</li>
+  <li><strong>FrozenSet</strong> -- Security policy patterns, program blacklists, and critical process lists use
+  <code>FrozenSet&lt;string&gt;</code> for O(1) amortized lookup with zero ongoing allocation.</li>
+  <li><strong>SearchValues</strong> -- The installed programs blacklist uses <code>SearchValues&lt;string&gt;</code>
+  for hardware-accelerated string matching on .NET 10.</li>
+  <li><strong>Channel-based Pipeline</strong> -- The OptimizationEngine uses <code>BoundedChannelOptions</code> with
+  <code>DropOldest</code> policy, <code>SingleReader=true</code>, <code>SingleWriter=true</code> for lock-free
+  inter-stage communication.</li>
+  <li><strong>TDigest</strong> -- Streaming quantile estimation (Dunning & Ertl 2019) for P95 latency computation
+  without sorting the entire sample array.</li>
+</ul>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     4. FUNCTIONAL MODULES
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="modules" class="page-break">4. Functional Modules</h1>
+
+<p>
+Coclico exposes eight primary functional modules via a left-sidebar navigation. Each module is implemented
+as a WPF UserControl with dedicated service layer support. All long-running operations are routed through
+<code>FeatureExecutionEngine.RunFeatureAsync</code>, which provides circuit-breaker semantics, lifecycle
+tracking, and telemetry recording.
+</p>
+
+<h2 id="mod-dashboard">4.1 Dashboard</h2>
+
+<p>
+The Dashboard provides a real-time overview of the host machine's health, refreshed every 3 seconds.
+All metrics are collected via P/Invoke (<code>GlobalMemoryStatusEx</code>) and WMI queries without any
+external process spawning.
+</p>
+
+<h3>Displayed Metrics</h3>
+<table>
+  <thead>
+    <tr><th>Metric</th><th>Source</th><th>Refresh Interval</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>CPU utilization (%)</td><td><code>PerformanceCounter</code> / process delta</td><td>3 seconds</td></tr>
+    <tr><td>RAM used / total (GB)</td><td><code>GlobalMemoryStatusEx</code> P/Invoke</td><td>3 seconds</td></tr>
+    <tr><td>Disk C: free / total</td><td><code>DriveInfo</code></td><td>3 seconds</td></tr>
+    <tr><td>Windows uptime</td><td><code>Environment.TickCount64</code></td><td>3 seconds</td></tr>
+    <tr><td>Active process count</td><td><code>Process.GetProcesses()</code></td><td>3 seconds</td></tr>
+    <tr><td>Installed application count</td><td><code>InstalledProgramsService</code> cache</td><td>On load</td></tr>
+  </tbody>
+</table>
+
+<h2 id="mod-apps">4.2 Applications</h2>
+
+<p>
+The Applications module maintains a comprehensive inventory of all software and games installed on the
+system. It aggregates data from eight distinct sources, each requiring a dedicated detection algorithm:
+</p>
+
+<table>
+  <thead>
+    <tr><th>#</th><th>Source</th><th>Detection Method</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Windows Registry (HKLM + HKCU)</td><td>Uninstall key enumeration under <code>SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</code></td></tr>
+    <tr><td>2</td><td>Steam</td><td>VDF manifest parsing from <code>steamapps</code> library folders</td></tr>
+    <tr><td>3</td><td>Epic Games</td><td>Manifest JSON parsing from <code>%ProgramData%\Epic\EpicGamesLauncher</code></td></tr>
+    <tr><td>4</td><td>GOG Galaxy</td><td>Database / registry key enumeration</td></tr>
+    <tr><td>5</td><td>Ubisoft Connect</td><td>Configuration file and registry detection</td></tr>
+    <tr><td>6</td><td>EA App</td><td>Local content descriptor parsing</td></tr>
+    <tr><td>7</td><td>Rockstar Games</td><td>Launcher metadata and registry keys</td></tr>
+    <tr><td>8</td><td>Microsoft Store (MSIX)</td><td>PackageManager API enumeration</td></tr>
+  </tbody>
+</table>
+
+<h3>Features</h3>
+<ul>
+  <li>Double-click to launch any application directly.</li>
+  <li>Rename applications (persisted in <code>custom_apps_data.json</code>).</li>
+  <li>Change application category assignment.</li>
+  <li>Manually add executables not detected by automated scanning.</li>
+  <li>Filter and search across all sources.</li>
+  <li>6-hour in-memory cache for performance; manual refresh available.</li>
+  <li>Intelligent blacklist filter using <code>SearchValues&lt;string&gt;</code> to exclude drivers, runtimes, SDKs, and other non-user-facing entries.</li>
+</ul>
+
+<h2 id="mod-flowchains" class="page-break">4.3 Flow Chains</h2>
+
+<p>
+Flow Chains is a visual drag-and-drop automation editor that allows users to construct complex
+multi-step workflows. Chains are persisted as JSON in <code>%AppData%\Coclico\flow_chains.json</code>
+and can be triggered manually, via global hotkeys (<code>Ctrl+(Alt+)Key</code>), or on automatic intervals.
+</p>
+
+<h3>Node Types (28 total)</h3>
+
+<table>
+  <thead>
+    <tr><th>Category</th><th>Nodes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Control Flow</td><td>Start, End, Condition, Loop, Parallel, Delay</td></tr>
+    <tr><td>Process Management</td><td>OpenApp, CloseApp, KillProcess, KillByMemory, SetProcessPriority</td></tr>
+    <tr><td>Command Execution</td><td>RunCommand, RunPowerShell</td></tr>
+    <tr><td>User Interaction</td><td>Notification, SendKeys, TriggerShortcut, ClipboardSet, Screenshot</td></tr>
+    <tr><td>Network &amp; Web</td><td>HttpRequest, OpenUrl</td></tr>
+    <tr><td>File System</td><td>FileOperation, CompressFile, EmptyRecycleBin, CleanTemp</td></tr>
+    <tr><td>System</td><td>SystemCheck, RamClean, SetVolume, MuteAudio</td></tr>
+  </tbody>
+</table>
+
+<h3>Condition Operators (10 total)</h3>
+
+<table>
+  <thead>
+    <tr><th>Operator</th><th>Type</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ProcessRunning</code></td><td>Process</td><td>True if named process is active</td></tr>
+    <tr><td><code>ProcessNotRunning</code></td><td>Process</td><td>True if named process is not active</td></tr>
+    <tr><td><code>FileExists</code></td><td>File System</td><td>True if file path exists</td></tr>
+    <tr><td><code>FileNotExists</code></td><td>File System</td><td>True if file path does not exist</td></tr>
+    <tr><td><code>TimeAfter</code></td><td>Temporal</td><td>True if current time is after specified time</td></tr>
+    <tr><td><code>TimeBefore</code></td><td>Temporal</td><td>True if current time is before specified time</td></tr>
+    <tr><td><code>CpuBelow</code></td><td>Resource</td><td>True if CPU usage is below threshold (%)</td></tr>
+    <tr><td><code>CpuAbove</code></td><td>Resource</td><td>True if CPU usage is above threshold (%)</td></tr>
+    <tr><td><code>RamBelow</code></td><td>Resource</td><td>True if RAM usage is below threshold (%)</td></tr>
+    <tr><td><code>RamAbove</code></td><td>Resource</td><td>True if RAM usage is above threshold (%)</td></tr>
+  </tbody>
+</table>
+
+<h3>Error Handling</h3>
+<p>Each <code>PipelineStep</code> supports an <code>OnErrorAction</code> enum controlling failure behavior:</p>
+<ul>
+  <li><code>ContinueNext</code> (default) -- Skip the failed step and proceed to the next.</li>
+  <li><code>StopChain</code> -- Halt the entire chain immediately.</li>
+  <li><code>SkipToEnd</code> -- Jump to the End node, bypassing all remaining steps.</li>
+</ul>
+<p>
+Additionally, each step supports configurable <code>RetryCount</code> (0--10) and <code>TimeoutSeconds</code>
+parameters for resilient execution.
+</p>
+
+<h2 id="mod-installer">4.4 Quick Installer</h2>
+
+<p>
+The Quick Installer provides a graphical interface to the Windows Package Manager (Winget), enabling
+one-click installation of curated software packages without requiring command-line interaction.
+</p>
+
+<h3>Software Categories</h3>
+<ul>
+  <li><strong>Internet</strong> -- Browsers, VPN clients, communication tools</li>
+  <li><strong>Runtimes</strong> -- .NET, Visual C++ Redistributable, Java</li>
+  <li><strong>Development</strong> -- IDEs, Git, Docker, compilers</li>
+  <li><strong>Gaming</strong> -- Game launchers, streaming tools</li>
+  <li><strong>Creation</strong> -- Media editors, design tools</li>
+  <li><strong>System</strong> -- Utilities, archivers, disk tools</li>
+</ul>
+
+<p>
+The Winget scope (Machine or User) is configurable via Settings. Software definitions are loaded from
+an embedded <code>software_list.json</code> resource that ships with the application.
+</p>
+
+<h2 id="mod-cleaning">4.5 System Cleaning</h2>
+
+<p>
+The Cleaning module provides both a standard Windows Disk Cleanup integration and a proprietary deep
+cleaning engine. Before execution, the engine estimates the recoverable space per category.
+</p>
+
+<h3>Cleaning Categories (10 total)</h3>
+
+<table>
+  <thead>
+    <tr><th>#</th><th>Category</th><th>Target Paths</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Windows Temp Files</td><td><code>%TEMP%</code>, <code>C:\Windows\Temp</code></td></tr>
+    <tr><td>2</td><td>Browser Caches</td><td>Chrome, Firefox, Edge local cache directories</td></tr>
+    <tr><td>3</td><td>System Logs</td><td>Windows event log archives, CBS logs</td></tr>
+    <tr><td>4</td><td>Recycle Bin</td><td><code>$Recycle.Bin</code></td></tr>
+    <tr><td>5</td><td>User Temp</td><td><code>%LOCALAPPDATA%\Temp</code></td></tr>
+    <tr><td>6</td><td>Thumbnail Cache</td><td><code>thumbcache_*.db</code> files</td></tr>
+    <tr><td>7</td><td>Error Reports</td><td>Windows Error Reporting queue</td></tr>
+    <tr><td>8</td><td>Old Installers &amp; Updates</td><td><code>SoftwareDistribution\Download</code></td></tr>
+    <tr><td>9</td><td>DNS Cache</td><td>In-memory DNS resolver cache</td></tr>
+    <tr><td>10</td><td>Prefetch</td><td><code>C:\Windows\Prefetch</code></td></tr>
+  </tbody>
+</table>
+
+<p>
+The deep cleaning mode performs iterative, multi-pass deletion with retry logic for locked files. Results
+include per-category byte counts, file deletion counts, and elapsed time. The Windows Disk Cleanup utility
+(<code>cleanmgr.exe</code>) is launched as a separate elevated process with <code>BelowNormal</code> priority
+to avoid impacting system responsiveness.
+</p>
+
+<h2 id="mod-scanner">4.6 Scanner</h2>
+
+<p>
+The Scanner module performs a comprehensive audit of all installed applications, producing a detailed
+inventory with the following fields per application: name, version, publisher, estimated size, installation
+path, detection source, and installation date. Results are sortable and filterable. The scanning process
+uses the same multi-source detection engine as the Applications module (Section 4.2).
+</p>
+
+<h2 id="mod-ram" class="page-break">4.7 RAM Cleaner</h2>
+
+<p>
+The RAM Cleaner module provides kernel-level memory optimization through direct Windows API calls via
+P/Invoke. It displays real-time RAM statistics (physical used/total, virtual commit charge, pagefile size)
+and offers manual or automated cleaning.
+</p>
+
+<h3>P/Invoke API Surface</h3>
+
+<table>
+  <thead>
+    <tr><th>DLL</th><th>Functions Used</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ntdll.dll</code></td><td><code>NtSetSystemInformation</code> (MemoryPurge, StandbyList, ModifiedList)</td></tr>
+    <tr><td><code>kernel32.dll</code></td><td><code>SetProcessWorkingSetSize</code>, <code>OpenProcess</code>, <code>CloseHandle</code>, <code>SetSystemFileCacheSize</code>, <code>GetProcessHeap</code>, <code>HeapCompact</code>, <code>GlobalMemoryStatusEx</code></td></tr>
+    <tr><td><code>advapi32.dll</code></td><td><code>OpenProcessToken</code>, <code>LookupPrivilegeValue</code>, <code>AdjustTokenPrivileges</code>, <code>RegFlushKey</code></td></tr>
+    <tr><td><code>dnsapi.dll</code></td><td><code>DnsFlushResolverCache</code></td></tr>
+    <tr><td><code>iphlpapi.dll</code></td><td><code>FlushIpNetTable</code></td></tr>
+  </tbody>
+</table>
+
+<h3>Memory Operations</h3>
+<p>The following kernel-level operations are performed via <code>NtSetSystemInformation</code>:</p>
+<ul>
+  <li><strong>Empty Working Sets</strong> (<code>SystemMemoryListInformation</code>, command 2) -- Trims the working set of all processes.</li>
+  <li><strong>Flush Modified List</strong> (command 3) -- Writes dirty pages to the pagefile.</li>
+  <li><strong>Purge Standby List</strong> (command 4) -- Frees cached standby pages.</li>
+  <li><strong>Purge Low-Priority Standby</strong> (command 5) -- Frees priority-0 standby pages only.</li>
+  <li><strong>Memory Combine</strong> -- Deduplicates identical memory pages.</li>
+  <li><strong>.NET GC Collect</strong> -- Forces a full garbage collection with LOH compaction.</li>
+  <li><strong>System File Cache Flush</strong> -- Resets the system file cache size limits.</li>
+  <li><strong>Pool Non-Paged Cleanup</strong> -- Reclaims non-paged pool memory.</li>
+  <li><strong>Heap Compaction</strong> -- Compacts the process heap via <code>HeapCompact</code>.</li>
+</ul>
+
+<p>
+Privilege escalation is performed per-operation by acquiring <code>SeDebugPrivilege</code> and
+<code>SeIncreaseQuotaPrivilege</code> through the <code>AdjustTokenPrivileges</code> API. The
+automatic mode supports both interval-based triggers and threshold-based triggers (when RAM usage
+exceeds a configurable percentage).
+</p>
+
+<h2 id="mod-ai">4.8 AI Assistant</h2>
+
+<p>
+The AI Assistant is an in-application conversational interface powered by a local GGUF language model.
+It provides contextual help across all Coclico modules, answering user questions about features,
+guiding step-by-step through complex operations, and adapting its response language to match the
+user's input language. The assistant is described in full technical detail in Section 5.
+</p>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     5. LOCAL AI ENGINE
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="local-ai" class="page-break">5. Local AI Engine</h1>
+
+<p>
+Coclico implements a fully local LLM inference stack using LLamaSharp 0.26, the C# binding for
+<code>llama.cpp</code>. The engine loads a single GGUF model file (<code>resource/model/IA-support-chat.gguf</code>)
+and creates two isolated execution contexts from the same model weights. This dual-context architecture
+eliminates contention between interactive user chat and background autonomous optimization tasks.
+</p>
+
+<h2 id="dual-executor">5.1 Dual-Executor Architecture</h2>
+
+<div class="arch-diagram">
+                    LLamaWeights (single model file, shared weights)
+                           |
+              +------------+------------+
+              |                         |
+        Chat Context                Engine Context
+     (2048 token window)          (512 token window)
+              |                         |
+     InteractiveExecutor       InteractiveExecutor
+              |                         |
+       _chatSem (1,1)           _engineSem (1,1)
+              |                         |
+        AiChatView              OptimizationEngine
+     (user conversation)       (system prompts, JSON)
+</div>
+
+<h3>Context Specifications</h3>
+
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Chat Context</th><th>Engine Context</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Context Size</td><td>2048 tokens</td><td>512 tokens</td></tr>
+    <tr><td>Batch Size</td><td>256</td><td>128</td></tr>
+    <tr><td>Thread Count</td><td><code>OptimalThreads</code> (2..6)</td><td><code>OptimalThreads / 2</code></td></tr>
+    <tr><td>Memory Map</td><td>Enabled</td><td>Enabled</td></tr>
+    <tr><td>Flash Attention</td><td>Enabled</td><td>Enabled</td></tr>
+    <tr><td>GPU Layer Attempts</td><td>[8, 0] (GPU first, CPU fallback)</td><td>[8, 0]</td></tr>
+  </tbody>
+</table>
+
+<h3>Immutable Context Swap Pattern</h3>
+<p>
+Context reset is performed without blocking consumers through <code>Interlocked.Exchange</code>:
+</p>
+<pre><code>var newCtx = new ChatCtx(_model.CreateContext(params));
+Interlocked.Exchange(ref _chatCtx, newCtx)?.Dispose();</code></pre>
+<p>
+This atomic swap ensures that any in-flight read of <code>_chatCtx</code> completes on the old context
+while subsequent reads use the new one. The old context is disposed after the exchange. The chat context
+automatically resets after 6 conversation turns to prevent context window saturation.
+</p>
+
+<h3>Short-Term Memory</h3>
+<p>
+The chat executor maintains a sliding window of the last 4 conversation turns
+(<code>MaxMemoryTurns = 4</code>), summarized into a compact memory block injected at session start.
+User messages are truncated to 100 characters and AI responses to 150 characters within the memory block
+to conserve context window budget. After every 6 turns (<code>AutoResetAfterTurns = 6</code>), the context
+is silently reset with the memory block re-injected to prevent quality degradation.
+</p>
+
+<h2 id="idle-release">5.2 Automatic Memory Release</h2>
+
+<p>
+The AI model consumes approximately 2.5 GB of RAM when loaded. To optimize resource usage on machines
+where the AI assistant is not continuously active, Coclico implements a configurable idle timeout
+mechanism:
+</p>
+
+<ol>
+  <li>After each inference operation (chat or engine), a timer is reset to the configured idle period (default: 5 minutes).</li>
+  <li>When the timer fires, <code>OnIdleTimeout</code> executes with <code>Interlocked.CompareExchange</code>
+  guard to prevent concurrent unload attempts.</li>
+  <li>The unload sequence acquires all three semaphores (<code>_initLock</code>, <code>_chatSem</code>,
+  <code>_engineSem</code>) in order, then disposes both contexts and the model weights.</li>
+  <li>A forced GC collect is triggered via <code>MemoryCleanerService.ForceGcCollect()</code> to
+  immediately reclaim the freed native memory.</li>
+  <li>On the next user interaction, <code>InitializeAsync</code> transparently reloads the model with
+  the same GPU-first, CPU-fallback strategy.</li>
+</ol>
+
+<div class="info-box">
+  <p><strong>Memory Impact</strong> -- The automatic unload releases approximately 2.5 GB of RAM after the
+  configured idle period. The reload latency is transparent to the user, as <code>SendMessageAsync</code>
+  internally calls <code>InitializeAsync</code> if the model is not loaded.</p>
+</div>
+
+<h2 id="rag">5.3 Retrieval-Augmented Generation (RAG)</h2>
+
+<p>
+The AI assistant is augmented with a local RAG pipeline implemented in <code>RagService</code>. At startup,
+all Markdown files in <code>resource/docs/</code> are indexed using a hybrid scoring system:
+</p>
+
+<h3>Indexing Pipeline</h3>
+<ol>
+  <li><strong>Chunking</strong> -- Documents are split at Markdown headers (<code>#{1,3}</code>). Each chunk retains its section title as metadata. Chunks smaller than 40 characters are discarded.</li>
+  <li><strong>Tokenization</strong> -- Text is lowercased, split on non-word boundaries (including accented characters), filtered through a stop-word list, and stemmed using a custom <code>SimpleStemmer</code>.</li>
+  <li><strong>TF-IDF Vectorization</strong> -- Term Frequency (TF) and Inverse Document Frequency (IDF, BM25 variant) vectors are computed per chunk. The IDF formula uses the BM25 smoothing: <code>log((N - df + 0.5) / (df + 0.5) + 1)</code>.</li>
+  <li><strong>Pre-computed Norms</strong> -- Cosine similarity norms are pre-computed at index time to avoid runtime square-root operations.</li>
+</ol>
+
+<h3>Search Pipeline</h3>
+<p>At query time, the RAG engine applies a dual-score ranking:</p>
+<ul>
+  <li><strong>BM25 Score (60% weight)</strong> -- Okapi BM25 with parameters <code>k1=1.5</code>, <code>b=0.75</code>, normalized against the maximum BM25 score in the corpus.</li>
+  <li><strong>Cosine Similarity (40% weight)</strong> -- TF-IDF cosine similarity between the query vector and each chunk vector.</li>
+</ul>
+<p>
+The top-K results (default <code>K=2</code>, max 350 characters total) are injected into the LLM prompt
+as a <code>[Doc]</code> context block, positioned between the system prompt and the user message.
+</p>
+
+<h2 id="inference-params">5.4 Inference Parameters</h2>
+
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Chat (User-Facing)</th><th>Engine (Background)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Max Tokens</td><td>512</td><td>256</td></tr>
+    <tr><td>Temperature</td><td>0.4</td><td>0.1</td></tr>
+    <tr><td>Top-P</td><td>0.90</td><td>0.95</td></tr>
+    <tr><td>Top-K</td><td>30</td><td>10</td></tr>
+    <tr><td>Repeat Penalty</td><td>1.1</td><td>1.0</td></tr>
+    <tr><td>Anti-Prompts</td><td><code>&lt;|end|&gt;</code>, <code>&lt;|user|&gt;</code>, <code>&lt;|endoftext|&gt;</code>, <code>User:</code>, <code>Assistant:</code></td><td><code>&lt;|end|&gt;</code>, <code>&lt;|user|&gt;</code>, <code>&lt;|endoftext|&gt;</code></td></tr>
+  </tbody>
+</table>
+
+<p>
+The engine context uses significantly lower temperature (0.1) and top-K (10) to produce deterministic,
+parseable JSON output. The chat context uses slightly higher creativity parameters for natural
+conversational responses.
+</p>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     6. AUTONOMOUS CORE
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="autonomous" class="page-break">6. Autonomous Core</h1>
+
+<p>
+The autonomous core represents Coclico's self-governing optimization subsystem. It continuously monitors
+system health, analyzes code quality, and applies validated improvements through a multi-stage pipeline
+with comprehensive safety gates. The core loop follows the
+Observe-Analyze-Act-Validate pattern described in the architecture vision.
+</p>
+
+<h2 id="opt-engine">6.1 OptimizationEngine -- 3-Stage Pipeline</h2>
+
+<p>
+The <code>OptimizationEngineService</code> implements a lock-free, channel-based pipeline that executes
+every 30 seconds. The pipeline uses three concurrent <code>Task</code> stages communicating through
+bounded channels with <code>DropOldest</code> semantics.
+</p>
+
+<div class="arch-diagram">
+Stage 1: COLLECT                Stage 2: DECIDE                Stage 3: EXECUTE
+(every 30s)                     (per metric batch)             (per decision)
++-------------------+          +-------------------+          +-------------------+
+| CollectMetrics()  |  ----->  | AI or Fallback    |  ----->  | Parse JSON        |
+| - CPU %           | Channel  | decision engine   | Channel  | - SetPriority     |
+| - RAM used/total  | (1 cap)  | - BuildPrompt()   | (1 cap)  | - CreateSnapshot  |
+| - Top 5 processes |          | - SendSystemPrmpt |          | - AuditLog        |
+| - EWMA anomalies  |          | - Audit trail     |          | - Report          |
+| - P95 latency     |          +-------------------+          +-------------------+
++-------------------+
+</div>
+
+<h3>Stage 1: Collect</h3>
+<p>Gathers system metrics using <code>MemoryCleanerService</code> and <code>DynamicTracerService</code>:</p>
+<ul>
+  <li>CPU utilization percentage</li>
+  <li>RAM usage (MB used, MB total, percentage)</li>
+  <li>Top 5 processes by working set memory</li>
+  <li>MemoryCleaner P95 latency from TDigest</li>
+  <li>EWMA anomaly detection via Isolation Forest</li>
+</ul>
+
+<h3>Stage 2: Decide</h3>
+<p>
+If the AI model is loaded, the engine constructs a JSON-structured prompt containing the serialized
+<code>SystemMetrics</code> record plus optional hotspot context from the SourceAnalyzer. The LLM is
+instructed to respond exclusively in JSON with a fixed schema:
+</p>
+<pre><code>{
+  "ProcessId": 1234,
+  "ProcessName": "chrome",
+  "TargetPriority": "BelowNormal",
+  "Reason": "...",
+  "RcaSummary": "Root cause analysis...",
+  "NoAction": false
+}</code></pre>
+<p>
+If the AI is unavailable or fails, the engine falls back to a deterministic scoring algorithm using
+<code>AdaptiveScorer</code>. The scorer computes a weighted sum of normalized CPU, RAM, disk I/O, and
+history features with self-adjusting weights:
+</p>
+<pre><code>score = wCPU * cpuScore + wRAM * ramScore + wDisk * diskScore + wHistory * histScore</code></pre>
+<p>
+Default weights: CPU=0.4, RAM=0.3, Disk=0.2, History=0.1. After each ineffective action, weights are
+adjusted (CPU weight increases, others decrease) and re-normalized to sum to 1.0.
+</p>
+
+<h3>Stage 3: Execute</h3>
+<p>
+Parses the JSON response, extracts the action, and applies it through the <code>IResourceAllocator</code>
+interface. Before any priority change, a rollback snapshot is created. Critical system processes (system,
+smss, csrss, wininit, winlogon, lsass, services, svchost, explorer, coclico) are protected from priority
+modification.
+</p>
+
+<h3>Anomaly Detection: Isolation Forest</h3>
+<p>
+The <code>IsolationForestDetector</code> implements the Liu et al. (2008) algorithm adapted for streaming
+data. Configuration: 100 trees, subsample size of 64, anomaly threshold of 0.65. The forest is initially
+fit after 20 observations and refitted every 50 observations from a rolling buffer of 500 samples.
+When an anomaly is detected (score > 0.65), per-feature Z-scores are computed to identify which
+metrics deviate beyond 2 standard deviations.
+</p>
+
+<h2 id="source-analyzer" class="page-break">6.2 SourceAnalyzer -- Roslyn AST Analysis</h2>
+
+<p>
+The <code>SourceAnalyzerService</code> performs static analysis on C# source files using the Roslyn
+<code>Microsoft.CodeAnalysis.CSharp</code> library (version 4.12.0). It traverses the syntax tree of
+every <code>.cs</code> file (excluding <code>bin/</code> and <code>obj/</code> directories) and computes
+per-method complexity metrics.
+</p>
+
+<h3>Computed Metrics</h3>
+
+<table>
+  <thead>
+    <tr><th>Metric</th><th>Algorithm</th><th>Formula / Description</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cyclomatic Complexity (CC)</td>
+      <td>McCabe, 1976</td>
+      <td>Base 1 + increments for: <code>if</code>, <code>while</code>, <code>for</code>,
+      <code>foreach</code>, <code>do</code>, <code>case</code>, <code>switch arm</code>,
+      <code>catch</code>, ternary <code>?:</code>, <code>&amp;&amp;</code>, <code>||</code></td>
+    </tr>
+    <tr>
+      <td>Cognitive Complexity (CogCC)</td>
+      <td>SonarSource, 2016</td>
+      <td>Increments for control flow structures with nesting penalty. <code>else if</code> does not
+      add nesting. Lambda and local function bodies add nesting depth. Same-operator logical chains
+      are counted once.</td>
+    </tr>
+    <tr>
+      <td>Halstead Volume (V)</td>
+      <td>Halstead, 1977</td>
+      <td><code>V = N * log2(eta)</code> where N = total operators + operands,
+      eta = distinct operators + distinct operands</td>
+    </tr>
+    <tr>
+      <td>Halstead Difficulty (D)</td>
+      <td>Halstead, 1977</td>
+      <td><code>D = (eta1 / 2) * (n2 / eta2)</code></td>
+    </tr>
+    <tr>
+      <td>Halstead Effort (E)</td>
+      <td>Halstead, 1977</td>
+      <td><code>E = D * V</code></td>
+    </tr>
+    <tr>
+      <td>Maintainability Index (MI)</td>
+      <td>SEI, adapted</td>
+      <td><code>MI = max(0, (171 - 5.2*ln(V) - 0.23*CC - 16.2*ln(LOC)) / 171 * 100)</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Severity Classification</h3>
+
+<table>
+  <thead>
+    <tr><th>CC Range</th><th>Base Severity</th><th>Line Count Promotion</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1--5</td><td>Low</td><td>>80 lines: promoted to Medium</td></tr>
+    <tr><td>6--10</td><td>Medium</td><td>>80 lines: promoted to High</td></tr>
+    <tr><td>11--20</td><td>High</td><td>>80 lines: promoted to Critical</td></tr>
+    <tr><td>21+</td><td>Critical</td><td>No further promotion</td></tr>
+  </tbody>
+</table>
+
+<p>
+Methods with severity "Low" and fewer than 20 lines are excluded from hotspot reporting to focus
+attention on meaningful optimization targets. Hotspots are sorted by severity rank (descending),
+then by cyclomatic complexity (descending).
+</p>
+
+<h2 id="digital-twin">6.3 Digital Twin (StateValidator)</h2>
+
+<p>
+The <code>StateValidatorService</code> maintains an in-memory index of all C# source files, acting as a
+"Digital Twin" of the codebase. It performs the following functions:
+</p>
+
+<h3>Indexing</h3>
+<ul>
+  <li>Parses every <code>.cs</code> file using Roslyn and records per-file snapshots with SHA-256 hashes (first 16 hex characters).</li>
+  <li>Implements incremental indexing: files whose hash matches the cached value are skipped, avoiding redundant reparsing.</li>
+  <li>Stale files (deleted since last index) are automatically removed from the index.</li>
+</ul>
+
+<h3>Patch Simulation</h3>
+<p>
+When the AutoPatcher proposes a code modification, the Digital Twin simulates the change by computing
+a weighted improvement score across five normalized metrics:
+</p>
+<pre><code>score = 0.35 * normCC
+      + 0.15 * normLines
+      + 0.20 * normVolume
+      + 0.15 * normDifficulty
+      + 0.15 * normEffort</code></pre>
+<p>
+Each normalization is computed as the negative delta divided by the original value plus one, meaning
+reductions in complexity yield positive scores. A patch is approved only if
+<code>score > 0.05</code> (the improvement threshold). This multi-dimensional gate ensures that the
+cyclomatic complexity, code volume, and Halstead difficulty do not regress, even if one metric improves.
+</p>
+
+<h2 id="autopatcher">6.4 AutoPatcher (CodePatcher)</h2>
+
+<p>
+The <code>CodePatcherService</code> manages the lifecycle of AI-proposed code modifications, from
+proposal through validation to application. It supports two operational modes:
+</p>
+
+<h3>Audit-Only Mode (Default Enterprise)</h3>
+<p>
+When <code>CodePatcherAuditOnly = true</code> (the default), patches are validated by the Digital Twin but
+not applied to disk. Instead, they are recorded as proposals in a pending queue. An authorized human
+can then review, approve, or reject each proposal through the API:
+</p>
+<ul>
+  <li><code>GetPendingProposals()</code> -- Returns all pending patch proposals.</li>
+  <li><code>ApproveAndApplyAsync(proposal)</code> -- Re-validates through the Digital Twin, creates a rollback snapshot, and applies the patch. Logs the approval with <code>Actor: "Human"</code>.</li>
+  <li><code>RejectProposalAsync(proposal, reason)</code> -- Removes from pending and logs the rejection with the provided reason.</li>
+</ul>
+
+<h3>Patch Application Pipeline</h3>
+<ol>
+  <li><strong>Digital Twin Validation</strong> -- <code>SimulatePatch()</code> computes the weighted improvement score.</li>
+  <li><strong>Source Drift Detection</strong> -- Verifies the original method source still exists in the current file contents via string containment check.</li>
+  <li><strong>Rollback Snapshot</strong> -- <code>IRollbackService.CreateSnapshot()</code> persists the entire file contents before modification.</li>
+  <li><strong>AST-Based Replacement</strong> -- <code>MethodReplacer.ReplaceMethod()</code> uses Roslyn to locate the target method in the syntax tree and replace it, preserving surrounding code structure.</li>
+  <li><strong>Disk Write</strong> -- <code>File.WriteAllTextAsync()</code> writes the patched source.</li>
+  <li><strong>Audit Trail</strong> -- A full audit entry is logged with the action type, actor, target, success status, and delta metrics.</li>
+</ol>
+
+<p>
+The history buffer retains the last 100 patch results (applied, rejected, and proposed). The pending
+proposals queue is capped at 50 entries.
+</p>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     7. SECURITY
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="security" class="page-break">7. Security</h1>
+
+<h2 id="zero-cloud">7.1 Zero Cloud Architecture</h2>
+
+<p>
+Coclico is designed as a strictly offline application. No telemetry, logs, AI inference data, or user
+information is transmitted to any external server. The AI model runs entirely on-device using
+<code>llama.cpp</code> via the LLamaSharp binding. All user data is stored under
+<code>%AppData%\Coclico\</code> and never leaves the machine.
+</p>
+
+<p>
+The only outbound network activity is the optional update check service, which polls for new application
+versions every 5 minutes. This service can be disabled in settings.
+</p>
+
+<h2 id="rollback">7.2 Rollback Service &amp; DPAPI Encryption</h2>
+
+<p>
+The <code>RollbackService</code> provides a comprehensive state preservation mechanism for all
+system-modifying operations. Every file write triggered by the autonomous core (AutoPatcher, QoS changes)
+is preceded by a mandatory snapshot.
+</p>
+
+<h3>Architecture</h3>
+<ul>
+  <li><strong>Dual Storage</strong> -- Snapshots are stored both in-memory (ConcurrentDictionary, capacity: 50) and on disk (<code>%AppData%\Coclico\snapshots\</code>).</li>
+  <li><strong>DPAPI Encryption</strong> -- Disk-persisted snapshots are encrypted using <code>ProtectedData.Protect()</code> with <code>DataProtectionScope.CurrentUser</code>. Only the Windows user account that created the snapshot can decrypt it.</li>
+  <li><strong>Metadata Tracking</strong> -- Each snapshot records: unique GUID, context name (e.g., <code>CodePatcher.App.xaml.cs.OnStartup</code>), creation timestamp, state type name, and serialized size in bytes.</li>
+  <li><strong>Insertion-Order Eviction</strong> -- When the in-memory capacity (50) is exceeded, the oldest snapshot is evicted from memory (it remains on disk).</li>
+  <li><strong>Pruning</strong> -- At application exit, snapshots older than 30 days are deleted from both memory and disk.</li>
+</ul>
+
+<h3>Rollback API</h3>
+<pre><code>string CreateSnapshot&lt;T&gt;(string contextName, T state)
+T? Rollback&lt;T&gt;(string snapshotId)
+IReadOnlyList&lt;SnapshotMetadata&gt; GetHistory(int maxCount = 20)
+void Delete(string snapshotId)
+void Prune(TimeSpan olderThan)</code></pre>
+
+<h2 id="sec-policy">7.3 Security Policy Engine</h2>
+
+<p>
+The <code>SecurityPolicyService</code> enforces command-level security restrictions for all
+Flow Chain operations. It maintains three categories of blocked patterns and one category of protected paths:
+</p>
+
+<h3>Default Blocked Patterns (Hardcoded, Non-Suppressible)</h3>
+
+<table>
+  <thead>
+    <tr><th>Category</th><th>Count</th><th>Examples</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CMD Patterns</td>
+      <td>17</td>
+      <td><code>format</code>, <code>rd /s /q</code>, <code>bcdedit</code>, <code>diskpart</code>, <code>sc delete</code>, <code>net user</code></td>
+    </tr>
+    <tr>
+      <td>PowerShell Patterns</td>
+      <td>26</td>
+      <td><code>invoke-expression</code>, <code>-encodedcommand</code>, <code>downloadstring</code>, <code>set-mppreference</code>, <code>[reflection.assembly]::load</code></td>
+    </tr>
+    <tr>
+      <td>PowerShell Wildcards</td>
+      <td>1</td>
+      <td><code>set-itemproperty.*hklm</code> (regex, 100ms timeout)</td>
+    </tr>
+    <tr>
+      <td>Protected Paths</td>
+      <td>9</td>
+      <td><code>\windows\</code>, <code>\program files\</code>, <code>\system volume information\</code>, <code>\boot\</code>, <code>\efi\</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Enterprise Policy Merge</h3>
+<p>
+Organizations can deploy a custom policy file at <code>%AppData%\Coclico\security-policy.json</code>.
+The service loads this file at startup and merges its patterns with the hardcoded defaults using
+<code>HashSet.UnionWith()</code>. The hardcoded defaults can never be removed, only supplemented.
+After merging, all pattern sets are converted to <code>FrozenSet&lt;string&gt;</code> for O(1) lookup
+performance. Regex wildcards are compiled with <code>RegexOptions.Compiled</code> and a 100ms execution
+timeout to prevent ReDoS attacks.
+</p>
+
+<h3>Runtime Verification API</h3>
+<pre><code>bool IsCommandBlocked(string normalizedCmd)
+bool IsPowerShellBlocked(string normalizedPs)
+bool IsProtectedPath(string lowerCasePath)</code></pre>
+
+<h2 id="audit-log">7.4 Audit Log (NDJSON)</h2>
+
+<p>
+The <code>AuditLogService</code> implements an append-only, Newline-Delimited JSON (NDJSON) audit trail.
+Each entry is written to a daily file (<code>audit-{yyyy-MM-dd}.log</code>) under
+<code>%AppData%\Coclico\audit\</code>.
+</p>
+
+<h3>Audit Entry Schema</h3>
+<pre><code>record AuditEntry(
+    DateTimeOffset Timestamp,
+    string Actor,           // "OptimizationEngine", "CodePatcher", "Human", ...
+    string Action,          // "AiDecision", "PatchApplied", "ProposalRejected", ...
+    string Target,          // "SystemMetrics", "App.xaml.cs::OnStartup", ...
+    bool Success,
+    string? Details,
+    AiDecisionContext? AiDecision  // optional LLM prompt/response traceability
+)
+
+record AiDecisionContext(
+    string Prompt,
+    string RawResponse,
+    string DecisionMode     // "Cognitive" or "Fallback"
+)</code></pre>
+
+<h3>Implementation Details</h3>
+<ul>
+  <li><strong>Write Serialization</strong> -- A <code>SemaphoreSlim(1,1)</code> ensures atomic, ordered writes.</li>
+  <li><strong>Reverse Read</strong> -- <code>GetRecentAsync</code> reads entries from the end of files using a block-based reverse reader with <code>ArrayPool&lt;byte&gt;.Shared</code> for zero-allocation buffering.</li>
+  <li><strong>Pruning</strong> -- At application startup, audit files older than <code>AuditRetentionDays</code> (configurable in Settings) are deleted.</li>
+  <li><strong>AI Traceability</strong> -- Every OptimizationEngine cycle logs the full prompt and raw LLM response in the <code>AiDecisionContext</code> field, providing complete reproducibility of autonomous decisions.</li>
+</ul>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     8. TELEMETRY & OBSERVABILITY
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="telemetry" class="page-break">8. Telemetry &amp; Observability</h1>
+
+<h2 id="serilog">8.1 Structured Logging (Serilog)</h2>
+
+<p>
+Coclico uses Serilog 4.2.0 with the File sink 6.0.0 for structured, rolling daily log files.
+Logs are written to <code>%AppData%\Coclico\logs\coclico-{date}.log</code> with a 14-day retention
+policy. The output template includes millisecond-precision timestamps, three-character uppercase level
+indicators, and the source context for precise log filtering.
+</p>
+
+<h3>Log Configuration</h3>
+<pre><code>Template: [{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}
+Minimum Level: Debug
+Rolling Interval: Day
+Retained Files: 14
+Integration: Microsoft.Extensions.Logging via Serilog.Extensions.Logging 8.0.0</code></pre>
+
+<h3>Logging Conventions</h3>
+<ul>
+  <li><code>LoggingService.LogInfo(message)</code> -- Informational events, startup milestones, cycle completions.</li>
+  <li><code>LoggingService.LogError(message)</code> -- Error conditions that are handled but notable.</li>
+  <li><code>LoggingService.LogException(ex, context)</code> -- Full exception with stack trace and caller context.</li>
+  <li>Every service method logs entry and exit points with parameter summaries and return value descriptions.</li>
+</ul>
+
+<h2 id="dynamic-tracer">8.2 DynamicTracer -- EWMA &amp; Isolation Forest</h2>
+
+<p>
+The <code>DynamicTracerService</code> provides application-level performance instrumentation with
+statistical anomaly detection capabilities.
+</p>
+
+<h3>Metric Collection</h3>
+<ul>
+  <li><strong>Ring Buffer</strong> -- A <code>ConcurrentQueue</code>-based ring buffer with a capacity of 2,000 snapshots.
+  Overflow evicts the oldest entry via <code>TryDequeue</code>.</li>
+  <li><strong>TDigest Quantiles</strong> -- Each operation name has an associated <code>TDigest</code> (compression=100,
+  Dunning & Ertl 2019 algorithm) for streaming P95 estimation without full-sort overhead.</li>
+  <li><strong>Periodic Flush</strong> -- Every 30 seconds, the buffer is serialized to <code>%AppData%\Coclico\telemetry\metrics-{date}.json</code>.
+  Files older than 14 days are pruned.</li>
+</ul>
+
+<h3>API Surface</h3>
+<pre><code>IDisposable BeginOperation(string name, string? category, IReadOnlyDictionary&lt;string, object&gt;? tags)
+void Record(string name, TimeSpan elapsed, ...)
+IReadOnlyList&lt;MetricSnapshot&gt; GetRecentMetrics(int maxCount = 100)
+MetricAggregate? GetAggregate(string operationName)  // Min, Max, Avg, P95, SampleCount</code></pre>
+
+<p>
+The <code>BeginOperation</code> method returns a disposable span that records elapsed time using
+<code>Stopwatch.GetTimestamp()</code> and <code>Stopwatch.GetElapsedTime()</code> for high-resolution timing.
+</p>
+
+<h3>Anomaly Detection Pipeline</h3>
+<p>
+The Isolation Forest detector (<code>IsolationForestDetector</code>) processes multi-dimensional feature
+vectors (CPU%, RAM%, DiskIO latency) from the OptimizationEngine:
+</p>
+
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Value</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Number of Trees</td><td>100</td><td>Ensemble size for averaging path lengths</td></tr>
+    <tr><td>Subsample Size</td><td>64</td><td>Points per tree at fit time</td></tr>
+    <tr><td>Anomaly Threshold</td><td>0.65</td><td>Score above which an observation is anomalous</td></tr>
+    <tr><td>Min Samples to Fit</td><td>20</td><td>Minimum buffer size before first forest construction</td></tr>
+    <tr><td>Max Buffer Size</td><td>500</td><td>Rolling window for forest refitting</td></tr>
+    <tr><td>Refit Interval</td><td>Every 50 observations</td><td>Forest is reconstructed to adapt to drift</td></tr>
+  </tbody>
+</table>
+
+<p>
+The anomaly score is computed as <code>2^(-avgPathLength / c(n))</code> where <code>c(n)</code> is the
+average path length of an unsuccessful search in a BST: <code>2(ln(n-1) + 0.5772) - 2(n-1)/n</code>.
+Scores closer to 1.0 indicate higher anomaly likelihood.
+</p>
+
+<h2 id="resource-guard">8.3 ResourceGuard -- Pressure Levels</h2>
+
+<p>
+The <code>ResourceGuardService</code> monitors Coclico's own resource footprint using
+<code>System.Reactive</code> observables with a 2-second polling interval. It computes the application's
+CPU usage (delta-based), working set, and private memory, then maps the overall system state to one of
+four pressure levels:
+</p>
+
+<table>
+  <thead>
+    <tr><th>Level</th><th>Trigger Conditions</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Normal</strong></td>
+      <td>RAM &lt; 70% AND AppWorkingSet &lt; 300 MB</td>
+      <td>Reset high-streak counter. GC mode: <code>Interactive</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Elevated</strong></td>
+      <td>RAM >= 70% OR AppWorkingSet >= 300 MB</td>
+      <td>Decrement high-streak counter. GC mode: <code>Interactive</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>High</strong></td>
+      <td>RAM >= 83% OR AppWorkingSet >= 550 MB</td>
+      <td>After 8 consecutive high readings: working set trim. GC mode: <code>SustainedLowLatency</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Critical</strong></td>
+      <td>RAM >= 93% OR AppWorkingSet >= 900 MB</td>
+      <td>After 4 consecutive readings: aggressive LOH compaction + working set trim (30s cooldown). GC mode: <code>SustainedLowLatency</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+The service exposes a <code>PressureChanged</code> event that other services can subscribe to for adaptive
+behavior (e.g., the OptimizationEngine could reduce its analysis scope under Critical pressure). Metric
+collection runs on the Rx <code>Scheduler.Default</code> background thread, with UI property updates
+dispatched to the WPF dispatcher via <code>ObserveOn(DispatcherScheduler)</code>.
+</p>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     9. WEBSITE
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="website" class="page-break">9. Website</h1>
+
+<p>
+Coclico includes a companion marketing and documentation website built with modern web technologies,
+designed for performance, accessibility, and internationalization.
+</p>
+
+<h3>Technology Stack</h3>
+<table>
+  <thead>
+    <tr><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Astro</td><td>5.1+</td><td>Static site generator with island architecture</td></tr>
+    <tr><td>Tailwind CSS</td><td>3.4</td><td>Utility-first CSS framework</td></tr>
+    <tr><td>TypeScript</td><td>5.7</td><td>Type-safe component logic</td></tr>
+    <tr><td>GSAP</td><td>3.12.5</td><td>High-performance scroll and entrance animations</td></tr>
+    <tr><td>Fuse.js</td><td>7.0</td><td>Fuzzy client-side search</td></tr>
+  </tbody>
+</table>
+
+<h3>Internationalization</h3>
+<p>
+The website supports 4 languages with dedicated routing and locale files:
+</p>
+<ul>
+  <li><strong>French</strong> (<code>/fr/</code>) -- Primary language</li>
+  <li><strong>English</strong> (<code>/en/</code>)</li>
+  <li><strong>German</strong> (<code>/de/</code>)</li>
+  <li><strong>Spanish</strong> (<code>/es/</code>)</li>
+</ul>
+<p>
+Translation strings are managed through TypeScript locale modules under <code>src/i18n/locales/</code>.
+The root <code>index.astro</code> page handles locale detection and routing. Additional content sections
+include dedicated pages for changelog, documentation, FAQ, guides, and wiki.
+</p>
+
+<h3>Build &amp; Deploy</h3>
+<pre><code>npm run dev      # Local development server
+npm run build    # Production static build
+npm run preview  # Preview production build
+npm run check    # Astro type checking</code></pre>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     10. PREREQUISITES & DEPLOYMENT
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="prerequisites" class="page-break">10. Prerequisites &amp; Deployment</h1>
+
+<h2>System Requirements</h2>
+
+<table>
+  <thead>
+    <tr><th>Requirement</th><th>Minimum</th><th>Recommended</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Operating System</td><td>Windows 10 22H2 (Build 22621)</td><td>Windows 11 23H2+</td></tr>
+    <tr><td>Runtime</td><td>.NET 10.0 Desktop Runtime</td><td>.NET 10.0 Desktop Runtime</td></tr>
+    <tr><td>RAM (without AI)</td><td>4 GB</td><td>8 GB</td></tr>
+    <tr><td>RAM (with AI loaded)</td><td>8 GB</td><td>16 GB</td></tr>
+    <tr><td>Disk Space</td><td>500 MB (app + model)</td><td>1 GB</td></tr>
+    <tr><td>CPU</td><td>x64, 4 cores</td><td>x64, 8+ cores (for optimal LLM threading)</td></tr>
+    <tr><td>GPU (optional)</td><td>Vulkan-compatible (if using GPU backend)</td><td>Any Vulkan 1.1+ GPU</td></tr>
+    <tr><td>Privileges</td><td>Administrator (required for WMI, memory ops, priority changes)</td><td>Administrator</td></tr>
+  </tbody>
+</table>
+
+<h2>Build Instructions</h2>
+
+<pre><code># Restore NuGet packages
+dotnet restore
+
+# Build the application
+dotnet build Coclico/Coclico.csproj
+
+# Run the application (requires admin elevation)
+dotnet run --project Coclico/Coclico.csproj
+
+# Run all tests
+dotnet test
+
+# Run specific test class
+dotnet test --filter "FullyQualifiedName~ServiceCore"</code></pre>
+
+<h2>Deployment Artifacts</h2>
+
+<p>
+An Inno Setup script (<code>Coclico_Setup.iss</code>) is included for producing a Windows installer.
+The installer packages the compiled application, the GGUF model file, resource documentation, and
+the .NET runtime prerequisite check.
+</p>
+
+<h2>User Data Locations</h2>
+
+<table>
+  <thead>
+    <tr><th>File / Directory</th><th>Path</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>settings.json</code></td><td><code>%AppData%\Coclico\</code></td><td>Application settings (theme, language, AI config)</td></tr>
+    <tr><td><code>flow_chains.json</code></td><td><code>%AppData%\Coclico\</code></td><td>Flow Chain definitions</td></tr>
+    <tr><td><code>custom_apps_data.json</code></td><td><code>%AppData%\Coclico\</code></td><td>User-customized application names/categories</td></tr>
+    <tr><td><code>manual_apps.json</code></td><td><code>%AppData%\Coclico\</code></td><td>Manually added application entries</td></tr>
+    <tr><td><code>avatar.png</code></td><td><code>%AppData%\Coclico\</code></td><td>User profile avatar</td></tr>
+    <tr><td><code>security-policy.json</code></td><td><code>%AppData%\Coclico\</code></td><td>Enterprise security policy (optional)</td></tr>
+    <tr><td><code>logs\</code></td><td><code>%AppData%\Coclico\logs\</code></td><td>Serilog daily rolling logs (14 days)</td></tr>
+    <tr><td><code>audit\</code></td><td><code>%AppData%\Coclico\audit\</code></td><td>NDJSON audit trail</td></tr>
+    <tr><td><code>snapshots\</code></td><td><code>%AppData%\Coclico\snapshots\</code></td><td>DPAPI-encrypted rollback snapshots</td></tr>
+    <tr><td><code>telemetry\</code></td><td><code>%AppData%\Coclico\telemetry\</code></td><td>DynamicTracer metric dumps (14 days)</td></tr>
+  </tbody>
+</table>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     APPENDIX A: DIRECTORY STRUCTURE
+     ════════════════════════════════════════════════════════════════════════ -->
+<h1 id="appendix-dir" class="page-break">Appendix A: Directory Structure</h1>
+
+<pre><code>Coclico/
++-- Coclico.slnx                    # Solution file
++-- CLAUDE.md                       # AI assistant project instructions
++-- README.md                       # English README
++-- README.fr.md                    # French README
++-- LICENSE                         # Open source
++-- Coclico_Setup.iss               # Inno Setup installer script
++-- docs/                           # Project documentation
++-- Coclico/                        # Main application project
+|   +-- Coclico.csproj              # Project file (.NET 10, WinExe)
+|   +-- App.xaml / App.xaml.cs      # Application entry point
+|   +-- MainWindow.xaml / .cs       # Shell window with navigation
+|   +-- AssemblyInfo.cs             # Assembly metadata
+|   +-- app.manifest                # UAC elevation manifest
+|   +-- Properties/                 # Launch settings
+|   +-- Models/
+|   |   +-- LaunchMode.cs           # Startup mode enum
+|   |   +-- WorkflowPipeline.cs     # Pipeline, Step, Connection models
+|   +-- Views/
+|   |   +-- DashboardView.xaml      # System metrics dashboard
+|   |   +-- ProgramsView.xaml       # Application library
+|   |   +-- WorkflowPipelinesView.xaml  # Flow Chain visual editor
+|   |   +-- InstallerView.xaml      # Winget GUI
+|   |   +-- CleaningView.xaml       # Disk cleanup
+|   |   +-- ScannerView.xaml        # Application audit
+|   |   +-- RamCleanerView.xaml     # Memory optimization
+|   |   +-- AiChatView.xaml         # AI chat interface
+|   |   +-- SettingsView.xaml       # Application settings
+|   |   +-- HelpView.xaml           # Help / about
+|   |   +-- ProfileWindow.xaml      # User profile editor
+|   |   +-- SplashWindow.xaml       # Startup splash screen
+|   |   +-- LauncherWindow.xaml     # First-run configuration
+|   |   +-- AdminPromptWindow.xaml  # UAC elevation dialog
+|   |   +-- AvatarCropWindow.xaml   # Avatar image cropper
+|   |   +-- RuleSelectionDialog.xaml # Flow Chain rule picker
+|   |   +-- PipelineLink.cs         # Visual link renderer
+|   +-- ViewModels/
+|   |   +-- DashboardViewModel.cs
+|   |   +-- CleaningViewModel.cs
+|   |   +-- ScannerViewModel.cs
+|   |   +-- SettingsViewModel.cs
+|   |   +-- WorkflowPipelinesViewModel.cs
+|   +-- Services/
+|   |   +-- ServiceContainer.cs     # Static DI wrapper
+|   |   +-- AiChatService.cs        # Dual-context LLamaSharp
+|   |   +-- IAiService.cs           # AI service interface
+|   |   +-- RagService.cs           # BM25+Cosine RAG engine
+|   |   +-- OptimizationEngineService.cs  # 3-stage pipeline
+|   |   +-- IOptimizationEngine.cs
+|   |   +-- SourceAnalyzerService.cs     # Roslyn AST analysis
+|   |   +-- ISourceAnalyzer.cs
+|   |   +-- StateValidatorService.cs     # Digital Twin
+|   |   +-- IStateValidator.cs
+|   |   +-- CodePatcherService.cs        # AutoPatcher
+|   |   +-- ICodePatcher.cs
+|   |   +-- DynamicTracerService.cs      # Telemetry + TDigest
+|   |   +-- IDynamicTracer.cs
+|   |   +-- ResourceGuardService.cs      # Pressure level monitor
+|   |   +-- ResourceAllocatorService.cs  # Process priority QoS
+|   |   +-- IResourceAllocator.cs
+|   |   +-- RollbackService.cs           # DPAPI-encrypted snapshots
+|   |   +-- IRollbackService.cs
+|   |   +-- SecurityPolicyService.cs     # FrozenSet policy engine
+|   |   +-- ISecurityPolicy.cs
+|   |   +-- AuditLogService.cs           # NDJSON audit trail
+|   |   +-- IAuditLog.cs
+|   |   +-- FeatureExecutionEngine.cs    # Circuit-breaker wrapper
+|   |   +-- MemoryCleanerService.cs      # P/Invoke RAM operations
+|   |   +-- CleaningService.cs           # Disk cleanup engine
+|   |   +-- InstalledProgramsService.cs  # 8-source app detection
+|   |   +-- InstallerService.cs          # Winget integration
+|   |   +-- WorkflowService.cs           # CRUD + execution
+|   |   +-- SettingsService.cs           # JSON settings persistence
+|   |   +-- ThemeService.cs              # Dark/light theme engine
+|   |   +-- LocalizationService.cs       # 10-language runtime switch
+|   |   +-- ProfileService.cs            # User profile management
+|   |   +-- CacheService.cs              # In-memory caching
+|   |   +-- ICacheService.cs
+|   |   +-- LoggingService.cs            # Serilog facade
+|   |   +-- NetworkMonitorService.cs     # Network state tracking
+|   |   +-- ProcessWatcherService.cs     # Process lifecycle events
+|   |   +-- StartupService.cs            # Windows startup registration
+|   |   +-- StartupHealthService.cs      # Boot health diagnostics
+|   |   +-- KeyboardShortcutsService.cs  # Global hotkey registration
+|   |   +-- ToastService.cs              # WPF notification toasts
+|   |   +-- TrayService.Win32.cs         # System tray P/Invoke
+|   |   +-- UpdateCheckService.cs        # Version update polling
+|   |   +-- UpdateManager.cs             # Update download/apply
+|   |   +-- UserAccountService.cs        # Windows user account info
+|   |   +-- SecretScanService.cs         # Credential leak detection
+|   |   +-- SecurityHelpers.cs           # Privilege escalation utils
+|   |   +-- SeverityClassifier.cs        # Log severity mapping
+|   |   +-- AiActionParser.cs            # LLM response JSON parser
+|   |   +-- OptimizationAction.cs        # Action record type
+|   |   +-- Algorithms/
+|   |       +-- IsolationForestDetector.cs  # Liu et al. 2008
+|   |       +-- TDigest.cs                  # Dunning &amp; Ertl 2019
+|   |       +-- MethodReplacer.cs           # Roslyn AST replacement
+|   |       +-- SimpleStemmer.cs            # Token stemmer for RAG
+|   +-- Converters/                 # WPF value converters
+|   +-- Resources/
+|   |   +-- icone/                  # Application icons
+|   |   +-- software_list.json      # Winget package definitions
+|   +-- resource/
+|       +-- model/                  # GGUF AI model file
+|       +-- docs/                   # RAG knowledge base (Markdown)
++-- Coclico.Tests/                  # xUnit + Moq test project
++-- Installer/                      # Inno Setup resources
++-- website/                        # Astro 5 companion website
+    +-- astro.config.mjs
+    +-- tailwind.config.mjs
+    +-- package.json
+    +-- tsconfig.json
+    +-- public/                     # Static assets
+    +-- src/
+        +-- components/             # Astro/HTML components
+        +-- layouts/                # Page layouts
+        +-- pages/                  # Route pages (fr, en, de, es)
+        +-- styles/                 # Global CSS
+        +-- i18n/
+            +-- index.ts            # i18n router
+            +-- locales/            # fr.ts, en.ts, de.ts, es.ts</code></pre>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="doc-footer">
+  Coclico -- Technical Reference Document v1.0.4 -- March 2026<br>
+  2026 Coclico<br>
+  
+</div>
+
+</body>
+</html>

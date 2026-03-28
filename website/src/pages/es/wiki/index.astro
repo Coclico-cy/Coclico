@@ -1,0 +1,250 @@
+---
+import DocLayout from '../../../layouts/DocLayout.astro';
+const lang = 'es' as const;
+
+const sidebarLinks = [
+  { group: 'Arquitectura', label: 'Visión general', href: '#overview' },
+  { group: 'Arquitectura', label: 'Arranque & DI', href: '#startup-di' },
+  { group: 'Arquitectura', label: 'ServiceContainer', href: '#service-container' },
+  { group: 'Arquitectura', label: 'Patrón MVVM', href: '#mvvm' },
+  { group: 'Servicios Core', label: 'Dual LLM Executor', href: '#dual-llm' },
+  { group: 'Servicios Core', label: 'FeatureExecutionEngine', href: '#feature-engine' },
+  { group: 'Servicios Core', label: 'RollbackService', href: '#rollback' },
+  { group: 'Automatización', label: 'Sistema Flow Chains', href: '#flow-chains-sys' },
+  { group: 'Automatización', label: 'Modelo WorkflowPipeline', href: '#workflow-pipeline' },
+  { group: 'Fase 3.x Autónoma', label: 'SourceAnalyzer (Roslyn)', href: '#source-analyzer' },
+  { group: 'Fase 3.x Autónoma', label: 'Digital Twin Gate', href: '#digital-twin' },
+  { group: 'Fase 3.x Autónoma', label: 'AutoPatcher', href: '#auto-patcher' },
+  { group: 'Fase 3.x Autónoma', label: 'OptimizationEngine', href: '#optimization-engine' },
+  { group: 'Seguridad', label: 'SecurityPolicy & AuditLog', href: '#security-policy' },
+  { group: 'Convenciones', label: 'Convenciones de código', href: '#conventions' },
+];
+
+const tocLinks = [
+  { label: 'Visión general', href: '#overview', level: 2 as const },
+  { label: 'Arranque & DI', href: '#startup-di', level: 2 as const },
+  { label: 'ServiceContainer', href: '#service-container', level: 2 as const },
+  { label: 'Patrón MVVM', href: '#mvvm', level: 2 as const },
+  { label: 'Dual LLM Executor', href: '#dual-llm', level: 2 as const },
+  { label: 'FeatureExecutionEngine', href: '#feature-engine', level: 2 as const },
+  { label: 'RollbackService', href: '#rollback', level: 2 as const },
+  { label: 'Sistema Flow Chains', href: '#flow-chains-sys', level: 2 as const },
+  { label: 'Modelo WorkflowPipeline', href: '#workflow-pipeline', level: 2 as const },
+  { label: 'SourceAnalyzer (Roslyn)', href: '#source-analyzer', level: 2 as const },
+  { label: 'Digital Twin Gate', href: '#digital-twin', level: 2 as const },
+  { label: 'AutoPatcher', href: '#auto-patcher', level: 2 as const },
+  { label: 'OptimizationEngine', href: '#optimization-engine', level: 2 as const },
+  { label: 'Seguridad & Auditoría', href: '#security-policy', level: 2 as const },
+  { label: 'Convenciones de código', href: '#conventions', level: 2 as const },
+];
+---
+
+<DocLayout
+  title="Wiki Desarrollador — Coclico"
+  description="Documentación técnica de la arquitectura de Coclico: MVVM, ServiceContainer DI, Dual LLM Executor, núcleo autónomo Fase 3.x, seguridad y convenciones."
+  lang={lang}
+  currentPath="/wiki/"
+  sidebarLinks={sidebarLinks}
+  tocLinks={tocLinks}
+  heroTitle="Wiki Desarrollador"
+  heroBadge="Referencia Técnica"
+  heroDesc="Arquitectura interna, patrones, servicios core y sistema autónomo de Coclico. Referencia para contribuidores e integradores."
+>
+
+  <!-- Referencias cruzadas a secciones complementarias -->
+  <nav class="doc-crosslinks" aria-label="Secciones complementarias">
+    <a href="/Coclico/es/docs/" class="crosslink-card">
+      <span class="crosslink-icon">📚</span>
+      <span class="crosslink-label">Documentación API</span>
+      <span class="crosslink-desc">Referencia completa de interfaces, servicios y modelos</span>
+    </a>
+    <a href="/Coclico/es/guide/" class="crosslink-card">
+      <span class="crosslink-icon">📖</span>
+      <span class="crosslink-label">Guía &amp; Tutorial</span>
+      <span class="crosslink-desc">Instalación, módulos y Flow Chains paso a paso</span>
+    </a>
+    <a href="/Coclico/es/faq/" class="crosslink-card">
+      <span class="crosslink-icon">❓</span>
+      <span class="crosslink-label">FAQ</span>
+      <span class="crosslink-desc">Preguntas frecuentes sobre instalación y uso</span>
+    </a>
+  </nav>
+
+  <h2 id="overview">Visión general</h2>
+  <p>Coclico está arquitecturado alrededor de un bucle autónomo: <strong>Observar → Analizar → Actuar → Validar</strong></p>
+  <ul>
+    <li><strong>Observar:</strong> <code>DynamicTracerService</code> recopila telemetría CPU/RAM/red</li>
+    <li><strong>Analizar:</strong> <code>OptimizationEngineService</code> + <code>SourceAnalyzerService</code> (Roslyn AST)</li>
+    <li><strong>Actuar:</strong> <code>AutoPatcherService</code> aplica parches validados</li>
+    <li><strong>Validar:</strong> <code>DigitalTwinService</code> asegura que la complejidad ciclomática no aumenta</li>
+  </ul>
+  <p>Framework: <strong>.NET 10 / C# (LangVersion: preview)</strong>, UI en <strong>WPF + WPF-UI 4.x</strong>, DI via <code>Microsoft.Extensions.DependencyInjection</code>.</p>
+
+  <h2 id="startup-di">Arranque & DI</h2>
+  <p>Punto de entrada: <code>App.xaml.cs</code>. Secuencia de arranque:</p>
+
+  <pre><code><span class="tok-cmt">// App.xaml.cs — secuencia de arranque simplificada</span>
+<span class="tok-kw">protected override async</span> <span class="tok-type">void</span> <span class="tok-fn">OnStartup</span>(<span class="tok-type">StartupEventArgs</span> e)
+&#123;
+    <span class="tok-cmt">// 1. Elevación UAC obligatoria</span>
+    <span class="tok-kw">if</span> (!<span class="tok-type">ElevationHelper</span>.<span class="tok-fn">IsElevated</span>())
+        <span class="tok-type">ElevationHelper</span>.<span class="tok-fn">RestartAsAdmin</span>();
+
+    <span class="tok-cmt">// 2. Construcción del contenedor DI</span>
+    <span class="tok-type">ServiceContainer</span>.<span class="tok-fn">Build</span>(services =&gt;
+    &#123;
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">ICacheService</span>, <span class="tok-type">CacheService</span>&gt;();
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">IDynamicTracer</span>, <span class="tok-type">DynamicTracerService</span>&gt;();
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">IRollbackService</span>, <span class="tok-type">RollbackService</span>&gt;();
+        services.<span class="tok-fn">AddSingleton</span>&lt;<span class="tok-type">AiChatService</span>&gt;();
+        services.<span class="tok-fn">AddTransient</span>&lt;<span class="tok-type">CleaningService</span>&gt;();
+    &#125;, validateOnBuild: <span class="tok-kw">true</span>);
+
+    <span class="tok-cmt">// 3. SplashWindow durante el calentamiento de servicios</span>
+    <span class="tok-kw">var</span> splash = <span class="tok-kw">new</span> <span class="tok-type">SplashWindow</span>();
+    splash.<span class="tok-fn">Show</span>();
+    <span class="tok-kw">await</span> <span class="tok-type">Task</span>.<span class="tok-fn">Delay</span>(<span class="tok-str">2000</span>).<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+
+    <span class="tok-cmt">// 4. Apertura de MainWindow</span>
+    <span class="tok-kw">new</span> <span class="tok-type">MainWindow</span>().<span class="tok-fn">Show</span>();
+    splash.<span class="tok-fn">Close</span>();
+&#125;</code></pre>
+
+  <h2 id="service-container">ServiceContainer</h2>
+  <p>Un wrapper estático thread-safe alrededor de <code>IServiceProvider</code>. Dos métodos principales:</p>
+
+  <pre><code><span class="tok-kw">public static class</span> <span class="tok-type">ServiceContainer</span>
+&#123;
+    <span class="tok-cmt">/// Resolución obligatoria — lanza excepción si falta</span>
+    <span class="tok-kw">public static</span> T <span class="tok-fn">GetRequired</span>&lt;T&gt;() <span class="tok-kw">where</span> T : <span class="tok-kw">notnull</span>
+        =&gt; _provider!.<span class="tok-fn">GetRequiredService</span>&lt;T&gt;();
+
+    <span class="tok-cmt">/// Resolución opcional — devuelve null si falta</span>
+    <span class="tok-kw">public static</span> T? <span class="tok-fn">GetOptional</span>&lt;T&gt;() <span class="tok-kw">where</span> T : <span class="tok-kw">class</span>
+        =&gt; _provider!.<span class="tok-fn">GetService</span>&lt;T&gt;();
+&#125;</code></pre>
+
+  <blockquote>
+    Prefiere la inyección por constructor en código nuevo. <code>ServiceContainer.GetRequired&lt;T&gt;()</code> está reservado para casos donde la inyección es imposible (handlers estáticos, convertidores WPF, etc.).
+  </blockquote>
+
+  <h2 id="mvvm">Patrón MVVM</h2>
+  <p>Coclico sigue estrictamente el MVVM con <strong>CommunityToolkit.Mvvm 8.4</strong>:</p>
+  <ul>
+    <li><strong>Vistas</strong> (<code>Views/*.xaml</code>) — XAML puro, sin lógica de negocio</li>
+    <li><strong>ViewModels</strong> (<code>ViewModels/*ViewModel.cs</code>) — <code>[ObservableProperty]</code>, <code>[RelayCommand]</code></li>
+    <li><strong>Servicios</strong> (<code>Services/*.cs</code>) — lógica de negocio, acceso al sistema, IA</li>
+  </ul>
+
+  <pre><code><span class="tok-cmt">// ViewModels/DashboardViewModel.cs</span>
+<span class="tok-kw">public partial class</span> <span class="tok-type">DashboardViewModel</span> : <span class="tok-type">ObservableObject</span>
+&#123;
+    [<span class="tok-type">ObservableProperty</span>] <span class="tok-kw">private double</span> _cpuUsage;
+    [<span class="tok-type">ObservableProperty</span>] <span class="tok-kw">private long</span> _ramUsedMb;
+
+    [<span class="tok-type">RelayCommand</span>]
+    <span class="tok-kw">private async</span> <span class="tok-type">Task</span> <span class="tok-fn">RefreshAsync</span>()
+    &#123;
+        <span class="tok-kw">var</span> snap = <span class="tok-kw">await</span> _tracer.<span class="tok-fn">GetSnapshotAsync</span>().<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+        <span class="tok-cmt">// Siempre Dispatcher.InvokeAsync para actualizaciones de UI</span>
+        <span class="tok-kw">await</span> <span class="tok-type">Application</span>.Current.<span class="tok-fn">Dispatcher</span>
+            .<span class="tok-fn">InvokeAsync</span>(() =&gt; &#123; CpuUsage = snap.CpuPercent; &#125;);
+    &#125;
+&#125;</code></pre>
+
+  <h2 id="dual-llm">Dual LLM Executor</h2>
+  <p><code>AiChatService</code> mantiene dos pares de contexto/executor LLamaSharp completamente aislados para evitar contención entre el chat de usuario y el motor de optimización:</p>
+
+  <pre><code><span class="tok-kw">public sealed class</span> <span class="tok-type">AiChatService</span>
+&#123;
+    <span class="tok-cmt">// Contexto dedicado al chat de usuario (AiChatView)</span>
+    <span class="tok-kw">private</span> <span class="tok-type">LLamaContext</span> _chatCtx;
+    <span class="tok-kw">private readonly</span> <span class="tok-type">SemaphoreSlim</span> _chatSem = <span class="tok-kw">new</span>(<span class="tok-str">1</span>, <span class="tok-str">1</span>);
+
+    <span class="tok-cmt">// Contexto dedicado al OptimizationEngine (segundo plano)</span>
+    <span class="tok-kw">private</span> <span class="tok-type">LLamaContext</span> _engineCtx;
+    <span class="tok-kw">private readonly</span> <span class="tok-type">SemaphoreSlim</span> _engineSem = <span class="tok-kw">new</span>(<span class="tok-str">1</span>, <span class="tok-str">1</span>);
+
+    <span class="tok-cmt">// Immutable Context Swap — reset sin bloquear consumidores</span>
+    <span class="tok-kw">public async</span> <span class="tok-type">Task</span> <span class="tok-fn">ResetChatContextAsync</span>()
+    &#123;
+        <span class="tok-kw">var</span> old = <span class="tok-type">Interlocked</span>.<span class="tok-fn">Exchange</span>(<span class="tok-kw">ref</span> _chatCtx, <span class="tok-kw">await</span> <span class="tok-fn">BuildContextAsync</span>());
+        old?.<span class="tok-fn">Dispose</span>();
+    &#125;
+&#125;</code></pre>
+
+  <h2 id="feature-engine">FeatureExecutionEngine</h2>
+  <p>Todas las acciones de larga duración deben pasar por <code>FeatureExecutionEngine.RunFeatureAsync</code>, que añade automáticamente protección circuit-breaker, telemetría y soporte de cancelación.</p>
+
+  <h2 id="rollback">RollbackService</h2>
+  <p>Cada operación de escritura disparada por la IA debe ir precedida de un snapshot de rollback:</p>
+
+  <pre><code><span class="tok-cmt">// Patrón obligatorio antes de File.WriteAllText</span>
+<span class="tok-kw">var</span> snapshotId = <span class="tok-kw">await</span> _rollback
+    .<span class="tok-fn">CreateSnapshotAsync</span>(targetFilePath)
+    .<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+<span class="tok-kw">try</span>
+&#123;
+    <span class="tok-type">File</span>.<span class="tok-fn">WriteAllText</span>(targetFilePath, newContent, <span class="tok-type">Encoding</span>.UTF8);
+&#125;
+<span class="tok-kw">catch</span>
+&#123;
+    <span class="tok-kw">await</span> _rollback.<span class="tok-fn">RestoreAsync</span>(snapshotId).<span class="tok-fn">ConfigureAwait</span>(<span class="tok-kw">false</span>);
+    <span class="tok-kw">throw</span>;
+&#125;</code></pre>
+
+  <h2 id="flow-chains-sys">Sistema Flow Chains</h2>
+  <p>Tres servicios gestionan el ciclo de vida del pipeline de automatización:</p>
+  <ul>
+    <li><code>WorkflowPipelineService</code> — CRUD para definiciones de pipeline (JSON en <code>%APPDATA%\Coclico\flow-chains\</code>)</li>
+    <li><code>WorkflowPipelineExecutionService</code> — ejecución secuencial con circuit-breaker y aplicación de política de seguridad</li>
+    <li><code>WorkflowExecutionService</code> — orquestación de alto nivel y planificación</li>
+  </ul>
+
+  <h2 id="workflow-pipeline">Modelo WorkflowPipeline</h2>
+
+  <pre><code><span class="tok-kw">public record</span> <span class="tok-type">WorkflowPipeline</span>
+&#123;
+    <span class="tok-kw">public</span> <span class="tok-type">Guid</span> Id &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = <span class="tok-type">Guid</span>.<span class="tok-fn">NewGuid</span>();
+    <span class="tok-kw">public</span> <span class="tok-type">string</span> Name &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = <span class="tok-type">string</span>.Empty;
+    <span class="tok-kw">public</span> <span class="tok-type">List</span>&lt;<span class="tok-type">PipelineNode</span>&gt; Nodes &#123; <span class="tok-kw">get</span>; <span class="tok-kw">init</span>; &#125; = [];
+&#125;
+
+<span class="tok-cmt">// 28 valores NodeType, 10 valores ConditionOperator, 3 valores OnErrorAction</span>
+<span class="tok-kw">public enum</span> <span class="tok-type">NodeType</span>
+&#123;
+    KillProcess, LaunchProcess, RestartService, StopService, StartService,
+    SetRegistryValue, DeleteRegistryKey, CreateDirectory, DeleteFile,
+    MoveFile, CopyFile, RunScript, CleanTemp, EmptyRecycleBin, FlushDns,
+    ClearBrowserCache, ClearEventLogs, ClearPrefetch, ClearThumbnailCache,
+    ClearWindowsErrorReports, FreeRam, SetWorkingSet, PingHost,
+    DisableNetworkAdapter, EnableNetworkAdapter, Wait, Condition, Log, Notification
+&#125;</code></pre>
+
+  <h2 id="source-analyzer">SourceAnalyzer (Roslyn AST) — Fase 3.3</h2>
+  <p><code>SourceAnalyzerService</code> usa Roslyn para analizar el propio código fuente C# de Coclico. Calcula por método: Complejidad Ciclomática (CC), métricas Halstead (V, D, E) e Índice de Mantenibilidad (MI).</p>
+
+  <h2 id="digital-twin">Digital Twin Gate — Fase 3.3</h2>
+  <p>Antes de aplicar cualquier parche generado por IA, <code>DigitalTwinService</code> valida que el parche no aumente la complejidad ciclomática. Si <code>patchedCC > originalCC</code>, el parche es rechazado.</p>
+
+  <h2 id="auto-patcher">AutoPatcher — Fase 3.4</h2>
+  <p>Gestiona el ciclo de vida de los parches de IA con aprobación humana. Por defecto: <code>AutoPatcherAuditOnly = true</code> — los parches se registran en el log de auditoría pero nunca se aplican sin aprobación explícita vía <code>ApproveAndApplyAsync(proposalId)</code>.</p>
+
+  <h2 id="optimization-engine">OptimizationEngine — Fase 2</h2>
+  <p>Se ejecuta cada <strong>30 segundos</strong> en segundo plano. Reglas críticas: usar <code>ArrayPool&lt;byte&gt;.Shared</code> para buffers de telemetría, nunca closures en el bucle principal, siempre <code>ConfigureAwait(false)</code>.</p>
+
+  <h2 id="security-policy">Seguridad & Auditoría</h2>
+  <p><strong>SecurityPolicyService</strong> fusiona <code>%APPDATA%\Coclico\security-policy.json</code> con valores predeterminados codificados no suprimibles. <strong>AuditLogService</strong> escribe NDJSON de solo anexión incluyendo <code>AiDecisionContext</code> para trazabilidad completa de decisiones LLM.</p>
+
+  <h2 id="conventions">Convenciones de código</h2>
+  <ul>
+    <li><strong>Nomenclatura:</strong> <code>PascalCase</code> para clases/interfaces, <code>_camelCase</code> para campos privados, sufijo <code>Async</code> para métodos async</li>
+    <li><strong>Inyección:</strong> Solo por constructor — nunca service-locate dentro de un constructor</li>
+    <li><strong>Segundo plano:</strong> <code>ConfigureAwait(false)</code> en cada <code>await</code> en servicios</li>
+    <li><strong>Logs:</strong> <code>LoggingService.LogInfo</code> / <code>LoggingService.LogException</code> — nunca silenciar excepciones</li>
+    <li><strong>DTOs:</strong> Usar <code>record</code> para snapshots y resultados (inmutabilidad)</li>
+    <li><strong>Secretos:</strong> Nunca codificar en duro — usar <code>SettingsService</code> o variables de entorno</li>
+    <li><strong>C# 12:</strong> Usar primary constructors y collection expressions (<code>[]</code>)</li>
+  </ul>
+
+</DocLayout>

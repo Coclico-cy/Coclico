@@ -1,0 +1,1144 @@
+<UserControl x:Class="Coclico.Views.ProgramsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Coclico.Views"
+             xmlns:conv="clr-namespace:Coclico.Converters"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             Background="{DynamicResource BgBaseBrush}"
+             d:DesignHeight="800" d:DesignWidth="1000">
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="PageRoot"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.35"/>
+                    <DoubleAnimation Storyboard.TargetName="PageSlide"
+                                     Storyboard.TargetProperty="Y"
+                                     From="14" To="0" Duration="0:0:0.35">
+                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <conv:BooleanToVisibilityInvertedConverter x:Key="BoolToVisInv"/>
+        <conv:FileIconToImageSourceConverter x:Key="IconConv"/>
+        <conv:EqualityToBooleanConverter x:Key="EqToBool"/>
+        <conv:StringFirstCharConverter x:Key="FirstCharConverter"/>
+
+        <ItemsPanelTemplate x:Key="ProgramsListPanel">
+            <VirtualizingStackPanel/>
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="ProgramsGridPanel">
+            <WrapPanel/>
+        </ItemsPanelTemplate>
+
+        <Style x:Key="FilterTabStyle" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="FontSize"   Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor"     Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" CornerRadius="{DynamicResource CornerPill}"
+                                Padding="{TemplateBinding Padding}"
+                                BorderThickness="1" BorderBrush="Transparent">
+                            <Border.Background>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgPanelBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="PageRoot" Margin="32,28,32,0" Opacity="0">
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="PageSlide" Y="0"/>
+        </Grid.RenderTransform>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{DynamicResource Programs_Title}" FontSize="26" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock x:Name="TxtCount" Text="" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"
+                               VerticalAlignment="Bottom" Margin="12,0,0,6" FontWeight="SemiBold"
+                               FontFamily="Consolas, Courier New"/>
+                </StackPanel>
+                <TextBlock Text="{DynamicResource Programs_Subtitle}" FontSize="12"
+                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Style="{StaticResource SecondaryButton}" x:Name="BtnOpenConfig" Command="{Binding OpenConfigCommand}"
+                        Margin="0,0,8,0" Padding="14,8">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Settings24" FontSize="15" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="Configure" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SecondaryButton}" x:Name="BtnRefresh" Click="BtnRefresh_Click"
+                        Margin="0,0,8,0" Padding="14,8">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="ArrowSync24" FontSize="15" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{DynamicResource Programs_Refresh}" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource PrimaryButton}" x:Name="BtnAddManual" Click="BtnAddManual_Click"
+                        Padding="18,8">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Add24" FontSize="15" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{DynamicResource Programs_AddManual}" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SecondaryButton}" x:Name="BtnToggleView" Click="BtnToggleView_Click"
+                        Padding="14,8" Margin="8,0,0,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="AppsList24" FontSize="15" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="Basculer vue" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
+            <ItemsControl ItemsSource="{Binding FilterGroups}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Content="{Binding Name}"
+                                     Style="{StaticResource FilterTabStyle}"
+                                     GroupName="FilterGroups" Padding="12,6"
+                                     Click="FilterGroup_Click" Margin="0,0,4,0">
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{StaticResource EqToBool}" Mode="OneWay">
+                                    <Binding Path="."/>
+                                    <Binding Path="DataContext.SelectedFilterGroup" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                        </RadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ComboBox ItemsSource="{Binding Categories}"
+                      SelectedItem="{Binding SelectedCategory}"
+                      Width="180" Margin="20,0,0,0"/>
+        </StackPanel>
+
+        
+        <Border Grid.Row="2" Margin="0,0,0,16">
+            <ui:TextBox x:Name="SearchBox"
+                        PlaceholderText="{DynamicResource Programs_FilterPlaceholder}"
+                        TextChanged="SearchBox_TextChanged"/>
+        </Border>
+
+        
+        <Grid Grid.Row="3" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            
+            <Border Grid.Column="0" CornerRadius="{DynamicResource CornerCard}"
+                    BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" Padding="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#0D0818" Offset="0"/>
+                        <GradientStop Color="#08050F" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <ScrollViewer Padding="10" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+                        <Grid>
+                            
+                            <ItemsControl x:Name="ProgramsList"
+                                          Visibility="{Binding IsGridMode, Converter={StaticResource BoolToVisInv}}"
+                                          VirtualizingPanel.IsVirtualizing="True"
+                                          VirtualizingPanel.VirtualizationMode="Recycling">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="ItemBorder" Padding="12" Margin="0,3"
+                                                MouseLeftButtonDown="ProgramItem_Click"
+                                                CornerRadius="8"
+                                                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#0F0A1E" Offset="0"/>
+                                                    <GradientStop Color="#0A0614" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border Width="40" Height="40" CornerRadius="10"
+                                                        BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                            <GradientStop Color="#1A0A30" Offset="0"/>
+                                                            <GradientStop Color="#2A0A50" Offset="1"/>
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
+                                                    <Grid>
+                                                        <TextBlock Text="{Binding Name, Converter={StaticResource FirstCharConverter}}"
+                                                                   FontSize="16" FontWeight="Bold"
+                                                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextAccentBrush}"
+                                                                   Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisInv}}"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                        <Image Source="{Binding IconPath, Converter={StaticResource IconConv}}"
+                                                               Stretch="Uniform" Margin="8"/>
+                                                    </Grid>
+                                                </Border>
+
+                                                <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                   TextTrimming="CharacterEllipsis" MaxWidth="260"/>
+                                                        <Border Margin="8,0,0,0" Padding="5,2" CornerRadius="{DynamicResource CornerPill}">
+                                                            <Border.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                    <GradientStop Color="#4A1FA8" Offset="0"/>
+                                                                    <GradientStop Color="#7C3AED" Offset="1"/>
+                                                                </LinearGradientBrush>
+                                                            </Border.Background>
+                                                            <TextBlock Text="{Binding Category}" FontSize="9"
+                                                                       FontWeight="ExtraBold" Foreground="White"
+                                                                       VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding Publisher}" FontSize="11"
+                                                               Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
+                                                </StackPanel>
+
+                                                <TextBlock Grid.Column="2" Text="{Binding SizeText}"
+                                                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                                                           FontWeight="SemiBold" FontSize="11"
+                                                           Foreground="{DynamicResource TextMutedBrush}"
+                                                           FontFamily="Consolas, Courier New"/>
+
+                                                <Border Grid.ColumnSpan="3" x:Name="LaunchingOverlay"
+                                                        CornerRadius="8"
+                                                        Visibility="{Binding IsLaunching, Converter={StaticResource BoolToVis}}">
+                                                    <Border.Background>
+                                                        <SolidColorBrush Color="#CC08050F"/>
+                                                    </Border.Background>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <ui:SymbolIcon Symbol="Play24" Foreground="{StaticResource SuccessBrush}" FontSize="16" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{DynamicResource Programs_Launching}"
+                                                                   Foreground="{StaticResource SuccessBrush}"
+                                                                   FontWeight="Bold" FontSize="13"
+                                                                   Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                        <DataTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{DynamicResource BorderDefaultBrush}"/>
+                                            </Trigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            
+                            <ItemsControl x:Name="ProgramsGrid"
+                                          Visibility="{Binding IsGridMode, Converter={StaticResource BoolToVis}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel IsItemsHost="True"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="GridItemBorder" Width="248" Height="120" Padding="14" Margin="6"
+                                                MouseLeftButtonDown="ProgramItem_Click"
+                                                CornerRadius="10"
+                                                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#0F0A1E" Offset="0"/>
+                                                    <GradientStop Color="#0A0614" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="42"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Width="34" Height="34" CornerRadius="10"
+                                                        BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                            <GradientStop Color="#1A0A30" Offset="0"/>
+                                                            <GradientStop Color="#2A0A50" Offset="1"/>
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
+                                                    <Grid>
+                                                        <TextBlock Text="{Binding Name, Converter={StaticResource FirstCharConverter}}" FontSize="14" FontWeight="Bold"
+                                                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextAccentBrush}"
+                                                                   Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisInv}}"/>
+                                                        <Image Source="{Binding IconPath, Converter={StaticResource IconConv}}" Stretch="Uniform" Margin="6"/>
+                                                    </Grid>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Publisher}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                                                    <TextBlock Text="{Binding SizeText}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"
+                                                               FontFamily="Consolas, Courier New"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            
+                            <Grid Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+                                <Border CornerRadius="8">
+                                    <Border.Background>
+                                        <SolidColorBrush Color="#E008050F"/>
+                                    </Border.Background>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <ui:ProgressRing IsIndeterminate="True" Width="40" Height="40"
+                                                     Foreground="{DynamicResource PrimaryBrush}"/>
+                                    <TextBlock Text="{DynamicResource Programs_Loading}"
+                                               Margin="0,16,0,0" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            
+            <StackPanel Grid.Column="2">
+
+                
+                <Border CornerRadius="{DynamicResource CornerCard}"
+                        BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1"
+                        Padding="16,14" Margin="0,0,0,12">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#0D0818" Offset="0"/>
+                            <GradientStop Color="#08050F" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <Border Width="30" Height="30" CornerRadius="8" Margin="0,0,10,0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#4A1FA8" Offset="0"/>
+                                        <GradientStop Color="#7C3AED" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ui:SymbolIcon Symbol="History24" FontSize="14"
+                                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                                               Foreground="White"/>
+                            </Border>
+                            <TextBlock Text="{DynamicResource Programs_RecentTitle}"
+                                       FontSize="9" FontWeight="Black"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Consolas, Courier New"/>
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding RecentPrograms}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="9,7" Margin="0,0,0,4"
+                                            CornerRadius="8"
+                                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#0F0A1E" Offset="0"/>
+                                                <GradientStop Color="#0A0614" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="28" Height="28" CornerRadius="6">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#1A0A30" Offset="0"/>
+                                                        <GradientStop Color="#2A0A50" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                                <TextBlock Text="{Binding Name, Converter={StaticResource FirstCharConverter}}"
+                                                           Foreground="{DynamicResource TextAccentBrush}"
+                                                           FontSize="12" FontWeight="Bold"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Version}" FontSize="10"
+                                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,1,0,0"
+                                                           FontFamily="Consolas, Courier New"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="{DynamicResource Programs_RecentEmpty}"
+                                   FontSize="12" Foreground="{DynamicResource TextMutedBrush}"
+                                   HorizontalAlignment="Center" Margin="0,8,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RecentPrograms.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+
+                <!-- Right panel: stats (default) or app details (when IsDetailsOpen=true) -->
+                <Grid>
+                    <!-- STATISTICS panel — hidden when an app is selected -->
+                    <Border CornerRadius="{DynamicResource CornerCard}"
+                            BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1"
+                            Padding="16,14"
+                            Visibility="{Binding IsDetailsOpen, Converter={StaticResource BoolToVisInv}}">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#0D0818" Offset="0"/>
+                                <GradientStop Color="#08050F" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <Border Width="30" Height="30" CornerRadius="8" Margin="0,0,10,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#0E4A6A" Offset="0"/>
+                                            <GradientStop Color="#0284C7" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ui:SymbolIcon Symbol="Info24" FontSize="14"
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                   Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="STATISTIQUES"
+                                           FontSize="9" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <Border CornerRadius="8" Padding="10,8" Margin="0,0,0,6"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#0F0A1E" Offset="0"/>
+                                        <GradientStop Color="#0A0614" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Logiciels" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding TotalAppsCount}"
+                                               FontSize="13" FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryBrush}"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <Border CornerRadius="8" Padding="10,8" Margin="0,0,0,10"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#0F0A1E" Offset="0"/>
+                                        <GradientStop Color="#0A0614" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Jeux" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding TotalGamesCount}"
+                                               FontSize="13" FontWeight="Bold"
+                                               Foreground="{StaticResource SuccessBrush}"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <TextBlock Text="PAR SOURCE" FontSize="9" FontWeight="Black"
+                                       Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,6"/>
+                            <TextBlock Text="{Binding SourceStats}"
+                                       FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextWrapping="Wrap" LineHeight="20"/>
+
+                            <TextBlock Text="PAR CATÉGORIE" FontSize="9" FontWeight="Black"
+                                       Foreground="{DynamicResource TextMutedBrush}" Margin="0,10,0,6"/>
+                            <TextBlock Text="{Binding CategoryStats}"
+                                       FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextWrapping="Wrap" LineHeight="20"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- APP DETAIL panel — shown when an app is selected -->
+                    <Border CornerRadius="{DynamicResource CornerCard}"
+                            BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1"
+                            Padding="16,14"
+                            Visibility="{Binding IsDetailsOpen, Converter={StaticResource BoolToVis}}">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#0D0818" Offset="0"/>
+                                <GradientStop Color="#08050F" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel>
+                            <!-- Header: close button -->
+                            <Grid Margin="0,0,0,14">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="30" Height="30" CornerRadius="8" Margin="0,0,10,0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#4A1FA8" Offset="0"/>
+                                                <GradientStop Color="#7C3AED" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <ui:SymbolIcon Symbol="Apps24" FontSize="14"
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                       Foreground="White"/>
+                                    </Border>
+                                    <TextBlock Text="APPLICATION"
+                                               FontSize="9" FontWeight="Black"
+                                               Foreground="{DynamicResource TextMutedBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                                        Click="BtnCloseDetails_Click"
+                                        Background="Transparent" BorderThickness="0"
+                                        Cursor="Hand" Padding="4"
+                                        Foreground="{DynamicResource TextMutedBrush}"
+                                        FontSize="14">✕</Button>
+                            </Grid>
+
+                            <!-- App icon + editable name -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <Border Width="48" Height="48" CornerRadius="12" Margin="0,0,12,0" VerticalAlignment="Top">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#2D1065" Offset="0"/>
+                                            <GradientStop Color="#4C1D95" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Grid>
+                                        <!-- Icon image if available -->
+                                        <Image Source="{Binding SelectedProgram.IconPath, Converter={StaticResource IconConv}}"
+                                               Width="36" Height="36" Stretch="Uniform">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedProgram.HasIcon}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <!-- Fallback initial -->
+                                        <TextBlock Text="{Binding SelectedProgram.Name, Converter={StaticResource FirstCharConverter}}"
+                                                   FontSize="22" FontWeight="Black" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedProgram.HasIcon}" Value="False">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBox x:Name="TxtProgramName"
+                                             Text="{Binding SelectedProgram.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             FontSize="14" FontWeight="SemiBold"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             Background="Transparent" BorderThickness="0"
+                                             Padding="0" MaxWidth="160" TextWrapping="Wrap">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="IsReadOnly" Value="True"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                        <Setter Property="IsReadOnly" Value="False"/>
+                                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+                                    <TextBlock Text="{Binding SelectedProgram.Publisher}"
+                                               FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                                               TextTrimming="CharacterEllipsis" MaxWidth="160"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Metadata rows -->
+                            <Border CornerRadius="8" Padding="10,8" Margin="0,0,0,6"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#0F0A1E" Offset="0"/>
+                                        <GradientStop Color="#0A0614" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Version" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding SelectedProgram.Version}"
+                                                   FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                    </Grid>
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Taille" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding SelectedProgram.SizeText}"
+                                                   FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Grid>
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Source" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding SelectedProgram.Source}"
+                                                   FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Catégorie" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                        <!-- Read mode -->
+                                        <TextBlock Grid.Column="1" Text="{Binding SelectedProgram.Category}"
+                                                   FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <!-- Edit mode — ComboBox lié aux catégories disponibles -->
+                                        <ComboBox Grid.Column="1"
+                                                  ItemsSource="{Binding Categories, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  SelectedItem="{Binding SelectedProgram.Category, Mode=TwoWay}"
+                                                  FontSize="11"
+                                                  VerticalAlignment="Center"
+                                                  Padding="6,3"
+                                                  Height="26">
+                                            <ComboBox.Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ComboBox.Style>
+                                        </ComboBox>
+                                    </Grid>
+                                    <Grid Margin="0,4,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Raccourci" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock x:Name="TxtShortcut"
+                                                       Text="{Binding SelectedProgram.Shortcut}"
+                                                       FontSize="11" Foreground="{DynamicResource TextAccentBrush}"
+                                                       VerticalAlignment="Center"
+                                                       FontFamily="Consolas, Courier New">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedProgram.Shortcut}" Value="">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock Text="—" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                                                       VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedProgram.Shortcut}" Value="">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <Button x:Name="BtnAssignShortcut"
+                                                    Click="BtnAssignShortcut_Click"
+                                                    Margin="8,0,0,0" Padding="6,2"
+                                                    FontSize="9" Cursor="Hand"
+                                                    Background="Transparent"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                                    Foreground="{DynamicResource TextMutedBrush}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}"
+                                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                                            CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                ✎ Assigner
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Path -->
+                            <Border CornerRadius="8" Padding="10,8" Margin="0,0,0,12"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#0F0A1E" Offset="0"/>
+                                        <GradientStop Color="#0A0614" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <StackPanel>
+                                    <TextBlock Text="Chemin" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,3"/>
+                                    <TextBlock Text="{Binding SelectedProgram.ExePath}"
+                                               FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"
+                                               TextWrapping="Wrap" LineHeight="16"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Action buttons -->
+                            <Button Click="BtnLaunch_Click"
+                                    IsEnabled="True"
+                                    HorizontalAlignment="Stretch" Margin="0,0,0,6"
+                                    Padding="0,9" FontSize="12" FontWeight="SemiBold"
+                                    Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#4A1FA8" Offset="0"/>
+                                                    <GradientStop Color="#7C3AED" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="0.85"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.4"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                ▶  Lancer
+                            </Button>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Click="BtnOpenFolder_Click"
+                                        HorizontalAlignment="Stretch" Padding="0,8"
+                                        FontSize="11" Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="{DynamicResource BgPanelBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BorderDefaultBrush}"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    📁  Dossier
+                                </Button>
+                                <Button Grid.Column="2" Click="BtnSaveName_Click"
+                                        HorizontalAlignment="Stretch" Padding="0,8"
+                                        FontSize="11" Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="{DynamicResource BgPanelBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BorderDefaultBrush}"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <Button.ContentTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="✏  Modifier"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding DataContext.IsEditing, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                <Setter Property="Text" Value="💾  Sauvegarder"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </Button.ContentTemplate>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+            </StackPanel>
+        </Grid>
+
+        
+        <Grid Grid.RowSpan="4" Panel.ZIndex="2000"
+              Visibility="{Binding IsConfigOpen, Converter={StaticResource BoolToVis}}">
+            <Border Background="#CC000000">
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding CloseConfigCommand}"/>
+                </Border.InputBindings>
+            </Border>
+
+            <Border Width="820" Height="640" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" CornerRadius="16" Padding="36">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#0F0820" Offset="0"/>
+                        <GradientStop Color="#08050F" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="#7C3AED" BlurRadius="40" ShadowDepth="0" Opacity="0.3"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Border Width="36" Height="36" CornerRadius="10" Margin="0,0,14,0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#4A1FA8" Offset="0"/>
+                                        <GradientStop Color="#7C3AED" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ui:SymbolIcon Symbol="Settings24" FontSize="16" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Configuration" FontSize="18" FontWeight="Black"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="Gérez vos onglets et catégories." FontSize="11"
+                                           Foreground="{DynamicResource TextMutedBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Height="1" Margin="0,0,0,20">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#3B0764" Offset="0"/>
+                                    <GradientStop Color="Transparent" Offset="0.6"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="Onglets"
+                                       FontSize="9" FontWeight="Black"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       Margin="0,0,0,8"
+                                       FontFamily="Consolas, Courier New"/>
+
+                            <ListBox Grid.Row="1"
+                                     ItemsSource="{Binding FilterGroups}"
+                                     Background="Transparent" BorderThickness="0"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center"
+                                                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <ComboBox Grid.Column="1"
+                                                      ItemsSource="{Binding DataContext.Categories, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                      SelectedItem="{Binding CategoryFilter, Mode=TwoWay}"
+                                                      Width="120" Margin="8,0,4,0" Padding="6,3"
+                                                      FontSize="11"
+                                                      ToolTip="Catégorie par défaut de cet onglet">
+                                                <ComboBox.Style>
+                                                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsStatic}" Value="True">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                                <Setter Property="Opacity" Value="0.4"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ComboBox.Style>
+                                            </ComboBox>
+                                            <Button Style="{StaticResource SecondaryButton}" Grid.Column="2" Content="Modifier"
+                                                    Padding="8,4" FontSize="10" Margin="4,0"
+                                                    Command="{Binding DataContext.EditGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsStatic, Converter={StaticResource BoolToVisInv}}"/>
+                                            <Button Style="{StaticResource DangerButton}" Grid.Column="3" Content="✕"
+                                                    Padding="6,4" FontSize="10"
+                                                    Command="{Binding DataContext.RemoveGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsStatic, Converter={StaticResource BoolToVisInv}}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <StackPanel Grid.Row="2" Margin="0,8,0,0">
+                                <ui:TextBox x:Name="TxtNewGroup" PlaceholderText="Nom du nouvel onglet" Margin="0,0,0,6"/>
+                                <Button Content="+ Ajouter un onglet"
+                                        Style="{StaticResource PrimaryButton}" Padding="10,6" FontSize="11"
+                                        Command="{Binding AddGroupCommand}"
+                                        CommandParameter="{Binding Text, ElementName=TxtNewGroup}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        
+                        <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="Catégories"
+                                       FontSize="9" FontWeight="Black"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       Margin="0,0,0,8"
+                                       FontFamily="Consolas, Courier New"/>
+
+                            <ListBox Grid.Row="1"
+                                     ItemsSource="{Binding Categories}"
+                                     Background="Transparent" BorderThickness="0"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center"
+                                                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <Button Style="{StaticResource DangerButton}" Grid.Column="1" Content="✕"
+                                                    Padding="6,4" FontSize="10"
+                                                    Command="{Binding DataContext.RemoveCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <StackPanel Grid.Row="2" Margin="0,8,0,0">
+                                <ui:TextBox x:Name="TxtNewCat" PlaceholderText="Nouvelle catégorie" Margin="0,0,0,6"/>
+                                <Button Content="+ Ajouter une catégorie"
+                                        Style="{StaticResource PrimaryButton}" Padding="10,6" FontSize="11"
+                                        Command="{Binding AddCategoryCommand}"
+                                        CommandParameter="{Binding Text, ElementName=TxtNewCat}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                        <Button Content="{DynamicResource Programs_Close}" Click="CloseConfig_Click"
+                                Style="{StaticResource SecondaryButton}" Padding="16,8"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+
+    </Grid>
+</UserControl>
+

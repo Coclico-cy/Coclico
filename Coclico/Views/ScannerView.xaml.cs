@@ -1,0 +1,43 @@
+#nullable enable
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using Coclico.Services;
+using Coclico.ViewModels;
+
+namespace Coclico.Views;
+
+public partial class ScannerView : UserControl
+{
+    private ICollectionView? _view;
+
+    public ScannerView()
+    {
+        InitializeComponent();
+        var vm = new ScannerViewModel();
+        DataContext = vm;
+
+        _view = CollectionViewSource.GetDefaultView(vm.Programs);
+        ResultsList.ItemsSource = _view;
+    }
+
+    private void AttachFilter(ScannerViewModel vm)
+    {
+        _view = CollectionViewSource.GetDefaultView(vm.Programs);
+        ResultsList.ItemsSource = _view;
+    }
+
+    private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (_view == null) return;
+        var text = SearchBox.Text.Trim();
+        _view.Filter = string.IsNullOrEmpty(text)
+            ? null
+            : o => o is InstalledProgramsService.ProgramInfo p &&
+                   (p.Name.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+                    p.Publisher.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+                    p.Source.Contains(text, StringComparison.OrdinalIgnoreCase));
+    }
+}

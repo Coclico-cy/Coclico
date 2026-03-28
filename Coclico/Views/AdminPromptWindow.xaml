@@ -1,0 +1,75 @@
+<Window x:Class="Coclico.Views.AdminPromptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Width="500" Height="420"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Icon="/Resources/icone/plage.ico">
+
+    <Window.Resources>
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Padding" Value="20,10"/>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Padding" Value="20,10"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Margin="20" CornerRadius="20" Background="#08050F" BorderBrush="#2A1848" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="48" ShadowDepth="0" Opacity="0.72"/>
+        </Border.Effect>
+        <Grid>
+             <Ellipse Width="420" Height="260" Opacity="0.055"
+                         HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#7C3AED" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+            <Border Height="2" VerticalAlignment="Top" CornerRadius="20,20,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0"/>
+                            <GradientStop Color="#6B2FD9"     Offset="0.2"/>
+                            <GradientStop Color="#BE185D"     Offset="0.5"/>
+                            <GradientStop Color="#F97316"     Offset="0.8"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+            <StackPanel Margin="30">
+                <TextBlock Text="Mode Administrateur Requis" FontSize="22" FontWeight="Bold" Foreground="#EDE9F7" Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap" Foreground="#8B7AAE" FontSize="13" Margin="0,0,0,20">
+                    Coclico a besoin des droits Administrateur pour fonctionner au mieux.
+                    Avec les droits administrateur, vous pouvez :
+                </TextBlock>
+                
+                <StackPanel Margin="15,0,0,20">
+                    <TextBlock Text="• Nettoyer la mémoire en profondeur" Foreground="#C4B5FD" Margin="0,0,0,8" FontSize="13"/>
+                    <TextBlock Text="• Installer les logiciels correctement" Foreground="#C4B5FD" Margin="0,0,0,8" FontSize="13"/>
+                    <TextBlock Text="• Exécuter les chaînes/scripts sans erreurs" Foreground="#C4B5FD" Margin="0,0,0,8" FontSize="13"/>
+                </StackPanel>
+
+                <TextBlock Text="Voulez-vous relancer l'application en mode Administrateur ?" TextWrapping="Wrap" Foreground="#8B7AAE" FontSize="13" Margin="0,10,0,30"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Non" Style="{StaticResource SecondaryButtonStyle}" Click="NoButton_Click" Margin="0,0,10,0"/>
+                    <Button Content="Oui, relancer" Style="{StaticResource PrimaryButtonStyle}" Click="YesButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
+

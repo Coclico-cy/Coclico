@@ -1,0 +1,129 @@
+---
+/**
+ * BaseLayout.astro — Layout de base pour toutes les pages Coclico
+ *
+ * Props :
+ *   title        — Titre de la page (ajouté à "| Coclico")
+ *   description  — Meta description SEO
+ *   lang         — Langue de la page (fr / en / de / es)
+ *   ogImage      — Image Open Graph (optionnel)
+ *   noindex      — true pour les pages hors-SEO
+ */
+
+import type { Lang } from '../i18n/index';
+import { getAlternateLinks } from '../i18n/index';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  ogImage?: string;
+  noindex?: boolean;
+  currentPath?: string;
+}
+
+const {
+  title,
+  description,
+  lang,
+  ogImage = '/og-default.png',
+  noindex = false,
+  currentPath = '/',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const alternates = getAlternateLinks(currentPath);
+const BASE = (import.meta.env.BASE_URL || '/');
+const basePath = BASE.endsWith('/') ? BASE : BASE + '/';
+const ogImagePath = ogImage.startsWith('/') ? ogImage.slice(1) : ogImage;
+
+const siteTitle = title === 'Coclico' ? 'Coclico' : `${title} | Coclico`;
+---
+
+<!doctype html>
+<html lang={lang} class="dark" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#03030a" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f8f8fc" media="(prefers-color-scheme: light)" />
+
+  <!-- SEO -->
+  <title>{siteTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+  {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+  <!-- Hreflang (i18n SEO) -->
+  {alternates.map(({ lang: l, href }) => (
+    <link rel="alternate" hreflang={l} href={new URL(href, Astro.site).href} />
+  ))}
+  <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site).href} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:title" content={siteTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={new URL(basePath + ogImagePath, Astro.site).href} />
+  <meta property="og:site_name" content="Coclico" />
+  <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : lang === 'en' ? 'en_US' : lang === 'de' ? 'de_DE' : 'es_ES'} />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={siteTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={new URL(basePath + ogImagePath, Astro.site).href} />
+
+  <!-- Favicon -->
+  <link rel="icon" href={basePath + 'favicon.ico'} sizes="any" />
+  <link rel="apple-touch-icon" href={basePath + 'apple-touch-icon.png'} />
+
+  <!-- Fonts — Preconnect pour éviter le FOUT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
+<body class="bg-mesh">
+  <slot />
+
+  <!-- Script de préférence de thème — injecté avant le render pour éviter le flash -->
+  <script is:inline>
+    (function () {
+      const stored = localStorage.getItem('coclico-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = stored ? stored === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+      document.documentElement.classList.toggle('light', !isDark);
+    })();
+  </script>
+
+  <!-- Script de préférence de langue — redirect si nécessaire -->
+  <script is:inline>
+    window.__COC_BASE = {JSON.stringify(basePath)};
+  </script>
+
+  <script is:inline>
+    (function () {
+      const stored = localStorage.getItem('coclico-lang');
+      if (stored) return;
+      const BASE = window.__COC_BASE || '/';
+      const normalize = (p) => p.replace(/^\/+/, '').replace(/\/+$/, '');
+      const pathNorm = normalize(window.location.pathname);
+      const baseNorm = normalize(BASE);
+      if (pathNorm !== '' && pathNorm !== baseNorm) return;
+      const nav = (navigator.language || navigator.languages?.[0] || 'fr').slice(0, 2).toLowerCase();
+      const supported = ['fr','en','de','es'];
+      if (nav !== 'fr' && supported.includes(nav)) {
+        const target = BASE + nav + '/';
+        window.location.replace(target);
+      }
+    })();
+  </script>
+</body>
+</html>
