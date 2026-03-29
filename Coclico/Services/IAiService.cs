@@ -14,11 +14,11 @@ public interface IAiService
 
     IAsyncEnumerable<string> SendMessageAsync(
         string userMessage,
-        [EnumeratorCancellation] CancellationToken ct = default);
+        CancellationToken ct = default);
 
     IAsyncEnumerable<string> SendSystemPromptAsync(
         string systemPrompt,
-        [EnumeratorCancellation] CancellationToken ct = default);
+        CancellationToken ct = default);
 
     void RecordExchange(string userMsg, string aiResponse);
     void ResetConversation();

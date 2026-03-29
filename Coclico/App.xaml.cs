@@ -241,7 +241,7 @@ services.AddSingleton<IOptimizationEngine>(sp =>
 
     protected override void OnExit(ExitEventArgs e)
     {
-        try { ServiceContainer.GetOptional<ResourceGuardService>().Stop(); ServiceContainer.GetOptional<ResourceGuardService>().Dispose(); }
+        try { ServiceContainer.GetOptional<ResourceGuardService>()?.Stop(); ServiceContainer.GetOptional<ResourceGuardService>()?.Dispose(); }
         catch (Exception ex) { LoggingService.LogException(ex, "App.OnExit.DisposeResourceGuard"); }
 
         try { ServiceContainer.GetOptional<ThemeService>()?.Dispose(); }
