@@ -15,7 +15,7 @@ public partial class DashboardView : UserControl
     public DashboardView()
     {
         InitializeComponent();
-        Loaded   += (_, _) => (DataContext as DashboardViewModel)?.StartRefresh();
+        Loaded += (_, _) => (DataContext as DashboardViewModel)?.StartRefresh();
         Unloaded += (_, _) => (DataContext as DashboardViewModel)?.StopRefresh();
     }
 

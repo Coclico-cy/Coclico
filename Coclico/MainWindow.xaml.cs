@@ -79,7 +79,7 @@ public partial class MainWindow : FluentWindow
 
         ToastService.Initialize(RootSnackbarPresenter);
 
-        UserNameText.Text       = _userService.DisplayName;
+        UserNameText.Text = _userService.DisplayName;
         UserNameText.Visibility = Visibility.Collapsed;
     }
 
@@ -202,7 +202,7 @@ public partial class MainWindow : FluentWindow
     {
         const double duration = 200;
 
-        var sw    = System.Diagnostics.Stopwatch.StartNew();
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         var timer = new System.Windows.Threading.DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(16)
@@ -234,30 +234,30 @@ public partial class MainWindow : FluentWindow
 
             UIElement newContent = tag switch
             {
-                "Home"              => _dashboardView ??= new DashboardView(),
-                "Programs"          => _programsView   ??= new ProgramsView(),
+                "Home" => _dashboardView ??= new DashboardView(),
+                "Programs" => _programsView ??= new ProgramsView(),
                 "WorkflowPipelines" => _flowChainsView ??= new WorkflowPipelinesView(),
-                "Installer"         => _installerView  ??= new InstallerView(),
-                "Cleaning"          => _cleaningView   ??= new CleaningView(),
-                "Scanner"           => _scannerView    ??= new ScannerView(),
-                "RamCleaner"        => _ramCleanerView ??= new RamCleanerView(),
-                "Settings"          => _settingsView   ??= new SettingsView(),
-                "Help"              => _helpView       ??= new HelpView(),
-                _                   => _dashboardView ??= new DashboardView()
+                "Installer" => _installerView ??= new InstallerView(),
+                "Cleaning" => _cleaningView ??= new CleaningView(),
+                "Scanner" => _scannerView ??= new ScannerView(),
+                "RamCleaner" => _ramCleanerView ??= new RamCleanerView(),
+                "Settings" => _settingsView ??= new SettingsView(),
+                "Help" => _helpView ??= new HelpView(),
+                _ => _dashboardView ??= new DashboardView()
             };
 
             ServiceContainer.GetRequired<IAiService>().CurrentStatusContext = tag switch
             {
-                "Home"              => "L'utilisateur est sur le Tableau de Bord (stats CPU/RAM/Disque).",
-                "Programs"          => "L'utilisateur consulte la liste des Applications installées.",
+                "Home" => "L'utilisateur est sur le Tableau de Bord (stats CPU/RAM/Disque).",
+                "Programs" => "L'utilisateur consulte la liste des Applications installées.",
                 "WorkflowPipelines" => "L'utilisateur est sur les Flow Chains (automatisation).",
-                "Installer"         => "L'utilisateur est dans l'Installeur Winget.",
-                "Cleaning"          => "L'utilisateur est dans le Nettoyage système.",
-                "Scanner"           => "L'utilisateur utilise le Scanner d'applications.",
-                "RamCleaner"        => "L'utilisateur est dans le RAM Cleaner (nettoyage et surveillance mémoire).",
-                "Settings"          => "L'utilisateur est dans les Paramètres.",
-                "Help"              => "L'utilisateur est sur la page d'Aide.",
-                _                   => "L'utilisateur est sur le Tableau de Bord."
+                "Installer" => "L'utilisateur est dans l'Installeur Winget.",
+                "Cleaning" => "L'utilisateur est dans le Nettoyage système.",
+                "Scanner" => "L'utilisateur utilise le Scanner d'applications.",
+                "RamCleaner" => "L'utilisateur est dans le RAM Cleaner (nettoyage et surveillance mémoire).",
+                "Settings" => "L'utilisateur est dans les Paramètres.",
+                "Help" => "L'utilisateur est sur la page d'Aide.",
+                _ => "L'utilisateur est sur le Tableau de Bord."
             };
 
             await NavigateWithTransition(newContent);
@@ -284,7 +284,7 @@ public partial class MainWindow : FluentWindow
         translate.Y = 10;
 
         var easeOut = new CubicEase { EasingMode = EasingMode.EaseOut };
-        var fadeIn  = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(220)) { EasingFunction = easeOut };
+        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(220)) { EasingFunction = easeOut };
         var slideIn = new DoubleAnimation(10, 0, TimeSpan.FromMilliseconds(220)) { EasingFunction = easeOut };
         translate.BeginAnimation(TranslateTransform.YProperty, slideIn);
         MainContentFrame.BeginAnimation(UIElement.OpacityProperty, fadeIn);
@@ -303,14 +303,14 @@ public partial class MainWindow : FluentWindow
             _sidebarCollapsed = compact;
 
             double from = SidebarColumn.Width.Value;
-            double to   = compact
+            double to = compact
                 ? SidebarCollapsedWidth
                 : Math.Clamp(ServiceContainer.GetRequired<SettingsService>().Settings.SidebarWidth, 120, 400);
             AnimateSidebarWidth(from, to);
 
             var labelVis = compact ? Visibility.Collapsed : Visibility.Visible;
             foreach (var lbl in NavLabels) lbl.Visibility = labelVis;
-            BrandLabel.Visibility    = labelVis;
+            BrandLabel.Visibility = labelVis;
             NavSectionLbl.Visibility = labelVis;
 
             SidebarLogoImage.Visibility = Visibility.Visible;
@@ -413,40 +413,40 @@ public partial class MainWindow : FluentWindow
 
             UIElement? target = action switch
             {
-                "open_dashboard"  => _dashboardView,
-                "open_programs"   => _programsView   ??= new ProgramsView(),
+                "open_dashboard" => _dashboardView,
+                "open_programs" => _programsView ??= new ProgramsView(),
                 "open_flowchains" => _flowChainsView ??= new WorkflowPipelinesView(),
-                "open_installer"  => _installerView  ??= new InstallerView(),
-                "open_cleaning"   => _cleaningView   ??= new CleaningView(),
-                "open_scanner"    => _scannerView    ??= new ScannerView(),
+                "open_installer" => _installerView ??= new InstallerView(),
+                "open_cleaning" => _cleaningView ??= new CleaningView(),
+                "open_scanner" => _scannerView ??= new ScannerView(),
                 "open_ramcleaner" => _ramCleanerView ??= new RamCleanerView(),
-                "open_settings"   => _settingsView   ??= new SettingsView(),
-                _                 => null
+                "open_settings" => _settingsView ??= new SettingsView(),
+                _ => null
             };
 
             ServiceContainer.GetRequired<IAiService>().CurrentStatusContext = action switch
             {
-                "open_dashboard"  => "L'utilisateur est sur le Tableau de Bord (stats CPU/RAM/Disque).",
-                "open_programs"   => "L'utilisateur consulte la liste des Applications installées.",
+                "open_dashboard" => "L'utilisateur est sur le Tableau de Bord (stats CPU/RAM/Disque).",
+                "open_programs" => "L'utilisateur consulte la liste des Applications installées.",
                 "open_flowchains" => "L'utilisateur est sur les Flow Chains (automatisation).",
-                "open_installer"  => "L'utilisateur est dans l'Installeur Winget.",
-                "open_cleaning"   => "L'utilisateur est dans le Nettoyage système.",
-                "open_scanner"    => "L'utilisateur utilise le Scanner d'applications.",
-                "open_settings"   => "L'utilisateur est dans les Paramètres.",
-                _                 => ServiceContainer.GetRequired<IAiService>().CurrentStatusContext
+                "open_installer" => "L'utilisateur est dans l'Installeur Winget.",
+                "open_cleaning" => "L'utilisateur est dans le Nettoyage système.",
+                "open_scanner" => "L'utilisateur utilise le Scanner d'applications.",
+                "open_settings" => "L'utilisateur est dans les Paramètres.",
+                _ => ServiceContainer.GetRequired<IAiService>().CurrentStatusContext
             };
 
             var navButton = action switch
             {
-                "open_dashboard"  => NavHome,
-                "open_programs"   => NavPrograms,
+                "open_dashboard" => NavHome,
+                "open_programs" => NavPrograms,
                 "open_flowchains" => NavWorkflowPipelines,
-                "open_installer"  => NavInstaller,
-                "open_cleaning"   => NavCleaning,
-                "open_scanner"    => NavScanner,
+                "open_installer" => NavInstaller,
+                "open_cleaning" => NavCleaning,
+                "open_scanner" => NavScanner,
                 "open_ramcleaner" => NavRamCleaner,
-                "open_settings"   => NavSettings,
-                _                 => (RadioButton?)null
+                "open_settings" => NavSettings,
+                _ => (RadioButton?)null
             };
             if (navButton != null) navButton.IsChecked = true;
 

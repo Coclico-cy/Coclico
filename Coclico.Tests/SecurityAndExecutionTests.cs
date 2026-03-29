@@ -25,7 +25,7 @@ namespace Coclico.Tests
             return Build("Test",
                 new PipelineStep { NodeType = NodeType.Start, Name = "S", IsEnabled = true },
                 inner,
-                new PipelineStep { NodeType = NodeType.End,   Name = "E", IsEnabled = true });
+                new PipelineStep { NodeType = NodeType.End, Name = "E", IsEnabled = true });
         }
 
         internal static WorkflowPipeline CommandChain(string cmd) => SingleNode(
@@ -38,16 +38,32 @@ namespace Coclico.Tests
             new PipelineStep { NodeType = NodeType.HttpRequest, Name = "req", HttpUrl = url, HttpMethod = "GET" });
 
         internal static WorkflowPipeline FileChain(string src, string dst, string op = "copy") => SingleNode(
-            new PipelineStep { NodeType = NodeType.FileOperation, Name = "f",
-                           FileOperationSource = src, FileOperationDest = dst, FileOperationType = op });
+            new PipelineStep
+            {
+                NodeType = NodeType.FileOperation,
+                Name = "f",
+                FileOperationSource = src,
+                FileOperationDest = dst,
+                FileOperationType = op
+            });
 
         internal static WorkflowPipeline DeleteChain(string path) => SingleNode(
-            new PipelineStep { NodeType = NodeType.FileOperation, Name = "del",
-                           FileOperationSource = path, FileOperationType = "delete" });
+            new PipelineStep
+            {
+                NodeType = NodeType.FileOperation,
+                Name = "del",
+                FileOperationSource = path,
+                FileOperationType = "delete"
+            });
 
         internal static WorkflowPipeline CondChain(ConditionOperator op, string value) => SingleNode(
-            new PipelineStep { NodeType = NodeType.Condition, Name = "cond",
-                           ConditionOperator = op, ConditionValue = value });
+            new PipelineStep
+            {
+                NodeType = NodeType.Condition,
+                Name = "cond",
+                ConditionOperator = op,
+                ConditionValue = value
+            });
     }
 
     public class BlockedCommandSecurityTests
@@ -118,7 +134,6 @@ namespace Coclico.Tests
         }
     }
 
-    [Collection("ServiceContainer")]
     public class BlockedPowerShellSecurityTests
     {
         [Theory]
@@ -185,7 +200,6 @@ namespace Coclico.Tests
         }
     }
 
-    [Collection("ServiceContainer")]
     public class SsrfProtectionTests
     {
         [Theory]
@@ -655,10 +669,10 @@ namespace Coclico.Tests
         public async Task MultipleNodes_AllExecute()
         {
             var chain = new WorkflowPipeline { Name = "Multi" };
-            chain.Items.Add(new PipelineStep { NodeType = NodeType.Start,  Name = "S", IsEnabled = true });
-            chain.Items.Add(new PipelineStep { NodeType = NodeType.Delay,  Name = "d1", DelaySeconds = 0, IsEnabled = true });
+            chain.Items.Add(new PipelineStep { NodeType = NodeType.Start, Name = "S", IsEnabled = true });
+            chain.Items.Add(new PipelineStep { NodeType = NodeType.Delay, Name = "d1", DelaySeconds = 0, IsEnabled = true });
             chain.Items.Add(new PipelineStep { NodeType = NodeType.RamClean, Name = "ram", IsEnabled = true });
-            chain.Items.Add(new PipelineStep { NodeType = NodeType.End,    Name = "E", IsEnabled = true });
+            chain.Items.Add(new PipelineStep { NodeType = NodeType.End, Name = "E", IsEnabled = true });
 
             var r = await new WorkflowService().ExecuteChainAsync(chain);
 
@@ -671,7 +685,7 @@ namespace Coclico.Tests
             var chain = new WorkflowPipeline { Name = "Disabled" };
             chain.Items.Add(new PipelineStep { NodeType = NodeType.Start, Name = "S", IsEnabled = true });
             chain.Items.Add(new PipelineStep { NodeType = NodeType.Delay, Name = "skip", DelaySeconds = 60, IsEnabled = false });
-            chain.Items.Add(new PipelineStep { NodeType = NodeType.End,   Name = "E", IsEnabled = true });
+            chain.Items.Add(new PipelineStep { NodeType = NodeType.End, Name = "E", IsEnabled = true });
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
             var r = await new WorkflowService().ExecuteChainAsync(chain);

@@ -42,9 +42,9 @@ public sealed class KeyboardShortcut
 
 public sealed class KeyboardShortcutsService : IDisposable
 {
-private static readonly string DataPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "Coclico", "keyboard_shortcuts.json");
+    private static readonly string DataPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Coclico", "keyboard_shortcuts.json");
 
     private readonly List<KeyboardShortcut> _shortcuts = new();
     private readonly Dictionary<int, KeyboardShortcut> _registeredIds = new();
@@ -188,13 +188,32 @@ private static readonly string DataPath = Path.Combine(
         }
         return key.ToUpperInvariant() switch
         {
-            "F1" => 0x70, "F2" => 0x71, "F3" => 0x72, "F4" => 0x73,
-            "F5" => 0x74, "F6" => 0x75, "F7" => 0x76, "F8" => 0x77,
-            "F9" => 0x78, "F10" => 0x79, "F11" => 0x7A, "F12" => 0x7B,
-            "SPACE" => 0x20, "ENTER" => 0x0D, "TAB" => 0x09,
-            "ESCAPE" => 0x1B, "DELETE" => 0x2E, "INSERT" => 0x2D,
-            "HOME" => 0x24, "END" => 0x23, "PAGEUP" => 0x21, "PAGEDOWN" => 0x22,
-            "LEFT" => 0x25, "UP" => 0x26, "RIGHT" => 0x27, "DOWN" => 0x28,
+            "F1" => 0x70,
+            "F2" => 0x71,
+            "F3" => 0x72,
+            "F4" => 0x73,
+            "F5" => 0x74,
+            "F6" => 0x75,
+            "F7" => 0x76,
+            "F8" => 0x77,
+            "F9" => 0x78,
+            "F10" => 0x79,
+            "F11" => 0x7A,
+            "F12" => 0x7B,
+            "SPACE" => 0x20,
+            "ENTER" => 0x0D,
+            "TAB" => 0x09,
+            "ESCAPE" => 0x1B,
+            "DELETE" => 0x2E,
+            "INSERT" => 0x2D,
+            "HOME" => 0x24,
+            "END" => 0x23,
+            "PAGEUP" => 0x21,
+            "PAGEDOWN" => 0x22,
+            "LEFT" => 0x25,
+            "UP" => 0x26,
+            "RIGHT" => 0x27,
+            "DOWN" => 0x28,
             _ => 0
         };
     }

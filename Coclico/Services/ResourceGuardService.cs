@@ -11,7 +11,7 @@ namespace Coclico.Services;
 
 public sealed class ResourceGuardService : IDisposable
 {
-public enum PressureLevel { Normal, Elevated, High, Critical }
+    public enum PressureLevel { Normal, Elevated, High, Critical }
 
     public event Action<PressureLevel>? PressureChanged;
     public event Action<string>? GuardMessage;

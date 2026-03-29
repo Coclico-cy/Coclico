@@ -18,9 +18,9 @@ public class TrayService : IDisposable
     public bool IsInitialized => _initialized;
 
     private const int ID_RESTORE = 1000;
-    private const int ID_EXIT    = 1001;
+    private const int ID_EXIT = 1001;
     private const int WM_LBUTTONDBLCLK = 0x0203;
-    private const int WM_RBUTTONUP     = 0x0205;
+    private const int WM_RBUTTONUP = 0x0205;
 
     public void Initialize(Window mainWindow)
     {

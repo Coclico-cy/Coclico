@@ -52,7 +52,7 @@ public partial class InstalledProgramsService
     [GeneratedRegex("\"installdir\"\\s+\"([^\"]+)\"", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex SteamDirRegex();
 
-private List<ProgramInfo>? _memoryCache;
+    private List<ProgramInfo>? _memoryCache;
     private Dictionary<string, CustomAppEntry>? _customAppsDataCache;
 
     private static readonly JsonSerializerOptions _jsonCaseInsensitive = new() { PropertyNameCaseInsensitive = true };
@@ -323,7 +323,8 @@ private List<ProgramInfo>? _memoryCache;
 
         var finalizedList = rawList
             .Where(p => IsUserFacingApplication(p))
-            .GroupBy(p => {
+            .GroupBy(p =>
+            {
                 string normName = NormalizeName(p.Name);
                 var words = normName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 string groupKey = words.Length >= 2 ? words[0] + " " + words[1] : normName;
@@ -333,7 +334,8 @@ private List<ProgramInfo>? _memoryCache;
 
                 return groupKey;
             })
-            .Select(g => {
+            .Select(g =>
+            {
                 if (g.Count() > 1)
                 {
                     var best = g.FirstOrDefault(x =>
@@ -553,7 +555,8 @@ private List<ProgramInfo>? _memoryCache;
         if (shellType == null) return list;
         dynamic shell;
         try { shell = Activator.CreateInstance(shellType)!; }
-        catch (Exception ex) { LoggingService.LogException(ex, "ScanStartMenu.CreateShell"); return list; };
+        catch (Exception ex) { LoggingService.LogException(ex, "ScanStartMenu.CreateShell"); return list; }
+        ;
 
         foreach (var rootPath in paths)
         {

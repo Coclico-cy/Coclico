@@ -56,11 +56,11 @@ public class ThemeService : IDisposable
     {
         var color = preset switch
         {
-            "Cyan"    => "#0EA5E9",
+            "Cyan" => "#0EA5E9",
             "Emerald" => "#10B981",
-            "Rose"    => "#F43F5E",
-            "Amber"   => "#F59E0B",
-            _         => "#6366F1"
+            "Rose" => "#F43F5E",
+            "Amber" => "#F59E0B",
+            _ => "#6366F1"
         };
 
         var ss = ServiceContainer.GetRequired<SettingsService>();
@@ -92,10 +92,10 @@ public class ThemeService : IDisposable
             gradient.GradientStops.Add(new GradientStop(color, 1));
             gradient.Freeze();
 
-            Application.Current.Resources["AccentPrimary"]   = color;
+            Application.Current.Resources["AccentPrimary"] = color;
             Application.Current.Resources["AccentSecondary"] = lighterColor;
-            Application.Current.Resources["PrimaryBrush"]    = brush;
-            Application.Current.Resources["SecondaryBrush"]  = lighterBrush;
+            Application.Current.Resources["PrimaryBrush"] = brush;
+            Application.Current.Resources["SecondaryBrush"] = lighterBrush;
             Application.Current.Resources["PrimaryGradient"] = gradient;
 
             ApplicationAccentColorManager.Apply(color);
@@ -123,26 +123,26 @@ public class ThemeService : IDisposable
 
         var (bgHex, cardHex, textPrimary, textMuted) = mode switch
         {
-            "Light"    => ("#FFFFFFFF", "#FFF3F4F6", "#0F172A", "#475569"),
-            "Dark"     => ("#0F0F14", "#1A1A22", "#E8E8F4", "#8080A8"),
+            "Light" => ("#FFFFFFFF", "#FFF3F4F6", "#0F172A", "#475569"),
+            "Dark" => ("#0F0F14", "#1A1A22", "#E8E8F4", "#8080A8"),
             "Midnight" => ("#0A0A14", "#12121C", "#E8E8F4", "#8080A8"),
-            _          => ("#08080A", "#10101E", "#E8E8F4", "#8080A8")
+            _ => ("#08080A", "#10101E", "#E8E8F4", "#8080A8")
         };
 
         try
         {
-            var bgColor   = (Color)ColorConverter.ConvertFromString(bgHex);
+            var bgColor = (Color)ColorConverter.ConvertFromString(bgHex);
             var cardColor = (Color)ColorConverter.ConvertFromString(cardHex);
 
-            var bgBrush   = new SolidColorBrush(bgColor);   bgBrush.Freeze();
+            var bgBrush = new SolidColorBrush(bgColor); bgBrush.Freeze();
             var cardBrush = new SolidColorBrush(cardColor); cardBrush.Freeze();
 
-            Application.Current.Resources["BgBaseBrush"]  = bgBrush;
-            Application.Current.Resources["BgCardBrush"]  = cardBrush;
-            Application.Current.Resources["BgDarkColor"]  = bgColor;
-            Application.Current.Resources["BgCardColor"]  = cardColor;
-            Application.Current.Resources["BgDark"]       = bgBrush;
-            Application.Current.Resources["BgCard"]       = cardBrush;
+            Application.Current.Resources["BgBaseBrush"] = bgBrush;
+            Application.Current.Resources["BgCardBrush"] = cardBrush;
+            Application.Current.Resources["BgDarkColor"] = bgColor;
+            Application.Current.Resources["BgCardColor"] = cardColor;
+            Application.Current.Resources["BgDark"] = bgBrush;
+            Application.Current.Resources["BgCard"] = cardBrush;
 
             var textPrimaryBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(textPrimary));
             textPrimaryBrush.Freeze();
@@ -150,7 +150,7 @@ public class ThemeService : IDisposable
             textMutedBrush.Freeze();
 
             Application.Current.Resources["TextPrimaryBrush"] = textPrimaryBrush;
-            Application.Current.Resources["TextMutedBrush"]   = textMutedBrush;
+            Application.Current.Resources["TextMutedBrush"] = textMutedBrush;
 
             var ss = ServiceContainer.GetRequired<SettingsService>();
             ss.Settings.BackgroundMode = preferenceToSave;
@@ -179,7 +179,7 @@ public class ThemeService : IDisposable
 
             Application.Current.Resources["BgCardBrush"] = cardBrush;
             Application.Current.Resources["BgCardColor"] = cardColor;
-            Application.Current.Resources["BgCard"]      = cardBrush;
+            Application.Current.Resources["BgCard"] = cardBrush;
 
             var ss = ServiceContainer.GetRequired<SettingsService>();
             ss.Settings.CardOpacity = opacity;

@@ -36,18 +36,18 @@ public partial class SettingsView : UserControl
             case "en": RbEn.IsChecked = true; break;
             case "es": RbEs.IsChecked = true; break;
             case "de": RbDe.IsChecked = true; break;
-            default:   RbFr.IsChecked = true; break;
+            default: RbFr.IsChecked = true; break;
         }
 
         switch (s.BackgroundMode)
         {
-            case "Dark":   RbDark.IsChecked   = true; break;
-            case "Light":  RbLight.IsChecked  = true; break;
+            case "Dark": RbDark.IsChecked = true; break;
+            case "Light": RbLight.IsChecked = true; break;
             case "System": RbSystem.IsChecked = true; break;
-            default:       RbDark.IsChecked   = true; break;
+            default: RbDark.IsChecked = true; break;
         }
 
-        RbUser.IsChecked    = s.WingetScope == "user";
+        RbUser.IsChecked = s.WingetScope == "user";
         RbMachine.IsChecked = s.WingetScope != "user";
     }
 
@@ -58,10 +58,10 @@ public partial class SettingsView : UserControl
             PanelInstaller, PanelProfiles, PanelCache, PanelAutonomous, PanelAbout })
         {
             p.Visibility = Visibility.Collapsed;
-            p.Opacity    = 1;
+            p.Opacity = 1;
         }
 
-        panel.Opacity    = 0;
+        panel.Opacity = 0;
         panel.Visibility = Visibility.Visible;
         panel.BeginAnimation(OpacityProperty,
             new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(160)));
@@ -78,10 +78,10 @@ public partial class SettingsView : UserControl
         switch (tag)
         {
             case "Appearance": ShowPanel(PanelAppearance); break;
-            case "Language":   ShowPanel(PanelLanguage);   break;
-            case "Interface":  ShowPanel(PanelInterface);  break;
-            case "Installer":  ShowPanel(PanelInstaller);  break;
-            case "About":      ShowPanel(PanelAbout);      break;
+            case "Language": ShowPanel(PanelLanguage); break;
+            case "Interface": ShowPanel(PanelInterface); break;
+            case "Installer": ShowPanel(PanelInstaller); break;
+            case "About": ShowPanel(PanelAbout); break;
             case "Profiles":
                 ShowPanel(PanelProfiles);
                 RefreshProfiles();
@@ -94,19 +94,19 @@ public partial class SettingsView : UserControl
         }
     }
 
-    private void Preset_Indigo(object sender, RoutedEventArgs e)  => _vm.ApplyPreset("Indigo");
-    private void Preset_Cyan(object sender, RoutedEventArgs e)    => _vm.ApplyPreset("Cyan");
+    private void Preset_Indigo(object sender, RoutedEventArgs e) => _vm.ApplyPreset("Indigo");
+    private void Preset_Cyan(object sender, RoutedEventArgs e) => _vm.ApplyPreset("Cyan");
     private void Preset_Emerald(object sender, RoutedEventArgs e) => _vm.ApplyPreset("Emerald");
-    private void Preset_Rose(object sender, RoutedEventArgs e)    => _vm.ApplyPreset("Rose");
-    private void Preset_Amber(object sender, RoutedEventArgs e)   => _vm.ApplyPreset("Amber");
+    private void Preset_Rose(object sender, RoutedEventArgs e) => _vm.ApplyPreset("Rose");
+    private void Preset_Amber(object sender, RoutedEventArgs e) => _vm.ApplyPreset("Amber");
 
     private void ApplyAccent_Click(object sender, RoutedEventArgs e)
         => _vm.ApplyCustomAccent();
 
     private void BgMode_Click(object sender, RoutedEventArgs e)
     {
-        if      (sender == RbDark)   _vm.BackgroundMode = "Dark";
-        else if (sender == RbLight)  _vm.BackgroundMode = "Light";
+        if (sender == RbDark) _vm.BackgroundMode = "Dark";
+        else if (sender == RbLight) _vm.BackgroundMode = "Light";
         else if (sender == RbSystem) _vm.BackgroundMode = "System";
     }
 
@@ -116,10 +116,10 @@ public partial class SettingsView : UserControl
 
     private void Lang_Click(object sender, RoutedEventArgs e)
     {
-        if      (sender == RbEn) _vm.SelectedLanguage = "en";
+        if (sender == RbEn) _vm.SelectedLanguage = "en";
         else if (sender == RbEs) _vm.SelectedLanguage = "es";
         else if (sender == RbDe) _vm.SelectedLanguage = "de";
-        else                     _vm.SelectedLanguage = "fr";
+        else _vm.SelectedLanguage = "fr";
     }
 
     private void FontSize_Changed(object sender,
@@ -158,12 +158,12 @@ public partial class SettingsView : UserControl
         if (active != null)
         {
             TbActiveProfileName.Text = active.Name;
-            TbActiveInitials.Text    = active.AvatarInitials;
+            TbActiveInitials.Text = active.AvatarInitials;
         }
         else
         {
             TbActiveProfileName.Text = "Aucun profil";
-            TbActiveInitials.Text    = "?";
+            TbActiveInitials.Text = "?";
         }
     }
 
@@ -189,12 +189,12 @@ public partial class SettingsView : UserControl
 
         var profile = new AppProfile
         {
-            Name         = name,
-            Description  = string.Empty,
-            CreatedAt    = DateTime.UtcNow,
+            Name = name,
+            Description = string.Empty,
+            CreatedAt = DateTime.UtcNow,
             LastModified = DateTime.UtcNow,
-            Settings     = ServiceContainer.GetRequired<SettingsService>().Settings,
-            Categories   = ServiceContainer.GetRequired<InstalledProgramsService>().GetCategories(),
+            Settings = ServiceContainer.GetRequired<SettingsService>().Settings,
+            Categories = ServiceContainer.GetRequired<InstalledProgramsService>().GetCategories(),
             FilterGroups = ServiceContainer.GetRequired<InstalledProgramsService>().GetFilterGroups()
         };
 

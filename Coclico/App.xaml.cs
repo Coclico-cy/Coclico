@@ -63,14 +63,14 @@ public partial class App : Application
                 services.AddSingleton<ISourceAnalyzer, SourceAnalyzerService>();
                 services.AddSingleton<IStateValidator, StateValidatorService>();
                 services.AddSingleton<ICodePatcher, CodePatcherService>();
-services.AddSingleton<IOptimizationEngine>(sp =>
-                    new OptimizationEngineService(
-                        sp.GetRequiredService<IDynamicTracer>(),
-                        sp.GetRequiredService<IRollbackService>(),
-                        sp.GetRequiredService<IResourceAllocator>(),
-                        sp.GetRequiredService<IAiService>(),
-                        sp.GetRequiredService<ISourceAnalyzer>(),
-                        sp.GetRequiredService<IAuditLog>()));
+                services.AddSingleton<IOptimizationEngine>(sp =>
+                                    new OptimizationEngineService(
+                                        sp.GetRequiredService<IDynamicTracer>(),
+                                        sp.GetRequiredService<IRollbackService>(),
+                                        sp.GetRequiredService<IResourceAllocator>(),
+                                        sp.GetRequiredService<IAiService>(),
+                                        sp.GetRequiredService<ISourceAnalyzer>(),
+                                        sp.GetRequiredService<IAuditLog>()));
 
                 services.AddSingleton<SettingsService>();
                 services.AddSingleton<InstalledProgramsService>();
@@ -108,7 +108,7 @@ services.AddSingleton<IOptimizationEngine>(sp =>
 
         try
         {
-            var audit         = ServiceContainer.GetRequired<IAuditLog>();
+            var audit = ServiceContainer.GetRequired<IAuditLog>();
             int retentionDays = ServiceContainer.GetRequired<SettingsService>().Settings.AuditRetentionDays;
             audit.Prune(TimeSpan.FromDays(retentionDays));
             LoggingService.LogInfo($"[App] Audit pruned — rétention {retentionDays} jours.");
@@ -123,10 +123,10 @@ services.AddSingleton<IOptimizationEngine>(sp =>
                 settings.MinimizeToTray);
             launcher.ShowDialog();
 
-            settings.LaunchAtStartup  = launcher.LaunchAtStartup;
-            settings.MinimizeToTray   = launcher.MinimizeToTray;
-            settings.LaunchMode       = launcher.SelectedMode.ToString();
-            settings.FirstRun         = false;
+            settings.LaunchAtStartup = launcher.LaunchAtStartup;
+            settings.MinimizeToTray = launcher.MinimizeToTray;
+            settings.LaunchMode = launcher.SelectedMode.ToString();
+            settings.FirstRun = false;
             await ServiceContainer.GetRequired<SettingsService>().SaveAsync();
         }
 

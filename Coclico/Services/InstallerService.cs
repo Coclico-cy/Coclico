@@ -20,14 +20,19 @@ public class InstallerService
 
     public async Task<bool> RepairWingetSourcesAsync()
     {
-        return await Task.Run(() => {
-            try {
-                var psi = new ProcessStartInfo(GetWingetPath(), "source reset --force") {
-                    CreateNoWindow = true, UseShellExecute = false
+        return await Task.Run(() =>
+        {
+            try
+            {
+                var psi = new ProcessStartInfo(GetWingetPath(), "source reset --force")
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false
                 };
                 var proc = Process.Start(psi);
                 return proc?.WaitForExit(15000) == true && proc.ExitCode == 0;
-            } catch { return false; }
+            }
+            catch { return false; }
         });
     }
 
@@ -149,14 +154,19 @@ public class InstallerService
             if (_lastSourceUpdate == null || (DateTime.Now - _lastSourceUpdate.Value).TotalMinutes > 120)
             {
                 software.AppendOutput("🔄 Synchronisation avec les serveurs Winget...");
-                await Task.Run(() => {
-                    try {
-                        var psi = new ProcessStartInfo(GetWingetPath(), "source update") {
-                            CreateNoWindow = true, UseShellExecute = false
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        var psi = new ProcessStartInfo(GetWingetPath(), "source update")
+                        {
+                            CreateNoWindow = true,
+                            UseShellExecute = false
                         };
                         Process.Start(psi)?.WaitForExit(10000);
                         _lastSourceUpdate = DateTime.Now;
-                    } catch { }
+                    }
+                    catch { }
                 }, ct);
             }
 
@@ -171,9 +181,12 @@ public class InstallerService
     private async Task<bool> IsAlreadyInstalled(string wingetId)
     {
         if (string.IsNullOrEmpty(wingetId)) return false;
-        return await Task.Run(() => {
-            try {
-                var psi = new ProcessStartInfo(GetWingetPath(), $"list --id {wingetId}") {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                var psi = new ProcessStartInfo(GetWingetPath(), $"list --id {wingetId}")
+                {
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
@@ -185,7 +198,8 @@ public class InstallerService
                 proc.WaitForExit(5000);
                 if (proc.ExitCode != 0) return false;
                 return !string.IsNullOrWhiteSpace(output) && output.IndexOf(wingetId, StringComparison.OrdinalIgnoreCase) >= 0;
-            } catch { return false; }
+            }
+            catch { return false; }
         });
     }
 

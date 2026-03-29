@@ -78,7 +78,7 @@ namespace Coclico.Tests
         public async Task AnalyseAsync_OnTempFileWithHighCC_DetectsHotspot()
         {
 
-            var dir  = Path.Combine(Path.GetTempPath(), $"CoclicoTest_{Guid.NewGuid():N}");
+            var dir = Path.Combine(Path.GetTempPath(), $"CoclicoTest_{Guid.NewGuid():N}");
             Directory.CreateDirectory(dir);
 
             var code = @"
@@ -122,7 +122,7 @@ namespace T {
         [Fact]
         public async Task AnalyseAsync_ExcludesObjAndBin()
         {
-            var dir    = Path.Combine(Path.GetTempPath(), $"CoclicoTest_{Guid.NewGuid():N}");
+            var dir = Path.Combine(Path.GetTempPath(), $"CoclicoTest_{Guid.NewGuid():N}");
             var objDir = Path.Combine(dir, "obj", "Debug");
             Directory.CreateDirectory(objDir);
 
@@ -165,7 +165,7 @@ namespace T {
             try
             {
                 var analyser = new SourceAnalyzerService();
-                var twin     = new StateValidatorService(analyser);
+                var twin = new StateValidatorService(analyser);
 
                 await twin.IndexAsync(dir);
 
@@ -189,7 +189,7 @@ namespace T {
 
             var original = "public int Calc(int x, bool a, bool b) { if (x>0&&a) { if (b) return 1; return 2; } return 0; }";
 
-            var patched  = "public int Calc(int x, bool a, bool b) { return x > 0 && a ? (b ? 1 : 2) : 0; }";
+            var patched = "public int Calc(int x, bool a, bool b) { return x > 0 && a ? (b ? 1 : 2) : 0; }";
 
             var source = $"namespace T {{ class C {{ {original} }} }}";
             var filePath = Path.Combine(dir, "Calc.cs");
@@ -198,7 +198,7 @@ namespace T {
             try
             {
                 var analyser = new SourceAnalyzerService();
-                var twin     = new StateValidatorService(analyser);
+                var twin = new StateValidatorService(analyser);
                 await twin.IndexAsync(dir);
 
                 var result = twin.SimulatePatch(filePath, original, patched);
@@ -215,7 +215,7 @@ namespace T {
         public async Task SimulatePatch_NotIndexedFile_ReturnsError()
         {
             var analyser = new SourceAnalyzerService();
-            var twin     = new StateValidatorService(analyser);
+            var twin = new StateValidatorService(analyser);
 
             var result = twin.SimulatePatch("C:\\ghost.cs", "void M(){}", "void M(){ var x=1; }");
 
@@ -229,10 +229,10 @@ namespace T {
         [Fact]
         public async Task ApplyPatchAsync_FileNotIndexed_ReturnsFail()
         {
-            var analyser  = new SourceAnalyzerService();
-            var twin      = new StateValidatorService(analyser);
-            var rollback  = new RollbackService();
-            var patcher   = new CodePatcherService(twin, rollback, new Mock<IAuditLog>().Object);
+            var analyser = new SourceAnalyzerService();
+            var twin = new StateValidatorService(analyser);
+            var rollback = new RollbackService();
+            var patcher = new CodePatcherService(twin, rollback, new Mock<IAuditLog>().Object);
 
             var result = await patcher.ApplyPatchAsync(
                 "C:\\ghost.cs",
@@ -251,19 +251,19 @@ namespace T {
 
             var original = "public void Complex(int x, bool a, bool b) { if (x>0) { if (a) {} if (b) {} } }";
 
-            var patched  = "public void Complex(int x, bool a, bool b) { var ok = x > 0; }";
-            var source   = $"namespace T {{ class C {{ {original} }} }}";
+            var patched = "public void Complex(int x, bool a, bool b) { var ok = x > 0; }";
+            var source = $"namespace T {{ class C {{ {original} }} }}";
             var filePath = Path.Combine(dir, "Target.cs");
             await File.WriteAllTextAsync(filePath, source);
 
             try
             {
                 var analyser = new SourceAnalyzerService();
-                var twin     = new StateValidatorService(analyser);
+                var twin = new StateValidatorService(analyser);
                 await twin.IndexAsync(dir);
 
                 var rollback = new RollbackService();
-                var patcher  = new CodePatcherService(twin, rollback, new Mock<IAuditLog>().Object);
+                var patcher = new CodePatcherService(twin, rollback, new Mock<IAuditLog>().Object);
 
                 var result = await patcher.ApplyPatchAsync(filePath, original, patched);
 
@@ -288,9 +288,9 @@ namespace T {
         public async Task GetHistory_ReturnsInChronologicalReverseOrder()
         {
             var analyser = new SourceAnalyzerService();
-            var twin     = new StateValidatorService(analyser);
+            var twin = new StateValidatorService(analyser);
             var rollback = new RollbackService();
-            var patcher  = new CodePatcherService(twin, rollback, new Mock<IAuditLog>().Object);
+            var patcher = new CodePatcherService(twin, rollback, new Mock<IAuditLog>().Object);
 
             await patcher.ApplyPatchAsync("C:\\a.cs", "void A(){}", "void A(){var x=1;}");
             await patcher.ApplyPatchAsync("C:\\b.cs", "void B(){}", "void B(){var x=2;}");

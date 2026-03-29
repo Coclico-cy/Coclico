@@ -31,10 +31,10 @@ public partial class LauncherWindow : Window
         InitializeComponent();
 
         LaunchAtStartup = currentLaunchAtStartup;
-        MinimizeToTray  = currentMinimizeToTray;
+        MinimizeToTray = currentMinimizeToTray;
 
         ToggleLaunchAtStartup.IsChecked = LaunchAtStartup;
-        ToggleMinimizeToTray.IsChecked  = MinimizeToTray;
+        ToggleMinimizeToTray.IsChecked = MinimizeToTray;
 
         SelectCard(LaunchMode.Normal);
     }
@@ -45,21 +45,21 @@ public partial class LauncherWindow : Window
             DragMove();
     }
 
-    private void CardNormal_Click(object sender, MouseButtonEventArgs e)    => SelectCard(LaunchMode.Normal);
+    private void CardNormal_Click(object sender, MouseButtonEventArgs e) => SelectCard(LaunchMode.Normal);
     private void CardMinimized_Click(object sender, MouseButtonEventArgs e) => SelectCard(LaunchMode.Minimized);
-    private void CardTray_Click(object sender, MouseButtonEventArgs e)      => SelectCard(LaunchMode.Tray);
+    private void CardTray_Click(object sender, MouseButtonEventArgs e) => SelectCard(LaunchMode.Tray);
 
     private void SelectCard(LaunchMode mode)
     {
         SelectedMode = mode;
 
-        RadioNormal.IsChecked    = mode == LaunchMode.Normal;
+        RadioNormal.IsChecked = mode == LaunchMode.Normal;
         RadioMinimized.IsChecked = mode == LaunchMode.Minimized;
-        RadioTray.IsChecked      = mode == LaunchMode.Tray;
+        RadioTray.IsChecked = mode == LaunchMode.Tray;
 
-        ApplyCardState(CardNormal,    GlowNormal,    TitleNormal,    IconNormal,    mode == LaunchMode.Normal);
+        ApplyCardState(CardNormal, GlowNormal, TitleNormal, IconNormal, mode == LaunchMode.Normal);
         ApplyCardState(CardMinimized, GlowMinimized, TitleMinimized, IconMinimized, mode == LaunchMode.Minimized);
-        ApplyCardState(CardTray,      GlowTray,      TitleTray,      IconTray,      mode == LaunchMode.Tray);
+        ApplyCardState(CardTray, GlowTray, TitleTray, IconTray, mode == LaunchMode.Tray);
     }
 
     private static void ApplyCardState(
@@ -72,11 +72,11 @@ public partial class LauncherWindow : Window
         if (selected)
         {
             card.BorderBrush = _accentBorder;
-            card.Background  = _accentBg;
-            glow.BlurRadius  = 14;
-            glow.Opacity     = 0.55;
+            card.Background = _accentBg;
+            glow.BlurRadius = 14;
+            glow.Opacity = 0.55;
             title.Foreground = _accentText;
-            icon.Foreground  = new LinearGradientBrush(
+            icon.Foreground = new LinearGradientBrush(
                 (Color)ColorConverter.ConvertFromString("#A78BFA"),
                 (Color)ColorConverter.ConvertFromString("#7C3AED"),
                 new Point(0, 0), new Point(1, 1));
@@ -84,11 +84,11 @@ public partial class LauncherWindow : Window
         else
         {
             card.BorderBrush = _mutedBorder;
-            card.Background  = _mutedBg;
-            glow.BlurRadius  = 0;
-            glow.Opacity     = 0;
+            card.Background = _mutedBg;
+            glow.BlurRadius = 0;
+            glow.Opacity = 0;
             title.Foreground = _mutedText;
-            icon.Foreground  = _mutedText;
+            icon.Foreground = _mutedText;
         }
     }
 
@@ -105,7 +105,7 @@ public partial class LauncherWindow : Window
     private void Continue_Click(object sender, RoutedEventArgs e)
     {
         LaunchAtStartup = ToggleLaunchAtStartup.IsChecked == true;
-        MinimizeToTray  = ToggleMinimizeToTray.IsChecked  == true;
+        MinimizeToTray = ToggleMinimizeToTray.IsChecked == true;
 
         DialogResult = true;
         Close();

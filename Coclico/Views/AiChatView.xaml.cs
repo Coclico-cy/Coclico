@@ -37,9 +37,9 @@ public partial class AiChatView : UserControl
     public AiChatView()
     {
         InitializeComponent();
-        DevPanel.Visibility       = Visibility.Visible;
+        DevPanel.Visibility = Visibility.Visible;
         MessagesScroll.Visibility = Visibility.Collapsed;
-        InputPanel.Visibility     = Visibility.Collapsed;
+        InputPanel.Visibility = Visibility.Collapsed;
 
         RefreshModelState();
 
@@ -54,13 +54,13 @@ public partial class AiChatView : UserControl
 
         await Task.Run(() =>
         {
-            ramGb      = GetTotalRamGb();
-            cpuCores   = Environment.ProcessorCount;
+            ramGb = GetTotalRamGb();
+            cpuCores = Environment.ProcessorCount;
             diskFreeGb = GetDiskFreeGb();
         });
 
-        _ramGb      = ramGb;
-        _cpuCores   = cpuCores;
+        _ramGb = ramGb;
+        _cpuCores = cpuCores;
         _diskFreeGb = diskFreeGb;
 
         DetectAndShowPcSpecs();
@@ -103,8 +103,8 @@ public partial class AiChatView : UserControl
 
     private void BuildPerfWarning()
     {
-        bool lowRam  = _ramGb < 16;
-        bool lowCpu  = _cpuCores < 4;
+        bool lowRam = _ramGb < 16;
+        bool lowCpu = _cpuCores < 4;
         bool lowDisk = _diskFreeGb < 3;
 
         if (!lowRam && !lowCpu && !lowDisk) return;
@@ -119,10 +119,10 @@ public partial class AiChatView : UserControl
             sb.AppendLine($"\u26a0\ufe0f Espace disque limit\u00e9 ({_diskFreeGb} Go libres). Il faut ~2.5 Go pour t\u00e9l\u00e9charger le mod\u00e8le.");
 
         var msg = sb.ToString().Trim();
-        TxtPerfWarning.Text       = msg;
+        TxtPerfWarning.Text = msg;
         WarningPerfCard.Visibility = Visibility.Visible;
 
-        TxtLowSpecBanner.Text    = "Configuration PC insuffisante \u2014 l'IA peut \u00eatre instable.";
+        TxtLowSpecBanner.Text = "Configuration PC insuffisante \u2014 l'IA peut \u00eatre instable.";
         BannerLowSpec.Visibility = Visibility.Visible;
 
         TxtBtnActivate.Text = "Activer l'IA  (non recommand\u00e9)";
@@ -157,12 +157,12 @@ public partial class AiChatView : UserControl
         if (AiChatService.IsModelAvailable)
         {
             DownloadSection.Visibility = Visibility.Collapsed;
-            BtnActivateAi.Visibility   = Visibility.Visible;
+            BtnActivateAi.Visibility = Visibility.Visible;
         }
         else
         {
             DownloadSection.Visibility = Visibility.Visible;
-            BtnActivateAi.Visibility   = Visibility.Collapsed;
+            BtnActivateAi.Visibility = Visibility.Collapsed;
         }
         UpdateStatus();
     }
@@ -198,11 +198,11 @@ public partial class AiChatView : UserControl
             return;
         }
 
-        BtnDownloadModel.IsEnabled   = false;
+        BtnDownloadModel.IsEnabled = false;
         BtnCancelDownload.Visibility = Visibility.Visible;
         ProgressContainer.Visibility = Visibility.Visible;
-        TxtBtnDownload.Text          = "T\u00e9l\u00e9chargement en cours\u2026";
-        TxtDownloadStatus.Text       = "Connexion \u00e0 Hugging Face\u2026";
+        TxtBtnDownload.Text = "T\u00e9l\u00e9chargement en cours\u2026";
+        TxtDownloadStatus.Text = "Connexion \u00e0 Hugging Face\u2026";
 
         _downloadCts = new CancellationTokenSource();
         var ct = _downloadCts.Token;
@@ -220,16 +220,16 @@ public partial class AiChatView : UserControl
             response.EnsureSuccessStatusCode();
 
             var totalBytes = response.Content.Headers.ContentLength ?? -1L;
-            var tmpPath    = destPath + ".tmp";
+            var tmpPath = destPath + ".tmp";
 
             using var contentStream = await response.Content.ReadAsStreamAsync(ct);
-            using var fileStream    = new FileStream(tmpPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true);
+            using var fileStream = new FileStream(tmpPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true);
 
-            var buffer    = new byte[81920];
+            var buffer = new byte[81920];
             long received = 0;
-            int  read;
-            var  lastUpdate = DateTime.UtcNow;
-            long lastBytes  = 0;
+            int read;
+            var lastUpdate = DateTime.UtcNow;
+            long lastBytes = 0;
 
             while ((read = await contentStream.ReadAsync(buffer, ct)) > 0)
             {
@@ -239,22 +239,22 @@ public partial class AiChatView : UserControl
                 var now = DateTime.UtcNow;
                 if ((now - lastUpdate).TotalMilliseconds >= 300)
                 {
-                    var elapsed  = (now - lastUpdate).TotalSeconds;
-                    var speed    = (received - lastBytes) / elapsed;
-                    lastUpdate   = now;
-                    lastBytes    = received;
+                    var elapsed = (now - lastUpdate).TotalSeconds;
+                    var speed = (received - lastBytes) / elapsed;
+                    lastUpdate = now;
+                    lastBytes = received;
 
-                    var pct      = totalBytes > 0 ? (double)received / totalBytes * 100 : 0;
-                    var recvMb   = received / (1024.0 * 1024);
-                    var totalMb  = totalBytes > 0 ? totalBytes / (1024.0 * 1024) : 0;
-                    var speedMb  = speed / (1024.0 * 1024);
+                    var pct = totalBytes > 0 ? (double)received / totalBytes * 100 : 0;
+                    var recvMb = received / (1024.0 * 1024);
+                    var totalMb = totalBytes > 0 ? totalBytes / (1024.0 * 1024) : 0;
+                    var speedMb = speed / (1024.0 * 1024);
 
                     await Dispatcher.InvokeAsync(() =>
                     {
                         DownloadProgress.Value = pct;
                         TxtDownloadStatus.Text = $"T\u00e9l\u00e9chargement\u2026 {pct:F1}%";
-                        TxtDownloadSpeed.Text  = $"{speedMb:F1} Mo/s";
-                        TxtDownloadBytes.Text  = totalBytes > 0
+                        TxtDownloadSpeed.Text = $"{speedMb:F1} Mo/s";
+                        TxtDownloadBytes.Text = totalBytes > 0
                             ? $"{recvMb:F0} Mo / {totalMb:F0} Mo"
                             : $"{recvMb:F0} Mo";
                     });
@@ -269,10 +269,10 @@ public partial class AiChatView : UserControl
 
             await Dispatcher.InvokeAsync(() =>
             {
-                DownloadProgress.Value       = 100;
-                TxtDownloadStatus.Text       = "T\u00e9l\u00e9chargement termin\u00e9 !";
-                TxtDownloadSpeed.Text        = "";
-                TxtDownloadBytes.Text        = "";
+                DownloadProgress.Value = 100;
+                TxtDownloadStatus.Text = "T\u00e9l\u00e9chargement termin\u00e9 !";
+                TxtDownloadSpeed.Text = "";
+                TxtDownloadBytes.Text = "";
                 BtnCancelDownload.Visibility = Visibility.Collapsed;
 
                 RefreshModelState();
@@ -287,8 +287,8 @@ public partial class AiChatView : UserControl
             {
                 ProgressContainer.Visibility = Visibility.Collapsed;
                 BtnCancelDownload.Visibility = Visibility.Collapsed;
-                BtnDownloadModel.IsEnabled   = true;
-                TxtBtnDownload.Text          = "T\u00e9l\u00e9charger le mod\u00e8le IA";
+                BtnDownloadModel.IsEnabled = true;
+                TxtBtnDownload.Text = "T\u00e9l\u00e9charger le mod\u00e8le IA";
             });
         }
         catch (Exception ex)
@@ -298,11 +298,11 @@ public partial class AiChatView : UserControl
 
             await Dispatcher.InvokeAsync(() =>
             {
-                TxtDownloadStatus.Text       = $"Erreur : {ex.Message}";
-                TxtDownloadSpeed.Text        = "";
+                TxtDownloadStatus.Text = $"Erreur : {ex.Message}";
+                TxtDownloadSpeed.Text = "";
                 BtnCancelDownload.Visibility = Visibility.Collapsed;
-                BtnDownloadModel.IsEnabled   = true;
-                TxtBtnDownload.Text          = "R\u00e9essayer";
+                BtnDownloadModel.IsEnabled = true;
+                TxtBtnDownload.Text = "R\u00e9essayer";
             });
         }
         finally
@@ -340,17 +340,17 @@ public partial class AiChatView : UserControl
         if (result != MessageBoxResult.Yes) return;
 
         _aiEnabled = true;
-        DevBadge.Visibility       = Visibility.Collapsed;
-        DevPanel.Visibility       = Visibility.Collapsed;
+        DevBadge.Visibility = Visibility.Collapsed;
+        DevPanel.Visibility = Visibility.Collapsed;
         MessagesScroll.Visibility = Visibility.Visible;
-        InputPanel.Visibility     = Visibility.Visible;
+        InputPanel.Visibility = Visibility.Visible;
         UpdateStatus();
     }
 
     private void SetThinking(bool thinking)
     {
         _isThinking = thinking;
-        BtnSend.IsEnabled  = !thinking;
+        BtnSend.IsEnabled = !thinking;
         TxtInput.IsEnabled = !thinking;
 
         if (thinking)

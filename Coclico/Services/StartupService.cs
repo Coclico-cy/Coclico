@@ -13,7 +13,7 @@ public class StartupProgress
 
 public class StartupService
 {
-public async Task RunStartupAsync(IProgress<StartupProgress>? progress = null, CancellationToken ct = default)
+    public async Task RunStartupAsync(IProgress<StartupProgress>? progress = null, CancellationToken ct = default)
     {
         try
         {

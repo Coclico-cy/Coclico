@@ -156,13 +156,13 @@ public sealed class CodePatcherService(
     {
         lock (_histLock)
             return _history.Count <= max
-                ? [.._history]
+                ? [.. _history]
                 : _history.GetRange(0, max);
     }
 
     public IReadOnlyList<CodePatchResult> GetPendingProposals()
     {
-        lock (_histLock) return [.._pending];
+        lock (_histLock) return [.. _pending];
     }
 
     public async Task<CodePatchResult> ApproveAndApplyAsync(

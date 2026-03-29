@@ -181,23 +181,23 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
     public ProgramsView()
     {
         InitializeComponent();
-        Categories   = new ObservableCollection<string>(_programsService.GetCategories());
+        Categories = new ObservableCollection<string>(_programsService.GetCategories());
         FilterGroups = new ObservableCollection<InstalledProgramsService.FilterGroup>(_programsService.GetFilterGroups());
 
         foreach (var group in FilterGroups)
             group.PropertyChanged += OnGroupChanged;
 
-        AddGroupCommand            = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => AddGroup());
-        EditGroupCommand           = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => EditGroup(p as InstalledProgramsService.FilterGroup));
-        DeleteGroupCommand         = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => DeleteGroup(p as InstalledProgramsService.FilterGroup));
-        AddCategoryCommand         = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => AddCategory());
-        EditCategoryCommand        = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => EditCategory(p as string));
-        DeleteCategoryCommand      = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => DeleteCategory(p as string));
-        OpenConfigCommand          = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsConfigOpen = true);
-        CloseConfigCommand         = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsConfigOpen = false);
-        CloseManualAddCommand      = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsManualAddOpen = false);
-        ConfirmManualAddCommand    = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => ConfirmManualAdd());
-        CloseGenericInputCommand   = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsGenericInputOpen = false);
+        AddGroupCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => AddGroup());
+        EditGroupCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => EditGroup(p as InstalledProgramsService.FilterGroup));
+        DeleteGroupCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => DeleteGroup(p as InstalledProgramsService.FilterGroup));
+        AddCategoryCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => AddCategory());
+        EditCategoryCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => EditCategory(p as string));
+        DeleteCategoryCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(p => DeleteCategory(p as string));
+        OpenConfigCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsConfigOpen = true);
+        CloseConfigCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsConfigOpen = false);
+        CloseManualAddCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsManualAddOpen = false);
+        ConfirmManualAddCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => ConfirmManualAdd());
+        CloseGenericInputCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ => IsGenericInputOpen = false);
         ConfirmGenericInputCommand = new CommunityToolkit.Mvvm.Input.RelayCommand<object?>(_ =>
         {
             var trimmed = GenericInputText?.Trim() ?? string.Empty;
@@ -235,11 +235,11 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
 
     private void ShowGenericInput(string title, string label, string defaultValue, Action<string> callback)
     {
-        GenericInputTitle     = title;
-        GenericInputLabel     = label;
-        GenericInputText      = defaultValue;
+        GenericInputTitle = title;
+        GenericInputLabel = label;
+        GenericInputText = defaultValue;
         _genericInputCallback = callback;
-        IsGenericInputOpen    = true;
+        IsGenericInputOpen = true;
     }
 
     private void ConfirmManualAdd()
@@ -252,12 +252,12 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
 
         var newApp = new InstalledProgramsService.ProgramInfo
         {
-            Name        = string.IsNullOrEmpty(NewAppName) ? Path.GetFileNameWithoutExtension(NewAppPath) : NewAppName,
-            ExePath     = NewAppPath,
+            Name = string.IsNullOrEmpty(NewAppName) ? Path.GetFileNameWithoutExtension(NewAppPath) : NewAppName,
+            ExePath = NewAppPath,
             InstallPath = Path.GetDirectoryName(NewAppPath) ?? string.Empty,
-            Source      = "Manuel",
-            Category    = NewAppCategory,
-            IconPath    = NewAppPath
+            Source = "Manuel",
+            Category = NewAppCategory,
+            IconPath = NewAppPath
         };
 
         _programsService.AddManualApplication(newApp);
@@ -267,16 +267,16 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
 
     private ProgramDisplayInfo MapToDisplayInfo(InstalledProgramsService.ProgramInfo p) => new()
     {
-        Name        = p.Name,
-        Publisher   = p.Publisher,
+        Name = p.Name,
+        Publisher = p.Publisher,
         InstallPath = p.InstallPath,
-        ExePath     = p.ExePath,
-        Version     = p.Version,
-        Source      = p.Source,
-        IconPath    = p.IconPath,
-        HasIcon     = !string.IsNullOrEmpty(p.IconPath),
-        Category    = p.Category,
-        SizeText    = FormatSize(p.SizeBytes)
+        ExePath = p.ExePath,
+        Version = p.Version,
+        Source = p.Source,
+        IconPath = p.IconPath,
+        HasIcon = !string.IsNullOrEmpty(p.IconPath),
+        Category = p.Category,
+        SizeText = FormatSize(p.SizeBytes)
     };
 
     private async Task LoadProgramsAsync(bool forceRefresh = false)
@@ -321,7 +321,7 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
 
     private void UpdateUI()
     {
-        var source     = (_selectedFilterGroup?.ShowsGames ?? false) ? _games : _allPrograms;
+        var source = (_selectedFilterGroup?.ShowsGames ?? false) ? _games : _allPrograms;
         var searchText = SearchBox?.Text ?? string.Empty;
 
         var filtered = source.Where(p =>
@@ -383,7 +383,7 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
             e is MouseButtonEventArgs mArgs)
         {
             SelectedProgram = app;
-            IsDetailsOpen   = true;
+            IsDetailsOpen = true;
             if (mArgs.ClickCount >= 2)
                 LaunchAppAndForget(app);
         }
@@ -418,9 +418,9 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
             await Task.Run(() => Process.Start(
                 new ProcessStartInfo
                 {
-                    FileName         = app.ExePath,
+                    FileName = app.ExePath,
                     WorkingDirectory = workDir,
-                    UseShellExecute  = true
+                    UseShellExecute = true
                 }));
 
             var existing = RecentPrograms.FirstOrDefault(p => p.ExePath == app.ExePath);
@@ -486,7 +486,7 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
     private void BtnCloseDetails_Click(object sender, RoutedEventArgs e)
     {
         IsDetailsOpen = false;
-        IsEditing     = false;
+        IsEditing = false;
     }
 
     private void BtnAssignShortcut_Click(object sender, RoutedEventArgs e)
@@ -668,22 +668,22 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
         var dialog = new OpenFileDialog
         {
             Filter = "Executables (*.exe)|*.exe|All files (*.*)|*.*",
-            Title  = "S\u00e9lectionner une application"
+            Title = "S\u00e9lectionner une application"
         };
 
         if (dialog.ShowDialog() == true)
         {
-            NewAppPath      = dialog.FileName;
-            NewAppName      = Path.GetFileNameWithoutExtension(dialog.FileName);
-            NewAppCategory  = Categories.Count > 2 ? Categories[2] : (Categories.Count > 0 ? Categories[0] : "Logiciel");
+            NewAppPath = dialog.FileName;
+            NewAppName = Path.GetFileNameWithoutExtension(dialog.FileName);
+            NewAppCategory = Categories.Count > 2 ? Categories[2] : (Categories.Count > 0 ? Categories[0] : "Logiciel");
             IsManualAddOpen = true;
         }
     }
 
     private static string FormatSize(long bytes)
     {
-        if (bytes <= 0)                  return string.Empty;
-        if (bytes < 1024 * 1024)         return $"{bytes / 1024:F0} KB";
+        if (bytes <= 0) return string.Empty;
+        if (bytes < 1024 * 1024) return $"{bytes / 1024:F0} KB";
         if (bytes < 1024L * 1024 * 1024) return $"{bytes / (1024.0 * 1024):F0} MB";
         return $"{bytes / (1024.0 * 1024 * 1024):F1} GB";
     }
@@ -702,14 +702,14 @@ public partial class ProgramsView : UserControl, INotifyPropertyChanged
             set { _name = value; OnPropertyChanged(); }
         }
 
-        public string Publisher   { get; set; } = string.Empty;
+        public string Publisher { get; set; } = string.Empty;
         public string InstallPath { get; set; } = string.Empty;
-        public string ExePath     { get; set; } = string.Empty;
-        public string Version     { get; set; } = string.Empty;
-        public string SizeText    { get; set; } = string.Empty;
-        public string Source      { get; set; } = string.Empty;
-        public string IconPath    { get; set; } = string.Empty;
-        public bool   HasIcon     { get; set; }
+        public string ExePath { get; set; } = string.Empty;
+        public string Version { get; set; } = string.Empty;
+        public string SizeText { get; set; } = string.Empty;
+        public string Source { get; set; } = string.Empty;
+        public string IconPath { get; set; } = string.Empty;
+        public bool HasIcon { get; set; }
 
         private string _category = string.Empty;
         public string Category

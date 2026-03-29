@@ -21,8 +21,8 @@ public partial class WorkflowPipelinesView : UserControl
 
     private void TbChainName_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        TbChainName.Visibility  = Visibility.Collapsed;
-        TbxChainName.Text       = VM.SelectedChain?.Name ?? string.Empty;
+        TbChainName.Visibility = Visibility.Collapsed;
+        TbxChainName.Text = VM.SelectedChain?.Name ?? string.Empty;
         TbxChainName.Visibility = Visibility.Visible;
         TbxChainName.Focus();
         TbxChainName.SelectAll();
@@ -43,14 +43,14 @@ public partial class WorkflowPipelinesView : UserControl
             VM.SelectedChain.Name = TbxChainName.Text.Trim();
 
         TbxChainName.Visibility = Visibility.Collapsed;
-        TbChainName.Visibility  = Visibility.Visible;
+        TbChainName.Visibility = Visibility.Visible;
     }
 
     private void BrowseExe_Click(object sender, RoutedEventArgs e)
     {
         var dlg = new OpenFileDialog
         {
-            Title  = "S\u00e9lectionner un ex\u00e9cutable",
+            Title = "S\u00e9lectionner un ex\u00e9cutable",
             Filter = "Ex\u00e9cutables (*.exe)|*.exe|Tous les fichiers (*.*)|*.*"
         };
 
@@ -65,7 +65,7 @@ public partial class WorkflowPipelinesView : UserControl
     {
         if (e.MiddleButton != MouseButtonState.Pressed) return;
         _isPanning = true;
-        _panStart  = e.GetPosition(FlowScroll);
+        _panStart = e.GetPosition(FlowScroll);
         FlowScroll.CaptureMouse();
         FlowScroll.Cursor = Cursors.SizeWE;
         e.Handled = true;
@@ -75,7 +75,7 @@ public partial class WorkflowPipelinesView : UserControl
     {
         if (!_isPanning) return;
         var pos = e.GetPosition(FlowScroll);
-        var dx  = _panStart.X - pos.X;
+        var dx = _panStart.X - pos.X;
         FlowScroll.ScrollToHorizontalOffset(FlowScroll.HorizontalOffset + dx);
         _panStart = pos;
     }

@@ -706,7 +706,8 @@ public sealed class WorkflowService
     [ComImport, Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IMMDevice
     {
-        [PreserveSig] int Activate([MarshalAs(UnmanagedType.LPStruct)] Guid riid, int dwClsCtx,
+        [PreserveSig]
+        int Activate([MarshalAs(UnmanagedType.LPStruct)] Guid riid, int dwClsCtx,
             IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
     }
 
@@ -1024,14 +1025,32 @@ public sealed class WorkflowService
         "alt" => 0x12,
         "shift" => 0x10,
         "win" or "winkey" => 0x5B,
-        "f1" => 0x70, "f2" => 0x71, "f3" => 0x72, "f4" => 0x73,
-        "f5" => 0x74, "f6" => 0x75, "f7" => 0x76, "f8" => 0x77,
-        "f9" => 0x78, "f10" => 0x79, "f11" => 0x7A, "f12" => 0x7B,
-        "tab" => 0x09, "enter" => 0x0D, "esc" or "escape" => 0x1B,
-        "space" => 0x20, "left" => 0x25, "up" => 0x26,
-        "right" => 0x27, "down" => 0x28, "home" => 0x24,
-        "end" => 0x23, "pageup" => 0x21, "pagedown" => 0x22,
-        "del" or "delete" => 0x2E, "backspace" => 0x08,
+        "f1" => 0x70,
+        "f2" => 0x71,
+        "f3" => 0x72,
+        "f4" => 0x73,
+        "f5" => 0x74,
+        "f6" => 0x75,
+        "f7" => 0x76,
+        "f8" => 0x77,
+        "f9" => 0x78,
+        "f10" => 0x79,
+        "f11" => 0x7A,
+        "f12" => 0x7B,
+        "tab" => 0x09,
+        "enter" => 0x0D,
+        "esc" or "escape" => 0x1B,
+        "space" => 0x20,
+        "left" => 0x25,
+        "up" => 0x26,
+        "right" => 0x27,
+        "down" => 0x28,
+        "home" => 0x24,
+        "end" => 0x23,
+        "pageup" => 0x21,
+        "pagedown" => 0x22,
+        "del" or "delete" => 0x2E,
+        "backspace" => 0x08,
         _ => key.Trim().Length == 1 ? ParseSingleCharVk(key.Trim()[0]) : (byte)0
     };
 

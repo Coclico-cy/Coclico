@@ -41,7 +41,7 @@ public partial class SplashWindow : Window
 
     private async Task SetProgress(string status, double value)
     {
-        TxtStatus.Text   = status;
+        TxtStatus.Text = status;
         PbProgress.Value = value;
         await Task.Delay(55);
     }

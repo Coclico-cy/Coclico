@@ -10,8 +10,8 @@ namespace Coclico.Services;
 
 public class CacheService : ICacheService
 {
-private static readonly string CacheDir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "cache");
+    private static readonly string CacheDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "cache");
 
     private static readonly JsonSerializerOptions _serializeOptions = new() { WriteIndented = false };
 
