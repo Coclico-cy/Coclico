@@ -1,7 +1,5 @@
 # Coclico
 
-> This project uses AI (Claude by Anthropic) for language correction and multi-language support (French, German, Spanish) — without it there would be too many mistakes and we don't speak all these languages. We believe in transparency.
-
 **Native Windows system management, automation, and AI-assisted analysis -- entirely offline.**
 
 ![Version](https://img.shields.io/badge/Version-1.0.4-blue?style=flat-square)
@@ -16,6 +14,12 @@ Coclico is a desktop application for Windows system administration, process supe
 [Website](https://coclico-cy.github.io/Coclico/) |
 [Download Latest Release](https://github.com/Coclico-cy/Coclico/releases/latest) |
 [Source Code](https://github.com/Coclico-cy/Coclico)
+
+---
+
+## Language & AI Assistance
+
+The English, German, and Spanish translations in this project were reviewed and corrected with the assistance of [Claude](https://claude.ai) (Anthropic), which also helps maintain linguistic consistency across all supported languages.
 
 ---
 
@@ -577,9 +581,3 @@ Contributions are welcome. To contribute:
 This project is open source with no license. You are free to use, modify, and distribute it.
 
 © 2026 Coclico-cy
-
----
-
-## Language & AI Assistance
-
-The French, German, and Spanish translations in this project were reviewed and corrected with the assistance of [Claude](https://claude.ai) (Anthropic), which also helps maintain linguistic consistency across all supported languages.

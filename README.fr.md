@@ -1,9 +1,6 @@
 # Coclico -- Plateforme d'administration systeme Windows
 
-> Ce projet utilise l'IA (Claude d'Anthropic) pour la correction linguistique et le support multilingue (francais, allemand, espagnol) — sans elle il y aurait trop de fautes et nous ne parlons pas toutes ces langues. Nous croyons en la transparence.
-
 [![Version](https://img.shields.io/badge/Version-1.0.4-blue)](https://github.com/Coclico-cy/Coclico/releases/latest)
-
 [![Plateforme](https://img.shields.io/badge/Plateforme-Windows%2010%2F11-0078d4)](https://github.com/Coclico-cy/Coclico)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512bd4)](https://dotnet.microsoft.com/)
 [![Site Web](https://img.shields.io/badge/Site%20Web-coclico--cy.github.io-ff7043)](https://coclico-cy.github.io/Coclico/)
@@ -11,6 +8,12 @@
 [English](README.md) | **Francais**
 
 Coclico est une application de bureau Windows native dediee a l'administration systeme, la supervision de processus, la maintenance automatisee et l'analyse assistee par intelligence artificielle. L'application fonctionne integralement hors ligne, sans aucune dependance cloud. Un modele de langage local embarque (LLamaSharp 0.26) fournit des capacites d'analyse et d'assistance pilotees par IA, sans qu'aucune donnee ne soit transmise vers l'exterieur.
+
+---
+
+## Langues et assistance IA
+
+Les traductions en anglais, allemand et espagnol de ce projet ont ete relues et corrigees avec l'aide de [Claude](https://claude.ai) (Anthropic), qui contribue egalement a maintenir la coherence linguistique entre toutes les langues supportees.
 
 ---
 
