@@ -1,6 +1,6 @@
 # Coclico -- Plateforme d'administration systeme Windows
 
-> Ce projet a ete construit avec l'aide de l'IA (Claude d'Anthropic) pour la generation de code, la correction linguistique et le support multilingue (francais, allemand, espagnol). Nous croyons en la transparence.
+> Ce projet utilise l'IA (Claude d'Anthropic) pour la correction linguistique et le support multilingue (francais, allemand, espagnol) — sans elle il y aurait trop de fautes et nous ne parlons pas toutes ces langues. Nous croyons en la transparence.
 
 [![Version](https://img.shields.io/badge/Version-1.0.4-blue)](https://github.com/Coclico-cy/Coclico/releases/latest)
 

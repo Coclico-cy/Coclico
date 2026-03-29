@@ -1,6 +1,6 @@
 # Coclico
 
-> This project was built with the assistance of AI (Claude by Anthropic) for code generation, language correction, and multi-language support (French, German, Spanish). We believe in transparency.
+> This project uses AI (Claude by Anthropic) for language correction and multi-language support (French, German, Spanish) — without it there would be too many mistakes and we don't speak all these languages. We believe in transparency.
 
 **Native Windows system management, automation, and AI-assisted analysis -- entirely offline.**
 
