@@ -118,6 +118,7 @@ namespace Coclico.Tests
         }
     }
 
+    [Collection("ServiceContainer")]
     public class BlockedPowerShellSecurityTests
     {
         [Theory]
@@ -184,6 +185,7 @@ namespace Coclico.Tests
         }
     }
 
+    [Collection("ServiceContainer")]
     public class SsrfProtectionTests
     {
         [Theory]
