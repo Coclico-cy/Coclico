@@ -10,6 +10,8 @@ namespace Coclico.Services;
 
 public static class ServiceContainer
 {
+    private static volatile bool _isBuilt = false;
+
     private static Lazy<IServiceProvider> _lazy =
         new(() => throw new InvalidOperationException(
             "Service container not built. Call Build() at startup."),
@@ -56,13 +58,14 @@ public static class ServiceContainer
                 ValidateScopes = false
             });
         }, LazyThreadSafetyMode.ExecutionAndPublication);
+        _isBuilt = true;
     }
 
     public static T GetRequired<T>() where T : notnull =>
         Provider.GetRequiredService<T>();
 
     public static T? GetOptional<T>() where T : class =>
-        Provider.GetService<T>();
+        _isBuilt ? Provider.GetService<T>() : null;
 
     public static IServiceScope CreateScope() =>
         Provider.CreateScope();
