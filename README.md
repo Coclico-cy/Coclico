@@ -1,9 +1,10 @@
 # Coclico
 
+> This project was built with the assistance of AI (Claude by Anthropic) for code generation, language correction, and multi-language support (French, German, Spanish). We believe in transparency.
+
 **Native Windows system management, automation, and AI-assisted analysis -- entirely offline.**
 
 ![Version](https://img.shields.io/badge/Version-1.0.4-blue?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078d4?style=flat-square)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512bd4?style=flat-square)
 [![Website](https://img.shields.io/badge/Website-coclico--cy.github.io-orange?style=flat-square)](https://coclico-cy.github.io/Coclico/)
@@ -47,7 +48,7 @@ Coclico is a desktop application for Windows system administration, process supe
 12. [Configuration](#configuration)
 13. [Localization](#localization)
 14. [Contributing](#contributing)
-15. [License](#license)
+15. [Open Source](#open-source)
 
 ---
 
@@ -401,7 +402,7 @@ The project file enables several .NET runtime optimizations:
 ```
 Coclico/
     Coclico.slnx                     Solution file
-    LICENSE                          MIT License
+
     README.md                        This file (English)
     README.fr.md                     French README
     Coclico_Setup.iss                Inno Setup installer script
@@ -571,8 +572,14 @@ Contributions are welcome. To contribute:
 
 ---
 
-## License
+## Open Source
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for the full text.
+This project is open source with no license. You are free to use, modify, and distribute it.
 
-© 2026 Coclico-cy — Open Source.
+© 2026 Coclico-cy
+
+---
+
+## Language & AI Assistance
+
+The French, German, and Spanish translations in this project were reviewed and corrected with the assistance of [Claude](https://claude.ai) (Anthropic), which also helps maintain linguistic consistency across all supported languages.

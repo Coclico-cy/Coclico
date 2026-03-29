@@ -1,7 +1,9 @@
 # Coclico -- Plateforme d'administration systeme Windows
 
+> Ce projet a ete construit avec l'aide de l'IA (Claude d'Anthropic) pour la generation de code, la correction linguistique et le support multilingue (francais, allemand, espagnol). Nous croyons en la transparence.
+
 [![Version](https://img.shields.io/badge/Version-1.0.4-blue)](https://github.com/Coclico-cy/Coclico/releases/latest)
-[![Licence](https://img.shields.io/badge/Licence-MIT-green)](LICENSE)
+
 [![Plateforme](https://img.shields.io/badge/Plateforme-Windows%2010%2F11-0078d4)](https://github.com/Coclico-cy/Coclico)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512bd4)](https://dotnet.microsoft.com/)
 [![Site Web](https://img.shields.io/badge/Site%20Web-coclico--cy.github.io-ff7043)](https://coclico-cy.github.io/Coclico/)
@@ -25,7 +27,7 @@ Coclico est une application de bureau Windows native dediee a l'administration s
 9. [Arborescence du projet](#arborescence-du-projet)
 10. [Site web et documentation](#site-web-et-documentation)
 11. [Contribuer](#contribuer)
-12. [Licence](#licence)
+12. [Open Source](#open-source)
 
 ---
 
@@ -419,8 +421,14 @@ Les contributions sont les bienvenues. Pour contribuer :
 
 ---
 
-## Licence
+## Open Source
 
-Ce projet est distribue sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour les details complets.
+Ce projet est open source sans licence. Vous etes libre de l'utiliser, le modifier et le distribuer.
 
-© 2026 Coclico-cy — Open Source.
+© 2026 Coclico-cy
+
+---
+
+## Langues et assistance IA
+
+Les traductions en francais, allemand et espagnol de ce projet ont ete relues et corrigees avec l'aide de [Claude](https://claude.ai) (Anthropic), qui contribue egalement a maintenir la coherence linguistique entre toutes les langues supportees.
