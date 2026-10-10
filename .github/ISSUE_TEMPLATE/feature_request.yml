@@ -1,0 +1,24 @@
+name: "Feature request"
+description: "Suggest a new feature for Coclico"
+title: "[Suggestion] "
+labels: [ "enhancement" ]
+body:
+  - type: textarea
+    id: probleme
+    attributes:
+      label: "What problem are you trying to solve?"
+      description: "Describe the need or the current frustration."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "The solution you'd like"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives considered (optional)"

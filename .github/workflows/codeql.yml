@@ -1,0 +1,40 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "0 6 * * 1"
+
+jobs:
+  analyze:
+    name: "Analyser avec CodeQL"
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+
+    steps:
+      - name: "Récupérer le code"
+        uses: actions/checkout@v4
+
+      - name: "Initialiser CodeQL"
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: "Compiler"
+        shell: pwsh
+        run: |
+          dotnet restore Coclico.slnx
+          dotnet build Coclico.slnx -c Release
+
+      - name: "Analyser"
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"

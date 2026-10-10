@@ -1,0 +1,71 @@
+name: "Bug report"
+description: "Report a problem with Coclico"
+title: "[Bug] "
+labels: [ "bug" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this issue! / Merci de prendre le temps de signaler ce problème !
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Describe the bug"
+      description: "What happens? What should happen instead?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: etapes
+    attributes:
+      label: "Steps to reproduce"
+      placeholder: |
+        1. Open Coclico
+        2. Go to the... tab
+        3. Click on...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: "Affected module"
+      options:
+        - Dashboard
+        - CPU optimization
+        - Network optimizer
+        - PC cleaning
+        - RAM cleaner
+        - Disk analyzer
+        - Health & defense
+        - Global launcher
+        - Program installer
+        - AI assistant
+        - Settings
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: "Coclico version"
+      placeholder: "2.0.1"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: "Windows version"
+      placeholder: "Windows 11 23H2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs (optional)"
+      description: "Paste any relevant error messages or logs here."
+      render: shell

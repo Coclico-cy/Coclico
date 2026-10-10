@@ -1,0 +1,23 @@
+name: "Review des dépendances"
+
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    name: "Vérifier les vulnérabilités des dépendances"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: "Récupérer le code"
+        uses: actions/checkout@v4
+
+      - name: "Review des dépendances"
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high

@@ -1,0 +1,31 @@
+name: "Stale issues cleanup"
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+
+permissions:
+  issues: write
+
+jobs:
+  stale:
+    name: "Mark and close stale issues"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: "stale"
+          stale-issue-message: |
+            This issue has been inactive for 30 days. It will be closed in 7 days if no further activity occurs.
+            
+            Cette issue est inactive depuis 30 jours. Elle sera fermée dans 7 jours si aucune activité.
+          close-issue-message: |
+            Issue closed due to inactivity. Feel free to reopen it if needed.
+            
+            Issue fermée pour inactivité. N'hésitez pas à la rouvrir si nécessaire.
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
