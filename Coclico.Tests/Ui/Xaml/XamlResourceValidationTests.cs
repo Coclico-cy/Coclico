@@ -10,7 +10,7 @@ public sealed class XamlResourceValidationTests
     private static readonly Regex StaticResourceRegex = new(@"\{StaticResource\s+([A-Za-z0-9_.]+)", RegexOptions.Compiled);
     private static readonly Regex MergedDictionaryRegex = new(@"ResourceDictionary\s+Source=""([^""]+)""", RegexOptions.Compiled);
     private static readonly Regex PackResourceRegex = new(@"pack://application:,,,/([A-Za-z0-9_.]+);component/(.+?)(?=[""]|$)", RegexOptions.Compiled);
-    private static readonly Regex IconSourceRegex = new("""(?:Icon|Source)="([^"{}]+)"""", RegexOptions.Compiled);
+    private static readonly Regex IconSourceRegex = new("(?:Icon|Source)=\"([^\"{}]+)\"", RegexOptions.Compiled);
     private static readonly Regex KeyRegex = new(@"x:Key=""([^""]+)""", RegexOptions.Compiled);
     private static readonly string[] ImageExtensions = [".ico", ".png", ".jpg", ".jpeg", ".bmp", ".gif"];
 
