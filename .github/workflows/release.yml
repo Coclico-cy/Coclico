@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Vérifier cohérence tag ↔ version.txt
+        shell: pwsh
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          $version = (Get-Content version.txt -Raw).Trim()
+          if ($env:TAG_NAME -like "v*") {
+            if ($env:TAG_NAME -ne "v$version") {
+              Write-Error "Le tag $env:TAG_NAME ne correspond pas à version.txt (v$version)"
+              exit 1
+            }
+          }
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore Coclico.slnx
+
+      - name: Build installer
+        shell: pwsh
+        run: ./installer/build-installer.ps1
+
+      - name: Préparer les artefacts et générer SHA256SUMS
+        shell: pwsh
+        run: |
+          $searchDirs = @('./installer/output', './publish')
+          $files = @()
+          foreach ($dir in $searchDirs) {
+            if (Test-Path $dir) {
+              $files += Get-ChildItem $dir -Recurse -Include *.exe,*.zip
+            }
+          }
+          if (-not $files) {
+            Write-Error "Aucun artefact (*.exe, *.zip) trouvé dans : $($searchDirs -join ', ')"
+            exit 1
+          }
+          New-Item -ItemType Directory -Force release-artifacts | Out-Null
+          $lines = foreach ($f in $files) {
+            Copy-Item $f.FullName -Destination (Join-Path 'release-artifacts' $f.Name) -Force
+            "{0}  {1}" -f (Get-FileHash $f.FullName -Algorithm SHA256).Hash, $f.Name
+          }
+          $lines | Out-File -Encoding utf8 SHA256SUMS.txt
+
+      - name: Créer la Release GitHub (draft)
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          files: |
+            SHA256SUMS.txt
+            release-artifacts/*

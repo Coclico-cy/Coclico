@@ -1,0 +1,994 @@
+<ui:FluentWindow x:Class="Coclico.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:views="clr-namespace:Coclico.Views"
+        Title="{DynamicResource App_Title}" Height="820" Width="1240"
+        Loaded="MainWindow_Loaded"
+        MinHeight="660" MinWidth="980"
+        Icon="Resources\icone\plage.ico"
+        Background="{DynamicResource BgBaseBrush}"
+        BorderBrush="#25212A"
+        BorderThickness="1"
+        Opacity="0"
+        WindowStartupLocation="CenterScreen"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="None"
+        WindowState="Normal"
+        RenderOptions.BitmapScalingMode="Linear"
+        RenderOptions.ClearTypeHint="Enabled"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        SnapsToDevicePixels="True">
+
+    <Window.Resources>
+        <Duration x:Key="NavDuration">0:0:0.15</Duration>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="AmbientBlueTransform" Storyboard.TargetProperty="X"
+                                     From="-60" To="80" Duration="0:0:12" AutoReverse="True" RepeatBehavior="Forever"/>
+                    <DoubleAnimation Storyboard.TargetName="AmbientVioletTransform" Storyboard.TargetProperty="Y"
+                                     From="40" To="-80" Duration="0:0:15" AutoReverse="True" RepeatBehavior="Forever"/>
+                    <DoubleAnimation Storyboard.TargetName="AmbientRoseTransform" Storyboard.TargetProperty="X"
+                                     From="70" To="-70" Duration="0:0:18" AutoReverse="True" RepeatBehavior="Forever"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border Background="{DynamicResource BgBaseBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="28"/>
+            </Grid.RowDefinitions>
+
+            <Canvas Grid.RowSpan="5" IsHitTestVisible="False" ClipToBounds="True" Opacity="0.26">
+                <Ellipse Width="620" Height="400" Canvas.Left="-160" Canvas.Top="-200">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#FF3B30" Offset="0"/>
+                            <GradientStop Color="#4A110D" Offset="0.45"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="AmbientBlueTransform"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="560" Height="420" Canvas.Left="420" Canvas.Top="-200">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#FF6B35" Offset="0"/>
+                            <GradientStop Color="#451C0A" Offset="0.42"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="AmbientVioletTransform"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="500" Height="340" Canvas.Left="980" Canvas.Top="320">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#FFA000" Offset="0"/>
+                            <GradientStop Color="#3D2100" Offset="0.4"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="AmbientRoseTransform"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+            </Canvas>
+
+            <ui:TitleBar x:Name="TitleBar" Grid.Row="0"
+                         Title="{DynamicResource App_Title}"
+                         ShowMaximize="True" ShowMinimize="True">
+                <ui:TitleBar.Header>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="UserNameText" VerticalAlignment="Center"
+                                   FontSize="11.5" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,12,0"/>
+                        <ui:Button x:Name="BtnElevateAdmin" Appearance="Transparent"
+                                   ToolTip="{DynamicResource Main_AdminStandardTip}"
+                                   Click="BtnElevateAdmin_Click" Padding="8,4" Margin="0,0,6,0"
+                                   Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Shield24" FontSize="14" Foreground="#F59E0B"/>
+                                <TextBlock Text="Admin" FontSize="11" Margin="5,0,0,0" Foreground="#F59E0B" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ui:Button>
+                        <ui:Button x:Name="UpdateCheckButton" Appearance="Transparent"
+                                   ToolTip="{DynamicResource Main_CheckUpdatesTip}"
+                                   Click="UpdateCheckButton_Click" Padding="6" Margin="0,0,4,0">
+                            <ui:SymbolIcon Symbol="ArrowSync24" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </ui:Button>
+                        <ui:Button Appearance="Transparent" ToolTip="{DynamicResource Profile_Title}"
+                                   Click="ProfileBorder_MouseDown" Padding="6">
+                            <ui:SymbolIcon Symbol="Person24" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </ui:Button>
+                    </StackPanel>
+                </ui:TitleBar.Header>
+            </ui:TitleBar>
+
+            <Border x:Name="TopNavigationBar" Grid.Row="1" Background="{DynamicResource BgPanelBrush}" Padding="18,8,18,8"
+                    MouseDown="TopNavigationBar_MouseDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button x:Name="BtnArchitecturalMenu" Click="BtnArchitecturalMenu_Click"
+                                Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                Padding="10,6" Cursor="Hand" Margin="0,0,14,0" ToolTip="{DynamicResource Main_OpenMenuTip}">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <StackPanel VerticalAlignment="Center" Margin="0,0,7,0">
+                                    <Border Width="16" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" CornerRadius="1" Margin="0,0,0,3"/>
+                                    <Border Width="11" Height="2" Background="#FFFFFF" CornerRadius="1" Margin="0,0,0,3" HorizontalAlignment="Left"/>
+                                    <Border Width="16" Height="2" Background="#FFFFFF" CornerRadius="1"/>
+                                </StackPanel>
+                                <TextBlock Text="{DynamicResource Main_Menu}" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                <ui:SymbolIcon Symbol="ChevronDown24" FontSize="11" Foreground="{DynamicResource ArchitecturalYellowBrush}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock Text="Coclico" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                        <Border Width="4" Height="4" CornerRadius="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="6,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtStudioSubtitle" FontSize="9.5" FontWeight="SemiBold" Foreground="{DynamicResource TextHintBrush}" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel x:Name="TopModuleLinks" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                        <Button x:Name="TopNavHome" Tag="Home" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_Dashboard}" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                <Border x:Name="TopUnderlineHome" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Visible"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="TopNavNetwork" Tag="Network" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_Network}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <Border x:Name="TopUnderlineNetwork" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="TopNavCleaning" Tag="Cleaning" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_Cleaning}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <Border x:Name="TopUnderlineCleaning" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="TopNavRam" Tag="RamCleaner" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_RamTurbo}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <Border x:Name="TopUnderlineRam" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="TopNavHealth" Tag="HealthDefense" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_HealthDefense}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <Border x:Name="TopUnderlineHealth" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="TopNavPrograms" Tag="Programs" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_Programs}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <Border x:Name="TopUnderlinePrograms" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="TopNavDisk" Tag="DiskAnalyzer" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_DiskAnalyzer}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <Border x:Name="TopUnderlineDisk" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="TopNavInstaller" Tag="Installer" Click="TopNavItem_Click"
+                                Background="Transparent" BorderThickness="0" Padding="12,6" Cursor="Hand">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource Nav_Top_Installer}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <Border x:Name="TopUnderlineInstaller" Height="2" Background="{DynamicResource ArchitecturalYellowBrush}" Margin="0,3,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button x:Name="BtnToggleWindowMode" Click="BtnToggleWindowMode_Click"
+                                Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                Padding="10,5" Cursor="Hand" Margin="0,0,8,0" ToolTip="{DynamicResource Main_ToggleFullscreenTip}">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon x:Name="IconWindowMode" Symbol="FullScreenMaximize24" FontSize="13" Foreground="{DynamicResource ArchitecturalYellowBrush}" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="TxtWindowMode" Text="{DynamicResource Main_Fullscreen}" FontSize="10.5" FontWeight="Bold" Foreground="#FFFFFF"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Click="BtnAiChat_Click"
+                                Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                Padding="10,5" Cursor="Hand" ToolTip="{DynamicResource Main_CopilotTip}">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Bot24" FontSize="13" Foreground="{DynamicResource ArchitecturalYellowBrush}" Margin="0,0,6,0"/>
+                                <TextBlock Text="{DynamicResource Main_CopilotButton}" FontSize="10.5" FontWeight="Bold" Foreground="#FFFFFF"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="2" Background="{DynamicResource BorderSubtleBrush}"/>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="SidebarColumn" Width="0"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="NavBorder" Grid.Column="0" Tag="False" Visibility="Collapsed"
+                        Background="{DynamicResource BgSidebarBrush}"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,1,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border x:Name="SidebarHeaderBorder" Grid.Row="0" Padding="14,14,14,12"
+                                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,0,1">
+                            <Grid x:Name="HeaderGrid">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Image x:Name="SidebarLogoImage" Source="Resources\icone\plage.png" Grid.Row="0" Grid.Column="0"
+                                       Width="26" Height="26"
+                                       VerticalAlignment="Center"
+                                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <TextBlock x:Name="BrandLabel" Grid.Row="0" Grid.Column="1"
+                                           Text="Coclico" FontSize="15" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"
+                                           Margin="10,0,0,0"
+                                           TextOptions.TextFormattingMode="Display"/>
+                                <Button x:Name="SidebarToggleBtn" Grid.Row="0" Grid.Column="2"
+                                        Click="SidebarToggle_Click"
+                                        Background="Transparent" BorderThickness="0"
+                                        Padding="6,4" Cursor="Hand"
+                                        ToolTip="{DynamicResource Sidebar_Collapse}"
+                                        HorizontalAlignment="Right">
+                                    <ui:SymbolIcon x:Name="ToggleIcon" Symbol="Navigation24" FontSize="14"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,8,0,0">
+                            <StackPanel x:Name="NavMainStack">
+
+                                <TextBlock x:Name="NavSectionLbl"
+                                           Text="{DynamicResource Nav_SectionOverview}" FontSize="9" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextHintBrush}" Margin="14,8,0,6"
+                                           TextOptions.TextFormattingMode="Display"/>
+
+                                <RadioButton x:Name="NavHome" Tag="Home" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}" IsChecked="True"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Dashboard}"
+                                             AutomationProperties.Name="Navigation - Tableau de bord">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition x:Name="LabelCol0" Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="Home24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavHome_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Dashboard}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <RadioButton x:Name="NavRamCleaner" Tag="RamCleaner" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_RamCleaner}"
+                                             AutomationProperties.Name="Navigation - RAM Cleaner">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="Flash24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavRamCleaner_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_RamCleaner}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <RadioButton x:Name="NavCleaning" Tag="Cleaning" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Cleaning}"
+                                             AutomationProperties.Name="Navigation - Nettoyage">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="Delete24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavCleaning_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Cleaning}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <TextBlock x:Name="NavSectionTools_Lbl"
+                                           Text="{DynamicResource Nav_SectionTools}" FontSize="9" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextHintBrush}" Margin="14,16,0,6"
+                                           TextOptions.TextFormattingMode="Display"/>
+
+                                <RadioButton x:Name="NavPrograms" Tag="Programs" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Programs}"
+                                             AutomationProperties.Name="Navigation - Applications">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="Apps24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavPrograms_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Programs}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <RadioButton x:Name="NavDisk" Tag="DiskAnalyzer" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_DiskAnalyzer}"
+                                             AutomationProperties.Name="Navigation - Espace disque">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="DataUsage24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavDisk_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_DiskAnalyzer}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <RadioButton x:Name="NavInstaller" Tag="Installer" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Installer}"
+                                             AutomationProperties.Name="Navigation - Installeur">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="ArrowDownload24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavInstaller_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Installer}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <RadioButton x:Name="NavHealthDefense" Tag="HealthDefense" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_HealthDefense}"
+                                             AutomationProperties.Name="Navigation - Santé &amp; Défense">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavHealthDefense_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_HealthDefense}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <RadioButton x:Name="NavNetwork" Tag="Network" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Network}"
+                                             AutomationProperties.Name="Navigation - Réseau &amp; Latence">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="Globe24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavNetwork_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Network}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <TextBlock x:Name="NavSectionSys_Lbl"
+                                           Text="{DynamicResource Nav_SectionSys}" FontSize="9" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextHintBrush}" Margin="14,16,0,6"
+                                           TextOptions.TextFormattingMode="Display"/>
+
+                                <RadioButton x:Name="NavSettings" Tag="Settings" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Settings}">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="Settings24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavSettings_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Settings}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
+                                <RadioButton x:Name="NavHelp" Tag="Help" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Help}">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="QuestionCircle24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavHelp_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Help}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <Border Grid.Row="2" Padding="8,10" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,1,0,0">
+                            <Button x:Name="BtnAiChat"
+                                    Click="BtnAiChat_Click"
+                                    Background="{DynamicResource BgElevatedBrush}"
+                                    BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                    BorderThickness="1"
+                                    Padding="10,8"
+                                    HorizontalContentAlignment="Left"
+                                    Cursor="Hand" ToolTip="{DynamicResource Main_CopilotFloatingTip}">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="{DynamicResource CornerSmall}"/>
+                                    </Style>
+                                </Button.Resources>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Bot24" FontSize="16" Foreground="#38BDF8"
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="NavAi_Lbl" Grid.Column="1"
+                                               Text="Coclico AI" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Button>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Column="1">
+                    <Border Background="{DynamicResource BgBaseBrush}">
+                        <ContentControl x:Name="MainContentFrame"/>
+                    </Border>
+
+                    <Button x:Name="BtnFloatingAi"
+                            Click="BtnFloatingAi_Click"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,24,24"
+                            Width="44" Height="44"
+                            Panel.ZIndex="90"
+                            Cursor="Hand"
+                            ToolTip="{DynamicResource Main_CopilotFloatingTip}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="FabBorder" CornerRadius="12"
+                                        Background="#161F32"
+                                        BorderBrush="#2B3A68" BorderThickness="1.2"
+                                        SnapsToDevicePixels="True">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270"
+                                                          Color="#000000" Opacity="0.5"/>
+                                    </Border.Effect>
+                                    <ui:SymbolIcon Symbol="Bot24" FontSize="20" Foreground="#38BDF8"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="FabBorder" Property="Background" Value="#1E2B46"/>
+                                        <Setter TargetName="FabBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Border x:Name="AiChatOverlay"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Panel.ZIndex="100"
+                            Visibility="Collapsed"
+                            Width="490"
+                            MinWidth="400"
+                            Margin="0,0,0,0"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                            BorderThickness="1,0,0,0"
+                            Background="{DynamicResource BgPanelBrush}">
+                        <Border.RenderTransform>
+                            <TranslateTransform X="540"/>
+                        </Border.RenderTransform>
+                        <views:AiChatView x:Name="AiChatPanel"
+                                          CloseRequested="AiChatPanel_CloseRequested"
+                                          ActionRequested="AiChatPanel_ActionRequested"/>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="ArchitecturalDropdownOverlay" Grid.Row="3" Grid.RowSpan="2" Panel.ZIndex="800" Visibility="Collapsed" Opacity="0">
+                <Border Background="#C008090C" MouseDown="DropdownBackdrop_MouseDown"/>
+
+                <Border x:Name="ArchitecturalDropdownContainer" VerticalAlignment="Top" HorizontalAlignment="Left" Width="380"
+                    Background="{DynamicResource BgPanelBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="0,0,14,14" Padding="18,18,18,20">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.55"/>
+                    </Border.Effect>
+                    <Border.CacheMode>
+                        <BitmapCache RenderAtScale="1"/>
+                    </Border.CacheMode>
+                    <Border.RenderTransform>
+                        <TranslateTransform x:Name="DropdownTranslate" Y="-200"/>
+                    </Border.RenderTransform>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="4" Height="16" Background="{DynamicResource ArchitecturalYellowBrush}" CornerRadius="2" Margin="0,0,10,0"/>
+                                <TextBlock Text="{DynamicResource Menu_DrawerTitle}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <Button Grid.Column="2" Click="DropdownClose_Click"
+                                    Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                    Padding="12,5" Cursor="Hand">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </Button.Resources>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Dismiss24" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{DynamicResource Common_Close}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <Border Grid.Row="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,18"/>
+
+                        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="560">
+                        <StackPanel Margin="0,0,2,0">
+
+                            <Border Tag="Home" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="6,0,6,4" Padding="12,10"
+                                    Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Home24" FontSize="13" Foreground="{DynamicResource ArchitecturalYellowBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Menu_Dashboard}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border x:Name="MenuGroupMaintenance" Tag="Maintenance" MouseDown="MenuGroupToggle_MouseDown" Cursor="Hand"
+                                    Margin="6,8,6,0" Padding="12,9"
+                                    Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" CornerRadius="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="3" Height="13" Background="{DynamicResource ArchitecturalYellowBrush}" CornerRadius="1.5" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_GroupMaintenance}" FontSize="10.5" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <ui:SymbolIcon x:Name="MenuChevronMaintenance" Grid.Column="1" Symbol="ChevronDown24" FontSize="11"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                        <ui:SymbolIcon.RenderTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </ui:SymbolIcon.RenderTransform>
+                                    </ui:SymbolIcon>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="MenuPanelMaintenance" Margin="14,6,6,2">
+                                <Border Tag="Cleaning" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0,0,0,4" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Delete24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_SystemCleaning}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Tag="HealthDefense" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0,0,0,4" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_HealthAndDefense}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Tag="DiskAnalyzer" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="DataUsage24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_DiskAnalyzer}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <Border x:Name="MenuGroupPerformance" Tag="Performance" MouseDown="MenuGroupToggle_MouseDown" Cursor="Hand"
+                                    Margin="6,10,6,0" Padding="12,9"
+                                    Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" CornerRadius="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="3" Height="13" Background="{DynamicResource ArchitecturalYellowBrush}" CornerRadius="1.5" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_GroupPerformance}" FontSize="10.5" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <ui:SymbolIcon x:Name="MenuChevronPerformance" Grid.Column="1" Symbol="ChevronDown24" FontSize="11"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                        <ui:SymbolIcon.RenderTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </ui:SymbolIcon.RenderTransform>
+                                    </ui:SymbolIcon>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="MenuPanelPerformance" Margin="14,6,6,2">
+                                <Border Tag="RamCleaner" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0,0,0,4" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Flash24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_RamTurboCleaner}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Tag="Network" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0,0,0,4" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Globe24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_NetworkOptimizer}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Tag="PowerOptimizer" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Gauge24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_PowerOptimizer}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <Border x:Name="MenuGroupApplications" Tag="Applications" MouseDown="MenuGroupToggle_MouseDown" Cursor="Hand"
+                                    Margin="6,10,6,0" Padding="12,9"
+                                    Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" CornerRadius="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="3" Height="13" Background="{DynamicResource ArchitecturalYellowBrush}" CornerRadius="1.5" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_GroupApplications}" FontSize="10.5" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <ui:SymbolIcon x:Name="MenuChevronApplications" Grid.Column="1" Symbol="ChevronDown24" FontSize="11"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                        <ui:SymbolIcon.RenderTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </ui:SymbolIcon.RenderTransform>
+                                    </ui:SymbolIcon>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="MenuPanelApplications" Margin="14,6,6,2">
+                                <Border Tag="Programs" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0,0,0,4" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Apps24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_Applications}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Tag="Installer" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="ArrowDownload24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_WingetInstaller}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="6,12,6,6"/>
+
+                            <Border Tag="Settings" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="6,0,6,4" Padding="12,10"
+                                    Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Settings24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Menu_Settings}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="Help" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="6,0,6,0" Padding="12,10"
+                                    Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="QuestionCircle24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Menu_HelpAndAi}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Border Grid.Row="4" Background="{DynamicResource BgPanelBrush}"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,1,0,0">
+                <Grid Margin="12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="6" Height="6" CornerRadius="3" Background="{DynamicResource SuccessBrush}" Margin="0,0,8,0"/>
+                        <TextBlock Text="Coclico" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Status_SystemReady}"
+                               FontSize="10" Foreground="{DynamicResource TextMutedBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                    <TextBlock x:Name="VersionText" Grid.Column="2" Text=""
+                               FontSize="10" Foreground="{DynamicResource TextMutedBrush}"
+                               FontWeight="Medium" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <ui:SnackbarPresenter x:Name="RootSnackbarPresenter"
+                                  Grid.Row="3" Panel.ZIndex="9999"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Bottom"
+                                  Margin="0,0,0,24"/>
+
+            <Grid x:Name="BetaWelcomeOverlay" Grid.Row="0" Grid.RowSpan="5" Panel.ZIndex="10000" Visibility="Collapsed" Opacity="0">
+                <Border Background="#E607090E" MouseDown="BetaWelcomeBackdrop_MouseDown"/>
+                <Border x:Name="BetaWelcomeCard" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="690" Margin="24"
+                        Background="#10141D" BorderBrush="#263345"
+                        BorderThickness="1" CornerRadius="16" Padding="32,28">
+                    <Border.RenderTransform>
+                        <TranslateTransform x:Name="BetaWelcomeTransform" Y="0"/>
+                    </Border.RenderTransform>
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="40" ShadowDepth="10" Direction="270" Color="#000000" Opacity="0.85"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="42" Height="42" CornerRadius="12" Background="#162234"
+                                    BorderBrush="#253852" BorderThickness="1" VerticalAlignment="Center">
+                                <ui:SymbolIcon Symbol="Sparkle24" FontSize="20" Foreground="{DynamicResource PrimaryBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource BetaWelcome_Title}" FontSize="21" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    <Border Background="#162A38" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
+                                            CornerRadius="5" Padding="7,2" Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Tag}" FontSize="10" FontWeight="ExtraBold"
+                                                   Foreground="{DynamicResource PrimaryBrush}"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="{DynamicResource BetaWelcome_HeroTitle}" FontSize="14.5" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                        <TextBlock Text="{DynamicResource BetaWelcome_HeroDesc}" FontSize="12.5" LineHeight="18"
+                                   Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                        <UniformGrid Columns="2" Rows="2" Margin="0,0,0,20">
+                            <Border Background="#141923" BorderBrush="#202A3A" BorderThickness="1"
+                                    CornerRadius="10" Padding="14,12" Margin="0,0,6,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Flash24" FontSize="17" Foreground="{DynamicResource PrimaryBrush}"
+                                                   VerticalAlignment="Top" Margin="0,2,10,0"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card1_Title}" FontSize="13" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card1_Desc}" FontSize="11.5" LineHeight="16"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Background="#141923" BorderBrush="#202A3A" BorderThickness="1"
+                                    CornerRadius="10" Padding="14,12" Margin="6,0,0,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Brain24" FontSize="17" Foreground="{DynamicResource SecondaryBrush}"
+                                                   VerticalAlignment="Top" Margin="0,2,10,0"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card2_Title}" FontSize="13" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card2_Desc}" FontSize="11.5" LineHeight="16"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Background="#141923" BorderBrush="#202A3A" BorderThickness="1"
+                                    CornerRadius="10" Padding="14,12" Margin="0,6,6,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Sparkle24" FontSize="17" Foreground="#F59E0B"
+                                                   VerticalAlignment="Top" Margin="0,2,10,0"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card3_Title}" FontSize="13" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card3_Desc}" FontSize="11.5" LineHeight="16"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Background="#141923" BorderBrush="#202A3A" BorderThickness="1"
+                                    CornerRadius="10" Padding="14,12" Margin="6,6,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="17" Foreground="{DynamicResource SuccessBrush}"
+                                                   VerticalAlignment="Top" Margin="0,2,10,0"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card4_Title}" FontSize="13" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{DynamicResource BetaWelcome_Card4_Desc}" FontSize="11.5" LineHeight="16"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </UniformGrid>
+
+                        <Border Height="1" Background="#1D2635" Margin="0,0,0,14"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <ui:SymbolIcon Symbol="Beaker24" FontSize="14" Foreground="{DynamicResource TextMutedBrush}"
+                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{DynamicResource BetaWelcome_Notice}" FontSize="11"
+                                       Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="{DynamicResource BetaWelcome_Brand}" FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="{DynamicResource BetaWelcome_Author}" FontSize="11"
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
+                            </StackPanel>
+
+                            <ui:Button x:Name="BtnDismissBetaWelcome" Grid.Column="1" Click="BtnDismissBetaWelcome_Click"
+                                       Appearance="Primary" CornerRadius="8" Padding="22,10"
+                                       Cursor="Hand" FontWeight="SemiBold" IsDefault="True">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource BetaWelcome_Action}" FontSize="13" VerticalAlignment="Center"/>
+                                    <ui:SymbolIcon Symbol="ArrowRight24" FontSize="14" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</ui:FluentWindow>

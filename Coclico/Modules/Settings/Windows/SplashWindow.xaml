@@ -1,0 +1,208 @@
+<Window x:Class="Coclico.Views.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Width="500" Height="290"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Icon="..\..\..\Resources\icone\plage.ico">
+
+    <Window.Resources>
+        <QuarticEase x:Key="SplashEase" EasingMode="EaseOut"/>
+
+        <Style x:Key="CleanProgress" TargetType="ProgressBar">
+            <Setter Property="Height"          Value="3.5"/>
+            <Setter Property="Minimum"         Value="0"/>
+            <Setter Property="Maximum"         Value="100"/>
+            <Setter Property="Background"      Value="#13151D"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border CornerRadius="1.75" Background="{TemplateBinding Background}"
+                                BorderBrush="#2A2630" BorderThickness="1">
+                            <Border x:Name="PART_Track">
+                                <Border x:Name="PART_Indicator" HorizontalAlignment="Left" CornerRadius="1.75">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#FF3B30" Offset="0"/>
+                                            <GradientStop Color="#FF6B35" Offset="0.55"/>
+                                            <GradientStop Color="#FFA000" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                            </Border>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+
+                    <DoubleAnimation Storyboard.TargetName="ContentGrid"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.3"
+                                     EasingFunction="{StaticResource SplashEase}"/>
+                    <DoubleAnimation Storyboard.TargetName="ContentSlide"
+                                     Storyboard.TargetProperty="Y"
+                                     From="10" To="0" Duration="0:0:0.3"
+                                     EasingFunction="{StaticResource SplashEase}"/>
+
+                    <DoubleAnimation Storyboard.TargetName="OuterRingRotation"
+                                     Storyboard.TargetProperty="Angle"
+                                     From="0" To="360" Duration="0:0:18"
+                                     RepeatBehavior="Forever"/>
+
+                    <DoubleAnimation Storyboard.TargetName="InnerRingRotation"
+                                     Storyboard.TargetProperty="Angle"
+                                     From="360" To="0" Duration="0:0:12"
+                                     RepeatBehavior="Forever"/>
+
+                    <DoubleAnimation Storyboard.TargetName="CoreHaloScale"
+                                     Storyboard.TargetProperty="ScaleX"
+                                     From="0.96" To="1.04" Duration="0:0:2.0"
+                                     AutoReverse="True" RepeatBehavior="Forever"/>
+                    <DoubleAnimation Storyboard.TargetName="CoreHaloScale"
+                                     Storyboard.TargetProperty="ScaleY"
+                                     From="0.96" To="1.04" Duration="0:0:2.0"
+                                     AutoReverse="True" RepeatBehavior="Forever"/>
+
+                    <DoubleAnimation Storyboard.TargetName="DiodeGlow"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0.45" To="1.0" Duration="0:0:1.2"
+                                     AutoReverse="True" RepeatBehavior="Forever"/>
+                    <DoubleAnimation Storyboard.TargetName="StartupWave"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0.45" To="1" Duration="0:0:1.8"
+                                     AutoReverse="True" RepeatBehavior="Forever"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border Margin="14">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="28" ShadowDepth="0" Opacity="0.7"/>
+        </Border.Effect>
+
+        <Border CornerRadius="16" ClipToBounds="True" Background="#F207080B" BorderBrush="#33262B" BorderThickness="1">
+            <Grid>
+
+                <Border x:Name="StartupWave" Height="2" VerticalAlignment="Top" CornerRadius="16,16,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0"/>
+                            <GradientStop Color="#FF453A"     Offset="0.2"/>
+                            <GradientStop Color="#FFA000"     Offset="0.5"/>
+                            <GradientStop Color="#FF6B35"     Offset="0.8"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <Grid x:Name="ContentGrid" Margin="30,20,30,20" Opacity="0">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="ContentSlide" Y="10"/>
+                    </Grid.RenderTransform>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border x:Name="DiodeGlow" Width="6" Height="6" CornerRadius="3"
+                                    Background="#10B981" Margin="0,0,8,0" VerticalAlignment="Center">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#10B981" BlurRadius="4" ShadowDepth="0" Opacity="0.6"/>
+                                </Border.Effect>
+                            </Border>
+                            <TextBlock Text="COCLICO" FontSize="10" FontWeight="Bold" Foreground="#FFA000"
+                                       FontFamily="Segoe UI Variable, Segoe UI, sans-serif" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <TextBlock x:Name="TxtVersion" Text="v1.0.4" FontSize="9.5" FontWeight="SemiBold"
+                                   Foreground="#706760" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                        <Grid Width="76" Height="76" HorizontalAlignment="Center">
+
+                            <Ellipse Width="74" Height="74" Stroke="#2A2630" StrokeThickness="1"
+                                     StrokeDashArray="2, 6" Opacity="0.7" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <RotateTransform x:Name="OuterRingRotation" Angle="0"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+
+                            <Ellipse Width="62" Height="62" Stroke="#FFA000" StrokeThickness="1"
+                                     StrokeDashArray="4, 10" Opacity="0.3" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <RotateTransform x:Name="InnerRingRotation" Angle="0"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+
+                            <Ellipse Width="50" Height="50" Opacity="0.12" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform x:Name="CoreHaloScale" ScaleX="1" ScaleY="1"/>
+                                </Ellipse.RenderTransform>
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush>
+                                        <GradientStop Color="#FF453A" Offset="0"/>
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+
+                            <Border Width="46" Height="46" CornerRadius="13"
+                                    Background="#13151D" BorderBrush="#2A2630" BorderThickness="1"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image Source="..\..\..\Resources\icone\plage.png"
+                                       Width="28" Height="28"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="Coclico" FontSize="23" FontWeight="Bold" Foreground="#FFFFFF"
+                                   HorizontalAlignment="Center" Margin="0,10,0,2"
+                                   FontFamily="Segoe UI Variable, Segoe UI, sans-serif"/>
+                        <TextBlock Text="{DynamicResource Splash_Subtitle}" FontSize="11" Foreground="#9C928B"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2">
+                        <Grid Margin="0,0,0,4">
+                            <TextBlock x:Name="TxtStatus" Text="{DynamicResource Splash_Starting}"
+                                       FontSize="11" FontWeight="SemiBold" Foreground="#D2CBC6"
+                                       FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtPercent" Text="0 %"
+                                       FontSize="11" FontWeight="SemiBold" Foreground="#706760"
+                                       FontFamily="Consolas, Courier New, monospace"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <TextBlock x:Name="TxtSubDetail" Text="" FontSize="9.5" Foreground="#706760" Margin="0,0,0,4"/>
+
+                        <ProgressBar x:Name="PbProgress" Style="{StaticResource CleanProgress}" Value="0"/>
+                    </StackPanel>
+                </Grid>
+
+                <Border x:Name="FlashOverlay" Background="#FFFFFF" Opacity="0" IsHitTestVisible="False"/>
+            </Grid>
+        </Border>
+    </Border>
+</Window>

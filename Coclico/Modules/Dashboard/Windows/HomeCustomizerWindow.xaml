@@ -1,0 +1,719 @@
+﻿<Window x:Class="Coclico.Views.HomeCustomizerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="{DynamicResource HomeCustomizer_Title}"
+        Width="700" Height="680"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        MouseDown="Window_MouseDown">
+
+    <Window.RenderTransform>
+        <ScaleTransform x:Name="WinScale" ScaleX="1.0" ScaleY="1.0" CenterX="350" CenterY="340"/>
+    </Window.RenderTransform>
+
+    <Border Margin="16" Background="{DynamicResource BgBaseBrush}" CornerRadius="18" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="28" ShadowDepth="8" Direction="270" Color="#000000" Opacity="0.6"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Height="2" VerticalAlignment="Top" Margin="24,0" CornerRadius="2">
+                <Border.Background>
+                    <SolidColorBrush Color="#FFA000"/>
+                </Border.Background>
+            </Border>
+
+            <Grid Grid.Row="0" Margin="24,20,20,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10"
+                        Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1" Margin="0,0,14,0">
+                    <ui:SymbolIcon Symbol="PaintBrush24" FontSize="18" Foreground="{DynamicResource ArchitecturalYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource Customize_Title}" FontSize="17" FontWeight="Bold" Foreground="#FFFFFF"/>
+                    <TextBlock Text="{DynamicResource Customize_Subtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                </StackPanel>
+
+                <ui:Button Grid.Column="2" Click="Close_Click" Appearance="Transparent" Padding="8"
+                           Cursor="Hand" VerticalAlignment="Top" CornerRadius="8">
+                    <ui:SymbolIcon Symbol="Dismiss24" FontSize="15" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </ui:Button>
+            </Grid>
+
+            <Border Grid.Row="0" VerticalAlignment="Bottom" Height="1" Margin="24,0,24,0" Background="{DynamicResource BorderSubtleBrush}"/>
+
+            <Border Grid.Row="1" Margin="24,14,24,6" Background="{DynamicResource BgCardBrush}" CornerRadius="10" Padding="5"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <RadioButton x:Name="TabBtnShapes" Grid.Column="0" IsChecked="True" GroupName="PillTabs"
+                                 Checked="TabBtn_Checked" Tag="0" Cursor="Hand">
+                        <RadioButton.Template>
+                            <ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="PillBd" CornerRadius="8" Padding="10,8" Background="Transparent" SnapsToDevicePixels="True">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <ui:SymbolIcon Symbol="AppGeneric24" FontSize="15" Foreground="{DynamicResource ArchitecturalYellowBrush}" Margin="0,0,7,0"/>
+                                        <TextBlock Text="{DynamicResource Customize_Tab_Shapes}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" x:Name="TabTxt"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="PillBd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                        <Setter TargetName="PillBd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                        <Setter TargetName="PillBd" Property="BorderThickness" Value="1"/>
+                                        <Setter TargetName="TabTxt" Property="Foreground" Value="#FFFFFF"/>
+                                        <Setter TargetName="TabTxt" Property="FontWeight" Value="SemiBold"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </RadioButton.Template>
+                    </RadioButton>
+
+                    <RadioButton x:Name="TabBtnStyle" Grid.Column="1" GroupName="PillTabs"
+                                 Checked="TabBtn_Checked" Tag="1" Cursor="Hand">
+                        <RadioButton.Template>
+                            <ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="PillBd" CornerRadius="8" Padding="10,8" Background="Transparent" SnapsToDevicePixels="True">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <ui:SymbolIcon Symbol="Color24" FontSize="15" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,7,0"/>
+                                        <TextBlock Text="{DynamicResource Customize_Tab_Style}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" x:Name="TabTxt"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="PillBd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                        <Setter TargetName="PillBd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                        <Setter TargetName="PillBd" Property="BorderThickness" Value="1"/>
+                                        <Setter TargetName="TabTxt" Property="Foreground" Value="#FFFFFF"/>
+                                        <Setter TargetName="TabTxt" Property="FontWeight" Value="SemiBold"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </RadioButton.Template>
+                    </RadioButton>
+
+                    <RadioButton x:Name="TabBtnOrder" Grid.Column="2" GroupName="PillTabs"
+                                 Checked="TabBtn_Checked" Tag="2" Cursor="Hand">
+                        <RadioButton.Template>
+                            <ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="PillBd" CornerRadius="8" Padding="10,8" Background="Transparent" SnapsToDevicePixels="True">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <ui:SymbolIcon Symbol="Navigation24" FontSize="15" Foreground="#10B981" Margin="0,0,7,0"/>
+                                        <TextBlock Text="{DynamicResource Customize_Tab_Order}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" x:Name="TabTxt"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="PillBd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                        <Setter TargetName="PillBd" Property="BorderBrush" Value="#10B981"/>
+                                        <Setter TargetName="PillBd" Property="BorderThickness" Value="1"/>
+                                        <Setter TargetName="TabTxt" Property="Foreground" Value="#FFFFFF"/>
+                                        <Setter TargetName="TabTxt" Property="FontWeight" Value="SemiBold"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </RadioButton.Template>
+                    </RadioButton>
+
+                    <RadioButton x:Name="TabBtnTiles" Grid.Column="3" GroupName="PillTabs"
+                                 Checked="TabBtn_Checked" Tag="3" Cursor="Hand">
+                        <RadioButton.Template>
+                            <ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="PillBd" CornerRadius="8" Padding="10,8" Background="Transparent" SnapsToDevicePixels="True">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <ui:SymbolIcon Symbol="Apps24" FontSize="15" Foreground="#F59E0B" Margin="0,0,7,0"/>
+                                        <TextBlock Text="{DynamicResource Customize_Tab_Tiles}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" x:Name="TabTxt"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="PillBd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                        <Setter TargetName="PillBd" Property="BorderBrush" Value="#F59E0B"/>
+                                        <Setter TargetName="PillBd" Property="BorderThickness" Value="1"/>
+                                        <Setter TargetName="TabTxt" Property="Foreground" Value="#FFFFFF"/>
+                                        <Setter TargetName="TabTxt" Property="FontWeight" Value="SemiBold"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </RadioButton.Template>
+                    </RadioButton>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2" Margin="24,10,24,10">
+
+                <ScrollViewer x:Name="PanelShapes" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="4,4,6,10">
+                        <TextBlock Text="{DynamicResource Customize_Sec_Shapes}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,10"/>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <RadioButton x:Name="RadioShapeRounded" Grid.Row="0" Grid.Column="0" Margin="0,0,5,8"
+                                         GroupName="TileShape" Checked="ShapeRadio_Checked" Tag="Rounded">
+                                <RadioButton.Template>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                CornerRadius="10" Padding="12,10" Cursor="Hand" SnapsToDevicePixels="True">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10"
+                                                        Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1" Margin="0,0,10,0">
+                                                    <ui:SymbolIcon Symbol="Square24" FontSize="16" Foreground="{DynamicResource ArchitecturalYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{DynamicResource Customize_Shape_Rounded_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12"/>
+                                                        <Border Background="{DynamicResource BgElevatedBrush}" CornerRadius="4" Padding="5,1" Margin="6,0,0,0">
+                                                            <TextBlock Text="{DynamicResource Customize_Shape_Rounded_Badge}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="9.5" FontWeight="SemiBold"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{DynamicResource Customize_Shape_Rounded_Desc}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </RadioButton.Template>
+                            </RadioButton>
+
+                            <RadioButton x:Name="RadioShapePill" Grid.Row="0" Grid.Column="1" Margin="5,0,0,8"
+                                         GroupName="TileShape" Checked="ShapeRadio_Checked" Tag="Pill">
+                                <RadioButton.Template>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                CornerRadius="10" Padding="12,10" Cursor="Hand" SnapsToDevicePixels="True">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="16"
+                                                        Background="{DynamicResource BgElevatedBrush}" BorderBrush="#0284C7" BorderThickness="1" Margin="0,0,10,0">
+                                                    <ui:SymbolIcon Symbol="Oval24" FontSize="16" Foreground="{DynamicResource ArchitecturalYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{DynamicResource Customize_Shape_Pill_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12"/>
+                                                        <Border Background="{DynamicResource BgElevatedBrush}" CornerRadius="4" Padding="5,1" Margin="6,0,0,0">
+                                                            <TextBlock Text="{DynamicResource Customize_Shape_Pill_Badge}" Foreground="{DynamicResource ArchitecturalYellowBrush}" FontSize="9.5" FontWeight="SemiBold"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{DynamicResource Customize_Shape_Pill_Desc}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="#0284C7"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </RadioButton.Template>
+                            </RadioButton>
+
+                            <RadioButton x:Name="RadioShapeClassic" Grid.Row="1" Grid.Column="0" Margin="0,0,5,0"
+                                         GroupName="TileShape" Checked="ShapeRadio_Checked" Tag="Classic">
+                                <RadioButton.Template>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                CornerRadius="10" Padding="12,10" Cursor="Hand" SnapsToDevicePixels="True">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8"
+                                                        Background="{DynamicResource BgElevatedBrush}" BorderBrush="#10B981" BorderThickness="1" Margin="0,0,10,0">
+                                                    <ui:SymbolIcon Symbol="Checkmark24" FontSize="16" Foreground="#10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{DynamicResource Customize_Shape_Classic_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12"/>
+                                                        <Border Background="{DynamicResource BgElevatedBrush}" CornerRadius="4" Padding="5,1" Margin="6,0,0,0">
+                                                            <TextBlock Text="{DynamicResource Customize_Shape_Classic_Badge}" Foreground="#34D399" FontSize="9.5" FontWeight="SemiBold"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{DynamicResource Customize_Shape_Classic_Desc}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="#10B981"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="#0F2420"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </RadioButton.Template>
+                            </RadioButton>
+
+                            <RadioButton x:Name="RadioShapeSquare" Grid.Row="1" Grid.Column="1" Margin="5,0,0,0"
+                                         GroupName="TileShape" Checked="ShapeRadio_Checked" Tag="Square">
+                                <RadioButton.Template>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                CornerRadius="10" Padding="12,10" Cursor="Hand" SnapsToDevicePixels="True">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="4"
+                                                        Background="{DynamicResource BgElevatedBrush}" BorderBrush="#F59E0B" BorderThickness="1" Margin="0,0,10,0">
+                                                    <ui:SymbolIcon Symbol="Code24" FontSize="16" Foreground="#F59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{DynamicResource Customize_Shape_Square_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12"/>
+                                                        <Border Background="{DynamicResource BgElevatedBrush}" CornerRadius="4" Padding="5,1" Margin="6,0,0,0">
+                                                            <TextBlock Text="{DynamicResource Customize_Shape_Square_Badge}" Foreground="#FBBF24" FontSize="9.5" FontWeight="SemiBold"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{DynamicResource Customize_Shape_Square_Desc}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="#F59E0B"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="#241B0E"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </RadioButton.Template>
+                            </RadioButton>
+                        </Grid>
+
+                        <TextBlock Text="{DynamicResource Customize_Sec_Density}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,10,0,8"/>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <RadioButton x:Name="RadioDensityCompact" Grid.Column="0" Margin="0,0,5,0"
+                                         GroupName="TileDensity" Checked="DensityRadio_Checked" Tag="Compact">
+                                <RadioButton.Template>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                CornerRadius="8" Padding="12,10" Cursor="Hand">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource Customize_Density_Compact_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12"/>
+                                                <TextBlock Text="{DynamicResource Customize_Density_Compact_Desc}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </RadioButton.Template>
+                            </RadioButton>
+
+                            <RadioButton x:Name="RadioDensityNormal" Grid.Column="1" Margin="3,0,3,0"
+                                         GroupName="TileDensity" Checked="DensityRadio_Checked" Tag="Normal">
+                                <RadioButton.Template>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                CornerRadius="8" Padding="12,10" Cursor="Hand">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource Customize_Density_Normal_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12"/>
+                                                <TextBlock Text="{DynamicResource Customize_Density_Normal_Desc}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </RadioButton.Template>
+                            </RadioButton>
+
+                            <RadioButton x:Name="RadioDensitySpacious" Grid.Column="2" Margin="5,0,0,0"
+                                         GroupName="TileDensity" Checked="DensityRadio_Checked" Tag="Spacious">
+                                <RadioButton.Template>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                CornerRadius="8" Padding="12,10" Cursor="Hand">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource Customize_Density_Spacious_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12"/>
+                                                <TextBlock Text="{DynamicResource Customize_Density_Spacious_Desc}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </RadioButton.Template>
+                            </RadioButton>
+                        </Grid>
+
+                        <TextBlock Text="{DynamicResource Customize_Sec_Columns}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,8,0,8"/>
+                        <StackPanel Orientation="Horizontal" Margin="2,0,0,0">
+                            <RadioButton x:Name="RadioCols3" Content="{DynamicResource Customize_Cols_3}" Margin="0,0,24,0"
+                                         GroupName="ColsGroup" Checked="ColsRadio_Checked" Tag="3"
+                                         Foreground="#FFFFFF" FontSize="12"/>
+                            <RadioButton x:Name="RadioCols2" Content="{DynamicResource Customize_Cols_2}"
+                                         GroupName="ColsGroup" Checked="ColsRadio_Checked" Tag="2"
+                                         Foreground="#FFFFFF" FontSize="12"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="PanelStyle" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <StackPanel Margin="4,4,6,10">
+                        <TextBlock Text="{DynamicResource Customize_Sec_Style}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,10"/>
+
+                        <RadioButton x:Name="RadioStyleClassic" Margin="0,0,0,10"
+                                     GroupName="HomeStyle" Checked="StyleRadio_Checked" Tag="Classic">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                            CornerRadius="10" Padding="14,12" Cursor="Hand">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="38" Height="38" CornerRadius="10" Background="{DynamicResource BgElevatedBrush}" Margin="0,0,12,0"
+                                                    BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1">
+                                                <ui:SymbolIcon Symbol="Color24" FontSize="18" Foreground="{DynamicResource ArchitecturalYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{DynamicResource Customize_Style_Classic_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12.5"/>
+                                                <TextBlock Text="{DynamicResource Customize_Style_Classic_Desc}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+
+                        <RadioButton x:Name="RadioStyleGlassmorphism" Margin="0,0,0,10"
+                                     GroupName="HomeStyle" Checked="StyleRadio_Checked" Tag="Glassmorphism">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                            CornerRadius="10" Padding="14,12" Cursor="Hand">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="38" Height="38" CornerRadius="10" Background="{DynamicResource BgElevatedBrush}" Margin="0,0,12,0"
+                                                    BorderBrush="{DynamicResource ArchitecturalYellowBrush}" BorderThickness="1">
+                                                <ui:SymbolIcon Symbol="Sparkle24" FontSize="18" Foreground="{DynamicResource ArchitecturalYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{DynamicResource Customize_Style_Glass_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12.5"/>
+                                                <TextBlock Text="{DynamicResource Customize_Style_Glass_Desc}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ArchitecturalYellowBrush}"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgCardBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+
+                        <RadioButton x:Name="RadioStyleMinimalist" Margin="0,0,0,10"
+                                     GroupName="HomeStyle" Checked="StyleRadio_Checked" Tag="Minimalist">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                            CornerRadius="10" Padding="14,12" Cursor="Hand">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="38" Height="38" CornerRadius="10" Background="#0C0E14" Margin="0,0,12,0"
+                                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                                <ui:SymbolIcon Symbol="DarkTheme24" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{DynamicResource Customize_Style_Minimal_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12.5"/>
+                                                <TextBlock Text="{DynamicResource Customize_Style_Minimal_Desc}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TextHintBrush}"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgCardBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+
+                        <RadioButton x:Name="RadioStyleNeon" Margin="0,0,0,10"
+                                     GroupName="HomeStyle" Checked="StyleRadio_Checked" Tag="VibrantNeon">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border x:Name="Bd" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                            CornerRadius="10" Padding="14,12" Cursor="Hand">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="38" Height="38" CornerRadius="10" Background="{DynamicResource BgElevatedBrush}" Margin="0,0,12,0"
+                                                    BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1">
+                                                <ui:SymbolIcon Symbol="Flash24" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{DynamicResource Customize_Style_Neon_Title}" FontWeight="SemiBold" Foreground="#FFFFFF" FontSize="12.5"/>
+                                                <TextBlock Text="{DynamicResource Customize_Style_Neon_Desc}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="PanelOrder" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <StackPanel Margin="4,4,6,10">
+                        <TextBlock Text="{DynamicResource Customize_Sec_Order}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,4"/>
+                        <TextBlock Text="{DynamicResource Customize_Order_Help}" FontSize="11" Foreground="{DynamicResource TextHintBrush}" Margin="2,0,0,12"/>
+
+                        <ItemsControl x:Name="SectionsItemsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,6" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                            CornerRadius="8" Padding="12,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox IsChecked="{Binding IsVisible}" Click="SectionVisibility_Changed" Tag="{Binding Id}"
+                                                      VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                                <TextBlock Text="{Binding Description}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <ui:Button Click="BtnMoveSectionUp_Click" Tag="{Binding Id}"
+                                                           Appearance="Transparent" Padding="7,5" Margin="0,0,4,0" ToolTip="{DynamicResource Common_MoveUp}"
+                                                           Background="{DynamicResource BgCardBrush}" BorderBrush="#243054" BorderThickness="1" CornerRadius="6">
+                                                    <ui:SymbolIcon Symbol="ArrowUp24" FontSize="13" Foreground="{DynamicResource ArchitecturalYellowBrush}"/>
+                                                </ui:Button>
+                                                <ui:Button Click="BtnMoveSectionDown_Click" Tag="{Binding Id}"
+                                                           Appearance="Transparent" Padding="7,5" ToolTip="{DynamicResource Common_MoveDown}"
+                                                           Background="{DynamicResource BgCardBrush}" BorderBrush="#243054" BorderThickness="1" CornerRadius="6">
+                                                    <ui:SymbolIcon Symbol="ArrowDown24" FontSize="13" Foreground="{DynamicResource ArchitecturalYellowBrush}"/>
+                                                </ui:Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="PanelTiles" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <StackPanel Margin="4,4,6,10">
+                        <TextBlock Text="{DynamicResource Customize_Sec_Tiles}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,4"/>
+                        <TextBlock Text="{DynamicResource Customize_Tiles_Help}" FontSize="11" Foreground="{DynamicResource TextHintBrush}" Margin="2,0,0,12"/>
+
+                        <Border Margin="0,0,0,7" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="12,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1" Margin="0,0,10,0">
+                                    <ui:SymbolIcon Symbol="Flash24" FontSize="14" Foreground="{DynamicResource ArchitecturalYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <CheckBox Grid.Column="1" x:Name="ChkTileRam" Content="{DynamicResource Customize_Tile_Ram}"
+                                          Foreground="#FFFFFF" FontSize="12" Click="TileCheck_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Margin="0,0,0,7" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="12,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{DynamicResource BgElevatedBrush}" BorderBrush="#10B981" BorderThickness="1" Margin="0,0,10,0">
+                                    <ui:SymbolIcon Symbol="Delete24" FontSize="14" Foreground="#10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <CheckBox Grid.Column="1" x:Name="ChkTileCleaning" Content="{DynamicResource Customize_Tile_Cleaning}"
+                                          Foreground="#FFFFFF" FontSize="12" Click="TileCheck_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Margin="0,0,0,7" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="12,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{DynamicResource BgElevatedBrush}" BorderBrush="#F59E0B" BorderThickness="1" Margin="0,0,10,0">
+                                    <ui:SymbolIcon Symbol="Apps24" FontSize="14" Foreground="#F59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <CheckBox Grid.Column="1" x:Name="ChkTilePrograms" Content="{DynamicResource Customize_Tile_Programs}"
+                                          Foreground="#FFFFFF" FontSize="12" Click="TileCheck_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Margin="0,0,0,7" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="12,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{DynamicResource BgElevatedBrush}" BorderBrush="#0284C7" BorderThickness="1" Margin="0,0,10,0">
+                                    <ui:SymbolIcon Symbol="ArrowDownload24" FontSize="14" Foreground="{DynamicResource ArchitecturalYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <CheckBox Grid.Column="1" x:Name="ChkTileInstaller" Content="{DynamicResource Customize_Tile_Installer}"
+                                          Foreground="#FFFFFF" FontSize="12" Click="TileCheck_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Margin="0,0,0,7" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="12,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{DynamicResource BgElevatedBrush}" BorderBrush="#6366F1" BorderThickness="1" Margin="0,0,10,0">
+                                    <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="14" Foreground="#818CF8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <CheckBox Grid.Column="1" x:Name="ChkTileHealth" Content="{DynamicResource Customize_Tile_Health}"
+                                          Foreground="#FFFFFF" FontSize="12" Click="TileCheck_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Margin="0,0,0,7" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="12,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{DynamicResource BgElevatedBrush}" BorderBrush="#EF4444" BorderThickness="1" Margin="0,0,10,0">
+                                    <ui:SymbolIcon Symbol="Globe24" FontSize="14" Foreground="#F87171" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <CheckBox Grid.Column="1" x:Name="ChkTileNetwork" Content="{DynamicResource Customize_Tile_Network}"
+                                          Foreground="#FFFFFF" FontSize="12" Click="TileCheck_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Row="3" Margin="24,10,24,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ui:Button Click="ResetDefaults_Click" Appearance="Transparent" Padding="16,8"
+                           Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" CornerRadius="8" Cursor="Hand">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="ArrowCounterclockwise24" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,7,0"/>
+                        <TextBlock Text="{DynamicResource Customize_Btn_Reset}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </ui:Button>
+
+                <ui:Button Grid.Column="2" Click="ApplyClose_Click" Appearance="Transparent" Padding="20,8"
+                           Background="{DynamicResource PrimaryBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1" CornerRadius="8" Cursor="Hand">
+                    <ui:Button.Effect>
+                        <DropShadowEffect BlurRadius="8" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.35"/>
+                    </ui:Button.Effect>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Checkmark24" FontSize="15" Foreground="#FFFFFF" Margin="0,0,7,0"/>
+                        <TextBlock Text="{DynamicResource Customize_Btn_Apply}" Foreground="#FFFFFF" FontSize="12.5" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </ui:Button>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

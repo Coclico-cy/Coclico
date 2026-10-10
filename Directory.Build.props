@@ -1,0 +1,21 @@
+<Project>
+
+  <!-- ============================================================================
+       VERSION CENTRALISÉE — la source de vérité est version.txt à la racine.
+       Modifier UNIQUEMENT version.txt : tous les projets de la solution
+       (Coclico, Coclico.Installer, Coclico.Tests) héritent automatiquement de
+       Version/AssemblyVersion/FileVersion/InformationalVersion, et le script
+       installer/build-installer.ps1 ainsi que la CI (.github/workflows/release.yml)
+       lisent le même fichier.
+       ============================================================================ -->
+  <PropertyGroup>
+    <Version>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)version.txt').Trim())</Version>
+    <!-- AssemblyVersion/FileVersion doivent rester purement numériques : on n'en
+         conserve que le cœur pour que version.txt puisse aussi porter un suffixe
+         préversion (« 2.0.1-beta » par exemple). -->
+    <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Match('$(Version)', '^[0-9]+\.[0-9]+\.[0-9]+').Value)</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+  </PropertyGroup>
+
+</Project>

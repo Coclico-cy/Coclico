@@ -1,0 +1,499 @@
+<UserControl x:Class="Coclico.Modules.DiskAnalyzer.Views.DiskAnalyzerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Background="{DynamicResource BgBaseBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{DynamicResource BgPanelBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,0,1"
+                Padding="16,10,16,10">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="BtnModeSpace" Tag="Space" Click="BtnMode_Click" Cursor="Hand" Content="{DynamicResource Disk_ModeSpace}"
+                        FontSize="11.5" FontWeight="SemiBold" Padding="14,7" Margin="0,0,8,0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="7"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button x:Name="BtnModeDuplicates" Tag="Duplicates" Click="BtnMode_Click" Cursor="Hand" Content="{DynamicResource Disk_ModeDuplicates}"
+                        FontSize="11.5" FontWeight="SemiBold" Padding="14,7" Margin="0,0,8,0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="7"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button x:Name="BtnModeLargeFiles" Tag="LargeFiles" Click="BtnMode_Click" Cursor="Hand" Content="{DynamicResource Disk_ModeLargeFiles}"
+                        FontSize="11.5" FontWeight="SemiBold" Padding="14,7">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="7"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <Grid x:Name="SpaceModePanel" Grid.Row="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="310"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="{DynamicResource BgSurfaceBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,1,0">
+            <Grid Margin="16,18">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="{DynamicResource Disk_Drives}" FontSize="11" FontWeight="Bold"
+                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                <TextBlock Grid.Row="0" Text="{DynamicResource Disk_DrivesHint}" FontSize="9.5"
+                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,16,0,12"/>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="DrivesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Click="DriveButton_Click" Cursor="Hand" Margin="0,0,0,8"
+                                        Background="Transparent" BorderThickness="0" Padding="0"
+                                        HorizontalContentAlignment="Stretch">
+                                    <Border Background="{DynamicResource BgCardBrush}"
+                                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                            BorderThickness="1" CornerRadius="10" Padding="12,10">
+                                        <StackPanel>
+                                            <Grid>
+                                                <TextBlock Text="{Binding Label}" FontSize="12.5" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                <TextBlock Text="{Binding SizeText}" FontSize="11"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                                           HorizontalAlignment="Right"/>
+                                            </Grid>
+                                            <TextBlock Text="{Binding UsageText}" FontSize="10.5"
+                                                       Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,5"/>
+                                            <Border Height="5" CornerRadius="2.5"
+                                                    Background="{DynamicResource BorderSubtleBrush}" HorizontalAlignment="Stretch">
+                                                <Border Width="{Binding UsedBarWidth}" CornerRadius="2.5"
+                                                        Background="{Binding BarBrush}" HorizontalAlignment="Left"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="ScanStatus" Grid.Column="0" Text="{DynamicResource Disk_SelectDrive}"
+                                   FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}"
+                                   TextWrapping="Wrap" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnCancelScan" Grid.Column="1" Content="{DynamicResource Disk_BtnCancel}" Click="BtnCancelScan_Click"
+                                Margin="8,0,0,0" FontSize="11" Padding="10,5" Cursor="Hand" Visibility="Collapsed"/>
+                        <Button x:Name="BtnScan" Grid.Column="2" Content="{DynamicResource Disk_BtnScan}" Click="BtnScan_Click"
+                                Background="{DynamicResource PrimaryBrush}" Foreground="White"
+                                FontWeight="SemiBold" FontSize="12" Padding="14,7" Cursor="Hand" Visibility="Collapsed"/>
+                    </Grid>
+                    <ProgressBar x:Name="ScanProgress" Height="5" IsIndeterminate="True"
+                                 Background="{DynamicResource BgElevatedBrush}"
+                                 Foreground="{DynamicResource PrimaryBrush}"
+                                 BorderThickness="0" Margin="0,8,0,0" Visibility="Collapsed"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="6,14,14,14">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                <Button x:Name="BtnGoHome" Click="BtnGoHome_Click" Cursor="Hand" Background="Transparent"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                        Padding="10,4" Margin="0,0,6,0" FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}" Content="{DynamicResource Disk_LblBase}">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button x:Name="BtnGoUp" Click="BtnGoUp_Click" Cursor="Hand" Background="Transparent"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                        Padding="10,4" Margin="0,0,10,0" FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}" Content="{DynamicResource Disk_BtnBack}">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <ItemsControl x:Name="Breadcrumb" ItemsSource="{Binding}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Click="Breadcrumb_Click" Cursor="Hand" Background="Transparent"
+                                        BorderThickness="0" Padding="6,3" Content="{Binding Label}"
+                                        FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="›" FontSize="13" Foreground="{DynamicResource TextMutedBrush}"
+                                           VerticalAlignment="Center" Margin="-4,0,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <Grid Grid.Row="1" x:Name="ChartHost" SizeChanged="ChartHost_SizeChanged"
+                  RenderTransformOrigin="0.5,0.5">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform x:Name="ChartScale" ScaleX="1" ScaleY="1"/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
+                <Canvas x:Name="SunburstCanvas"/>
+                <Grid x:Name="CenterOverlay" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="CenterButton" Click="CenterButton_Click" Cursor="Hand"
+                            Background="Transparent" BorderThickness="0" Padding="0" MinWidth="10" MinHeight="10">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="CenterTitle" Text="" FontSize="13" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock x:Name="CenterSize" Text="" FontSize="11"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="CenterHint" Text="" FontSize="9"
+                                       Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"
+                                       Margin="0,3,0,0" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Border Grid.Column="2" Background="{DynamicResource BgSurfaceBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1,0,0,0">
+            <Grid Margin="14,18">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" x:Name="ZonesTitle" Text="{DynamicResource Disk_Zones}" FontSize="11" FontWeight="Bold"
+                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                <TextBlock Grid.Row="1" x:Name="ZonesSubTitle" Text="" FontSize="10.5"
+                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,10"/>
+
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="ZonesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Click="ZoneButton_Click" Cursor="Hand" Margin="0,0,0,4"
+                                        Background="Transparent" BorderThickness="0" Padding="0"
+                                        HorizontalContentAlignment="Stretch">
+                                    <Border Background="{DynamicResource BgCardBrush}"
+                                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                            BorderThickness="1" CornerRadius="8" Padding="10,7">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="10" Height="10" CornerRadius="3"
+                                                    Background="{Binding ZoneBrush}" Margin="0,0,9,0"
+                                                    VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Label}" FontSize="11.5"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <ProgressBar Height="3" Margin="0,3,4,0"
+                                                              Background="{DynamicResource BorderSubtleBrush}"
+                                                              Foreground="{Binding ZoneBrush}"
+                                                              Maximum="100" Value="{Binding Percent}"
+                                                              BorderThickness="0"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="8,0,0,0">
+                                                <TextBlock Text="{Binding SizeText}" FontSize="11" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding PercentText}" FontSize="9.5"
+                                                           Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="3" Background="{DynamicResource BgCardBrush}" CornerRadius="8"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                        Padding="10,8" Margin="0,10,0,0">
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource Disk_ZoneSelected}" FontSize="9.5" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock x:Name="SelectedName" Text="—" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="SelectedDetails" Text="" FontSize="10.5"
+                                   Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                        <Button x:Name="BtnOpenExplorer" Content="{DynamicResource Disk_BtnOpenExplorer}" Click="BtnOpenExplorer_Click"
+                                FontSize="10.5" Padding="8,4" Margin="0,8,0,0" Cursor="Hand"
+                                HorizontalAlignment="Left" Visibility="Collapsed"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+        </Grid>
+
+        <Grid x:Name="DuplicatesPanel" Grid.Row="1" Visibility="Collapsed" Margin="18,16,18,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                <TextBlock Text="{DynamicResource Disk_Duplicates}" FontSize="13" FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <TextBlock Text="{DynamicResource Disk_DuplicatesDesc}"
+                           FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="DuplicatesRootBox" Width="340" FontSize="11.5" Padding="8,6"
+                             VerticalContentAlignment="Center"/>
+                    <Button x:Name="BtnDuplicatesBrowse" Content="{DynamicResource Disk_BtnBrowse}" Click="BtnDuplicatesBrowse_Click"
+                            Margin="8,0,0,0" FontSize="11" Padding="12,6" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <ComboBox x:Name="DuplicatesMinSize" Width="100" Margin="10,0,0,0" FontSize="11" SelectedIndex="0">
+                        <ComboBoxItem Content="≥ 1 Mo"/>
+                        <ComboBoxItem Content="≥ 10 Mo"/>
+                        <ComboBoxItem Content="≥ 50 Mo"/>
+                        <ComboBoxItem Content="≥ 100 Mo"/>
+                    </ComboBox>
+                    <Button x:Name="BtnDuplicatesScan" Content="{DynamicResource Disk_BtnScan}" Click="BtnDuplicatesScan_Click"
+                            Background="{DynamicResource PrimaryBrush}" Foreground="White" FontWeight="SemiBold"
+                            Margin="10,0,0,0" FontSize="11.5" Padding="16,7" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button x:Name="BtnDuplicatesCancel" Content="{DynamicResource Disk_BtnCancel}" Click="BtnDuplicatesCancel_Click"
+                            Visibility="Collapsed" Margin="8,0,0,0" FontSize="11" Padding="10,6" Cursor="Hand"/>
+                </StackPanel>
+                <ProgressBar x:Name="DuplicatesProgress" Height="5" IsIndeterminate="True" BorderThickness="0"
+                             Margin="0,10,0,0" Visibility="Collapsed"
+                             Background="{DynamicResource BgElevatedBrush}" Foreground="{DynamicResource PrimaryBrush}"/>
+            </StackPanel>
+
+            <TextBlock x:Name="DuplicatesSummary" Grid.Row="1" Text="" FontSize="11"
+                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="DuplicatesList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="12,10" Margin="0,0,0,8">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding FileName}" FontSize="12.5" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CountText}" FontSize="10.5"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="10,0,10,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding WastedText}" FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <ItemsControl ItemsSource="{Binding Files}" Margin="0,8,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,0,0,4">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                              VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Path}" FontSize="10.5"
+                                                               Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center" ToolTip="{Binding Path}"/>
+                                                    <Button Grid.Column="2" Content="{DynamicResource Disk_BtnOpen}" Click="DuplicateOpen_Click"
+                                                            Tag="{Binding Path}" FontSize="10" Padding="8,3" Margin="8,0,0,0" Cursor="Hand"
+                                                            Background="Transparent" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                                            BorderThickness="1" Foreground="{DynamicResource TextSecondaryBrush}">
+                                                        <Button.Resources>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="CornerRadius" Value="5"/>
+                                                            </Style>
+                                                        </Button.Resources>
+                                                    </Button>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10,0,0">
+                <Button x:Name="BtnDuplicatesSelectCopies" Content="{DynamicResource Disk_BtnCheckCopies}"
+                        Click="BtnDuplicatesSelectCopies_Click" FontSize="11" Padding="12,6" Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button x:Name="BtnDuplicatesDelete" Content="{DynamicResource Disk_BtnDeleteSelection}"
+                        Click="BtnDuplicatesDelete_Click" Background="{DynamicResource DangerBrush}" Foreground="White"
+                        FontWeight="SemiBold" FontSize="11" Padding="12,6" Margin="10,0,0,0" Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <TextBlock x:Name="DuplicatesStatus" Text="" FontSize="10.5"
+                           Foreground="{DynamicResource TextMutedBrush}" Margin="14,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="LargeFilesPanel" Grid.Row="1" Visibility="Collapsed" Margin="18,16,18,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                <TextBlock Text="{DynamicResource Disk_LargeFiles}" FontSize="13" FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <TextBlock Text="{DynamicResource Disk_LargeFilesDesc}"
+                           FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="LargeRootBox" Width="340" FontSize="11.5" Padding="8,6"
+                             VerticalContentAlignment="Center"/>
+                    <Button x:Name="BtnLargeBrowse" Content="{DynamicResource Disk_BtnBrowse}" Click="BtnLargeBrowse_Click"
+                            Margin="8,0,0,0" FontSize="11" Padding="12,6" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <ComboBox x:Name="LargeTopCount" Width="100" Margin="10,0,0,0" FontSize="11" SelectedIndex="1">
+                        <ComboBoxItem Content="Top 50"/>
+                        <ComboBoxItem Content="Top 100"/>
+                        <ComboBoxItem Content="Top 200"/>
+                    </ComboBox>
+                    <Button x:Name="BtnLargeScan" Content="{DynamicResource Disk_BtnScan}" Click="BtnLargeScan_Click"
+                            Background="{DynamicResource PrimaryBrush}" Foreground="White" FontWeight="SemiBold"
+                            Margin="10,0,0,0" FontSize="11.5" Padding="16,7" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button x:Name="BtnLargeCancel" Content="{DynamicResource Disk_BtnCancel}" Click="BtnLargeCancel_Click"
+                            Visibility="Collapsed" Margin="8,0,0,0" FontSize="11" Padding="10,6" Cursor="Hand"/>
+                </StackPanel>
+                <ProgressBar x:Name="LargeProgress" Height="5" IsIndeterminate="True" BorderThickness="0"
+                             Margin="0,10,0,0" Visibility="Collapsed"
+                             Background="{DynamicResource BgElevatedBrush}" Foreground="{DynamicResource PrimaryBrush}"/>
+                <TextBlock x:Name="LargeStatus" Text="" FontSize="10.5"
+                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0"/>
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="LargeFilesList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="12,9" Margin="0,0,0,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding FileName}" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Path}" FontSize="10"
+                                                   Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding Path}"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="{Binding SizeText}" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="14,0,14,0" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Content="{DynamicResource Disk_LblLocation}" Click="LargeOpenLocation_Click" Tag="{Binding Path}"
+                                                FontSize="10" Padding="9,3" Cursor="Hand" Background="Transparent"
+                                                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                Foreground="{DynamicResource TextSecondaryBrush}">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="5"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+                                        <Button Content="{DynamicResource Disk_LblBin}" Click="LargeDelete_Click" Tag="{Binding Path}"
+                                                FontSize="10" Padding="9,3" Margin="6,0,0,0" Cursor="Hand" Background="Transparent"
+                                                BorderBrush="{DynamicResource DangerBrush}" BorderThickness="1"
+                                                Foreground="{DynamicResource DangerBrush}">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="5"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,15 @@
+# Coclico : les fins de ligne sont normalisées en LF dans le dépôt ET dans les
+# checkouts, conformément à .editorconfig (end_of_line = lf). Sans ce fichier,
+# un checkout Windows peut produire des CRLF et faire échouer
+# `dotnet format --verify-no-changes` en local comme dans la CI.
+* text=auto eol=lf
+
+# Fichiers binaires : jamais de normalisation ni de diff
+*.png binary
+*.ico binary
+*.exe binary
+*.dll binary
+*.pdb binary
+*.zip binary
+*.bin binary
+*.gguf binary

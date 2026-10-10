@@ -1,0 +1,292 @@
+<UserControl x:Class="Coclico.Modules.Power.Views.PowerOptimizerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <Grid Background="{DynamicResource BgBaseBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{DynamicResource BgPanelBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,0,1"
+                Padding="24,16,24,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="38" Height="38" CornerRadius="11" Background="{DynamicResource BgElevatedBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Gauge24" FontSize="18" Foreground="{DynamicResource ArchitecturalYellowBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="13,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="CPU &amp; Alimentation" FontSize="16" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock x:Name="HeaderSubTitle" Text="Plans d'alimentation Coclico, mode adaptatif et test CPU"
+                                   FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border x:Name="AdminChip" CornerRadius="6" Padding="10,5" Background="{DynamicResource BgElevatedBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon x:Name="AdminChipIcon" Symbol="Shield24" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="AdminChipText" Text="..." FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <Border CornerRadius="6" Padding="10,5" Margin="8,0,0,0" Background="{DynamicResource BgElevatedBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="BatteryCharge24" FontSize="12" Foreground="{DynamicResource PrimaryBrush}"/>
+                            <TextBlock x:Name="ActivePlanText" Text="Plan : ..." FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,18,24,18">
+            <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+                <Border Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource CornerCard}" Padding="20,16" Margin="0,0,0,14">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="PLANS D'ALIMENTATION COCLICO" FontSize="11" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="Trois plans créés et configurés automatiquement via powercfg, adaptés aux capacités réelles de ce PC. Les paramètres non supportés par le matériel sont ignorés."
+                                           FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <Button x:Name="BtnCreatePlans" Grid.Column="1" Click="BtnCreatePlans_Click" Cursor="Hand"
+                                    Background="{DynamicResource PrimaryBrush}" Foreground="White" FontWeight="SemiBold"
+                                    FontSize="11.5" Padding="16,8" Margin="16,0,0,0" VerticalAlignment="Center">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </Button.Resources>
+                                Créer / auto-configurer
+                            </Button>
+                        </Grid>
+
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" x:Name="CardEconomy" Background="{DynamicResource BgSurfaceBrush}"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="14,12">
+                                <StackPanel>
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ui:SymbolIcon Symbol="BatterySaver24" FontSize="16" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Coclico économie" FontSize="13" FontWeight="Bold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="StatusEconomy" Text="Absent" FontSize="9.5" FontWeight="Bold"
+                                                   Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <TextBlock Text="Autonomie maximale : boost économe, composants en économie d'énergie."
+                                               FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,7,0,10"/>
+                                    <Button x:Name="BtnActivateEconomy" Click="BtnActivateEconomy_Click" Cursor="Hand"
+                                            Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                            BorderThickness="1" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Padding="12,6"
+                                            HorizontalAlignment="Left">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </Button.Resources>
+                                        Activer
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="2" x:Name="CardOptimal" Background="{DynamicResource BgSurfaceBrush}"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="14,12">
+                                <StackPanel>
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ui:SymbolIcon Symbol="Gauge24" FontSize="16" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Coclico optimal" FontSize="13" FontWeight="Bold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="StatusOptimal" Text="Absent" FontSize="9.5" FontWeight="Bold"
+                                                   Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <TextBlock Text="Équilibre intelligent : réactif sur secteur, économe sur batterie. Compatible avec le mode adaptatif."
+                                               FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,7,0,10"/>
+                                    <Button x:Name="BtnActivateOptimal" Click="BtnActivateOptimal_Click" Cursor="Hand"
+                                            Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                            BorderThickness="1" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Padding="12,6"
+                                            HorizontalAlignment="Left">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </Button.Resources>
+                                        Activer
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="4" x:Name="CardPerformance" Background="{DynamicResource BgSurfaceBrush}"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="14,12">
+                                <StackPanel>
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ui:SymbolIcon Symbol="Flash24" FontSize="16" Foreground="#F59E0B" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Coclico performance" FontSize="13" FontWeight="Bold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="StatusPerformance" Text="Absent" FontSize="9.5" FontWeight="Bold"
+                                                   Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <TextBlock Text="Réactivité maximale : boost agressif, cœurs actifs, aucune mise en veille des composants."
+                                               FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,7,0,10"/>
+                                    <Button x:Name="BtnActivatePerformance" Click="BtnActivatePerformance_Click" Cursor="Hand"
+                                            Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}"
+                                            BorderThickness="1" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Padding="12,6"
+                                            HorizontalAlignment="Left">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </Button.Resources>
+                                        Activer
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="PlansReportText" Text="" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}"
+                                       TextWrapping="Wrap" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnDeletePlans" Grid.Column="1" Click="BtnDeletePlans_Click" Cursor="Hand"
+                                    Background="Transparent" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                    Foreground="{DynamicResource DangerBrush}" FontSize="10.5" Padding="10,5" VerticalAlignment="Center">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </Button.Resources>
+                                Supprimer les plans Coclico
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource CornerCard}" Padding="20,16" Margin="0,0,0,14">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="DesktopPulse24" FontSize="15" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="MODE OPTIMAL ADAPTATIF" FontSize="11" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="Surveillance continue de la charge CPU : bascule automatiquement vers « Coclico performance » dès que la charge est soutenue, et vers « Coclico économie » quand le PC redevient tranquille."
+                                           FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <Button x:Name="BtnToggleAdaptive" Grid.Column="1" Click="BtnToggleAdaptive_Click" Cursor="Hand"
+                                    Background="{DynamicResource PrimaryBrush}" Foreground="White" FontWeight="SemiBold"
+                                    FontSize="11.5" Padding="16,8" Margin="16,0,0,0" VerticalAlignment="Center">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </Button.Resources>
+                                Activer
+                            </Button>
+                        </Grid>
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Charge CPU actuelle" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ProgressBar x:Name="CpuUsageBar" Height="6" Maximum="100" Value="0" BorderThickness="0"
+                                             Background="{DynamicResource BgElevatedBrush}" Foreground="{DynamicResource PrimaryBrush}"
+                                             VerticalAlignment="Center"/>
+                                <TextBlock x:Name="CpuUsageText" Grid.Column="1" Text="—" FontSize="10.5" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="10,0,0,0" VerticalAlignment="Center" Width="44"/>
+                            </Grid>
+                        </Grid>
+                        <TextBlock x:Name="AdaptiveStatusText" Text="Mode adaptatif inactif." FontSize="10.5"
+                                   Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource CornerCard}" Padding="20,16" Margin="0,0,0,14">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="FlashSettings24" FontSize="15" Foreground="#F59E0B" VerticalAlignment="Center"/>
+                                    <TextBlock Text="TEST COMPARATIF DES PLANS" FontSize="11" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="Auto-test : active chaque plan Coclico, mesure le débit de calcul du CPU, puis restaure votre plan de départ. Durée totale environ 15 secondes."
+                                           FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <Button x:Name="BtnRunBenchmark" Grid.Column="1" Click="BtnRunBenchmark_Click" Cursor="Hand"
+                                    Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1"
+                                    Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="11.5"
+                                    Padding="16,8" Margin="16,0,0,0" VerticalAlignment="Center">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </Button.Resources>
+                                Lancer le test
+                            </Button>
+                        </Grid>
+
+                        <ProgressBar x:Name="BenchmarkProgress" Height="6" IsIndeterminate="False" Minimum="0" Maximum="100" Value="0"
+                                     BorderThickness="0" Margin="0,12,0,0" Background="{DynamicResource BgElevatedBrush}"
+                                     Foreground="{DynamicResource PrimaryBrush}" Visibility="Collapsed"/>
+                        <StackPanel x:Name="BenchmarkResults" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock x:Name="StatusText" Text="" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}"
+                           TextWrapping="Wrap" Margin="2,0,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,0 +1,836 @@
+<UserControl x:Class="Coclico.Views.ProgramsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Coclico.Views"
+             xmlns:conv="clr-namespace:Coclico.Converters"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             Background="{DynamicResource BgBaseBrush}"
+             d:DesignHeight="850" d:DesignWidth="1200">
+
+    <UserControl.Resources>
+
+        <Style x:Key="ModernSegmentedTabStyle" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="14,7"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" CornerRadius="8"
+                                Padding="{TemplateBinding Padding}"
+                                BorderThickness="1" BorderBrush="Transparent"
+                                Background="Transparent">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border x:Name="BadgeBd" CornerRadius="10" Margin="8,0,0,0"
+                                        Padding="7,2" Background="#18FFFFFF"
+                                        VerticalAlignment="Center">
+                                    <TextBlock x:Name="BadgeTxt" Text="{TemplateBinding Tag}"
+                                               FontSize="11" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextMutedBrush}"/>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1AFFFFFF"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter TargetName="BadgeTxt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ArchitecturalYellowBrush}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ArchitecturalYellowBrush}"/>
+                                <Setter Property="Foreground" Value="#0A0A0C"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter TargetName="BadgeBd" Property="Background" Value="#33000000"/>
+                                <Setter TargetName="BadgeTxt" Property="Foreground" Value="#0A0A0C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ViewModeToggleBtnStyle" TargetType="Button">
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="PageRoot" Margin="28,24,28,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6" VerticalAlignment="Center">
+                    <Border Width="3" Height="3" CornerRadius="1.5" Background="{DynamicResource TextHintBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Programs_HeaderBadge}" FontSize="10.5" FontWeight="Bold" Foreground="{DynamicResource TextHintBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="4" Height="30" Background="{DynamicResource ArchitecturalYellowBrush}" CornerRadius="2" Margin="0,0,12,0"/>
+                    <TextBlock Text="{DynamicResource Menu_Programs}" FontSize="24" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+
+                    <Border Margin="12,0,0,0" Padding="10,3" CornerRadius="6"
+                            Background="#1AFFC700" BorderBrush="#33FFC700" BorderThickness="1"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="{Binding HeaderStatsText}" FontSize="11" FontWeight="Bold"
+                                   Foreground="{DynamicResource ArchitecturalYellowBrush}"/>
+                    </Border>
+                </StackPanel>
+                <TextBlock Text="{DynamicResource Programs_Subtitle}"
+                           FontSize="12.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="16,4,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+
+                <Border Background="{DynamicResource BgPanelBrush}" CornerRadius="8"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                        Padding="3" Margin="0,0,12,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource ViewModeToggleBtnStyle}"
+                                Background="{Binding GridBtnBg}" Foreground="{Binding GridBtnFg}"
+                                Click="BtnSetGrid_Click" ToolTip="{DynamicResource Programs_ViewGrid_Tip}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:SymbolIcon Symbol="Grid24" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource Programs_ViewGrid}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource ViewModeToggleBtnStyle}"
+                                Background="{Binding ListBtnBg}" Foreground="{Binding ListBtnFg}"
+                                Click="BtnSetList_Click" Margin="2,0,0,0" ToolTip="{DynamicResource Programs_ViewList_Tip}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:SymbolIcon Symbol="AppsList24" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource Programs_ViewList}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <Button Style="{StaticResource SecondaryButton}" Click="BtnRefresh_Click"
+                        Margin="0,0,8,0" Padding="14,8" ToolTip="{DynamicResource Programs_Refresh_Tip}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="ArrowSync24" FontSize="15" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Programs_ScanBtn}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource PrimaryButton}" Click="BtnAddManual_Click"
+                        Padding="16,8" ToolTip="{DynamicResource Programs_AddManual_Tip}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Add24" FontSize="15" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Programs_AddBtn}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="1" Background="{DynamicResource BgCardBrush}" CornerRadius="12"
+                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                Padding="10,8" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="320"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="{DynamicResource BgPanelBrush}"
+                        CornerRadius="9" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                        Padding="3">
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Style="{StaticResource ModernSegmentedTabStyle}" Content="{DynamicResource Programs_CatAll}"
+                                     Tag="{Binding CountAll}" IsChecked="{Binding IsTabAll, Mode=OneWay}"
+                                     GroupName="MainPillTabs" Click="TabAll_Click" Margin="0,0,2,0"/>
+                        <RadioButton Style="{StaticResource ModernSegmentedTabStyle}" Content="{DynamicResource Programs_CatGames}"
+                                     Tag="{Binding CountGames}" IsChecked="{Binding IsTabGames, Mode=OneWay}"
+                                     GroupName="MainPillTabs" Click="TabGames_Click" Margin="0,0,2,0"/>
+                        <RadioButton Style="{StaticResource ModernSegmentedTabStyle}" Content="{DynamicResource Programs_CatApps}"
+                                     Tag="{Binding CountSoftware}" IsChecked="{Binding IsTabSoftware, Mode=OneWay}"
+                                     GroupName="MainPillTabs" Click="TabSoftware_Click" Margin="0,0,2,0"/>
+                        <RadioButton Style="{StaticResource ModernSegmentedTabStyle}" Content="{DynamicResource Programs_CatSystem}"
+                                     Tag="{Binding CountSystem}" IsChecked="{Binding IsTabSystem, Mode=OneWay}"
+                                     GroupName="MainPillTabs" Click="TabSystem_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource Programs_CategoryFilter}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox ItemsSource="{Binding Categories}"
+                              SelectedItem="{Binding SelectedCategory}"
+                              Width="140" Height="32" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource Programs_SortFilter}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox ItemsSource="{Binding SortOptions}"
+                              SelectedItem="{Binding SelectedSort}"
+                              Width="160" Height="32" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Grid Grid.Column="6" VerticalAlignment="Center">
+                    <ui:TextBox x:Name="SearchBox"
+                                PlaceholderText="{DynamicResource Programs_SearchPlaceholder}"
+                                TextChanged="SearchBox_TextChanged"
+                                Height="34" Padding="10,0,32,0"/>
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,6,0" Width="22" Height="22"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextMutedBrush}"
+                            Cursor="Hand" Click="BtnClearSearch_Click"
+                            ToolTip="{DynamicResource Programs_ClearFilter_Tip}"
+                            Visibility="{Binding IsSearchEmpty, Converter={StaticResource BoolToVisInv}}">
+                        <TextBlock Text="✕" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*"/>
+
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" CornerRadius="12"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                    Background="{DynamicResource BgSurfaceBrush}">
+                <Grid Margin="12">
+
+                    <ListView x:Name="ProgramsGrid"
+                              Visibility="{Binding IsGridMode, Converter={StaticResource BoolToVis}}"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.ScrollUnit="Pixel"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              BorderThickness="0"
+                              Background="Transparent">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border x:Name="CardBorder" Width="270" Height="126" Margin="5"
+                                        MouseLeftButtonDown="ProgramItem_Click"
+                                        CornerRadius="10"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                        Cursor="Hand"
+                                        Background="{DynamicResource BgCardBrush}">
+                                    <Grid Margin="12,10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="52"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Width="46" Height="46" CornerRadius="10"
+                                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                    Background="{DynamicResource BgElevatedBrush}">
+                                                <Grid>
+                                                    <TextBlock Text="{Binding Name, Converter={StaticResource FirstCharConverter}}"
+                                                               FontSize="20" FontWeight="Black"
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                               Foreground="{DynamicResource TextAccentBrush}"
+                                                               Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisInv}}"/>
+                                                    <Image Source="{Binding IconPath, Converter={StaticResource IconConv}}"
+                                                           Stretch="Uniform" Margin="5"/>
+                                                </Grid>
+                                            </Border>
+
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           TextWrapping="Wrap"
+                                                           MaxHeight="38"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           ToolTip="{Binding Name}"/>
+                                                <TextBlock Text="{Binding Publisher}" FontSize="10"
+                                                           Foreground="{DynamicResource TextMutedBrush}"
+                                                           TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Grid.Row="2" Margin="0,6,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Grid.Column="0" CornerRadius="6" Padding="7,3"
+                                                    Background="{Binding CategoryBgBrush}">
+                                                <TextBlock Text="{Binding CategoryDisplayName}" FontSize="9" FontWeight="Bold"
+                                                           Foreground="{Binding CategoryFgBrush}"/>
+                                            </Border>
+
+                                            <TextBlock Grid.Column="2" Text="{Binding SizeText}" FontSize="10"
+                                                       FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"
+                                                       VerticalAlignment="Center" FontFamily="Consolas, Courier New"/>
+                                        </Grid>
+
+                                        <Border Grid.RowSpan="3" CornerRadius="10" Margin="-12,-10"
+                                                Background="#E008050F"
+                                                Visibility="{Binding IsLaunching, Converter={StaticResource BoolToVis}}">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <ui:ProgressRing Width="18" Height="18" IsIndeterminate="True"
+                                                                 Foreground="{StaticResource SuccessBrush}"/>
+                                                <TextBlock Text="{DynamicResource Programs_Launching}" Foreground="{StaticResource SuccessBrush}"
+                                                           FontWeight="Bold" FontSize="12" Margin="8,0,0,0"
+                                                           VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                        <Setter TargetName="CardBorder" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Grid Visibility="{Binding IsGridMode, Converter={StaticResource BoolToVisInv}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="{DynamicResource BgElevatedBrush}"
+                                CornerRadius="8" Padding="14,8" Margin="0,0,0,6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="42"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="95"/>
+                                    <ColumnDefinition Width="85"/>
+                                    <ColumnDefinition Width="80"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="{DynamicResource Programs_ColApp}" FontSize="10" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}"/>
+                                <TextBlock Grid.Column="2" Text="{DynamicResource Programs_ColCategory}" FontSize="10" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}"/>
+                                <TextBlock Grid.Column="3" Text="{DynamicResource Programs_ColSource}" FontSize="10" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}"/>
+                                <TextBlock Grid.Column="4" Text="{DynamicResource Programs_ColSize}" FontSize="10" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="5" Text="{DynamicResource Programs_ColAction}" FontSize="10" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <ListView Grid.Row="1" x:Name="ProgramsList"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  VirtualizingPanel.ScrollUnit="Pixel"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  BorderThickness="0"
+                                  Background="Transparent">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="RowBorder" Padding="12,8" Margin="0,2"
+                                            MouseLeftButtonDown="ProgramItem_Click"
+                                            CornerRadius="8"
+                                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                            Cursor="Hand"
+                                            Background="{DynamicResource BgCardBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="42"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="95"/>
+                                                <ColumnDefinition Width="85"/>
+                                                <ColumnDefinition Width="80"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Grid.Column="0" Width="34" Height="34" CornerRadius="8"
+                                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                                    Background="{DynamicResource BgElevatedBrush}">
+                                                <Grid>
+                                                    <TextBlock Text="{Binding Name, Converter={StaticResource FirstCharConverter}}"
+                                                               FontSize="14" FontWeight="Bold"
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                               Foreground="{DynamicResource TextAccentBrush}"
+                                                               Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisInv}}"/>
+                                                    <Image Source="{Binding IconPath, Converter={StaticResource IconConv}}"
+                                                           Stretch="Uniform" Margin="5"/>
+                                                </Grid>
+                                            </Border>
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,12,0">
+                                                <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Publisher}" FontSize="11"
+                                                           Foreground="{DynamicResource TextMutedBrush}"
+                                                           TextTrimming="CharacterEllipsis" Margin="0,1,0,0"/>
+                                            </StackPanel>
+
+                                            <Border Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                    CornerRadius="6" Padding="8,3"
+                                                    Background="{Binding CategoryBgBrush}">
+                                                <TextBlock Text="{Binding CategoryDisplayName}" FontSize="10" FontWeight="Bold"
+                                                           Foreground="{Binding CategoryFgBrush}"/>
+                                            </Border>
+
+                                            <Border Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                    CornerRadius="6" Padding="7,2"
+                                                    Background="{DynamicResource BgElevatedBrush}"
+                                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                                <TextBlock Text="{Binding Source}" FontSize="10" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                            </Border>
+
+                                            <TextBlock Grid.Column="4" Text="{Binding SizeText}"
+                                                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                                                       FontWeight="SemiBold" FontSize="11" Margin="0,0,12,0"
+                                                       Foreground="{DynamicResource TextMutedBrush}"
+                                                       FontFamily="Consolas, Courier New"/>
+
+                                            <Border Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Background="#1A6366F1" CornerRadius="6" Padding="10,4"
+                                                    BorderBrush="#336366F1" BorderThickness="1">
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <ui:SymbolIcon Symbol="Play24" FontSize="12" Foreground="{DynamicResource PrimaryBrush}"
+                                                                   Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{DynamicResource Common_Open}" FontSize="11" FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border Grid.ColumnSpan="6" CornerRadius="8" Margin="-12,-8"
+                                                    Background="#CC08050F"
+                                                    Visibility="{Binding IsLaunching, Converter={StaticResource BoolToVis}}">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <ui:ProgressRing Width="18" Height="18" IsIndeterminate="True" Foreground="{StaticResource SuccessBrush}"/>
+                                                    <TextBlock Text="{DynamicResource Programs_Launching}" Foreground="{StaticResource SuccessBrush}"
+                                                               FontWeight="Bold" FontSize="12" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="RowBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                            <Setter TargetName="RowBorder" Property="Background" Value="{DynamicResource BgElevatedBrush}"/>
+                                        </Trigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+
+                    <Grid Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+                        <Border CornerRadius="10" Background="#E008050F"/>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <ui:ProgressRing IsIndeterminate="True" Width="44" Height="44"
+                                             Foreground="{DynamicResource PrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Programs_ScanningLibrary}"
+                                       Margin="0,16,0,0" HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVis}}">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="32">
+                            <Border Width="64" Height="64" CornerRadius="16" Margin="0,0,0,16"
+                                    Background="{DynamicResource BgElevatedBrush}"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                    HorizontalAlignment="Center">
+                                <ui:SymbolIcon Symbol="Search24" FontSize="28" Foreground="{DynamicResource TextMutedBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{DynamicResource Programs_NoAppFound}" FontSize="16" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Programs_NoAppHint}"
+                                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}"
+                                       Margin="0,6,0,0" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1" Width="360" Margin="14,0,0,0"
+                    CornerRadius="12"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                    Background="{DynamicResource BgCardBrush}"
+                    Visibility="{Binding IsDetailsOpen, Converter={StaticResource BoolToVis}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="18,16,18,24">
+                    <StackPanel>
+
+                        <Grid Margin="0,0,0,16">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="28" Height="28" CornerRadius="7" Margin="0,0,8,0"
+                                        Background="{DynamicResource BgElevatedBrush}"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                    <ui:SymbolIcon Symbol="Apps24" FontSize="14"
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                                </Border>
+                                <TextBlock Text="{DynamicResource Programs_DetailsTitle}" FontSize="10" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    Click="BtnCloseDetails_Click"
+                                    Background="Transparent" BorderThickness="0"
+                                    Cursor="Hand" Padding="6"
+                                    Foreground="{DynamicResource TextMutedBrush}"
+                                    FontSize="14" ToolTip="{DynamicResource Programs_CloseDetails_Tip}">
+                                <TextBlock Text="✕" FontSize="14" FontWeight="Bold"/>
+                            </Button>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Width="52" Height="52" CornerRadius="12"
+                                    Background="{DynamicResource BgElevatedBrush}"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                    VerticalAlignment="Top">
+                                <Grid>
+                                    <Image Source="{Binding SelectedProgram.IconPath, Converter={StaticResource IconConv}}"
+                                           Stretch="Uniform" Margin="8"
+                                           Visibility="{Binding SelectedProgram.HasIcon, Converter={StaticResource BoolToVis}}"/>
+                                    <TextBlock Text="{Binding SelectedProgram.Name, Converter={StaticResource FirstCharConverter}}"
+                                               FontSize="22" FontWeight="Black" Foreground="{DynamicResource TextAccentBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Visibility="{Binding SelectedProgram.HasIcon, Converter={StaticResource BoolToVisInv}}"/>
+                                </Grid>
+                            </Border>
+
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBox x:Name="TxtProgramName"
+                                         Text="{Binding SelectedProgram.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="15" FontWeight="Bold"
+                                         Foreground="{DynamicResource TextPrimaryBrush}"
+                                         Background="Transparent" BorderThickness="0"
+                                         Padding="0" TextWrapping="Wrap">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="IsReadOnly" Value="True"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                    <Setter Property="IsReadOnly" Value="False"/>
+                                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBlock Text="{Binding SelectedProgram.Publisher}" FontSize="11"
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Button Click="BtnLaunch_Click" Style="{StaticResource PrimaryButton}"
+                                HorizontalAlignment="Stretch" Padding="0,11" Margin="0,0,0,10"
+                                ToolTip="{DynamicResource Programs_LaunchApp_Tip}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <ui:SymbolIcon Symbol="Play24" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource Programs_LaunchApp}" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0" Click="BtnOpenFolder_Click" Style="{StaticResource SecondaryButton}"
+                                    Padding="0,8" ToolTip="{DynamicResource Programs_OpenFolder_Tip}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <ui:SymbolIcon Symbol="Folder24" FontSize="13" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Programs_Folder}" FontSize="11" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="2" Click="BtnCopyPath_Click" Style="{StaticResource SecondaryButton}"
+                                    Padding="0,8" ToolTip="{DynamicResource Programs_CopyPath_Tip}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <ui:SymbolIcon Symbol="Copy24" FontSize="13" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Common_Copy}" FontSize="11" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Column="4" Click="BtnSaveName_Click" Style="{StaticResource SecondaryButton}"
+                                    Padding="0,8" ToolTip="{DynamicResource Programs_EditApp_Tip}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <ui:SymbolIcon Symbol="Edit24" FontSize="13" Margin="0,0,4,0" VerticalAlignment="Center">
+                                        <ui:SymbolIcon.Style>
+                                            <Style TargetType="ui:SymbolIcon">
+                                                <Setter Property="Symbol" Value="Edit24"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                        <Setter Property="Symbol" Value="Checkmark24"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ui:SymbolIcon.Style>
+                                    </ui:SymbolIcon>
+                                    <TextBlock FontSize="11" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{DynamicResource Common_Edit}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                        <Setter Property="Text" Value="{DynamicResource Common_Apply}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <Border CornerRadius="10" Padding="14,12" Margin="0,0,0,12"
+                                Background="{DynamicResource BgElevatedBrush}"
+                                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                            <StackPanel>
+
+                                <Grid Margin="0,0,0,8" MinHeight="34">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource Programs_Category}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+
+                                    <Border Grid.Column="1" HorizontalAlignment="Left" CornerRadius="6" Padding="8,4"
+                                            Background="{Binding SelectedProgram.CategoryBgBrush}"
+                                            BorderBrush="{Binding SelectedProgram.CategoryFgBrush}" BorderThickness="0.8"
+                                            VerticalAlignment="Center"
+                                            Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisInv}}">
+                                         <TextBlock Text="{Binding SelectedProgram.Category}" FontSize="11" FontWeight="SemiBold"
+                                                    Foreground="{Binding SelectedProgram.CategoryFgBrush}"/>
+                                    </Border>
+
+                                    <ComboBox Grid.Column="1" ItemsSource="{Binding Categories}"
+                                              SelectedItem="{Binding SelectedProgram.Category, Mode=TwoWay}"
+                                              MinHeight="34" Height="34" FontSize="11.5"
+                                              Padding="8,4" VerticalContentAlignment="Center"
+                                              Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource Programs_Version}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding SelectedProgram.VersionDisplay}" FontSize="11"
+                                               Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                                               FontFamily="Consolas, Courier New" TextTrimming="CharacterEllipsis"/>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource Programs_Size}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding SelectedProgram.SizeDisplay}" FontSize="11"
+                                               FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"
+                                               VerticalAlignment="Center" FontFamily="Consolas, Courier New"/>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource Programs_Source}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="1" HorizontalAlignment="Left" CornerRadius="6" Padding="6,2"
+                                            Background="#20FFFFFF">
+                                        <TextBlock Text="{Binding SelectedProgram.Source}" FontSize="10" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource Programs_Shortcut}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding SelectedProgram.Shortcut}" FontSize="11"
+                                               FontWeight="Bold" Foreground="{DynamicResource TextAccentBrush}"
+                                               VerticalAlignment="Center" FontFamily="Consolas, Courier New"/>
+                                    <Button Grid.Column="2" Click="BtnAssignShortcut_Click" Style="{StaticResource SecondaryButton}"
+                                            Padding="8,3" FontSize="10" ToolTip="{DynamicResource Programs_SetShortcut_Tip}">
+                                        <TextBlock Text="{DynamicResource Programs_SetShortcut}"/>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border CornerRadius="10" Padding="12,10" Margin="0,0,0,16"
+                                Background="{DynamicResource BgElevatedBrush}"
+                                BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Programs_ExeLocation}" FontSize="9" FontWeight="Black"
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding SelectedProgram.ExePath}" FontSize="10"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                           FontFamily="Consolas, Courier New" LineHeight="15"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Button Click="BtnUninstall_Click" Style="{StaticResource DangerButton}"
+                                HorizontalAlignment="Stretch" Padding="0,10"
+                                ToolTip="{DynamicResource Programs_UninstallApp_Tip}"
+                                Visibility="{Binding SelectedProgram.CanUninstall, Converter={StaticResource BoolToVis}}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <ui:SymbolIcon Symbol="Delete24" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource Programs_UninstallApp}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <Grid Grid.RowSpan="3" Panel.ZIndex="3000"
+              Visibility="{Binding IsManualAddOpen, Converter={StaticResource BoolToVis}}">
+            <Border Background="#CC000000">
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding CloseManualAddCommand}"/>
+                </Border.InputBindings>
+            </Border>
+            <Border Width="480" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Background="{DynamicResource BgCardBrush}" CornerRadius="14"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Programs_AddModalTitle}" FontSize="16" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <TextBlock Text="{DynamicResource Programs_AddModalName}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <ui:TextBox Text="{Binding NewAppName, Mode=TwoWay}" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="{DynamicResource Programs_AddModalPath}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <ui:TextBox Text="{Binding NewAppPath, Mode=TwoWay}" IsReadOnly="True" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="{DynamicResource Programs_Category}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding NewAppCategory, Mode=TwoWay}" Margin="0,0,0,20"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="{DynamicResource Common_Cancel}" Command="{Binding CloseManualAddCommand}"
+                                Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" Padding="16,8"/>
+                        <Button Content="{DynamicResource Programs_AddModalConfirm}" Command="{Binding ConfirmManualAddCommand}"
+                                Style="{StaticResource PrimaryButton}" Padding="16,8"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Grid.RowSpan="3" Panel.ZIndex="3001"
+              Visibility="{Binding IsGenericInputOpen, Converter={StaticResource BoolToVis}}">
+            <Border Background="#CC000000">
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding CloseGenericInputCommand}"/>
+                </Border.InputBindings>
+            </Border>
+            <Border Width="420" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Background="{DynamicResource BgCardBrush}" CornerRadius="14"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="{Binding GenericInputTitle}" FontSize="15" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding GenericInputLabel}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12"/>
+                    <ui:TextBox Text="{Binding GenericInputText, Mode=TwoWay}" Margin="0,0,0,18"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="{DynamicResource Common_Cancel}" Command="{Binding CloseGenericInputCommand}"
+                                Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" Padding="14,6"/>
+                        <Button Content="{DynamicResource Common_Confirm}" Command="{Binding ConfirmGenericInputCommand}"
+                                Style="{StaticResource PrimaryButton}" Padding="16,6"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+    </Grid>
+</UserControl>
