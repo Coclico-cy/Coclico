@@ -207,72 +207,72 @@ public sealed class SmartMemoryDaemonService : ISmartMemoryDaemonService
                 switch (_mode)
                 {
                     case AutoCleanMode.Interval:
-                    {
-                        if (!_nextScheduledCleanUtc.HasValue)
                         {
-                            _nextScheduledCleanUtc = now.AddMinutes(_value);
-                        }
-
-                        TimeSpan rem = _nextScheduledCleanUtc.Value - now;
-                        if (rem <= TimeSpan.Zero)
-                        {
-                            if (!isCoolingDown)
+                            if (!_nextScheduledCleanUtc.HasValue)
                             {
-                                await TriggerAutoCleanAsync(AutoCleanMode.Interval, ct).ConfigureAwait(false);
-                                _nextScheduledCleanUtc = DateTime.UtcNow.AddMinutes(_value);
+                                _nextScheduledCleanUtc = now.AddMinutes(_value);
                             }
-                        }
-                        else
-                        {
-                            SetStatusMessage($"Actif • Prochain cycle dans {FormatTimeSpan(rem)}");
-                        }
-                        break;
-                    }
 
-                    case AutoCleanMode.ThresholdPercent:
-                    {
-                        MemoryCleanerService.RamInfo ram = MemoryCleanerService.GetRamInfo();
-                        if (ram.PhysUsedPercent >= _value)
-                        {
-                            if (!isCoolingDown)
+                            TimeSpan rem = _nextScheduledCleanUtc.Value - now;
+                            if (rem <= TimeSpan.Zero)
                             {
-                                await TriggerAutoCleanAsync(AutoCleanMode.ThresholdPercent, ct).ConfigureAwait(false);
-                                _cooldownUntilUtc = DateTime.UtcNow.AddSeconds(120);
+                                if (!isCoolingDown)
+                                {
+                                    await TriggerAutoCleanAsync(AutoCleanMode.Interval, ct).ConfigureAwait(false);
+                                    _nextScheduledCleanUtc = DateTime.UtcNow.AddMinutes(_value);
+                                }
                             }
                             else
                             {
-                                int waitSec = Math.Max(1, (int)(_cooldownUntilUtc - now).TotalSeconds);
-                                SetStatusMessage($"Actif • Seuil dépassé ({ram.PhysUsedPercent:F0}% >= {_value}%) • Temporisation anti-spam ({waitSec}s)");
+                                SetStatusMessage($"Actif • Prochain cycle dans {FormatTimeSpan(rem)}");
                             }
+                            break;
                         }
-                        else
+
+                    case AutoCleanMode.ThresholdPercent:
                         {
-                            SetStatusMessage($"Actif • Seuil surveillé : > {_value}% (Actuel : {ram.PhysUsedPercent:F1}%)");
+                            MemoryCleanerService.RamInfo ram = MemoryCleanerService.GetRamInfo();
+                            if (ram.PhysUsedPercent >= _value)
+                            {
+                                if (!isCoolingDown)
+                                {
+                                    await TriggerAutoCleanAsync(AutoCleanMode.ThresholdPercent, ct).ConfigureAwait(false);
+                                    _cooldownUntilUtc = DateTime.UtcNow.AddSeconds(120);
+                                }
+                                else
+                                {
+                                    int waitSec = Math.Max(1, (int)(_cooldownUntilUtc - now).TotalSeconds);
+                                    SetStatusMessage($"Actif • Seuil dépassé ({ram.PhysUsedPercent:F0}% >= {_value}%) • Temporisation anti-spam ({waitSec}s)");
+                                }
+                            }
+                            else
+                            {
+                                SetStatusMessage($"Actif • Seuil surveillé : > {_value}% (Actuel : {ram.PhysUsedPercent:F1}%)");
+                            }
+                            break;
                         }
-                        break;
-                    }
 
                     case AutoCleanMode.Hybrid:
-                    {
-                        MemoryCleanerService.RamInfo ram = MemoryCleanerService.GetRamInfo();
-                        bool lowFreeRam = ram.AvailPhysBytes < 1200L * 1024 * 1024;
-                        bool highPressure = ram.PhysUsedPercent >= 78.0;
+                        {
+                            MemoryCleanerService.RamInfo ram = MemoryCleanerService.GetRamInfo();
+                            bool lowFreeRam = ram.AvailPhysBytes < 1200L * 1024 * 1024;
+                            bool highPressure = ram.PhysUsedPercent >= 78.0;
 
-                        if ((lowFreeRam || highPressure) && !isCoolingDown)
-                        {
-                            await TriggerAutoCleanAsync(AutoCleanMode.Hybrid, ct).ConfigureAwait(false);
-                            _cooldownUntilUtc = DateTime.UtcNow.AddSeconds(90);
+                            if ((lowFreeRam || highPressure) && !isCoolingDown)
+                            {
+                                await TriggerAutoCleanAsync(AutoCleanMode.Hybrid, ct).ConfigureAwait(false);
+                                _cooldownUntilUtc = DateTime.UtcNow.AddSeconds(90);
+                            }
+                            else if (isCoolingDown)
+                            {
+                                SetStatusMessage($"Actif • Surveillance ISLC • Temporisation en cours");
+                            }
+                            else
+                            {
+                                SetStatusMessage($"Actif • Surveillance ISLC • RAM disponible : {MemoryCleanerService.FormatBytes(ram.AvailPhysBytes)}");
+                            }
+                            break;
                         }
-                        else if (isCoolingDown)
-                        {
-                            SetStatusMessage($"Actif • Surveillance ISLC • Temporisation en cours");
-                        }
-                        else
-                        {
-                            SetStatusMessage($"Actif • Surveillance ISLC • RAM disponible : {MemoryCleanerService.FormatBytes(ram.AvailPhysBytes)}");
-                        }
-                        break;
-                    }
                 }
             }
             catch (OperationCanceledException) { break; }
