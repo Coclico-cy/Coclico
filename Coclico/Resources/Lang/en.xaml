@@ -128,13 +128,8 @@ Estimated: {0} across {1} categories.</system:String>
     <system:String x:Key="Common_Done">Done</system:String>
     <system:String x:Key="Common_Edit">Edit</system:String>
     <system:String x:Key="Common_Error">Error</system:String>
-    <system:String x:Key="Common_Information">Information</system:String>
     <system:String x:Key="MainWindow_RamCleanedShortcut">RAM cleaned via shortcut</system:String>
-    <system:String x:Key="Programs_InvalidUninstallCommand">Invalid or missing uninstall command.</system:String>
-    <system:String x:Key="Programs_UninstallNotFound">The uninstaller could not be found: {0}</system:String>
-    <system:String x:Key="Programs_MaxFilterGroups">A maximum of 5 custom groups are allowed.</system:String>
     <system:String x:Key="Programs_GroupNameExists">A group with this name already exists.</system:String>
-    <system:String x:Key="Programs_MaxCategories">A maximum of 255 categories are allowed.</system:String>
     <system:String x:Key="Programs_CategoryExists">This category already exists.</system:String>
     <system:String x:Key="Common_MoveDown">Move Down</system:String>
     <system:String x:Key="Common_MoveUp">Move Up</system:String>
@@ -885,7 +880,5 @@ Estimated: {0} across {1} categories.</system:String>
     <system:String x:Key="Disk_Wasted">{0} recoverable</system:String>
     <system:String x:Key="Disk_DupSummary">{0} duplicate groups — {1} recoverable in total.</system:String>
     <system:String x:Key="Network_WaitingStart">Waiting to start...</system:String>
-    <system:String x:Key="Network_ParamsListed">parameters listed</system:String>
-    <system:String x:Key="Network_Rejected">rejected</system:String>
     <system:String x:Key="RamCleaner_WorkingSetNote">Note: the working-set memory is only released temporarily — Windows maps it back as soon as applications use it again. The standby purge and memory manager optimizations produce most of the real effect.</system:String>
 </ResourceDictionary>

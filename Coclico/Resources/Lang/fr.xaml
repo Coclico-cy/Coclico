@@ -128,13 +128,8 @@ Estimation : {0} répartis sur {1} catégories.</system:String>
     <system:String x:Key="Common_Done">Terminé</system:String>
     <system:String x:Key="Common_Edit">Éditer</system:String>
     <system:String x:Key="Common_Error">Erreur</system:String>
-    <system:String x:Key="Common_Information">Information</system:String>
     <system:String x:Key="MainWindow_RamCleanedShortcut">RAM nettoyée via raccourci</system:String>
-    <system:String x:Key="Programs_InvalidUninstallCommand">Commande de désinstallation invalide ou introuvable.</system:String>
-    <system:String x:Key="Programs_UninstallNotFound">Le programme de désinstallation est introuvable : {0}</system:String>
-    <system:String x:Key="Programs_MaxFilterGroups">Maximum 5 groupes personnalisés autorisés.</system:String>
     <system:String x:Key="Programs_GroupNameExists">Un groupe avec ce nom existe déjà.</system:String>
-    <system:String x:Key="Programs_MaxCategories">Maximum 255 catégories autorisées.</system:String>
     <system:String x:Key="Programs_CategoryExists">Cette catégorie existe déjà.</system:String>
     <system:String x:Key="Common_MoveDown">Descendre</system:String>
     <system:String x:Key="Common_MoveUp">Monter</system:String>
@@ -885,7 +880,5 @@ Estimation : {0} répartis sur {1} catégories.</system:String>
     <system:String x:Key="Disk_Wasted">{0} récupérables</system:String>
     <system:String x:Key="Disk_DupSummary">{0} groupes de doublons — {1} récupérables au total.</system:String>
     <system:String x:Key="Network_WaitingStart">En attente de démarrage...</system:String>
-    <system:String x:Key="Network_ParamsListed">paramètres répertoriés</system:String>
-    <system:String x:Key="Network_Rejected">rejetés</system:String>
     <system:String x:Key="RamCleaner_WorkingSetNote">Note : la mémoire « libérée » du working set est temporaire — Windows la remappe dès que les applications la réutilisent. La purge standby et l'optimisation du gestionnaire de mémoire produisent l'essentiel de l'effet réel.</system:String>
 </ResourceDictionary>

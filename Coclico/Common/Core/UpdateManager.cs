@@ -341,13 +341,25 @@ public class UpdateManager(ILogger<UpdateManager> logger)
             return false;
         }
 
-        return SameNumericVersion(VersionCore(fileVersion), VersionCore(expectedVersion));
+        (string fileCore, string fileSuffix) = SplitNumericAndSuffix(fileVersion);
+        (string expectedCore, string expectedSuffix) = SplitNumericAndSuffix(expectedVersion);
 
-        static string VersionCore(string value)
+        return SameNumericVersion(fileCore, expectedCore) &&
+            string.Equals(fileSuffix, expectedSuffix, StringComparison.OrdinalIgnoreCase);
+
+        static (string core, string suffix) SplitNumericAndSuffix(string value)
         {
             string version = value.Trim().TrimStart('v', 'V');
-            int cut = version.IndexOfAny(['-', '+', ' ']);
-            return cut > 0 ? version[..cut] : version;
+            int buildIndex = version.IndexOf('+');
+            if (buildIndex >= 0)
+            {
+                version = version[..buildIndex];
+            }
+
+            int cut = version.IndexOfAny(['-', ' ']);
+            return cut > 0
+                ? (version[..cut], version[(cut + 1)..])
+                : (version, string.Empty);
         }
 
         static bool SameNumericVersion(string left, string right)

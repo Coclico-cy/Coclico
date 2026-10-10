@@ -568,8 +568,21 @@
 
                     <StackPanel Grid.Row="1" Margin="0,0,0,12">
                         <Grid Margin="0,0,0,4">
-                            <TextBlock Text="{Binding EngineProgress.PhaseDescription, FallbackValue={StaticResource Network_WaitingStart}}"
+                            <TextBlock Text="{Binding EngineProgress.PhaseDescription}"
                                        FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Network_WaitingStart}"
+                                       FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding EngineProgress.PhaseDescription}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                             <TextBlock Text="{Binding ProgressPercent, StringFormat='{}{0:F0}%'}" FontSize="11" FontWeight="Bold"
                                        Foreground="{DynamicResource PrimaryBrush}" HorizontalAlignment="Right"/>
                         </Grid>

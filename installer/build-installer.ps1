@@ -3,6 +3,7 @@ param(
     [string]$Version,
     [string]$Configuration = "Release",
     [switch]$SkipPublish,
+    [switch]$SkipTests,
     [switch]$IncludeCuda,
     [switch]$SkipClean,
     [string]$OutputDir = "artifacts\installer"
@@ -123,6 +124,22 @@ try {
         }
     }
     Write-Success "$(T "Version cible : " "Target version: ")$Version"
+
+    if (-not $SkipTests) {
+        Write-Section (T "TESTS UNITAIRES COCLICO" "COClico UNIT TESTS")
+
+        if (Test-Path "$rootDir\Coclico.Tests\Coclico.Tests.csproj") {
+            Write-Step (T "Compilation et execution des tests unitaires..." "Building and running unit tests...")
+            & dotnet test "$rootDir\Coclico.Tests\Coclico.Tests.csproj" --configuration $Configuration
+            if ($LASTEXITCODE -ne 0) {
+                throw (T "Les tests unitaires ont echoue. L'installeur n'est pas genere." "Unit tests failed. Installer is not generated.")
+            }
+            Write-Success (T "Tous les tests passent" "All tests passed")
+        }
+        else {
+            Write-Host (T "  [-] Coclico.Tests absent, tests ignores." "  [-] Coclico.Tests not found, tests skipped.") -ForegroundColor DarkGray
+        }
+    }
 
     if (-not $SkipClean) {
         Write-Step (T "Nettoyage des anciens artefacts..." "Cleaning old artifacts...")
