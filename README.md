@@ -6,7 +6,7 @@
 
 ### A Windows desktop companion for everyday system care
 
-[![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Downloads](https://img.shields.io/github/downloads/Coclico-cy/Logiciels-Utiles/total.svg)](https://github.com/Coclico-cy/Logiciels-Utiles/releases) [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/platform-Windows%2011-0078D4?logo=windows11&logoColor=white)](#requirements)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
