@@ -1,7 +1,9 @@
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using Microsoft.Win32.SafeHandles;
 
 namespace Coclico.Modules.DiskAnalyzer.Services;
 
@@ -35,6 +37,13 @@ public static class DuplicateFinderService
 {
     private const int QuickHashBytes = 64 * 1024;
 
+    private static readonly EnumerationOptions ScanEnumeration = new()
+    {
+        IgnoreInaccessible = true,
+        RecurseSubdirectories = true,
+        AttributesToSkip = FileAttributes.System | FileAttributes.ReparsePoint
+    };
+
     public static async Task<IReadOnlyList<DuplicateGroup>> FindDuplicatesAsync(
         DuplicateScanOptions options,
         IProgress<DuplicateScanProgress>? progress = null,
@@ -62,14 +71,7 @@ public static class DuplicateFinderService
         ConcurrentBag<FileMeta> bySize = [];
         long bytesExamined = 0;
         int filesExamined = 0;
-        var enumeration = new EnumerationOptions
-        {
-            IgnoreInaccessible = true,
-            RecurseSubdirectories = true,
-            AttributesToSkip = FileAttributes.System
-        };
-
-        foreach (string path in Directory.EnumerateFiles(options.Root, "*", enumeration))
+        foreach (string path in Directory.EnumerateFiles(options.Root, "*", ScanEnumeration))
         {
             ct.ThrowIfCancellationRequested();
             filesExamined++;
@@ -89,7 +91,7 @@ public static class DuplicateFinderService
             }
         }
 
-        List<List<FileMeta>> sizeGroups = CandidateGroups(IndexBySize(bySize));
+        List<List<FileMeta>> sizeGroups = FilterHardlinkedFiles(CandidateGroups(IndexBySize(bySize)));
 
         progress?.Report(new DuplicateScanProgress(2, filesExamined, Volatile.Read(ref bytesExamined), string.Empty));
         List<List<FileMeta>> quickGroups = RefineByHash(sizeGroups, QuickHashBytes, ct);
@@ -131,6 +133,33 @@ public static class DuplicateFinderService
         }
 
         return groups;
+    }
+
+    internal static List<List<FileMeta>> FilterHardlinkedFiles(List<List<FileMeta>> groups)
+    {
+        List<List<FileMeta>> result = [];
+        foreach (List<FileMeta> group in groups)
+        {
+            HashSet<(uint Volume, long Index)> identities = [];
+            List<FileMeta> kept = [];
+            foreach (FileMeta file in group)
+            {
+                (uint Volume, long Index)? identity = GetFileIdentity(file.Path);
+                if (identity is { } id && !identities.Add(id))
+                {
+                    continue;
+                }
+
+                kept.Add(file);
+            }
+
+            if (kept.Count > 1)
+            {
+                result.Add(kept);
+            }
+        }
+
+        return result;
     }
 
     internal static List<List<FileMeta>> RefineByHash(List<List<FileMeta>> groups, int hashPrefixBytes, CancellationToken ct)
@@ -193,15 +222,8 @@ public static class DuplicateFinderService
         CancellationToken ct)
     {
         var top = new SortedSet<(long Size, string Path)>(SizePathComparer.Instance);
-        var enumeration = new EnumerationOptions
-        {
-            IgnoreInaccessible = true,
-            RecurseSubdirectories = true,
-            AttributesToSkip = FileAttributes.System
-        };
-
         long bytesSeen = 0;
-        foreach (string path in Directory.EnumerateFiles(root, "*", enumeration))
+        foreach (string path in Directory.EnumerateFiles(root, "*", ScanEnumeration))
         {
             ct.ThrowIfCancellationRequested();
             FileMeta meta = GetMeta(path);
@@ -251,6 +273,33 @@ public static class DuplicateFinderService
         return new FileMeta(path, size);
     }
 
+    private static (uint Volume, long Index)? GetFileIdentity(string path)
+    {
+        try
+        {
+            using FileStream stream = File.OpenRead(path);
+            if (!GetFileInformationByHandle(stream.SafeFileHandle, out ByHandleFileInformation info))
+            {
+                return null;
+            }
+
+            if (info.FileIndexHigh == 0 && info.FileIndexLow == 0)
+            {
+                return null;
+            }
+
+            return (info.VolumeSerialNumber, ((long)info.FileIndexHigh << 32) | info.FileIndexLow);
+        }
+        catch (IOException)
+        {
+            return null;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
     private static string? ComputeHash(string path, int prefixBytes)
     {
         try
@@ -288,6 +337,28 @@ public static class DuplicateFinderService
             return null;
         }
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct ByHandleFileInformation
+    {
+        public uint FileAttributes;
+        public uint CreationTimeLow;
+        public uint CreationTimeHigh;
+        public uint LastAccessTimeLow;
+        public uint LastAccessTimeHigh;
+        public uint LastWriteTimeLow;
+        public uint LastWriteTimeHigh;
+        public uint VolumeSerialNumber;
+        public uint FileSizeHigh;
+        public uint FileSizeLow;
+        public uint NumberOfLinks;
+        public uint FileIndexHigh;
+        public uint FileIndexLow;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetFileInformationByHandle(SafeFileHandle handle, out ByHandleFileInformation information);
 
     private sealed class SizePathComparer : IComparer<(long Size, string Path)>
     {

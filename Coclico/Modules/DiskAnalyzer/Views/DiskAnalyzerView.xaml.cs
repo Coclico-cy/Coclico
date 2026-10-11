@@ -12,14 +12,34 @@ using Path = System.Windows.Shapes.Path;
 
 namespace Coclico.Modules.DiskAnalyzer.Views;
 
-public sealed class DriveRow
+public sealed class DriveRow : INotifyPropertyChanged
 {
+    private Brush _cardBrush = Brushes.Transparent;
+
     public required string Label { get; init; }
     public required string SizeText { get; init; }
     public required string UsageText { get; init; }
+    public required double Percent { get; init; }
     public required double UsedBarWidth { get; init; }
     public required Brush BarBrush { get; init; }
     public required string RootPath { get; init; }
+
+    public Brush CardBrush
+    {
+        get => _cardBrush;
+        set
+        {
+            if (ReferenceEquals(_cardBrush, value))
+            {
+                return;
+            }
+
+            _cardBrush = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CardBrush)));
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }
 
 public sealed class ZoneRow
@@ -43,6 +63,8 @@ public sealed class DuplicateFileRow : INotifyPropertyChanged
     private bool _isSelected;
 
     public required string Path { get; init; }
+    public required string FileName { get; init; }
+    public required string Folder { get; init; }
 
     public bool IsSelected
     {
@@ -83,6 +105,7 @@ public partial class DiskAnalyzerView : UserControl
     private const double MinSegmentAngle = 1.0;
     private const int RingCount = 3;
     private const int LiveRenderIntervalMs = 250;
+    private const int DuplicateGroupsShown = 100;
 
     private static readonly Color[] Palette =
     [
@@ -93,11 +116,22 @@ public partial class DiskAnalyzerView : UserControl
         Color.FromRgb(0x3B, 0x82, 0xF6), Color.FromRgb(0x63, 0x66, 0xF1)
     ];
 
+    private static readonly SolidColorBrush SliceStrokeBrush = FrozenBrush(0x07, 0x08, 0x0B);
+    private static readonly SolidColorBrush FreeSpaceBrush = FrozenBrush(0x2A, 0x2E, 0x3A);
+    private static readonly SolidColorBrush RestSliceBrush = FrozenBrush(0x55, 0x5B, 0x66);
+
     private static string L(string key)
     {
         return Application.Current?.TryFindResource(key) as string
             ?? ServiceContainer.GetOptional<LocalizationService>()?.Get(key)
             ?? key;
+    }
+
+    private static SolidColorBrush FrozenBrush(byte r, byte g, byte b)
+    {
+        var brush = new SolidColorBrush(Color.FromRgb(r, g, b));
+        brush.Freeze();
+        return brush;
     }
 
     private sealed record Zone(
@@ -118,6 +152,7 @@ public partial class DiskAnalyzerView : UserControl
     private CancellationTokenSource? _duplicatesCts;
     private CancellationTokenSource? _largeCts;
     private bool _scanning;
+    private bool _liveRenderShown;
     private DateTime _lastLiveRender = DateTime.MinValue;
 
     public DiskAnalyzerView()
@@ -149,7 +184,8 @@ public partial class DiskAnalyzerView : UserControl
             {
                 Label = string.IsNullOrEmpty(drive.VolumeLabel) ? drive.Name : $"{drive.VolumeLabel} ({drive.Name[..1]})",
                 SizeText = $"{totalGb - freeGb:0.#} / {totalGb:0.#} Go",
-                UsageText = $"{usedPct:0}% utilisés --- {freeGb:0.#} Go libres",
+                UsageText = $"{usedPct:0}% utilisés · {freeGb:0.#} Go libres",
+                Percent = Math.Min(100, usedPct),
                 UsedBarWidth = Math.Max(2, usedPct * 1.2),
                 BarBrush = new SolidColorBrush(usedPct > 88 ? Color.FromRgb(0xF8, 0x71, 0x71) : Color.FromRgb(0xF5, 0x9E, 0x0B)),
                 RootPath = drive.RootDirectory.FullName
@@ -157,9 +193,28 @@ public partial class DiskAnalyzerView : UserControl
         }
 
         DrivesList.ItemsSource = rows;
-        if (rows.Count > 0)
+        if (rows.Count > 0 && string.IsNullOrWhiteSpace(_selectedDriveRoot))
         {
             _selectedDriveRoot = rows[0].RootPath;
+        }
+
+        HighlightSelectedDrive();
+    }
+
+    private void HighlightSelectedDrive()
+    {
+        if (DrivesList.ItemsSource is not IEnumerable<DriveRow> rows)
+        {
+            return;
+        }
+
+        Brush selected = TryFindResource("PrimaryBrush") as Brush ?? Brushes.Transparent;
+        Brush idle = TryFindResource("BorderSubtleBrush") as Brush ?? Brushes.Transparent;
+        foreach (DriveRow row in rows)
+        {
+            row.CardBrush = string.Equals(row.RootPath, _selectedDriveRoot, StringComparison.OrdinalIgnoreCase)
+                ? selected
+                : idle;
         }
     }
 
@@ -168,6 +223,7 @@ public partial class DiskAnalyzerView : UserControl
         if (sender is FrameworkElement { DataContext: DriveRow row })
         {
             _selectedDriveRoot = row.RootPath;
+            HighlightSelectedDrive();
             StartScan(row.RootPath);
         }
     }
@@ -188,8 +244,10 @@ public partial class DiskAnalyzerView : UserControl
             await Task.Delay(150).ConfigureAwait(true);
         }
 
+        var scanCts = new CancellationTokenSource();
+        _scanCts = scanCts;
         _scanning = true;
-        _scanCts = new CancellationTokenSource();
+        _liveRenderShown = false;
         BtnScan.Visibility = Visibility.Collapsed;
         BtnCancelScan.Visibility = Visibility.Visible;
         ScanProgress.Visibility = Visibility.Visible;
@@ -199,14 +257,18 @@ public partial class DiskAnalyzerView : UserControl
         _history.Clear();
         _liveRoot = null;
         SunburstCanvas.Children.Clear();
+        SunburstCanvas.BeginAnimation(UIElement.OpacityProperty, null);
+        SunburstCanvas.Opacity = 0;
         ZonesList.ItemsSource = null;
+        ZonesTitle.Text = L("Disk_Zones");
+        ZonesSubTitle.Text = "";
         CenterTitle.Text = L("Disk_StatusScanning");
         CenterSize.Text = "";
         CenterHint.Text = "";
 
         var progress = new Progress<DiskScanProgress>(p =>
         {
-            ScanStatus.Text = $"{DiskItemNode.FormatSize(p.Bytes)} --- {p.Files:N0} fichiers --- {p.Folders:N0} dossiers";
+            ScanStatus.Text = $"{DiskItemNode.FormatSize(p.Bytes)} · {p.Files:N0} fichiers · {p.Folders:N0} dossiers";
         });
 
         try
@@ -214,7 +276,12 @@ public partial class DiskAnalyzerView : UserControl
             DriveInfo drive = new(rootPath);
             _driveFreeBytes = drive.AvailableFreeSpace;
 
-            DiskItemNode root = await DiskAnalyzerService.ScanAsync(rootPath, progress, OnScanWaveCompleted, _scanCts.Token);
+            DiskItemNode root = await DiskAnalyzerService.ScanAsync(rootPath, progress, node => OnScanWaveCompleted(node, scanCts), scanCts.Token);
+            if (!ReferenceEquals(_scanCts, scanCts))
+            {
+                return;
+            }
+
             _root = root;
             _current = root;
             _history.Clear();
@@ -224,33 +291,56 @@ public partial class DiskAnalyzerView : UserControl
             UpdateCenter();
             UpdateBreadcrumb();
             UpdateZonesList();
-
             RenderSunburstWithAnimation();
 
             ScanStatus.Text = string.Format(L("Disk_StatusDone"), DiskItemNode.FormatSize(root.SizeBytes), $"{root.FileCount:N0}");
         }
         catch (OperationCanceledException)
         {
+            if (!ReferenceEquals(_scanCts, scanCts))
+            {
+                return;
+            }
+
             ScanStatus.Text = L("Disk_StatusCancelled");
         }
         catch (Exception ex)
         {
+            if (!ReferenceEquals(_scanCts, scanCts))
+            {
+                return;
+            }
+
             ScanStatus.Text = L("Disk_StatusError") + ex.Message;
         }
         finally
         {
-            _scanning = false;
-            _liveRoot = null;
-            BtnScan.Visibility = Visibility.Visible;
-            BtnCancelScan.Visibility = Visibility.Collapsed;
-            ScanProgress.Visibility = Visibility.Collapsed;
-            _scanCts?.Dispose();
-            _scanCts = null;
+            scanCts.Dispose();
+            if (ReferenceEquals(_scanCts, scanCts))
+            {
+                _scanCts = null;
+                _scanning = false;
+                _liveRoot = null;
+                SunburstCanvas.BeginAnimation(UIElement.OpacityProperty, null);
+                SunburstCanvas.Opacity = 1;
+                BtnScan.Visibility = Visibility.Visible;
+                BtnCancelScan.Visibility = Visibility.Collapsed;
+                ScanProgress.Visibility = Visibility.Collapsed;
+                if (_root == null)
+                {
+                    RenderSunburst();
+                }
+            }
         }
     }
 
-    private void OnScanWaveCompleted(DiskItemNode root)
+    private void OnScanWaveCompleted(DiskItemNode root, CancellationTokenSource scanCts)
     {
+        if (!ReferenceEquals(_scanCts, scanCts) || !_scanning)
+        {
+            return;
+        }
+
         DateTime now = DateTime.UtcNow;
         if ((now - _lastLiveRender).TotalMilliseconds < LiveRenderIntervalMs)
         {
@@ -276,14 +366,29 @@ public partial class DiskAnalyzerView : UserControl
 
         _ = Dispatcher.BeginInvoke(() =>
         {
-            if (!_scanning)
+            if (!ReferenceEquals(_scanCts, scanCts) || !_scanning)
             {
                 return;
             }
 
             _liveRoot = SnapshotToZone(snapshot);
             RenderSunburst();
+            UpdateCenter();
+            if (!_liveRenderShown)
+            {
+                _liveRenderShown = true;
+                FadeLiveCanvasIn();
+            }
         });
+    }
+
+    private void FadeLiveCanvasIn()
+    {
+        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(450))
+        {
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+        };
+        SunburstCanvas.BeginAnimation(UIElement.OpacityProperty, fadeIn);
     }
 
     private static Zone SnapshotToZone(DiskZoneSnapshot snapshot)
@@ -345,7 +450,10 @@ public partial class DiskAnalyzerView : UserControl
         {
             _scanCts?.Cancel();
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "DiskAnalyzerView.CancelScan"); }
+        catch (Exception ex)
+        {
+            LoggingService.LogException(ex, "DiskAnalyzerView.CancelScan");
+        }
     }
 
     private Zone? CurrentZone => _scanning ? _liveRoot : (_current != null ? BuildZone(_current, 0) : null);
@@ -366,13 +474,18 @@ public partial class DiskAnalyzerView : UserControl
 
     private void NavigateInto(DiskItemNode? node)
     {
-        if (node == null || _current == null || _scanning) return;
+        if (node == null || _current == null || _scanning)
+        {
+            return;
+        }
+
         _history.Push(_current);
         SetCurrent(node);
         PlayNavigationAnimation(false);
     }
 
     private void CenterButton_Click(object sender, RoutedEventArgs e) => GoUp();
+
     private void BtnGoUp_Click(object sender, RoutedEventArgs e) => GoUp();
 
     private void BtnGoHome_Click(object sender, RoutedEventArgs e)
@@ -411,9 +524,7 @@ public partial class DiskAnalyzerView : UserControl
 
     private void RenderSunburstWithAnimation()
     {
-        var oldElements = new List<UIElement>(SunburstCanvas.Children.Cast<UIElement>());
         SunburstCanvas.Children.Clear();
-
         RenderSunburst();
 
         var newElements = new List<UIElement>(SunburstCanvas.Children.Cast<UIElement>());
@@ -449,19 +560,28 @@ public partial class DiskAnalyzerView : UserControl
         if (sender is FrameworkElement { DataContext: ZoneRow row })
         {
             UpdateSelectedInfo(row.Node, row.ZoneBrush);
-            if (row.Node != null && !row.Label.StartsWith("Autres"))
+            if (row.Node != null)
+            {
                 NavigateInto(row.Node);
+            }
         }
     }
 
     private void BtnOpenExplorer_Click(object sender, RoutedEventArgs e)
     {
-        if (_current == null) return;
+        if (_current == null)
+        {
+            return;
+        }
+
         try
         {
             Process.Start(new ProcessStartInfo { FileName = _current.FullName, UseShellExecute = true });
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "DiskAnalyzerView.BtnOpenExplorer_Click"); }
+        catch (Exception ex)
+        {
+            LoggingService.LogException(ex, "DiskAnalyzerView.BtnOpenExplorer_Click");
+        }
     }
 
     private void UpdateCenter()
@@ -474,6 +594,7 @@ public partial class DiskAnalyzerView : UserControl
             CenterHint.Text = string.Empty;
             return;
         }
+
         string name = zone.Name.Length > 28 ? zone.Name[..25] + "..." : zone.Name;
         CenterTitle.Text = name;
         CenterSize.Text = DiskItemNode.FormatSize(zone.Size);
@@ -488,6 +609,7 @@ public partial class DiskAnalyzerView : UserControl
             Breadcrumb.ItemsSource = null;
             return;
         }
+
         var chain = new List<Crumb>();
         var visited = new HashSet<DiskItemNode>();
         BuildChain(_root, _current, chain, visited);
@@ -496,14 +618,25 @@ public partial class DiskAnalyzerView : UserControl
 
         static bool BuildChain(DiskItemNode from, DiskItemNode target, List<Crumb> chain, HashSet<DiskItemNode> visited)
         {
-            if (ReferenceEquals(from, target)) return true;
-            if (!visited.Add(from)) return false;
+            if (ReferenceEquals(from, target))
+            {
+                return true;
+            }
+
+            if (!visited.Add(from))
+            {
+                return false;
+            }
+
             foreach (DiskItemNode child in from.Children)
+            {
                 if (BuildChain(child, target, chain, visited))
                 {
                     chain.Insert(0, new Crumb { Label = child.Name, Node = child });
                     return true;
                 }
+            }
+
             return false;
         }
     }
@@ -517,8 +650,9 @@ public partial class DiskAnalyzerView : UserControl
             BtnOpenExplorer.Visibility = Visibility.Collapsed;
             return;
         }
+
         SelectedName.Text = node.Name;
-        SelectedDetails.Text = $"{DiskItemNode.FormatSize(node.SizeBytes)} * {node.FileCount:N0} fichiers\n{node.FullName}";
+        SelectedDetails.Text = $"{DiskItemNode.FormatSize(node.SizeBytes)} · {node.FileCount:N0} fichiers{Environment.NewLine}{node.FullName}";
         BtnOpenExplorer.Visibility = node.IsDirectory ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -528,13 +662,14 @@ public partial class DiskAnalyzerView : UserControl
         if (zone == null)
         {
             ZonesList.ItemsSource = null;
-            ZonesTitle.Text = "ZONES";
+            ZonesTitle.Text = L("Disk_Zones");
             ZonesSubTitle.Text = string.Empty;
             return;
         }
+
         ZonesTitle.Text = string.Format(L("Disk_ZonesFor"), zone.Name.ToUpperInvariant());
         long total = Math.Max(1, zone.Size);
-        ZonesSubTitle.Text = $"{zone.Children.Count:N0} elements --- {zone.Files:N0} fichiers --- {DiskItemNode.FormatSize(zone.Size)}";
+        ZonesSubTitle.Text = $"{zone.Children.Count:N0} éléments · {zone.Files:N0} fichiers · {DiskItemNode.FormatSize(zone.Size)}";
         var rows = new List<ZoneRow>();
         foreach (Zone child in zone.Children)
         {
@@ -550,6 +685,7 @@ public partial class DiskAnalyzerView : UserControl
                 Node = child.Node
             });
         }
+
         ZonesList.ItemsSource = rows;
     }
 
@@ -559,9 +695,17 @@ public partial class DiskAnalyzerView : UserControl
     {
         SunburstCanvas.Children.Clear();
         Zone? root = CurrentZone;
-        if (root == null) return;
+        if (root == null)
+        {
+            RenderEmptyRings();
+            return;
+        }
+
         double width = ChartHost.ActualWidth, height = ChartHost.ActualHeight;
-        if (width < 80 || height < 80) return;
+        if (width < 80 || height < 80)
+        {
+            return;
+        }
 
         double cx = width / 2.0, cy = height / 2.0;
         double outerRadius = Math.Min(width, height) / 2.0 - 8;
@@ -582,17 +726,61 @@ public partial class DiskAnalyzerView : UserControl
             availableSweep = 360.0 * totalSize / Math.Max(1, totalSize + freeBytes);
             SunburstCanvas.Children.Add(CreateSlice(cx, cy, innerRadius, innerRadius + ringWidth,
                 availableSweep, 360.0 - availableSweep,
-                new SolidColorBrush(Color.FromRgb(0x2A, 0x2E, 0x3A)), L("Disk_FreeSpace"), freeBytes, totalSize + freeBytes, null));
+                FreeSpaceBrush, L("Disk_FreeSpace"), freeBytes, totalSize + freeBytes, null));
         }
+
         RenderLevel(root.Children, cx, cy, innerRadius, ringWidth, 0, availableSweep, 0, 0);
+    }
+
+    private void RenderEmptyRings()
+    {
+        double width = ChartHost.ActualWidth, height = ChartHost.ActualHeight;
+        if (width < 80 || height < 80)
+        {
+            return;
+        }
+
+        double outerRadius = Math.Min(width, height) / 2.0 - 8;
+        if (outerRadius < 40)
+        {
+            return;
+        }
+
+        double ringWidth = outerRadius * 0.86 / RingCount;
+        Brush stroke = TryFindResource("BorderSubtleBrush") as Brush ?? Brushes.Gray;
+        for (int i = 0; i < RingCount; i++)
+        {
+            double radius = outerRadius - (i * ringWidth);
+            var ring = new System.Windows.Shapes.Ellipse
+            {
+                Width = radius * 2,
+                Height = radius * 2,
+                Stroke = stroke,
+                StrokeThickness = 1.2,
+                StrokeDashArray = new DoubleCollection([4, 5]),
+                IsHitTestVisible = false,
+                Opacity = 0.55
+            };
+            Canvas.SetLeft(ring, (width / 2.0) - radius);
+            Canvas.SetTop(ring, (height / 2.0) - radius);
+            SunburstCanvas.Children.Add(ring);
+        }
     }
 
     private void RenderLevel(IReadOnlyList<Zone> children, double cx, double cy,
         double innerRadius, double ringWidth, double startAngle, double sweepAngle, int colorIndex, int depth)
     {
-        if (children.Count == 0 || sweepAngle <= 0 || depth >= RingCount) return;
+        if (children.Count == 0 || sweepAngle <= 0 || depth >= RingCount)
+        {
+            return;
+        }
+
         long total = children.Sum(c => c.Size);
-        if (total <= 0) return;
+        if (total <= 0)
+        {
+            return;
+        }
+
         var visible = children.Where(c => c.Size * 360.0 / total >= MinSegmentAngle).Take(MaxZonesPerRing).ToList();
         long visibleSum = visible.Sum(c => c.Size);
         long rest = total - visibleSum;
@@ -608,21 +796,29 @@ public partial class DiskAnalyzerView : UserControl
                 new SolidColorBrush(color), child.Name, child.Size, total, child);
             SunburstCanvas.Children.Add(slice);
             if (span > 4.0 && depth + 1 < RingCount && child.Children.Count > 0)
+            {
                 RenderLevel(child.Children, cx, cy, innerRadius, ringWidth, cursor, span - gap,
                     (colorIndex + i + 3) % Palette.Length, depth + 1);
+            }
+
             cursor += span;
         }
+
         if (rest > 0)
         {
             double span = rest * sweepPerByte;
             SunburstCanvas.Children.Add(CreateSlice(cx, cy, r0, r1, cursor, span,
-                new SolidColorBrush(Color.FromRgb(0x55, 0x5B, 0x66)), "Autres", rest, total, null));
+                RestSliceBrush, "Autres", rest, total, null));
         }
     }
 
     private static Color ShadeColor(Color baseColor, int depth)
     {
-        if (depth <= 0) return baseColor;
+        if (depth <= 0)
+        {
+            return baseColor;
+        }
+
         double factor = 1.0 + (0.16 * depth);
         return Color.FromRgb(
             (byte)Math.Clamp(baseColor.R * factor, 0, 255),
@@ -655,15 +851,31 @@ public partial class DiskAnalyzerView : UserControl
         {
             Data = geometry,
             Fill = fill,
-            Stroke = new SolidColorBrush(Color.FromRgb(0x07, 0x08, 0x0B)),
+            Stroke = SliceStrokeBrush,
             StrokeThickness = 1.2,
-            ToolTip = $"{trimmed} --- {DiskItemNode.FormatSize(sizeBytes)} ({pct:0.#}%)",
+            ToolTip = $"{trimmed} · {DiskItemNode.FormatSize(sizeBytes)} ({pct:0.#}%)",
             Cursor = zone?.Node != null ? Cursors.Hand : null
         };
 
-        path.MouseEnter += (s, e) => { path.Stroke = Brushes.White; path.StrokeThickness = 1.8; };
-        path.MouseLeave += (s, e) => { path.Stroke = new SolidColorBrush(Color.FromRgb(0x07, 0x08, 0x0B)); path.StrokeThickness = 1.2; };
-        if (zone?.Node != null) path.MouseLeftButtonUp += (s, e) => { UpdateSelectedInfo(zone.Node, fill); NavigateInto(zone.Node); };
+        path.MouseEnter += (s, e) =>
+        {
+            path.Stroke = Brushes.White;
+            path.StrokeThickness = 1.8;
+        };
+        path.MouseLeave += (s, e) =>
+        {
+            path.Stroke = SliceStrokeBrush;
+            path.StrokeThickness = 1.2;
+        };
+        if (zone?.Node != null)
+        {
+            path.MouseLeftButtonUp += (s, e) =>
+            {
+                UpdateSelectedInfo(zone.Node, fill);
+                NavigateInto(zone.Node);
+            };
+        }
+
         return path;
     }
 
@@ -672,8 +884,16 @@ public partial class DiskAnalyzerView : UserControl
         string root = _selectedDriveRoot
             ?? DiskAnalyzerService.GetReadyDrives().FirstOrDefault()?.RootDirectory.FullName
             ?? "C:\\";
-        DuplicatesRootBox.Text ??= root;
-        LargeRootBox.Text ??= root;
+        if (string.IsNullOrWhiteSpace(DuplicatesRootBox.Text))
+        {
+            DuplicatesRootBox.Text = root;
+        }
+
+        if (string.IsNullOrWhiteSpace(LargeRootBox.Text))
+        {
+            LargeRootBox.Text = root;
+        }
+
         SetMode("Space");
     }
 
@@ -687,13 +907,38 @@ public partial class DiskAnalyzerView : UserControl
 
     private void SetMode(string mode)
     {
-        SpaceModePanel.Visibility = mode == "Space" ? Visibility.Visible : Visibility.Collapsed;
-        DuplicatesPanel.Visibility = mode == "Duplicates" ? Visibility.Visible : Visibility.Collapsed;
-        LargeFilesPanel.Visibility = mode == "LargeFiles" ? Visibility.Visible : Visibility.Collapsed;
+        ShowPanel(SpaceModePanel, mode == "Space");
+        ShowPanel(DuplicatesPanel, mode == "Duplicates");
+        ShowPanel(LargeFilesPanel, mode == "LargeFiles");
 
         StyleModeButton(BtnModeSpace, mode == "Space");
         StyleModeButton(BtnModeDuplicates, mode == "Duplicates");
         StyleModeButton(BtnModeLargeFiles, mode == "LargeFiles");
+    }
+
+    private static void ShowPanel(Grid panel, bool visible)
+    {
+        Visibility newValue = visible ? Visibility.Visible : Visibility.Collapsed;
+        if (panel.Visibility == newValue)
+        {
+            return;
+        }
+
+        panel.Visibility = newValue;
+        if (visible)
+        {
+            AnimatePanelIn(panel);
+        }
+    }
+
+    private static void AnimatePanelIn(UIElement panel)
+    {
+        panel.Opacity = 0;
+        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(260))
+        {
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+        };
+        panel.BeginAnimation(UIElement.OpacityProperty, fadeIn);
     }
 
     private void StyleModeButton(Button button, bool active)
@@ -769,14 +1014,19 @@ public partial class DiskAnalyzerView : UserControl
         try
         {
             IReadOnlyList<DuplicateGroup> groups = await DuplicateFinderService.FindDuplicatesAsync(
-                new DuplicateScanOptions(root, minSize), progress, ct);
+                new DuplicateScanOptions(root, minSize, DuplicateGroupsShown), progress, ct);
 
             List<DuplicateGroupRow> rows = groups.Select(g => new DuplicateGroupRow
             {
                 FileName = g.FileName,
                 CountText = $"{g.FileCount} fichiers identiques",
                 WastedText = string.Format(L("Disk_Wasted"), DiskItemNode.FormatSize(g.WastedBytes)),
-                Files = g.Paths.Select(p => new DuplicateFileRow { Path = p }).ToList()
+                Files = g.Paths.Select(p => new DuplicateFileRow
+                {
+                    Path = p,
+                    FileName = System.IO.Path.GetFileName(p),
+                    Folder = System.IO.Path.GetDirectoryName(p) ?? p
+                }).ToList()
             }).ToList();
 
             DuplicatesList.ItemsSource = rows;

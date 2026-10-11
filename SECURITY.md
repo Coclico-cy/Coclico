@@ -3,7 +3,7 @@
 ## Supported versions / Versions prises en charge
    Version | Supported / Prise en charge |
  | ------- | --------------------------- |
- | 2.0.1   | Yes / Oui                   |
+ | 2.0.2   | Yes / Oui                   |
 
 ## Reporting a vulnerability / Signaler une vulnérabilité
 
