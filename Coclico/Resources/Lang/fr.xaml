@@ -53,7 +53,7 @@
     <system:String x:Key="Welcome_Card4_Title">Contrôle &amp; stabilité</system:String>
     <system:String x:Key="Welcome_HeroDesc">Architecture repensée, optimisation intelligente et expérience entièrement modernisée pour un contrôle plus précis de votre système.</system:String>
     <system:String x:Key="Welcome_HeroTitle">Une nouvelle génération de Coclico commence ici.</system:String>
-    <system:String x:Key="Welcome_Title">Bienvenue dans Coclico 2.2.0.1</system:String>
+    <system:String x:Key="Welcome_Title">Bienvenue dans Coclico 2.0.3</system:String>
     <system:String x:Key="Cleaning_Btn_CleanSelection">Nettoyer la sélection</system:String>
     <system:String x:Key="Cleaning_Btn_CleanSelectionWithTotal">Nettoyer la sélection ({0})</system:String>
     <system:String x:Key="Cleaning_Btn_Cleaning">Nettoyage en cours...</system:String>
@@ -720,7 +720,7 @@ Estimation : {0} répartis sur {1} catégories.</system:String>
     <system:String x:Key="Settings_AiAndAudit">IA &amp; Audit</system:String>
     <system:String x:Key="Settings_AiSectionTitle">ASSISTANT IA &amp; COPILOT</system:String>
     <system:String x:Key="Settings_AppDesc">Gestionnaire système Windows</system:String>
-    <system:String x:Key="Settings_AppVersion">Version 2.0.1</system:String>
+    <system:String x:Key="Settings_AppVersion">Version 2.0.3</system:String>
     <system:String x:Key="Settings_Appearance">Apparence</system:String>
     <system:String x:Key="Settings_Apply">Appliquer</system:String>
     <system:String x:Key="Settings_AuditRetentionDays">Durée de rétention du journal d&apos;audit (jours)</system:String>
