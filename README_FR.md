@@ -6,6 +6,7 @@
 
 ### Une application Windows pour mieux suivre et entretenir son ordinateur
 
+![Downloads](https://img.shields.io/github/downloads/Coclico-cy/coclico/total)
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Plateforme](https://img.shields.io/badge/plateforme-Windows%2011-0078D4?logo=windows11&logoColor=white)](#configuration-requise)
 [![Licence : MIT](https://img.shields.io/badge/licence-MIT-green.svg)](LICENSE.txt)
