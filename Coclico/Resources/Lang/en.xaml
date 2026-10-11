@@ -53,7 +53,7 @@
     <system:String x:Key="Welcome_Card4_Title">Control &amp; Stability</system:String>
     <system:String x:Key="Welcome_HeroDesc">Rebuilt architecture, intelligent optimization, and a modernized experience designed for precise system control.</system:String>
     <system:String x:Key="Welcome_HeroTitle">A new generation of Coclico begins here.</system:String>
-    <system:String x:Key="Welcome_Title">Welcome to Coclico 2.0</system:String>
+    <system:String x:Key="Welcome_Title">Welcome to Coclico 2.0.1</system:String>
     <system:String x:Key="Cleaning_Btn_CleanSelection">Clean selection</system:String>
     <system:String x:Key="Cleaning_Btn_CleanSelectionWithTotal">Clean selection ({0})</system:String>
     <system:String x:Key="Cleaning_Btn_Cleaning">Cleaning in progress...</system:String>
