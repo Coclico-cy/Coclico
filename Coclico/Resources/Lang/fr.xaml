@@ -720,7 +720,7 @@ Estimation : {0} répartis sur {1} catégories.</system:String>
     <system:String x:Key="Settings_AiAndAudit">IA &amp; Audit</system:String>
     <system:String x:Key="Settings_AiSectionTitle">ASSISTANT IA &amp; COPILOT</system:String>
     <system:String x:Key="Settings_AppDesc">Gestionnaire système Windows</system:String>
-    <system:String x:Key="Settings_AppVersion">Version 1.0.4</system:String>
+    <system:String x:Key="Settings_AppVersion">Version 2.0.1</system:String>
     <system:String x:Key="Settings_Appearance">Apparence</system:String>
     <system:String x:Key="Settings_Apply">Appliquer</system:String>
     <system:String x:Key="Settings_AuditRetentionDays">Durée de rétention du journal d&apos;audit (jours)</system:String>

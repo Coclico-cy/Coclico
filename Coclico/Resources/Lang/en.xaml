@@ -720,7 +720,7 @@ Estimated: {0} across {1} categories.</system:String>
     <system:String x:Key="Settings_AiAndAudit">AI &amp; Audit</system:String>
     <system:String x:Key="Settings_AiSectionTitle">AI ASSISTANT &amp; COPILOT</system:String>
     <system:String x:Key="Settings_AppDesc">Windows system manager</system:String>
-    <system:String x:Key="Settings_AppVersion">Version 1.0.4</system:String>
+    <system:String x:Key="Settings_AppVersion">Version 2.0.1</system:String>
     <system:String x:Key="Settings_Appearance">Appearance</system:String>
     <system:String x:Key="Settings_Apply">Apply</system:String>
     <system:String x:Key="Settings_AuditRetentionDays">Audit log retention period (days)</system:String>
