@@ -44,7 +44,7 @@ public partial class MainWindow : FluentWindow
     {
         InitializeComponent();
 
-        TxtBadge.Text = $"BÊTA v{InstallService.AppVersion}";
+        TxtHeaderTitle.Text = $"Coclico v{InstallService.AppVersion}";
 
         _tipsTimer.Interval = TimeSpan.FromSeconds(4);
         _tipsTimer.Tick += (s, e) =>
@@ -256,7 +256,6 @@ public partial class MainWindow : FluentWindow
 
         TxtWelcomeTitle.Text = InstallerLocalization.Get("WelcomeTitle");
         TxtWelcomeDesc.Text = InstallerLocalization.Get("WelcomeDesc");
-        TxtNotice.Text = InstallerLocalization.Get("Notice");
         TxtDotNetTitle.Text = InstallerLocalization.Get("DotNetCheckTitle");
         TxtGpuTitle.Text = InstallerLocalization.Get("GpuCheckTitle");
 

@@ -926,9 +926,7 @@ public partial class MainWindow : FluentWindow
 
     private void ApplyVersionTexts()
     {
-        string template = ServiceContainer.GetOptional<LocalizationService>()?.Get("App_StudioSubtitle")
-            ?? (TryFindResource("App_StudioSubtitle") as string ?? "App_StudioSubtitle");
-        TxtStudioSubtitle.Text = string.Format(template, UpdateCheckService.GetCurrentVersion());
+        TxtStudioSubtitle.Text = string.Empty;
     }
 
     private void UpdateWindowModeButton()

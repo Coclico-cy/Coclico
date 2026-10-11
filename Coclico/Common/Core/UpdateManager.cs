@@ -154,6 +154,7 @@ public class UpdateManager(ILogger<UpdateManager> logger)
             _ = Directory.CreateDirectory(Path.GetDirectoryName(savePath) ?? ".");
             string fullPath = Path.GetFullPath(savePath);
             string tempPath = fullPath + ".download-" + Guid.NewGuid().ToString("N");
+            long totalBytesRead = 0;
             try
             {
                 await using (Stream contentStream = await assetResponse.Content.ReadAsStreamAsync(ct))
@@ -161,7 +162,6 @@ public class UpdateManager(ILogger<UpdateManager> logger)
                     tempPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, 128 * 1024, useAsync: true))
                 {
                     byte[] buffer = new byte[128 * 1024];
-                    long totalBytesRead = 0;
                     int bytesRead;
                     while ((bytesRead = await contentStream.ReadAsync(buffer.AsMemory(0, buffer.Length), ct)) > 0)
                     {
@@ -171,16 +171,31 @@ public class UpdateManager(ILogger<UpdateManager> logger)
                     }
                 }
 
-                await using FileStream hashStream = File.OpenRead(tempPath);
-                string actualHash = Convert.ToHexString(await SHA256.HashDataAsync(hashStream, ct));
-                if (!CryptographicOperations.FixedTimeEquals(
-                        Convert.FromHexString(actualHash), Convert.FromHexString(expectedHash)))
+                if (asset.Size > 0 && totalBytesRead != asset.Size)
                 {
-                    _logger.LogError("Downloaded update failed SHA-256 verification.");
+                    _logger.LogWarning($"Incomplete download for '{assetName}': {totalBytesRead} of {asset.Size} bytes.");
                     return false;
                 }
 
-                File.Move(tempPath, fullPath, overwrite: true);
+                string actualHash;
+                await using (FileStream hashStream = File.OpenRead(tempPath))
+                {
+                    actualHash = Convert.ToHexString(await SHA256.HashDataAsync(hashStream, ct));
+                }
+
+                if (!CryptographicOperations.FixedTimeEquals(
+                        Convert.FromHexString(actualHash), Convert.FromHexString(expectedHash)))
+                {
+                    _logger.LogError($"Downloaded update failed SHA-256 verification for '{assetName}' (expected {expectedHash}, actual {actualHash}).");
+                    return false;
+                }
+
+                if (!TryReplaceInstaller(tempPath, fullPath))
+                {
+                    _logger.LogError($"Cannot replace '{Path.GetFileName(fullPath)}': the file is locked by another process. Close the running application and retry the update.");
+                    return false;
+                }
+
                 _verifiedAssets[fullPath] = expectedHash;
             }
             finally
@@ -432,6 +447,42 @@ public class UpdateManager(ILogger<UpdateManager> logger)
         }
 
         return true;
+    }
+
+    private static bool TryReplaceInstaller(string tempPath, string fullPath)
+    {
+        const int maxAttempts = 3;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                File.Move(tempPath, fullPath, overwrite: true);
+                return true;
+            }
+            catch (Exception exMove) when (exMove is IOException or UnauthorizedAccessException)
+            {
+                LoggingService.LogException(exMove, "UpdateManager.TryReplaceInstaller.Move");
+            }
+
+            try
+            {
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                }
+            }
+            catch (Exception exDelete)
+            {
+                LoggingService.LogException(exDelete, "UpdateManager.TryReplaceInstaller.Delete");
+            }
+
+            if (attempt < maxAttempts)
+            {
+                Thread.Sleep(400);
+            }
+        }
+
+        return false;
     }
 
     private async Task<string?> ResolveExpectedHashAsync(

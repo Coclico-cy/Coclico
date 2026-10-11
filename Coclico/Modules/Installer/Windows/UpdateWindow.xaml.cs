@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using Coclico.Services;
 using Wpf.Ui.Controls;
@@ -7,6 +8,9 @@ namespace Coclico.Modules.Installer.Windows;
 
 public partial class UpdateWindow : FluentWindow
 {
+    private static readonly Regex MarkdownLinkPattern = new(@"\[([^\]]+)\]\([^)]*\)", RegexOptions.Compiled);
+    private static readonly Regex MarkdownHeadingPattern = new(@"^#{1,6}\s*", RegexOptions.Compiled);
+
     private readonly GitHubRelease _release;
     private readonly UpdateManager _updateManager;
     private readonly SettingsService _settings;
@@ -20,9 +24,52 @@ public partial class UpdateWindow : FluentWindow
         _updateManager = ServiceContainer.GetRequired<UpdateManager>();
 
         VersionLine.Text = $"v{currentVersion}  →  {_release.TagName}";
-        NotesText.Text = string.IsNullOrWhiteSpace(_release.Body)
+        NotesText.Text = CleanReleaseNotes(_release.Body);
+    }
+
+    private static string CleanReleaseNotes(string body)
+    {
+        if (string.IsNullOrWhiteSpace(body))
+        {
+            return "Pas de notes de version pour cette mise à jour.";
+        }
+
+        var lines = new List<string>();
+        foreach (string rawLine in body.Replace("\r\n", "\n").Split('\n'))
+        {
+            string line = rawLine.Trim();
+            if (line.Length == 0)
+            {
+                if (lines.Count > 0 && lines[^1].Length > 0)
+                {
+                    lines.Add(string.Empty);
+                }
+
+                continue;
+            }
+
+            if (line.StartsWith('<') || line.StartsWith("!["))
+            {
+                continue;
+            }
+
+            line = MarkdownLinkPattern.Replace(line, "$1");
+            line = line.Replace("**", string.Empty).Replace("`", string.Empty);
+            line = MarkdownHeadingPattern.Replace(line, string.Empty).Trim();
+            if (line.Length > 0)
+            {
+                lines.Add(line);
+            }
+        }
+
+        while (lines.Count > 0 && lines[^1].Length == 0)
+        {
+            lines.RemoveAt(lines.Count - 1);
+        }
+
+        return lines.Count == 0
             ? "Pas de notes de version pour cette mise à jour."
-            : _release.Body.Trim();
+            : string.Join(Environment.NewLine, lines);
     }
 
     private async void BtnInstall_Click(object sender, RoutedEventArgs e)
