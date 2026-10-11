@@ -129,12 +129,12 @@ public partial class MainWindow : FluentWindow
 
     private void MainWindow_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
     {
-        if (BetaWelcomeOverlay.Visibility == Visibility.Visible)
+        if (WelcomeOverlay.Visibility == Visibility.Visible)
         {
             if (e.Key == System.Windows.Input.Key.Escape)
             {
                 e.Handled = true;
-                DismissBetaWelcome();
+                DismissWelcome();
                 return;
             }
         }
@@ -192,7 +192,7 @@ public partial class MainWindow : FluentWindow
                 _trayService = ServiceContainer.GetRequired<TrayService>();
             }
 
-            _ = Dispatcher.InvokeAsync(ShowBetaWelcome, System.Windows.Threading.DispatcherPriority.Loaded);
+            _ = Dispatcher.InvokeAsync(ShowWelcome, System.Windows.Threading.DispatcherPriority.Loaded);
         }
         catch (Exception ex) { LoggingService.LogException(ex, "MainWindow.TrayCreate"); }
     }
@@ -998,10 +998,10 @@ public partial class MainWindow : FluentWindow
         return null;
     }
 
-    private void ShowBetaWelcome()
+    private void ShowWelcome()
     {
-        BetaWelcomeOverlay.Opacity = 0;
-        BetaWelcomeOverlay.Visibility = Visibility.Visible;
+        WelcomeOverlay.Opacity = 0;
+        WelcomeOverlay.Visibility = Visibility.Visible;
         var fade = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(280))
         {
             EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
@@ -1010,14 +1010,14 @@ public partial class MainWindow : FluentWindow
         {
             EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
         };
-        BetaWelcomeOverlay.BeginAnimation(OpacityProperty, fade);
-        BetaWelcomeTransform.BeginAnimation(TranslateTransform.YProperty, slide);
-        _ = Dispatcher.InvokeAsync(() => BtnDismissBetaWelcome.Focus(), System.Windows.Threading.DispatcherPriority.Input);
+        WelcomeOverlay.BeginAnimation(OpacityProperty, fade);
+        WelcomeTransform.BeginAnimation(TranslateTransform.YProperty, slide);
+        _ = Dispatcher.InvokeAsync(() => BtnDismissWelcome.Focus(), System.Windows.Threading.DispatcherPriority.Input);
     }
 
-    private void DismissBetaWelcome()
+    private void DismissWelcome()
     {
-        if (BetaWelcomeOverlay.Visibility != Visibility.Visible)
+        if (WelcomeOverlay.Visibility != Visibility.Visible)
         {
             return;
         }
@@ -1032,19 +1032,19 @@ public partial class MainWindow : FluentWindow
         };
         fade.Completed += (_, _) =>
         {
-            BetaWelcomeOverlay.Visibility = Visibility.Collapsed;
+            WelcomeOverlay.Visibility = Visibility.Collapsed;
         };
-        BetaWelcomeOverlay.BeginAnimation(OpacityProperty, fade);
-        BetaWelcomeTransform.BeginAnimation(TranslateTransform.YProperty, slide);
+        WelcomeOverlay.BeginAnimation(OpacityProperty, fade);
+        WelcomeTransform.BeginAnimation(TranslateTransform.YProperty, slide);
     }
 
-    private void BtnDismissBetaWelcome_Click(object sender, RoutedEventArgs e)
+    private void BtnDismissWelcome_Click(object sender, RoutedEventArgs e)
     {
-        DismissBetaWelcome();
+        DismissWelcome();
     }
 
-    private void BetaWelcomeBackdrop_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void WelcomeBackdrop_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        DismissBetaWelcome();
+        DismissWelcome();
     }
 }

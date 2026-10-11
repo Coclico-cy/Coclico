@@ -20,9 +20,8 @@ public class InstallerLocalization
     {
         ["AppTitle"] = ("Coclico", "Coclico"),
         ["AppSubtitle"] = ("Assistant Système & Maintenance Windows", "Windows System & Maintenance Companion"),
-        ["BetaTag"] = ("BÊTA", "BETA"),
-        ["BetaNotice"] = ("Coclico est actuellement en version Bêta. Certaines fonctionnalités peuvent être expérimentales.",
-                          "Coclico is currently in Beta. Some features may be experimental."),
+        ["Notice"] = ("Coclico est actuellement en version. Certaines fonctionnalités peuvent être expérimentales.",
+                          "Coclico is currently in . Some features may be experimental."),
         ["BtnNext"] = ("Suivant >", "Next >"),
         ["BtnBack"] = ("< Précédent", "< Back"),
         ["BtnCancel"] = ("Annuler", "Cancel"),

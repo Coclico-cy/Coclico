@@ -87,7 +87,7 @@
                         <TextBlock Text="Coclico Setup" FontWeight="SemiBold" FontSize="12.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,10,0"/>
 
                         <Border Background="#331A12" CornerRadius="6" Padding="6,2" VerticalAlignment="Center" BorderBrush="#6B2E1E" BorderThickness="1" Margin="0,0,14,0">
-                            <TextBlock x:Name="TxtBetaBadge" Text="BÊTA" FontSize="10.5" FontWeight="Bold" Foreground="#FF6B35"/>
+                            <TextBlock x:Name="TxtBadge" Text="BÊTA" FontSize="10.5" FontWeight="Bold" Foreground="#FF6B35"/>
                         </Border>
 
                         <Border Background="#161822" CornerRadius="8" BorderBrush="#2B2D3A" BorderThickness="1" Padding="2" Margin="0,0,14,0">
@@ -216,7 +216,7 @@
                                         <ui:SymbolIcon Symbol="Warning24" FontSize="22" Foreground="#FF6B35" VerticalAlignment="Center" Margin="0,0,12,0"/>
                                         <StackPanel Grid.Column="1">
                                             <TextBlock Text="Version Bêta Expérimentale" FontWeight="Bold" FontSize="12.5" Foreground="#FF9E80"/>
-                                            <TextBlock x:Name="TxtBetaNotice" Text="Coclico est actuellement en version Bêta. Vos retours et rapports de bugs sont les bienvenus." FontSize="11.5" Foreground="#CCC" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="TxtNotice" Text="Coclico est actuellement en version Bêta. Vos retours et rapports de bugs sont les bienvenus." FontSize="11.5" Foreground="#CCC" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>

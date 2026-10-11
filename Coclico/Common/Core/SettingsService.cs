@@ -51,8 +51,8 @@ public class AppSettings
     [JsonPropertyName("skipUninstallConfirmation")]
     public bool SkipUninstallConfirmation { get; set; } = false;
 
-    [JsonPropertyName("hasSeenBetaWelcome")]
-    public bool HasSeenBetaWelcome { get; set; } = false;
+    [JsonPropertyName("hasSeenWelcome")]
+    public bool HasSeenWelcome { get; set; } = false;
 
     [JsonPropertyName("hasSeenCoclico20Welcome")]
     public bool HasSeenCoclico20Welcome { get; set; } = false;

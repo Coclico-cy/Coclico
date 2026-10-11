@@ -18,9 +18,9 @@ public partial class AiChatView : UserControl
 
     private bool _autoExecuteActions;
 
-    private void BtnDismissBetaNotice_Click(object sender, RoutedEventArgs e)
+    private void BtnDismissNotice_Click(object sender, RoutedEventArgs e)
     {
-        BetaNoticeBanner.Visibility = Visibility.Collapsed;
+        NoticeBanner.Visibility = Visibility.Collapsed;
     }
 
     private void BtnAutoExecToggle_Click(object sender, RoutedEventArgs e)

@@ -40,7 +40,7 @@ public partial class HelpView : UserControl
 
         TxtVersionTitle.Text = string.Format(GetTemplate("Help_Version_Title"), version);
         TxtVersionTag.Text = string.Format(GetTemplate("Help_Version_CurrentTag"), version);
-        TxtVersionCardTitle.Text = $"Coclico {version} Beta";
+        TxtVersionCardTitle.Text = $"Coclico {version} ";
         TxtVersionDesc.Text = string.Format(GetTemplate("Help_Version_Desc"), version);
         TxtVersionNotesTitle.Text = string.Format(GetTemplate("Help_Version_NotesTitle"), version);
         TxtInfoStatusText.Text = string.Format(GetTemplate("Help_Info_Status_Text"), version);

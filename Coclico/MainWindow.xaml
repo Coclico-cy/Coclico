@@ -841,13 +841,13 @@
                                   VerticalAlignment="Bottom"
                                   Margin="0,0,0,24"/>
 
-            <Grid x:Name="BetaWelcomeOverlay" Grid.Row="0" Grid.RowSpan="5" Panel.ZIndex="10000" Visibility="Collapsed" Opacity="0">
-                <Border Background="#E607090E" MouseDown="BetaWelcomeBackdrop_MouseDown"/>
-                <Border x:Name="BetaWelcomeCard" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="690" Margin="24"
+            <Grid x:Name="WelcomeOverlay" Grid.Row="0" Grid.RowSpan="5" Panel.ZIndex="10000" Visibility="Collapsed" Opacity="0">
+                <Border Background="#E607090E" MouseDown="WelcomeBackdrop_MouseDown"/>
+                <Border x:Name="WelcomeCard" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="690" Margin="24"
                         Background="#10141D" BorderBrush="#263345"
                         BorderThickness="1" CornerRadius="16" Padding="32,28">
                     <Border.RenderTransform>
-                        <TranslateTransform x:Name="BetaWelcomeTransform" Y="0"/>
+                        <TranslateTransform x:Name="WelcomeTransform" Y="0"/>
                     </Border.RenderTransform>
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="40" ShadowDepth="10" Direction="270" Color="#000000" Opacity="0.85"/>
@@ -864,21 +864,14 @@
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="{DynamicResource BetaWelcome_Title}" FontSize="21" FontWeight="Bold"
-                                               Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
-                                    <Border Background="#162A38" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
-                                            CornerRadius="5" Padding="7,2" Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Tag}" FontSize="10" FontWeight="ExtraBold"
-                                                   Foreground="{DynamicResource PrimaryBrush}"/>
-                                    </Border>
-                                </StackPanel>
+                                <TextBlock Text="{DynamicResource Welcome_Title}" FontSize="21" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="{DynamicResource BetaWelcome_HeroTitle}" FontSize="14.5" FontWeight="SemiBold"
+                        <TextBlock Text="{DynamicResource Welcome_HeroTitle}" FontSize="14.5" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
-                        <TextBlock Text="{DynamicResource BetaWelcome_HeroDesc}" FontSize="12.5" LineHeight="18"
+                        <TextBlock Text="{DynamicResource Welcome_HeroDesc}" FontSize="12.5" LineHeight="18"
                                    Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,20"/>
 
                         <UniformGrid Columns="2" Rows="2" Margin="0,0,0,20">
@@ -892,9 +885,9 @@
                                     <ui:SymbolIcon Symbol="Flash24" FontSize="17" Foreground="{DynamicResource PrimaryBrush}"
                                                    VerticalAlignment="Top" Margin="0,2,10,0"/>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card1_Title}" FontSize="13" FontWeight="SemiBold"
+                                        <TextBlock Text="{DynamicResource Welcome_Card1_Title}" FontSize="13" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card1_Desc}" FontSize="11.5" LineHeight="16"
+                                        <TextBlock Text="{DynamicResource Welcome_Card1_Desc}" FontSize="11.5" LineHeight="16"
                                                    Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Grid>
@@ -910,9 +903,9 @@
                                     <ui:SymbolIcon Symbol="Brain24" FontSize="17" Foreground="{DynamicResource SecondaryBrush}"
                                                    VerticalAlignment="Top" Margin="0,2,10,0"/>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card2_Title}" FontSize="13" FontWeight="SemiBold"
+                                        <TextBlock Text="{DynamicResource Welcome_Card2_Title}" FontSize="13" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card2_Desc}" FontSize="11.5" LineHeight="16"
+                                        <TextBlock Text="{DynamicResource Welcome_Card2_Desc}" FontSize="11.5" LineHeight="16"
                                                    Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Grid>
@@ -928,9 +921,9 @@
                                     <ui:SymbolIcon Symbol="Sparkle24" FontSize="17" Foreground="#F59E0B"
                                                    VerticalAlignment="Top" Margin="0,2,10,0"/>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card3_Title}" FontSize="13" FontWeight="SemiBold"
+                                        <TextBlock Text="{DynamicResource Welcome_Card3_Title}" FontSize="13" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card3_Desc}" FontSize="11.5" LineHeight="16"
+                                        <TextBlock Text="{DynamicResource Welcome_Card3_Desc}" FontSize="11.5" LineHeight="16"
                                                    Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Grid>
@@ -946,23 +939,16 @@
                                     <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="17" Foreground="{DynamicResource SuccessBrush}"
                                                    VerticalAlignment="Top" Margin="0,2,10,0"/>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card4_Title}" FontSize="13" FontWeight="SemiBold"
+                                        <TextBlock Text="{DynamicResource Welcome_Card4_Title}" FontSize="13" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Text="{DynamicResource BetaWelcome_Card4_Desc}" FontSize="11.5" LineHeight="16"
+                                        <TextBlock Text="{DynamicResource Welcome_Card4_Desc}" FontSize="11.5" LineHeight="16"
                                                    Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
                         </UniformGrid>
 
-                        <Border Height="1" Background="#1D2635" Margin="0,0,0,14"/>
-
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                            <ui:SymbolIcon Symbol="Beaker24" FontSize="14" Foreground="{DynamicResource TextMutedBrush}"
-                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="{DynamicResource BetaWelcome_Notice}" FontSize="11"
-                                       Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                        </StackPanel>
+                        <Border Height="1" Background="#1D2635" Margin="0,0,0,16"/>
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -971,17 +957,17 @@
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource BetaWelcome_Brand}" FontSize="12" FontWeight="SemiBold"
+                                <TextBlock Text="{DynamicResource Welcome_Brand}" FontSize="12" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <TextBlock Text="{DynamicResource BetaWelcome_Author}" FontSize="11"
+                                <TextBlock Text="{DynamicResource Welcome_Author}" FontSize="11"
                                            Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
                             </StackPanel>
 
-                            <ui:Button x:Name="BtnDismissBetaWelcome" Grid.Column="1" Click="BtnDismissBetaWelcome_Click"
+                            <ui:Button x:Name="BtnDismissWelcome" Grid.Column="1" Click="BtnDismissWelcome_Click"
                                        Appearance="Primary" CornerRadius="8" Padding="22,10"
                                        Cursor="Hand" FontWeight="SemiBold" IsDefault="True">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{DynamicResource BetaWelcome_Action}" FontSize="13" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Welcome_Action}" FontSize="13" VerticalAlignment="Center"/>
                                     <ui:SymbolIcon Symbol="ArrowRight24" FontSize="14" Margin="8,0,0,0" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </ui:Button>

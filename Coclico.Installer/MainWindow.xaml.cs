@@ -44,7 +44,7 @@ public partial class MainWindow : FluentWindow
     {
         InitializeComponent();
 
-        TxtBetaBadge.Text = $"BÊTA v{InstallService.AppVersion}";
+        TxtBadge.Text = $"BÊTA v{InstallService.AppVersion}";
 
         _tipsTimer.Interval = TimeSpan.FromSeconds(4);
         _tipsTimer.Tick += (s, e) =>
@@ -256,7 +256,7 @@ public partial class MainWindow : FluentWindow
 
         TxtWelcomeTitle.Text = InstallerLocalization.Get("WelcomeTitle");
         TxtWelcomeDesc.Text = InstallerLocalization.Get("WelcomeDesc");
-        TxtBetaNotice.Text = InstallerLocalization.Get("BetaNotice");
+        TxtNotice.Text = InstallerLocalization.Get("Notice");
         TxtDotNetTitle.Text = InstallerLocalization.Get("DotNetCheckTitle");
         TxtGpuTitle.Text = InstallerLocalization.Get("GpuCheckTitle");
 

@@ -12,6 +12,7 @@ public sealed class UpdateVersionTests
     [InlineData("v3.0", "2.9.9", true)]
     [InlineData("v2.0.10", "2.0.9", true)]
     [InlineData("v2.0.9", "2.0.10", false)]
+    [InlineData("2.0.0", "2.0.0", false)]
     [InlineData("2.0.0", "2.0.0-beta", true)]
     [InlineData("2.0.0-beta", "2.0.0", false)]
     public void IsNewerVersion_ComparesNumericallyAndHandlesPrereleases(string latestTag, string currentVersion, bool expected)
