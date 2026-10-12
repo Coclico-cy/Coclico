@@ -5,7 +5,7 @@
 # Coclico
 
 ### A Windows desktop companion for everyday system care
-
+[![Downloads](https://img.shields.io/github/downloads/Coclico-cy/Coclico/total)](https://github.com/Coclico-cy/Coclico/releases)
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/platform-Windows%2011-0078D4?logo=windows11&logoColor=white)](#requirements)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
@@ -20,12 +20,11 @@
 
 Coclico is a Windows desktop application that brings system information and maintenance tools together in one modern WPF interface. Its goal is to make common tasks easier to find, understand, and review **before** they change the computer.
 
-> **A solo project, and a living one.** Coclico is developed by a single person, in their free time. The project keeps moving forward, but updates may be spaced out depending on available time: don't worry, it is very much alive and will keep evolving.
+> **A solo project, and a living one.** Coclico is developed by a single person, in their free time. The project keeps moving forward, but updates may be spaced out depending on available time don't worry, it is very much alive and will keep evolving.
 
 ## AI assistance disclosure
 
 I created and maintain Coclico on my own; the product direction and implementation decisions are mine. I use AI transparently as a helper: to correct and structure my texts in both French and English (I live with dyslexia and dysorthographia, a spelling disorder that makes some mistakes hard to catch), to investigate bugs and persistent errors, to work through problems I do not fully understand yet, and to better grasp technical topics such as .NET 10. AI suggestions may have informed code changes; I review and take responsibility for the work integrated into the project. I therefore do not present Coclico as a project created without AI assistance, and I prefer to state it clearly.
-
 
 A welcome message introduces the application on first launch:
 
@@ -35,7 +34,7 @@ A welcome message introduces the application on first launch:
 
 The application starts as a standard user: tools that need administrator rights ask for them exactly when needed, never at launch.
 
-The main menu is a grouped accordion, inspired by Windows Settings: modules are organized into three collapsible sections (**Maintenance**, **Performance**, and **Applications**) that remember what you unfolded. Dashboard, Settings, and Help stay always visible.
+The main menu is a grouped accordion, inspired by Windows Settings: modules are organized into three collapsible sections (**Maintenance**, **Performance**, and **Applications**) that remember which sections you expanded. Dashboard, Settings, and Help always stay visible.
 
 | | |
 | --- | --- |
@@ -43,7 +42,7 @@ The main menu is a grouped accordion, inspired by Windows Settings: modules are 
 | **Hardware aware** | Power plans are created only through `powercfg`, with every setting validated against your actual PC before it is applied. |
 | **Local AI** | A local GGUF model or a local Ollama server: no cloud keys, loopback addresses only. |
 
-The project is actively being finished. Some tools require administrator rights, hardware-specific validation, or additional software. Read each action's description and confirmation before applying it.
+The project is still in active development. Some tools require administrator rights, hardware-specific validation, or additional software. Read each action's description and confirmation before applying it.
 
 ## Features in detail
 
@@ -59,7 +58,7 @@ The home screen shows your system at a glance (CPU, memory, and disks), with sho
 - **Gamer**: deep memory purge before a gaming session.
 - **Work**: standard memory cleanup, without touching files.
 
-The visible tiles are customizable: you choose which shortcuts appear on your home screen.
+Tiles are customizable: choose which shortcuts appear on your home screen.
 
 ### System cleaning
 
@@ -103,7 +102,7 @@ Three complementary modes to understand where your space goes:
 
 - **Space map**: an interactive radial map of any drive or folder. Click a zone to zoom in, use the breadcrumb to go back, see the heaviest folders at a glance, and open any location in Explorer.
 - **Duplicates**: the search runs in three phases (size, then a hash of the first 64 KB, then a full SHA-256 fingerprint): only files with *identical content* are listed. Threshold of 1, 10, 50, or 100 MB; groups sorted by recoverable space; per-file checkboxes; a "check copies (keep the first)" button; and deletion **to the Recycle Bin** with confirmation.
-- **Largest files**: the top 50, 100, or 200 biggest files of a folder, with "open location" and per-file send-to-recycle-bin.
+- **Largest files**: the top 50, 100, or 200 biggest files in a folder, with an "open location" option and per-file deletion to the Recycle Bin.
 
 ### RAM Turbo Cleaner
 
@@ -115,7 +114,7 @@ Monitor and purge your memory:
 
 - Live view of physical memory, virtual memory (commit), and the page file (free / total);
 - Manual purge with several profiles (quick, normal, deep, smart);
-- History and total freed since the session started;
+- History and total memory freed since the session started;
 - **Smart automatic cleaning**: by interval, by usage threshold, or hybrid, protecting the foreground application so Coclico never purges what you are currently using.
 
 ### Network optimizer
@@ -143,7 +142,7 @@ Three Coclico power plans, created and driven **only through powercfg** (no dire
 
 Key points of the module:
 
-- **Auto-configured for your PC**: every setting (EPP, boost, frequency thresholds, USB, PCIe, Wi-Fi, display, disk, sleep…) is validated with `powercfg /q` before being applied; the ones your hardware does not support are skipped and counted.
+- **Auto-configured for your PC**: every setting (EPP, boost, frequency thresholds, USB, PCIe, Wi-Fi, display, disk, sleep…) is validated with `powercfg /q` before being applied; unsupported settings are skipped and reported.
 - **Adaptive optimal mode**: Coclico watches CPU load and switches on its own to "performance" under sustained load, back to "economy" when the PC is idle again, with thresholds, sustained confirmation, and a cooldown between switches.
 - **Comparative test**: measures CPU throughput under each of the three plans (about 15 seconds), displays the results as bars, highlights the best, and restores your original plan.
 - The Coclico plans can be deleted at any time; Coclico then returns to the Windows Balanced plan. Administrator rights required.
@@ -261,7 +260,7 @@ Details about the architecture, module anatomy, installer pipeline, and CI live 
 - The power module only uses the `powercfg` command line (no direct registry writes), validates each setting against your hardware, and can delete the Coclico plans at any time.
 - Administrator access is requested for operations that need it; declining elevation can make some features unavailable.
 - Keep important data backed up. Coclico is not a replacement for Windows recovery tools or a backup system.
-- Report a reproducible issue with Windows version, Coclico version, steps, and relevant sanitized logs. Never attach API keys, passwords, personal files, or unredacted diagnostic data.
+- To report a reproducible issue, include your Windows version, your Coclico version, the steps to reproduce, and relevant sanitized logs. Never attach API keys, passwords, personal files, or unredacted diagnostic data.
 
 ## Project structure
 
@@ -283,4 +282,4 @@ READMEDEV_FR.md          Developer documentation (French)
 
 ## License
 
-The project is licensed under the MIT License. You may use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the project, provided you include the copyright and license notice. The license is in [LICENSE.txt](LICENSE.txt). Third-party dependencies and assets may have separate licenses; review their notices before redistributing them.
+The project is licensed under the MIT License. You may use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the project, provided that you include the copyright and license notice. The license is in [LICENSE.txt](LICENSE.txt). Third-party dependencies and assets may have separate licenses; review their notices before redistributing them.

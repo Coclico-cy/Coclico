@@ -5,11 +5,10 @@
 # Coclico
 
 ### Une application Windows pour mieux suivre et entretenir son ordinateur
-
+[![Downloads](https://img.shields.io/github/downloads/Coclico-cy/Coclico/total)](https://github.com/Coclico-cy/Coclico/releases)
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Plateforme](https://img.shields.io/badge/plateforme-Windows%2011-0078D4?logo=windows11&logoColor=white)](#configuration-requise)
+[![Plateforme](https://img.shields.io/badge/plateforme-Windows%2011-0078D4?logo=windows11&logoColor=white)](#configuration-requise) 
 [![Licence : MIT](https://img.shields.io/badge/licence-MIT-green.svg)](LICENSE.txt)
-
 
 [English](README.md) · [Français](README_FR.md) · [Dev (EN)](READMEDEV.md) · [Dev (FR)](READMEDEV_FR.md)
 
@@ -19,31 +18,31 @@
 
 ## Présentation
 
-Coclico est une application de bureau Windows en WPF qui regroupe des informations système et des outils de maintenance dans une seule interface moderne. Le projet cherche à rendre les opérations courantes plus faciles à trouver et à comprendre, avec une confirmation **avant** les actions qui peuvent modifier l’ordinateur.
+Coclico est une application de bureau Windows en WPF qui regroupe des informations système et des outils de maintenance dans une seule interface moderne. Le projet cherche à rendre les opérations courantes plus faciles à trouver et à comprendre, avec une confirmation **avant** les actions qui peuvent modifier l'ordinateur.
 
-> **Un projet solo, vivant.** Coclico est développé par une seule personne, sur du temps libre. Le projet continue d’avancer avec le temps, mais les mises à jour peuvent être espacées selon le temps disponible : pas d’inquiétude, il est bien vivant et il continuera d’évoluer.
+> **Un projet solo, vivant.** Coclico est développé par une seule personne, sur du temps libre. Le projet continue d'avancer, mais les mises à jour peuvent être espacées selon le temps disponible pas d'inquiétude : il est bien vivant et il continuera d'évoluer.
 
-## Transparence sur l’usage de l’IA
+## Transparence sur l'usage de l'IA
 
-J’ai créé et je maintiens Coclico seul ; l’orientation du produit et les décisions d’implémentation sont les miennes. J’utilise l’IA de façon transparente comme outil d’aide : pour corriger et bien structurer mes textes en français comme en anglais (je vis avec une dyslexie et une dysorthographie, qui rendent certaines fautes difficiles à repérer), pour rechercher des bugs et des erreurs persistantes, comprendre des problèmes que je ne maîtrise pas encore, et mieux cerner des sujets techniques comme .NET 10. Certaines suggestions de l’IA ont pu contribuer à des changements de code ; je relis et assume le travail intégré au projet. Je ne présente donc pas Coclico comme un projet réalisé sans assistance de l’IA, et je préfère l’assumer clairement.
+J'ai créé et je maintiens Coclico seul ; l'orientation du produit et les décisions d'implémentation sont les miennes. J'utilise l'IA de façon transparente comme outil d'aide : pour corriger et bien structurer mes textes en français comme en anglais (je vis avec une dyslexie et une dysorthographie, qui rendent certaines fautes difficiles à repérer), pour rechercher des bugs et des erreurs persistantes, pour comprendre des problèmes que je ne maîtrise pas encore, et mieux cerner des sujets techniques comme .NET 10. Certaines suggestions de l'IA ont pu contribuer à des changements de code ; je relis et assume le travail intégré au projet. Je ne présente donc pas Coclico comme un projet réalisé sans assistance de l'IA, et je préfère l'assumer clairement.
 
-Au premier lancement, un message de bienvenue présente l’application :
+Au premier lancement, un message de bienvenue présente l'application :
 
 <p align="center">
   <img src="docs/messagede-bievenue.png" alt="Message de bienvenue au premier lancement" width="560">
 </p>
 
-L’application démarre en utilisateur standard : les outils qui ont besoin des droits administrateur le demandent au moment voulu, jamais au lancement.
+L'application démarre en utilisateur standard : les outils qui ont besoin des droits administrateur le demandent au moment voulu, jamais au lancement.
 
 Le menu principal est un accordéon groupé, inspiré des Paramètres Windows : les modules sont rangés en trois sections dépliables (**Maintenance**, **Performance** et **Applications**) qui se souviennent de ce que tu as déplié. Accueil, Paramètres et Aide restent toujours visibles.
 
 | | |
 | --- | --- |
-| **Sécurité d’abord** | Chaque action destructive demande une confirmation, les fichiers supprimés partent à la Corbeille, et les changements réseau sont protégés par des instantanés restaurables en un clic. |
-| **Matériel respecté** | Les plans d’alimentation sont créés uniquement via `powercfg`, chaque paramètre étant validé par rapport à ton PC avant d’être appliqué. |
+| **Sécurité d'abord** | Chaque action destructive demande une confirmation, les fichiers supprimés partent à la Corbeille, et les changements réseau sont protégés par des instantanés restaurables en un clic. |
+| **Matériel respecté** | Les plans d'alimentation sont créés uniquement via `powercfg`, chaque paramètre étant validé par rapport à ton PC avant d'être appliqué. |
 | **IA locale** | Un modèle GGUF local ou un serveur Ollama local : aucune clé cloud, adresses de boucle locale uniquement. |
 
-Le projet est encore en cours de finition. Certains outils dépendent des droits administrateur, du matériel ou de logiciels installés. Lis la description et la confirmation de chaque action avant de l’appliquer.
+Le projet est encore en cours de finalisation. Certains outils dépendent des droits administrateur, du matériel ou de logiciels installés. Lis la description et la confirmation de chaque action avant de l'appliquer.
 
 ## Fonctionnalités détaillées
 
@@ -53,7 +52,7 @@ Le projet est encore en cours de finition. Certains outils dépendent des droits
   <img src="docs/accueil.png" alt="Tableau de bord de Coclico" width="640">
 </p>
 
-L’écran d’accueil donne l’état du système en un coup d’œil (processeur, mémoire et disques), avec des tuiles de raccourcis vers les modules. Trois modes en un clic combinent nettoyage mémoire et nettoyage de fichiers temporaires :
+L'écran d'accueil donne l'état du système en un coup d'œil (processeur, mémoire et disques), avec des tuiles de raccourcis vers les modules. Trois modes en un clic combinent nettoyage mémoire et nettoyage de fichiers temporaires :
 
 - **Zen** : nettoyage mémoire rapide + fichiers temporaires, pour retrouver un PC léger.
 - **Gamer** : purge mémoire profonde avant une session de jeu.
@@ -67,7 +66,7 @@ Les tuiles affichées sont personnalisables : tu choisis toi-même les raccourci
   <img src="docs/Nettoyage-pc.png" alt="Module de nettoyage système" width="640">
 </p>
 
-Le module analyse d’abord, supprime ensuite, et toujours avec ta confirmation. Les catégories couvertes :
+Le module analyse d'abord, supprime ensuite, et toujours avec ta confirmation. Les catégories couvertes :
 
 - Fichiers temporaires de Windows ;
 - Corbeille ;
@@ -76,7 +75,7 @@ Le module analyse d’abord, supprime ensuite, et toujours avec ta confirmation.
 - Journaux système ;
 - Vidage du cache DNS.
 
-Des préréglages permettent de sélectionner en un clic un jeu de catégories adapté (nettoyage rapide ou complet). Après chaque opération, un résumé indique l’espace libéré et le nombre de fichiers supprimés.
+Des préréglages permettent de sélectionner en un clic un jeu de catégories adapté (nettoyage rapide ou complet). Après chaque opération, un résumé indique l'espace libéré et le nombre de fichiers supprimés.
 
 ### Santé & Défense
 
@@ -84,13 +83,13 @@ Des préréglages permettent de sélectionner en un clic un jeu de catégories a
   <img src="docs/santer-defence.png" alt="Module Santé et Défense" width="640">
 </p>
 
-Un point central pour l’état de sécurité de Windows :
+Un point central pour l'état de sécurité de Windows :
 
 - État de Windows Defender et fraîcheur des signatures ;
-- **Réparation en un clic** : une suite de vérifications et de réparations, étape par étape, avec possibilité d’annuler ;
+- **Réparation en un clic** : une suite de vérifications et de réparations, étape par étape, avec possibilité d'annuler à tout moment ;
 - Scan rapide et scan complet Defender ;
 - Mise à jour des signatures ;
-- Accès à l’outil de suppression de logiciels malveillants (MSRT) et au scan hors ligne de Defender (WDO) ;
+- Accès à l'outil de suppression de logiciels malveillants (MSRT) et au scan hors ligne de Defender (WDO) ;
 - Contrôle de la santé au démarrage de Windows.
 
 ### Espace disque
@@ -101,9 +100,9 @@ Un point central pour l’état de sécurité de Windows :
 
 Trois modes complémentaires pour comprendre où passe ton espace :
 
-- **Carte de l’espace** : une carte radiale interactive de n’importe quel lecteur ou dossier. Clic sur une zone pour zoomer, fil d’Ariane pour revenir, liste des zones les plus lourdes, ouverture directe dans l’Explorateur.
+- **Carte de l'espace** : une carte radiale interactive de n'importe quel lecteur ou dossier. Clic sur une zone pour zoomer, fil d'Ariane pour revenir, liste des zones les plus lourdes, ouverture directe dans l'Explorateur.
 - **Doublons** : la recherche se fait en trois phases (taille, puis empreinte des 64 premiers Ko, puis empreinte SHA-256 complète) : seuls les fichiers au contenu *réellement identique* sont listés. Seuil au choix (1, 10, 50 ou 100 Mo), groupes triés par espace récupérable, case à cocher par fichier, bouton « cocher les copies (garder le premier) », et suppression **vers la Corbeille** avec confirmation.
-- **Gros fichiers** : le top 50, 100 ou 200 des fichiers les plus volumineux d’un dossier, avec ouverture de l’emplacement et mise à la corbeille fichier par fichier.
+- **Gros fichiers** : le top 50, 100 ou 200 des fichiers les plus volumineux d'un dossier, avec ouverture de l'emplacement et mise à la corbeille fichier par fichier.
 
 ### RAM Turbo Cleaner
 
@@ -113,10 +112,10 @@ Trois modes complémentaires pour comprendre où passe ton espace :
 
 Moniteur et purge de la mémoire vive :
 
-- Vue en direct de la mémoire physique, de la mémoire virtuelle et du fichier d’échange (libre / total) ;
+- Vue en direct de la mémoire physique, de la mémoire virtuelle et du fichier d'échange (libre / total) ;
 - Purge manuelle avec plusieurs profils (rapide, normal, profond, intelligent) ;
-- Historique et total libéré depuis le début de la session ;
-- **Nettoyage automatique intelligent** : par intervalle, par seuil d’utilisation, ou hybride, avec protection de l’application au premier plan pour ne jamais purger ce que tu es en train d’utiliser.
+- Historique et total de mémoire libérée depuis le début de la session ;
+- **Nettoyage automatique intelligent** : par intervalle, par seuil d'utilisation, ou hybride, avec protection de l'application au premier plan pour ne jamais purger ce que tu es en train d'utiliser.
 
 ### Optimiseur réseau
 
@@ -135,15 +134,15 @@ Moniteur et purge de la mémoire vive :
   <img src="docs/optimisateur-pc.png" alt="CPU et plans d'alimentation Coclico" width="640">
 </p>
 
-Trois plans d’alimentation Coclico, créés et pilotés **uniquement via powercfg** (aucune écriture registre directe) :
+Trois plans d'alimentation Coclico, créés et pilotés **uniquement via powercfg** (aucune écriture directe dans le registre) :
 
-- **Coclico économie** : autonomie maximale. Boost économe, composants en économie d’énergie.
+- **Coclico économie** : autonomie maximale. Boost économe, composants en économie d'énergie.
 - **Coclico optimal** : réactif sur secteur, économe sur batterie. Compatible avec le mode adaptatif.
 - **Coclico performance** : réactivité maximale. Boost agressif, cœurs actifs, aucune mise en veille des composants.
 
 Points clés du module :
 
-- **Auto-configuration selon ton PC** : chaque paramètre (EPP, boost, seuils de fréquence, USB, PCIe, Wi-Fi, écran, disque, veille…) est validé par `powercfg /q` avant d’être appliqué ; ceux que ton matériel ne supporte pas sont ignorés et comptés.
+- **Auto-configuration selon ton PC** : chaque paramètre (EPP, boost, seuils de fréquence, USB, PCIe, Wi-Fi, écran, disque, veille…) est validé par `powercfg /q` avant d'être appliqué ; ceux que ton matériel ne supporte pas sont ignorés et comptabilisés.
 - **Mode optimal adaptatif** : Coclico surveille la charge CPU et bascule tout seul vers « performance » quand la charge est soutenue, vers « économie » quand le PC redevient tranquille, avec seuils, confirmation dans la durée et délai de repos entre deux bascules.
 - **Test comparatif** : mesure le débit de calcul du processeur sous chacun des trois plans (environ 15 secondes), affiche les résultats en barres, surligne le meilleur et restaure ton plan de départ.
 - Les plans Coclico peuvent être supprimés à tout moment ; Coclico revient alors au plan Équilibré de Windows. Droits administrateur requis.
@@ -164,7 +163,7 @@ Points clés du module :
   <img src="docs/installateur.png" alt="Installeur Winget" width="640">
 </p>
 
-- Catalogue d’applications populaires installables en un clic via **Winget** ;
+- Catalogue d'applications populaires installables en un clic via **Winget** ;
 - Détection automatique des paquets déjà présents sur ta machine (le bouton affiche « Déjà installé ») ;
 - Vérification des mises à jour de Coclico depuis GitHub.
 
@@ -174,18 +173,18 @@ Points clés du module :
   <img src="docs/IA.png" alt="Assistant IA local" width="640">
 </p>
 
-Un assistant intégré, **100 % local**, accessible depuis n’importe quel module via le bouton flottant ou `Ctrl + Espace` :
+Un assistant intégré, **100 % local**, accessible depuis n'importe quel module via le bouton flottant ou `Ctrl + Espace` :
 
 - Deux moteurs au choix : un modèle **GGUF** exécuté par LLamaSharp (accélération GPU NVIDIA optionnelle, repli CPU automatique), ou un serveur **Ollama** local (adresses `localhost` uniquement, serveurs distants refusés) ;
 - Possibilité de joindre des images (vision) ;
-- L’assistant sait sur quel module tu te trouves et peut proposer des **actions Coclico** prises en charge : chaque action est présentée et validée avant exécution ;
+- L'assistant sait sur quel module tu te trouves et peut proposer des **actions Coclico** prises en charge : chaque action est présentée et validée avant exécution ;
 - Aucune clé API cloud : les fournisseurs cloud et leur coffre de clés ont été supprimés.
 
 ### Paramètres et profils
 
-- Langue de l’interface (français / anglais), thème et couleur d’accent, mode compact et taille de police ;
+- Langue de l'interface (français / anglais), thème et couleur d'accent, mode compact et taille de police ;
 - Démarrage automatique avec Windows et réduction vers la zone de notification ;
-- Réglages de l’IA : moteur, modèle, utilisation du GPU et nombre de couches ;
+- Réglages de l'IA : moteur, modèle, utilisation du GPU et nombre de couches ;
 - Profil utilisateur avec avatar (recadrage intégré) ;
 - Vérification et installation des mises à jour de Coclico.
 
@@ -193,40 +192,40 @@ Les fonctions disponibles varient selon la version de Windows, les autorisations
 
 ## IA locale et confidentialité
 
-Coclico ne demande, ne stocke et n’utilise aucune clé API d’un fournisseur d’IA tiers. Au premier démarrage de cette version, Coclico supprime également l’ancien coffre chiffré de clés API du profil Windows actuel, s’il existe.
+Coclico ne demande, ne stocke et n'utilise aucune clé API d'un fournisseur d'IA tiers. Au premier démarrage de cette version, Coclico supprime également l'ancien coffre chiffré de clés API du profil Windows actuel, s'il existe.
 
-Le téléchargement d’un modèle GGUF nécessite Internet une fois ; l’inférence s’effectue ensuite localement. Les questions et les images jointes sont envoyées au moteur d’inférence local choisi. Coclico accède aussi au réseau pour certaines fonctions, comme la recherche de mises à jour GitHub ou le téléchargement des fichiers de modèles.
+Le téléchargement d'un modèle GGUF nécessite Internet une fois ; l'inférence s'effectue ensuite localement. Les questions et les images jointes sont envoyées au moteur d'inférence local choisi. Coclico accède aussi au réseau pour certaines fonctions, comme la recherche de mises à jour GitHub ou le téléchargement des fichiers de modèles.
 
-Examine les propositions de l’assistant avant de l’autoriser à modifier les paramètres du système. Une réponse d’IA peut être inexacte : elle ne remplace ni ton jugement ni la documentation Windows.
+Examine les propositions de l'assistant avant de l'autoriser à modifier les paramètres du système. Une réponse d'IA peut être inexacte : elle ne remplace ni ton jugement ni la documentation Windows.
 
 ## Configuration requise
 
 - Windows 11, version 22H2 ou ultérieure (build 22621 ou plus récent).
-- Aucun runtime .NET n’est à installer séparément pour les versions officielles : le runtime .NET 10 Desktop est inclus.
+- Aucun runtime .NET n'est à installer séparément pour les versions officielles : le runtime .NET 10 Desktop est inclus.
 - Connexion Internet pour rechercher des mises à jour et télécharger un modèle. Un modèle local déjà téléchargé peut ensuite fonctionner hors ligne.
 - Facultatif : Ollama installé et démarré localement.
-- Facultatif : carte graphique NVIDIA compatible et runtime CUDA 12 pour l’accélération GPU. Le processeur peut être utilisé en solution de repli ; la vitesse dépend de la machine et du modèle.
+- Facultatif : carte graphique NVIDIA compatible et runtime CUDA 12 pour l'accélération GPU. Le processeur peut être utilisé en solution de repli ; la vitesse dépend de la machine et du modèle.
 - Mémoire vive et espace disque suffisants pour le modèle choisi. Les fichiers GGUF sont volumineux et ne sont pas inclus dans ce dépôt.
-- Certains modules (plans d’alimentation, installeur, une partie du nettoyage et du réseau) demandent les droits administrateur.
+- Certains modules (plans d'alimentation, installeur, une partie du nettoyage et du réseau) demandent les droits administrateur.
 
 Le dossier de publication Windows x64 actuel pèse environ 1,6 Go avant compression ZIP, car il inclut le runtime CUDA facultatif. Le modèle GGUF se télécharge séparément.
 
 ## Télécharger Coclico
 
-Rends-toi sur la page [GitHub Releases](https://github.com/Coclico-cy/Coclico/releases) et télécharge `Coclico-<version>.exe` pour utiliser l’assistant d’installation, ou l’archive ZIP Windows x64 pour une installation portable. L’installateur s’installe pour le compte Windows actuel, propose un raccourci sur le bureau et conserve les réglages et données personnelles de Coclico après désinstallation. L’installation standard omet le volumineux runtime CUDA facultatif ; choisis ce composant uniquement si tu as une carte NVIDIA compatible. L’installateur n’est pas signé numériquement et Windows peut afficher un avertissement sur son éditeur.
+Rends-toi sur la page [GitHub Releases](https://github.com/Coclico-cy/Coclico/releases) et télécharge `Coclico-<version>.exe` pour utiliser l'assistant d'installation, ou l'archive ZIP Windows x64 pour une installation portable. L'installateur s'installe pour le compte Windows actuel, propose un raccourci sur le bureau et conserve les réglages et données personnelles de Coclico après désinstallation. L'installation standard omet le volumineux runtime CUDA facultatif ; choisis ce composant uniquement si tu as une carte NVIDIA compatible. L'installateur n'est pas signé numériquement et Windows peut afficher un avertissement sur son éditeur.
 
-L’installateur et l’archive portable incluent le runtime .NET 10 Desktop ; aucune installation séparée de .NET n’est nécessaire. Chaque release fournit `SHA256SUMS.txt` pour vérifier les deux téléchargements.
+L'installateur et l'archive portable incluent le runtime .NET 10 Desktop ; aucune installation séparée de .NET n'est nécessaire. Chaque version fournit `SHA256SUMS.txt` pour vérifier les deux téléchargements.
 
-Pour créer l’installateur localement, lance simplement `./installer/build-installer.ps1`. Le script publie Coclico en version autonome Windows x64 si nécessaire, compresse le payload et génère l’installeur moderne autonome dans `artifacts/installer`.
+Pour créer l'installateur localement, lance simplement `./installer/build-installer.ps1`. Le script publie Coclico en version autonome Windows x64 si nécessaire, compresse le payload et génère l'installeur moderne autonome dans `artifacts/installer`.
 
 ## Raccourcis clavier et zone de notification
 
 | Raccourci | Action |
 | --- | --- |
 | `F11` | Basculer entre plein écran et fenêtré |
-| `Ctrl` + `Espace` | Ouvrir ou fermer le panneau de l’assistant IA |
+| `Ctrl` + `Espace` | Ouvrir ou fermer le panneau de l'assistant IA |
 
-Coclico peut aussi se réduire dans la zone de notification (active-le dans les Paramètres). Un clic droit sur l’icône restaure la fenêtre.
+Coclico peut aussi se réduire dans la zone de notification (active-le dans les Paramètres). Un clic droit sur l'icône restaure la fenêtre.
 
 ## Compiler le projet
 
@@ -252,16 +251,16 @@ dotnet publish Coclico/Coclico.csproj `
   -p:DebugType=None
 ```
 
-Les détails sur l’architecture, l’anatomie d’un module, le pipeline de l’installeur et la CI se trouvent dans la [documentation développeur](READMEDEV_FR.md).
+Les détails sur l'architecture, l'anatomie d'un module, le pipeline de l'installeur et la CI se trouvent dans la [documentation développeur](READMEDEV_FR.md).
 
 ## Précautions
 
-- Certaines opérations peuvent supprimer des fichiers ou modifier Windows. Vérifie les catégories sélectionnées et lis le résumé après l’opération.
-- L’optimisation réseau écrit des paramètres qui dépendent de la carte et du pilote. Utilise les instantanés et la restauration proposés, et garde un autre moyen de rétablir la connexion.
-- Le module d’alimentation n’utilise que la ligne de commande `powercfg` (aucune écriture registre directe), valide chaque paramètre par rapport à ton matériel et peut supprimer les plans Coclico à tout moment.
+- Certaines opérations peuvent supprimer des fichiers ou modifier Windows. Vérifie les catégories sélectionnées et lis le résumé après l'opération.
+- L'optimisation réseau écrit des paramètres qui dépendent de la carte et du pilote. Utilise les instantanés et la restauration proposés, et garde un autre moyen de rétablir la connexion.
+- Le module d'alimentation n'utilise que la ligne de commande `powercfg` (aucune écriture directe dans le registre), valide chaque paramètre par rapport à ton matériel et peut supprimer les plans Coclico à tout moment.
 - Les opérations qui ont besoin de droits élevés demandent une élévation ; si tu la refuses, certaines fonctions peuvent être indisponibles.
 - Garde une sauvegarde de tes données importantes. Coclico ne remplace ni les outils de récupération Windows ni une solution de sauvegarde.
-- Pour signaler un problème reproductible, indique la version de Windows, celle de Coclico et les étapes suivies. N’envoie jamais de mot de passe, de clé API, de fichier personnel ni de journal contenant des données non masquées.
+- Pour signaler un problème reproductible, indique la version de Windows, celle de Coclico et les étapes suivies. N'envoie jamais de mot de passe, de clé API, de fichier personnel ni de journal contenant des données non masquées.
 
 ## Organisation du dépôt
 
@@ -283,4 +282,4 @@ READMEDEV_FR.md          Documentation développeur (français)
 
 ## Licence
 
-Le projet est distribué sous licence MIT. Tu peux utiliser, copier, modifier, fusionner, publier, distribuer, accorder une sous-licence et vendre des copies du projet, à condition d’inclure la mention de droit d’auteur et le texte de la licence. Consulte [LICENSE.txt](LICENSE.txt). Les dépendances et certains éléments tiers peuvent avoir leurs propres licences ; vérifie leurs mentions avant de les redistribuer.
+Le projet est distribué sous licence MIT. Tu peux utiliser, copier, modifier, fusionner, publier, distribuer, accorder une sous-licence et vendre des copies du projet, à condition d'inclure la mention de droit d'auteur et le texte de la licence. Consulte [LICENSE.txt](LICENSE.txt). Les dépendances et certains éléments tiers peuvent avoir leurs propres licences ; vérifie leurs mentions avant de les redistribuer.
