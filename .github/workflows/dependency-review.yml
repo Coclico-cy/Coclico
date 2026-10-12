@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: "Récupérer le code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Review des dépendances"
         uses: actions/dependency-review-action@v4
