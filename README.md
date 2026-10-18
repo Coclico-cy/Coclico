@@ -6,6 +6,7 @@
 
 ### A Windows desktop companion for everyday system care
 [![Downloads](https://img.shields.io/github/downloads/Coclico-cy/Coclico/total)](https://github.com/Coclico-cy/Coclico/releases)
+[![Downloads](https://img.shields.io/github/downloads/Coclico-cy/Coclico/v2.0.3/total)](https://github.com/Coclico-cy/Coclico/releases)
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/platform-Windows%2011-0078D4?logo=windows11&logoColor=white)](#requirements)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
