@@ -33,7 +33,7 @@ public static class NetworkSettingsGuard
     {
         if (settings is null)
         {
-            LoggingService.LogWarning("[NetworkSettingsGuard] TcpGlobalSettings null — application refusée.");
+            LoggingService.LogWarning("[NetworkSettingsGuard] TcpGlobalSettings null - application refusée.");
             return false;
         }
 
@@ -48,7 +48,7 @@ public static class NetworkSettingsGuard
         if (!valid)
         {
             LoggingService.LogWarning(
-                "[NetworkSettingsGuard] Réglages TCP hors liste blanche — application refusée. " +
+                "[NetworkSettingsGuard] Réglages TCP hors liste blanche - application refusée. " +
                 $"autotuninglevel='{settings.AutoTuningLevel}' rss='{settings.Rss}' rsc='{settings.Rsc}' " +
                 $"ecncapability='{settings.EcnCapability}' timestamps='{settings.Timestamps}' " +
                 $"congestionprovider='{settings.CongestionProvider}'");

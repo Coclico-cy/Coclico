@@ -463,7 +463,7 @@ public static class AiHardwareService
 
         int stepBase = stepIndex * 100 / TotalRuntimeSteps;
         int stepSpan = 100 / TotalRuntimeSteps;
-        progress.Report(new AiCudaProgress(stepBase, $"Téléchargement : {label} — connexion au serveur..."));
+        progress.Report(new AiCudaProgress(stepBase, $"Téléchargement : {label} connexion au serveur..."));
 
         using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();

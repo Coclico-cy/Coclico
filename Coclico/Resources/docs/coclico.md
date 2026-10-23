@@ -1,4 +1,4 @@
-# Coclico — Présentation générale
+# Coclico - Présentation générale
 
 Coclico est un gestionnaire système complet pour Windows, 100 % local et gratuit. Il regroupe l'optimisation, la maintenance et la sécurité du PC dans une interface unique. Coclico ne dépend d'aucun cloud : toutes les analyses et opérations s'exécutent sur la machine.
 

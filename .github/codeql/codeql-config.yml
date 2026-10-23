@@ -1,4 +1,4 @@
-name: "Configuration CodeQL — Coclico"
+name: "Configuration CodeQL - Coclico"
 
 queries:
   - uses: security-extended

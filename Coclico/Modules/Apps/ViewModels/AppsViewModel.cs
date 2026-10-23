@@ -639,7 +639,7 @@ public partial class AppsViewModel : INotifyPropertyChanged
         var toInstall = pack.Items.Where(static i => i.IsPackChecked && !i.IsInstalled).ToList();
         if (toInstall.Count == 0)
         {
-            Notify?.Invoke(L("Packs_NothingSelected", "Aucun élément sélectionné — coche au moins un outil."), pack.Name);
+            Notify?.Invoke(L("Packs_NothingSelected", "Aucun élément sélectionné - coche au moins un outil."), pack.Name);
             return;
         }
 
@@ -774,7 +774,7 @@ public partial class AppsViewModel : INotifyPropertyChanged
 
             if (autoScan && upgrades.Count > 0)
             {
-                Notify?.Invoke($"{upgrades.Count} mise(s) à jour d'applications disponible(s) — onglet Mises à jour.", "Coclico");
+                Notify?.Invoke($"{upgrades.Count} mise(s) à jour d'applications disponible(s) - onglet Mises à jour.", "Coclico");
             }
         }
         catch (OperationCanceledException)
@@ -1014,7 +1014,7 @@ public partial class AppsViewModel : INotifyPropertyChanged
         {
             if (!await _winget.IsWingetAvailableAsync().ConfigureAwait(true))
             {
-                AppendLog("WinGet absent — vérification de l'App Installer...");
+                AppendLog("WinGet absent - vérification de l'App Installer...");
                 bool ready = await _winget.EnsureWingetAsync(progress, _cts.Token).ConfigureAwait(true);
                 IsWingetReady = ready;
                 UpdateWingetStatusText();
@@ -1077,7 +1077,7 @@ public partial class AppsViewModel : INotifyPropertyChanged
             {
                 if (!await _winget.IsWingetAvailableAsync().ConfigureAwait(true))
                 {
-                    AppendLog(L("Apps_WingetMissing", "WinGet absent") + " — vérification de l'App Installer...");
+                    AppendLog(L("Apps_WingetMissing", "WinGet absent") + " - vérification de l'App Installer...");
                     OperationStatus = "Vérification de l'App Installer...";
                     bool ready = await _winget.EnsureWingetAsync(progress, _cts.Token).ConfigureAwait(true);
                     IsWingetReady = ready;

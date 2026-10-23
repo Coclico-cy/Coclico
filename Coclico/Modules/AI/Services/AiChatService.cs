@@ -526,7 +526,7 @@ public sealed class AiChatService : IAiService, IDisposable
             string avx2Dir = Path.Combine(nativeDir, "avx2");
 
             var report = new StringBuilder();
-            report.Append("[AiChatService] Diagnostic natif — native: '").Append(nativeDir).Append("'");
+            report.Append("[AiChatService] Diagnostic natif native: '").Append(nativeDir).Append("'");
             report.Append(" | llama.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "llama.dll"), Path.Combine(avx2Dir, "llama.dll")));
             report.Append(", ggml.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "ggml.dll"), Path.Combine(avx2Dir, "ggml.dll")));
             report.Append(", ggml-base.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "ggml-base.dll"), Path.Combine(avx2Dir, "ggml-base.dll")));

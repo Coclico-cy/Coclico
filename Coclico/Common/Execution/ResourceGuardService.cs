@@ -179,7 +179,7 @@ public sealed class ResourceGuardService : IDisposable
             case PressureLevel.Critical:
                 if (Interlocked.Increment(ref _consecutiveHigh) >= HighStreakForTrim)
                 {
-                    TrimSelfIfReady("Pression CRITIQUE — Working Set réduit");
+                    TrimSelfIfReady("Pression CRITIQUE  Working Set réduit");
                     _ = Interlocked.Exchange(ref _consecutiveHigh, 0);
                 }
                 break;
@@ -187,7 +187,7 @@ public sealed class ResourceGuardService : IDisposable
             case PressureLevel.High:
                 if (Interlocked.Increment(ref _consecutiveHigh) >= HighStreakForTrim * 2)
                 {
-                    TrimSelfIfReady("Pression HAUTE — optimisation mémoire");
+                    TrimSelfIfReady("Pression HAUTE optimisation mémoire");
                     _ = Interlocked.Exchange(ref _consecutiveHigh, 0);
                 }
                 break;

@@ -24,7 +24,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
 
     public QosResult SetProcessPriority(int processId, PriorityLevel level)
     {
-        LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessPriority] Entry — processId={processId}, priority={level}");
+        LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessPriority] Entry processId={processId}, priority={level}");
         try
         {
             if (level == PriorityLevel.RealTime)
@@ -43,7 +43,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
 
             proc.PriorityClass = _priorityMap[level];
             LoggingService.LogDebug($"[QoS] PID {processId} ({name}) → {level}");
-            LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessPriority] Exit — result=Success({name})");
+            LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessPriority] Exit result=Success({name})");
             return new QosResult(true, $"Priority set to {level}", processId, name);
         }
         catch (ArgumentException)
@@ -67,14 +67,14 @@ public sealed class ResourceAllocatorService : IResourceAllocator
 
     public QosResult SetProcessorAffinity(int processId, long affinityMask)
     {
-        LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessorAffinity] Entry — processId={processId}, mask=0x{affinityMask:X}");
+        LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessorAffinity] Entry processId={processId}, mask=0x{affinityMask:X}");
         try
         {
             using var proc = Process.GetProcessById(processId);
             string name = proc.ProcessName;
             proc.ProcessorAffinity = new IntPtr(affinityMask);
             LoggingService.LogDebug($"[QoS] PID {processId} ({name}) affinity → 0x{affinityMask:X}");
-            LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessorAffinity] Exit — result=Success({name})");
+            LoggingService.LogDebug($"[ResourceAllocatorService.SetProcessorAffinity] Exit result=Success({name})");
             return new QosResult(true, $"Affinity set to 0x{affinityMask:X}", processId, name);
         }
         catch (ArgumentException)
@@ -94,7 +94,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
 
     public QosResult TrimProcessWorkingSet(int processId)
     {
-        LoggingService.LogDebug($"[ResourceAllocatorService.TrimProcessWorkingSet] Entry — processId={processId}");
+        LoggingService.LogDebug($"[ResourceAllocatorService.TrimProcessWorkingSet] Entry  processId={processId}");
         try
         {
             using var proc = Process.GetProcessById(processId);
@@ -104,7 +104,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
             MemoryCleanerService.TrimProcessWorkingSetById(processId);
             proc.Refresh();
             long after = proc.WorkingSet64 / BytesPerMb;
-            LoggingService.LogDebug($"[ResourceAllocatorService.TrimProcessWorkingSet] Exit — result=Trimmed({name}, {before}MB → {after}MB)");
+            LoggingService.LogDebug($"[ResourceAllocatorService.TrimProcessWorkingSet] Exit  result=Trimmed({name}, {before}MB → {after}MB)");
             return new QosResult(true, $"WS trimmed (was {before} MB, now {after} MB)", processId, name);
         }
         catch (ArgumentException)
@@ -120,7 +120,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
 
     public QosResult ApplyProfile(int processId, PriorityLevel level, long? affinityMask = null)
     {
-        LoggingService.LogDebug($"[ResourceAllocatorService.ApplyProfile] Entry — processId={processId}, level={level}");
+        LoggingService.LogDebug($"[ResourceAllocatorService.ApplyProfile] Entry  processId={processId}, level={level}");
 
         QosResult priorityResult = SetProcessPriority(processId, level);
         if (!priorityResult.Success)
@@ -137,7 +137,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
             }
         }
 
-        LoggingService.LogDebug($"[ResourceAllocatorService.ApplyProfile] Exit — result=ProfileApplied({level})");
+        LoggingService.LogDebug($"[ResourceAllocatorService.ApplyProfile] Exit  result=ProfileApplied({level})");
         return new QosResult(true, $"Profile applied: {level}" + (affinityMask.HasValue ? $" + affinity 0x{affinityMask.Value:X}" : ""),
             processId, priorityResult.ProcessName);
     }
@@ -207,7 +207,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
 
     private static QosResult Fail(int pid, string reason)
     {
-        LoggingService.LogDebug($"[QoS] PID {pid} — {reason}");
+        LoggingService.LogDebug($"[QoS] PID {pid} {reason}");
         return new QosResult(false, reason, pid, string.Empty);
     }
 }

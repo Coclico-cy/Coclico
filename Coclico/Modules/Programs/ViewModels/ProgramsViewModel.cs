@@ -53,8 +53,8 @@ public class ProgramDisplayInfo : INotifyPropertyChanged
         set { field = value; OnPropertyChanged(); }
     } = string.Empty;
 
-    public string VersionDisplay => string.IsNullOrWhiteSpace(Version) ? "—" : Version;
-    public string SizeDisplay => string.IsNullOrWhiteSpace(SizeText) ? "—" : SizeText;
+    public string VersionDisplay => string.IsNullOrWhiteSpace(Version) ? "-" : Version;
+    public string SizeDisplay => string.IsNullOrWhiteSpace(SizeText) ? "-" : SizeText;
 
     private static readonly SolidColorBrush GameBg = FreezeBrush(Color.FromArgb(50, 16, 185, 129));
     private static readonly SolidColorBrush GameFg = FreezeBrush(Color.FromRgb(110, 231, 183));

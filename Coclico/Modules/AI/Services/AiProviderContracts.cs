@@ -56,20 +56,20 @@ public static class AiModelCatalog
             DownloadUrl: "https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf"),
         new(
             Id: "llama3.2",
-            DisplayName: "Ollama — Llama 3.2",
+            DisplayName: "Ollama - Llama 3.2",
             Provider: AiProviderType.Ollama,
             Description: "Serveur local Ollama (port 11434)",
             SupportsVision: true,
             IsRecommended: true),
         new(
             Id: "qwen2.5",
-            DisplayName: "Ollama — Qwen 2.5",
+            DisplayName: "Ollama - Qwen 2.5",
             Provider: AiProviderType.Ollama,
             Description: "Serveur local Ollama (port 11434)",
             SupportsVision: false),
         new(
             Id: "mistral",
-            DisplayName: "Ollama — Mistral",
+            DisplayName: "Ollama - Mistral",
             Provider: AiProviderType.Ollama,
             Description: "Serveur local Ollama (port 11434)",
             SupportsVision: false),

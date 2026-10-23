@@ -135,7 +135,7 @@ public sealed class WingetEngineService
         await DownloadAsync(BundleUrl, bundlePath, ct).ConfigureAwait(false);
         if (!await VerifyBundleSha256Async(bundlePath, log, ct).ConfigureAwait(false))
         {
-            log?.Report("Empreinte SHA-256 du bundle winget invalide — installation abandonnée.");
+            log?.Report("Empreinte SHA-256 du bundle winget invalide - installation abandonnée.");
             return false;
         }
 
@@ -483,7 +483,7 @@ public sealed class WingetEngineService
 
             log?.Report(result.ExitCode switch
             {
-                2 => "App Installer absent du système — la réparation n'est pas possible.",
+                2 => "App Installer absent du système - la réparation n'est pas possible.",
                 3 => "Manifeste de l'App Installer introuvable.",
                 4 => "Réparation bloquée : accès refusé (essaie en administrateur).",
                 _ => "Réparation de l'App Installer échouée."

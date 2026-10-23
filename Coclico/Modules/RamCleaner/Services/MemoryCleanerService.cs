@@ -221,7 +221,7 @@ public static class MemoryCleanerService
 
     public static long EmptyWorkingSets(bool protectForeground, int? specificExcludePid = null)
     {
-        LoggingService.LogInfo($"[MemoryCleanerService.EmptyWorkingSets] Entry — protectForeground={protectForeground}");
+        LoggingService.LogInfo($"[MemoryCleanerService.EmptyWorkingSets] Entry - protectForeground={protectForeground}");
         RamInfo before = GetRamInfo();
         _ = AcquirePrivilege("SeDebugPrivilege");
         _ = AcquirePrivilege("SeIncreaseQuotaPrivilege");
@@ -427,7 +427,7 @@ public static class MemoryCleanerService
         IProgress<string>? progress = null,
         CancellationToken ct = default)
     {
-        LoggingService.LogInfo($"[MemoryCleanerService.FullCleanAsync] Entry — protectFg={protectForeground}");
+        LoggingService.LogInfo($"[MemoryCleanerService.FullCleanAsync] Entry - protectFg={protectForeground}");
 
         RamInfo before = GetRamInfo();
         var result = new CleanResult { Before = before };
@@ -718,7 +718,7 @@ public static class MemoryCleanerService
         IProgress<string>? progress = null,
         CancellationToken ct = default)
     {
-        LoggingService.LogInfo($"[MemoryCleanerService.SmartCleanAsync] Entry — protectFg={protectForeground}, standbyOnly={purgeStandbyOnly}");
+        LoggingService.LogInfo($"[MemoryCleanerService.SmartCleanAsync] Entry - protectFg={protectForeground}, standbyOnly={purgeStandbyOnly}");
 
         RamInfo before = GetRamInfo();
         var result = new CleanResult { Before = before };
@@ -852,7 +852,7 @@ public static class MemoryCleanerService
         IProgress<string>? progress = null,
         CancellationToken ct = default)
     {
-        LoggingService.LogInfo($"[MemoryCleanerService.CleanByProfileAsync] Entry — profile={profile}, protectFg={protectForeground}");
+        LoggingService.LogInfo($"[MemoryCleanerService.CleanByProfileAsync] Entry - profile={profile}, protectFg={protectForeground}");
         if (profile == CleanProfile.Deep)
         {
             return await FullCleanAsync(protectForeground, progress, ct);

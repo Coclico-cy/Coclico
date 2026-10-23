@@ -168,11 +168,11 @@ The customizable home page. `HomeCustomizationService` + `HomeCustomizationModel
 
 ### AI assistant (`Modules/AI`)
 
-The built-in, fully local assistant — the chat panel opened with `Ctrl+Space`. Detailed in §7.
+The built-in, fully local assistant the chat panel opened with `Ctrl+Space`. Detailed in §7.
 
 ### PC Trash (`Modules/Cleaning`)
 
-`CleaningService` (plus ViewModel and view) lists every target — temporary files, caches… — and shows what will be removed **before** anything happens. Deletions go to the **Recycle Bin**. The result reports the freed space and the skipped items. Nothing runs without an explicit confirmation.
+`CleaningService` (plus ViewModel and view) lists every target temporary files, caches… and shows what will be removed **before** anything happens. Deletions go to the **Recycle Bin**. The result reports the freed space and the skipped items. Nothing runs without an explicit confirmation.
 
 ### Repair & Diagnostics (`Modules/HealthDefense`)
 
@@ -206,7 +206,7 @@ The built-in, fully local assistant — the chat panel opened with `Ctrl+Space`.
 - `PowerPlanCatalog`: plan definitions and the matching `powercfg` arguments (unit-tested).
 - `CpuPowerService`: admin-gated wrapper around `powercfg`. Every setting is validated with `powercfg /q` before being applied; unsupported ones are skipped and counted. Coclico-created plans can always be deleted, back to the Balanced plan first. No direct registry writes.
 - `CpuPowerBenchmark`: CPU load benchmark across the three plans (5 s each), restores your starting plan by its real GUID.
-- `AdaptivePowerService`: the adaptive daemon — it switches power plans based on CPU load, with thresholds, hysteresis, cooldown, and periodic re-sync with the actually active plan. The rule lives in the pure `AdaptivePowerRules`, tested without the daemon.
+- `AdaptivePowerService`: the adaptive daemon it switches power plans based on CPU load, with thresholds, hysteresis, cooldown, and periodic re-sync with the actually active plan. The rule lives in the pure `AdaptivePowerRules`, tested without the daemon.
 
 ### Programs (`Modules/Programs`)
 
@@ -231,7 +231,7 @@ All screenshots live in `docs/`. They also illustrate the user guides.
   <img src="docs/accueil.png" alt="Dashboard" width="400">
   <img src="docs/Menu.png" alt="Menu" width="400">
   <br>
-  <em>Dashboard (left) and navigation drawer (right) — three collapsible groups.</em>
+  <em>Dashboard (left) and navigation drawer (right) three collapsible groups.</em>
 </p>
 
 <p align="center">
@@ -252,7 +252,7 @@ All screenshots live in `docs/`. They also illustrate the user guides.
   <img src="docs/Réglage réseau.png" alt="Network Settings" width="400">
   <img src="docs/Mangement-power.png" alt="PC Power Management" width="400">
   <br>
-  <em>Network Settings (left) and PC Power Management (right) — 9 documented network settings, 3 honest plans.</em>
+  <em>Network Settings (left) and PC Power Management (right) 9 documented network settings, 3 honest plans.</em>
 </p>
 
 <p align="center">
@@ -283,7 +283,7 @@ Everything runs **locally**. No cloud call, no API key anywhere in the code base
 - **Providers.** `MultiProviderClient` (with `AiProviderContracts`) talks to the model backends: local GGUF files through LLamaSharp, or a local Ollama server. `AiHardwareService` detects the GPU/VRAM and decides the layer offload. Without the CUDA backend, LLamaSharp falls back to the bundled CPU backend automatically.
 - **Chat.** `AiChatService` builds the compact system prompt, keeps the conversation memory with pruning, handles stop tokens. The assistant always knows where you are: navigation updates `IAiService.CurrentStatusContext` (§8).
 - **Knowledge (RAG).** `RagService` runs BM25/TF-IDF retrieval over the bundled knowledge base (`Resources/docs/coclico.md`), which describes every module, action and safety rule. `SimpleStemmer` handles French and English.
-- **Actions.** `AiActionParser` parses the model's structured output into actions (navigate to a module, clean RAM, tune the network…). `AiToolExecutionService` executes them with strict sanitization — allowlisted navigation targets, validated package identifiers, numeric clamps. Nothing changes the system without explicit user confirmation. `AiToolExecutionServiceSanitizerTests` cover the sanitization.
+- **Actions.** `AiActionParser` parses the model's structured output into actions (navigate to a module, clean RAM, tune the network…). `AiToolExecutionService` executes them with strict sanitization allowlisted navigation targets, validated package identifiers, numeric clamps. Nothing changes the system without explicit user confirmation. `AiToolExecutionServiceSanitizerTests` cover the sanitization.
 - **Vision.** `AiVisionService` handles image understanding with the same local models.
 
 ## 8. Navigation and menu
@@ -396,12 +396,12 @@ dotnet test Coclico.slnx --configuration Release --no-build --no-restore
 
 Workflows in `.github/workflows/`:
 
-- **`ci.yml`** — on every push/PR to `main`: restore → format check → Release build → tests → on pushes to `main`, a win-x64 publish is uploaded as an artifact.
-- **`release.yml`** — triggered by a `vX.Y.Z` tag: tag ↔ `version.txt` consistency, format + tests, publish, installer via `./installer/build-installer.ps1 -SkipPublish`, portable ZIP + `SHA256SUMS.txt`, GitHub release.
-- **`codeql.yml`** — CodeQL security scanning.
-- **`dependency-review.yml`** — dependency review of package changes.
-- **`scorecard.yml`** — OpenSSF Scorecard.
-- **`labeler.yml`, `greetings.yml`, `stale.yml`** — repository automation.
+- **`ci.yml`** on every push/PR to `main`: restore → format check → Release build → tests → on pushes to `main`, a win-x64 publish is uploaded as an artifact.
+- **`release.yml`** triggered by a `vX.Y.Z` tag: tag ↔ `version.txt` consistency, format + tests, publish, installer via `./installer/build-installer.ps1 -SkipPublish`, portable ZIP + `SHA256SUMS.txt`, GitHub release.
+- **`codeql.yml`** CodeQL security scanning.
+- **`dependency-review.yml`** dependency review of package changes.
+- **`scorecard.yml`** OpenSSF Scorecard.
+- **`labeler.yml`, `greetings.yml`, `stale.yml`** repository automation.
 
 ## 15. The installer pipeline
 
@@ -411,23 +411,23 @@ What `installer/build-installer.ps1` does, step by step (interactive console, FR
 2. **Tests first**: `dotnet test` runs before anything is packaged (skip with `-SkipTests`). The installer is never built on a red suite.
 3. **Cleanup**: `publish/` and `artifacts/installer_build` are cleaned (skip with `-SkipClean`).
 4. **Publish Coclico**: `dotnet publish` win-x64, **framework-dependent** (`--self-contained false`), no single file, no PDBs → `publish/`.
-5. **Payload**: `publish/` is zipped into `payload.zip` inside `Coclico.Installer/`. Excluded: `.pdb` files and, unless `-IncludeCuda`, the CUDA runtime files. Without the CUDA DLLs, LLamaSharp cleanly uses the bundled CPU backend; NVIDIA users download the CUDA runtime during installation instead — that is how the installer stays small.
+5. **Payload**: `publish/` is zipped into `payload.zip` inside `Coclico.Installer/`. Excluded: `.pdb` files and, unless `-IncludeCuda`, the CUDA runtime files. Without the CUDA DLLs, LLamaSharp cleanly uses the bundled CPU backend; NVIDIA users download the CUDA runtime during installation instead that is how the installer stays small.
 6. **Final installer**: `Coclico.Installer` is published as a compressed self-contained SingleFile with `payload.zip` embedded → `artifacts/installer/Coclico-<version>.exe` (`-Full-CUDA` variant), SHA-256 printed.
 7. `-SkipPublish` reuses the existing `publish/` folder (this is what the release CI does after its own publish).
 
 At install time, the standalone `Coclico.Installer` project takes over (`Services/`):
 
-- `SystemRequirementService` — system requirements and the target drive derived from the chosen path.
-- `GpuDetector` — NVIDIA GPU detection (never throws).
-- `DotnetRuntimeService` — checks the .NET 10 Desktop Runtime; when missing, downloads the pinned Microsoft installer and runs it silently (`/install /passive /norestart /log`, with retries if Windows Installer is busy).
-- `CudaRuntimeDownloader` + `AiModelDownloader` — optional download of the CUDA runtime and of a local AI model (catalog in `ai-models.json`, resumable).
-- `InstallService` — installs for the current user (default `%LOCALAPPDATA%\Programs\Coclico`), creates shortcuts (`ShortcutHelper`), registers the uninstall entry, deploys the uninstaller, closes a running Coclico first, and preserves settings and data on uninstall.
-- `InstallerLocalization` — FR/EN installer strings.
+- `SystemRequirementService` system requirements and the target drive derived from the chosen path.
+- `GpuDetector` NVIDIA GPU detection (never throws).
+- `DotnetRuntimeService` checks the .NET 10 Desktop Runtime; when missing, downloads the pinned Microsoft installer and runs it silently (`/install /passive /norestart /log`, with retries if Windows Installer is busy).
+- `CudaRuntimeDownloader` + `AiModelDownloader` optional download of the CUDA runtime and of a local AI model (catalog in `ai-models.json`, resumable).
+- `InstallService` installs for the current user (default `%LOCALAPPDATA%\Programs\Coclico`), creates shortcuts (`ShortcutHelper`), registers the uninstall entry, deploys the uninstaller, closes a running Coclico first, and preserves settings and data on uninstall.
+- `InstallerLocalization` FR/EN installer strings.
 
 ## 16. Security practices
 
 - **Confirmations** before any destructive action; **Recycle Bin** (`SHFileOperation` + `FOF_ALLOWUNDO`) instead of permanent deletion for user files.
-- **Network**: no registry writes — `netsh` and PowerShell only; every value validated by `NetworkSettingsGuard`; one-click restore of the real Windows defaults.
+- **Network**: no registry writes `netsh` and PowerShell only; every value validated by `NetworkSettingsGuard`; one-click restore of the real Windows defaults.
 - **Power**: only `powercfg`, every setting validated with `powercfg /q`, Coclico plans deletable at any time, back to the Balanced plan first.
 - **Command filtering**: go through `IProcessExecutionService` whenever possible (`ISecurityPolicy` blocks forbidden commands, tested).
 - **Local-only AI**: no cloud key vault; Ollama restricted to loopback; guards tested; actions sanitized and confirmed.
@@ -437,7 +437,7 @@ At install time, the standalone `Coclico.Installer` project takes over (`Service
 
 ## 17. Publishing a release
 
-1. Update `version.txt` at the repository root — the single source of the version, picked up by the build and the installer script.
+1. Update `version.txt` at the repository root the single source of the version, picked up by the build and the installer script.
 2. Adjust the version shown in the status bar of `MainWindow.xaml` if needed.
 3. Merge to `main` (CI runs: format, build, tests).
 4. Create the tag: `git tag vX.Y.Z && git push origin vX.Y.Z`. The release (installer + portable ZIP + SHA256SUMS.txt) is generated automatically, provided the tag matches the version.

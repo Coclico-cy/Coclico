@@ -285,7 +285,7 @@ public sealed class SystemHealthService
         bool success = startBits.Success && startWuau.Success;
         string summary = success
             ? "Services et cache Windows Update réinitialisés avec succès."
-            : "Échec du redémarrage des services Windows Update (BITS/WUAU) — consultez les détails.";
+            : "Échec du redémarrage des services Windows Update (BITS/WUAU) - consultez les détails.";
         return new DiagnosticResult(success, summary, sb.ToString());
     }
 
@@ -328,7 +328,7 @@ public sealed class SystemHealthService
         else
         {
             onOutput?.Invoke("⚠️ RÉPARATION INTÉGRALE TERMINÉE AVEC DES ERREURS.");
-            onOutput?.Invoke("Certaines étapes ont échoué — consultez le détail ci-dessus pour identifier lesquelles.");
+            onOutput?.Invoke("Certaines étapes ont échoué - consultez le détail ci-dessus pour identifier lesquelles.");
         }
         onOutput?.Invoke("=================================================");
 

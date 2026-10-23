@@ -38,7 +38,7 @@ public partial class SettingsViewModel : INotifyPropertyChanged
     private string _renameProfileName = string.Empty;
     private string _activeProfileName = string.Empty;
     private string _activeProfileInitials = "?";
-    private string _cacheSizeText = "—";
+    private string _cacheSizeText = "-";
     private string _cachePathText = string.Empty;
 
     public Func<(bool Proceed, bool DontAskAgain)>? UninstallConfirmation { get; set; }

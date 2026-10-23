@@ -101,7 +101,7 @@ public partial class AiChatView : UserControl
                     "Coclico a détecté une carte graphique AMD (" + AiHardwareService.GetGpuDisplayName() + ")." + Environment.NewLine + Environment.NewLine +
                     "Il n'existe pas de runtime d'accélération IA officiel pour AMD sur Windows (ROCm est réservé à Linux)." + Environment.NewLine +
                     "Le Copilot s'exécute donc sur le processeur (AVX2), sans consommer de VRAM.",
-                    "Coclico Copilot — Carte AMD détectée",
+                    "Coclico Copilot - Carte AMD détectée",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 await _aiService.SetHardwareModeAsync(false);
@@ -116,7 +116,7 @@ public partial class AiChatView : UserControl
             MessageBoxResult choice = MessageBox.Show(
                 "Coclico a détecté une carte NVIDIA (" + AiHardwareService.GetGpuDisplayName() + ") mais le runtime CUDA 12 est absent : le Copilot s'exécute actuellement sur le processeur (lent)." + Environment.NewLine + Environment.NewLine +
                 "Télécharger et installer le runtime CUDA maintenant (environ 1,4 Go) ?",
-                "Coclico Copilot — Runtime CUDA manquant",
+                "Coclico Copilot - Runtime CUDA manquant",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             if (choice == MessageBoxResult.Yes)
@@ -144,7 +144,7 @@ public partial class AiChatView : UserControl
             ToastService.Show("✅ Runtime CUDA installé avec succès.");
             MessageBox.Show(
                 "Runtime CUDA installé avec succès. Redémarrez Coclico pour activer l'accélération GPU (VRAM).",
-                "Coclico Copilot — CUDA installé",
+                "Coclico Copilot - CUDA installé",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -153,7 +153,7 @@ public partial class AiChatView : UserControl
             ToastService.Show($"Échec de l'installation du runtime CUDA : {ex.Message}");
             MessageBox.Show(
                 "Échec de l'installation du runtime CUDA :" + Environment.NewLine + ex.Message,
-                "Coclico Copilot — Installation CUDA",
+                "Coclico Copilot - Installation CUDA",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
         }
@@ -263,9 +263,9 @@ public partial class AiChatView : UserControl
         string model = _aiService.CurrentModel;
         TxtStatusSubtitle.Text = prov == AiProviderType.LocalGGUF
             ? (_aiService.IsInitialized
-                ? $"Local GGUF ({(_aiService.UseGpu ? "GPU VRAM" : "CPU")}) — Actif"
-                : $"Local GGUF ({(_aiService.UseGpu ? "GPU VRAM" : "CPU")}) — Prêt")
-            : $"{prov} — {model}";
+                ? $"Local GGUF ({(_aiService.UseGpu ? "GPU VRAM" : "CPU")}) - Actif"
+                : $"Local GGUF ({(_aiService.UseGpu ? "GPU VRAM" : "CPU")}) - Prêt")
+            : $"{prov} - {model}";
         UpdateHardwareToggleUi();
     }
 
@@ -327,7 +327,7 @@ public partial class AiChatView : UserControl
         {
             MessageBox.Show(
                 "Aucune carte NVIDIA détectée : l'accélération GPU n'est pas disponible pour le Copilot (les cartes AMD ne disposent d'aucun runtime IA officiel sur Windows). L'exécution reste sur le processeur (AVX2).",
-                "Coclico Copilot — Accélération GPU",
+                "Coclico Copilot - Accélération GPU",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
             return;

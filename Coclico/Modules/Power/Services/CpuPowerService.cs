@@ -249,7 +249,7 @@ public sealed class CpuPowerService
     {
         PowerSchemeInfo? active = await GetActiveSchemeAsync(ct).ConfigureAwait(false);
         return new PowerStateSummary(
-            ActiveSchemeName: active?.Name ?? "—",
+            ActiveSchemeName: active?.Name ?? "-",
             ActiveSchemeGuid: active?.Guid ?? string.Empty,
             ActiveCoclicoMode: active == null ? null : PowerPlanCatalog.TryGetModeFromPlanName(active.Name),
             IsElevated: IsElevated,

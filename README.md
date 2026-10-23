@@ -4,7 +4,7 @@
 
 # Coclico
 
-### Maintain, tune and equip your Windows PC — with confidence
+### Maintain, tune and equip your Windows PC - with confidence
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/platform-Windows%2011-0078D4?logo=windows11&logoColor=white)](#requirements)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
@@ -41,7 +41,7 @@ A welcome message introduces the application on first launch:
   <img src="docs/messagede-bievenue.png" alt="First-launch welcome message" width="560">
 </p>
 
-Coclico starts as a standard user. Tools that need administrator rights ask for them exactly when needed — never at launch.
+Coclico starts as a standard user. Tools that need administrator rights ask for them exactly when needed never at launch.
 
 The main menu is a grouped accordion, inspired by Windows Settings. Modules live in three collapsible sections that remember what you expanded:
 
@@ -65,7 +65,7 @@ Home, Settings and Help always stay visible.
 
 ## The modules, one by one
 
-### Home — your PC at a glance
+### Home - your PC at a glance
 
 <p align="center">
   <img src="docs/accueil.png" alt="Coclico dashboard" width="640">
@@ -79,7 +79,7 @@ The home screen shows CPU, memory and disks live. Three one-click modes combine 
 
 Tiles are customizable: choose which shortcuts appear on your home screen, and add your own.
 
-### PC Trash — clean without risk
+### PC Trash - clean without risk
 
 <p align="center">
   <img src="docs/Nettoyage-pc.png" alt="PC Trash module" width="640">
@@ -96,7 +96,7 @@ The module scans first, deletes second, and always with your confirmation. Cover
 
 Presets select a whole set of categories in one click (quick or full cleanup). After each run, a summary reports the space freed and the number of files removed.
 
-### Repair & Diagnostics — Windows in full health
+### Repair & Diagnostics - Windows in full health
 
 <p align="center">
   <img src="docs/santer-defence.png" alt="Repair & Diagnostics module" width="640">
@@ -111,7 +111,7 @@ One central place for the health of Windows:
 - Access to the Malicious Software Removal Tool (MSRT) and Defender's offline scan (WDO);
 - Windows startup health check.
 
-### Disk Analysis — where does your space go?
+### Disk Analysis - where does your space go?
 
 <p align="center">
   <img src="docs/espace-disque.png" alt="Disk Analysis module" width="640">
@@ -123,7 +123,7 @@ Three complementary modes:
 - **Duplicates**: the search runs in three phases (size, then a hash of the first 64 KB, then a full SHA-256 fingerprint). Only files with *identical content* are listed. Threshold of 1 to 100 MB. Deletion **to the Recycle Bin**, with confirmation.
 - **Largest files**: the top 50, 100 or 200 biggest files in a folder, with an "open location" option and per-file deletion to the Recycle Bin.
 
-### RAM Management — memory in top shape
+### RAM Management - memory in top shape
 
 <p align="center">
   <img src="docs/ram-clean.png" alt="RAM Management module" width="640">
@@ -134,7 +134,7 @@ Three complementary modes:
 - History and total memory freed since the session started;
 - **Smart automatic cleaning**: by interval, by usage threshold, or hybrid. The foreground application is protected: Coclico never purges what you are currently using.
 
-### Network Settings — nine useful settings, zero placebo
+### Network Settings - nine useful settings, zero placebo
 
 <p align="center">
   <img src="docs/Réglage réseau.png" alt="Network Settings module" width="640">
@@ -152,7 +152,7 @@ Key points:
 - Restore puts back the **real Windows defaults** in one click;
 - The network adapter is displayed live: status, ping, throughput.
 
-### PC Power Management — three honest plans
+### PC Power Management - three honest plans
 
 <p align="center">
   <img src="docs/Mangement-power.png" alt="PC Power Management module" width="640">
@@ -162,16 +162,16 @@ Three Coclico power plans, created and driven **only through `powercfg`** (no di
 
 - **Coclico economie**: maximum battery life. Efficient boost, components in power-saving mode.
 - **Coclico optimal**: responsive on AC power, frugal on battery. The display turns off normally. Compatible with the adaptive mode.
-- **Coclico performance**: maximum responsiveness. Aggressive boost, active cores, no component sleep — but the battery is respected: the CPU can downshift and energy efficiency stays active on battery.
+- **Coclico performance**: maximum responsiveness. Aggressive boost, active cores, no component sleep but the battery is respected: the CPU can downshift and energy efficiency stays active on battery.
 
 Key points of the module:
 
-- **Auto-configured for your PC**: every setting is validated with `powercfg /q` before being applied. What your hardware does not support is skipped and counted — you see exactly what was applied;
+- **Auto-configured for your PC**: every setting is validated with `powercfg /q` before being applied. What your hardware does not support is skipped and counted you see exactly what was applied;
 - **Adaptive mode**: Coclico watches CPU load and switches on its own to "performance" under sustained load, back to "economie" when the PC is idle again. The mode re-syncs with the actually active plan;
-- **Comparative test**: measures the CPU under each of the three plans (about 15 seconds), shows the results as bars and **restores your starting plan** — even if it is not a Coclico plan. The result is indicative: a load test favors by construction the most power-hungry plan;
+- **Comparative test**: measures the CPU under each of the three plans (about 15 seconds), shows the results as bars and **restores your starting plan** even if it is not a Coclico plan. The result is indicative: a load test favors by construction the most power-hungry plan;
 - The Coclico plans can be deleted at any time. Coclico then returns to the Windows Balanced plan. Administrator rights required.
 
-### Programs — your software list, made clear
+### Programs - your software list, made clear
 
 <p align="center">
   <img src="docs/appplication.png" alt="Programs module" width="640">
@@ -182,7 +182,7 @@ Key points of the module:
 - Clean uninstall through each application's own uninstaller, with confirmation;
 - Add missing programs to the list.
 
-### Winget Installer — your software in one click
+### Winget Installer - your software in one click
 
 <p align="center">
   <img src="docs/Installeur.png" alt="Winget Installer catalog" width="640">
@@ -212,7 +212,7 @@ The installer also handles **updates**: outdated software is offered an update, 
   <img src="docs/update.png" alt="Software updates" width="640">
 </p>
 
-### Local AI assistant — a helping hand, no cloud
+### Local AI assistant - a helping hand, no cloud
 
 <p align="center">
   <img src="docs/IA.png" alt="Local AI assistant" width="640">
@@ -225,7 +225,7 @@ A built-in assistant, **100% local**, available from any module through the floa
 - The assistant knows which module you are on. It can propose **Coclico actions**: every action is shown and confirmed before it runs;
 - No cloud API keys. Cloud providers have been removed from the project.
 
-### Notifications — a record of what Coclico did
+### Notifications - a record of what Coclico did
 
 <p align="center">
   <img src="docs/Notification.png" alt="Notifications panel" width="480">

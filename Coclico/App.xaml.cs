@@ -121,7 +121,7 @@ public partial class App : Application
                 string appVersion = System.Reflection.Assembly.GetExecutingAssembly()
                     .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                     ?.InformationalVersion ?? "unknown";
-                LoggingService.LogInfo($"Coclico v{appVersion} starting — DI container built successfully");
+                LoggingService.LogInfo($"Coclico v{appVersion} starting DI container built successfully");
             }
             catch (Exception ex)
             {
@@ -131,7 +131,7 @@ public partial class App : Application
                 _ = System.Windows.MessageBox.Show(
                     "Le conteneur de services de Coclico n'a pas pu être initialisé.\n" +
                     "Consultez les journaux dans %AppData%\\Coclico\\logs pour le détail.\n\n" + ex.Message,
-                    "Coclico — erreur critique", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    "Coclico erreur critique", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 Shutdown(-1);
                 return;
             }
@@ -155,7 +155,7 @@ public partial class App : Application
                 IAuditLog audit = ServiceContainer.GetRequired<IAuditLog>();
                 int retentionDays = ServiceContainer.GetRequired<SettingsService>().Settings.AuditRetentionDays;
                 audit.Prune(TimeSpan.FromDays(retentionDays));
-                LoggingService.LogInfo($"[App] Audit pruned — rétention {retentionDays} jours.");
+                LoggingService.LogInfo($"[App] Audit pruned rétention {retentionDays} jours.");
             }
             catch (Exception ex) { LoggingService.LogException(ex, "App.AuditPrune"); }
 

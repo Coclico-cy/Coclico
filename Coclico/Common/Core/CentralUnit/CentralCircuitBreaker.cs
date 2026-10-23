@@ -125,7 +125,7 @@ public sealed class CentralCircuitBreaker
         StateChanged?.Invoke(subsystem, state);
         if (state == CentralCircuitState.Open)
         {
-            LoggingService.LogWarning($"CentralUnit : circuit breaker ouvert pour '{subsystem}' — quarantaine de {Math.Max(1, (int)_openCooldown.TotalSeconds)} s.");
+            LoggingService.LogWarning($"CentralUnit : circuit breaker ouvert pour '{subsystem}' quarantaine de {Math.Max(1, (int)_openCooldown.TotalSeconds)} s.");
         }
         else if (state == CentralCircuitState.HalfOpen)
         {

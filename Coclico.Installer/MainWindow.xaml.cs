@@ -167,7 +167,7 @@ public partial class MainWindow : FluentWindow
         }
         catch
         {
-            TxtLicenseBox.Text = "MIT License — Copyright (c) 2026 Coclico";
+            TxtLicenseBox.Text = "MIT License - Copyright (c) 2026 Coclico";
         }
     }
 
@@ -419,7 +419,7 @@ public partial class MainWindow : FluentWindow
         var compList = new StringBuilder();
         compList.AppendLine("• Application Coclico Core");
         if (ChkCuda.IsChecked == true)
-            compList.AppendLine("• Runtime NVIDIA CUDA 12 (~1,2 Go — téléchargé à la demande)");
+            compList.AppendLine("• Runtime NVIDIA CUDA 12 (~1,2 Go - téléchargé à la demande)");
         if (ChkAiModel.IsChecked == true)
             compList.AppendLine("• Modèle IA Local Coclico Copilot (~1.1 Go)");
 

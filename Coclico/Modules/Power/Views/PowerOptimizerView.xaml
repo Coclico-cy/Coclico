@@ -241,7 +241,7 @@
                                 <ProgressBar x:Name="CpuUsageBar" Height="6" Maximum="100" Value="0" BorderThickness="0"
                                              Background="{DynamicResource BgElevatedBrush}" Foreground="{DynamicResource PrimaryBrush}"
                                              VerticalAlignment="Center"/>
-                                <TextBlock x:Name="CpuUsageText" Grid.Column="1" Text="—" FontSize="10.5" FontWeight="SemiBold"
+                                <TextBlock x:Name="CpuUsageText" Grid.Column="1" Text="-" FontSize="10.5" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}" Margin="10,0,0,0" VerticalAlignment="Center" Width="44"/>
                             </Grid>
                         </Grid>

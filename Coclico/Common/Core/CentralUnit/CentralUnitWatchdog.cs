@@ -95,7 +95,7 @@ public sealed class CentralUnitWatchdog : IDisposable
 
         foreach ((string subsystem, TimeSpan silence, Action? revive) in stale)
         {
-            LoggingService.LogWarning($"CentralUnit : watchdog — '{subsystem}' silencieux depuis {(int)silence.TotalSeconds} s.");
+            LoggingService.LogWarning($"CentralUnit : watchdog '{subsystem}' silencieux depuis {(int)silence.TotalSeconds} s.");
             try
             {
                 revive?.Invoke();

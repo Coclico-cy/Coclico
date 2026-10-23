@@ -276,7 +276,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
                 MergeFromFile(PolicyPath);
             }
 
-            LoggingService.LogInfo($"[SecurityPolicy] Rechargé — {_cmdPatterns.Count} cmd, " +
+            LoggingService.LogInfo($"[SecurityPolicy] Rechargé - {_cmdPatterns.Count} cmd, " +
                                    $"{_psPatterns.Count} ps patterns.");
         }
         finally { _ = _lock.Release(); }

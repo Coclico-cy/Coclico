@@ -65,38 +65,38 @@ public partial class RamCleanerViewModel : INotifyPropertyChanged, IDisposable
         private set { if (_notifEnabled == value) return; _notifEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(NotifButtonLabel)); }
     }
     public string NotifButtonLabel => NotifEnabled ? L("RamCleaner_NotifOn") : L("RamCleaner_NotifOff");
-    public string ResultWorkingSets { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultStandby { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultLowPriorityStandby { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultModifiedPages { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultCombinedPages { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultModifiedFileCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultSystemFileCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultRegistryCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultDnsCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string ResultTotal { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string PhysUsedText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string PhysAvailText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string PhysTotalText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string PhysPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
+    public string ResultWorkingSets { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultStandby { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultLowPriorityStandby { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultModifiedPages { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultCombinedPages { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultModifiedFileCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultSystemFileCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultRegistryCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultDnsCache { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string ResultTotal { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string PhysUsedText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string PhysAvailText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string PhysTotalText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string PhysPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
     public double PhysUsedPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } }
-    public string VirtUsedText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string VirtAvailText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string VirtTotalText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string VirtPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
+    public string VirtUsedText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string VirtAvailText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string VirtTotalText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string VirtPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
     public double VirtUsedPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } }
-    public string PageUsedText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string PageAvailText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string PageTotalText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
+    public string PageUsedText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string PageAvailText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string PageTotalText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
     public double SysCpuPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } }
-    public string SysCpuText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
+    public string SysCpuText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
     public Brush SysCpuColor { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = _brushGreen;
     public string GpuNameShort { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = string.Empty;
-    public string GpuVramText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string GpuTypeText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
-    public string AppRamText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
+    public string GpuVramText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string GpuTypeText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
+    public string AppRamText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
     public double AppRamPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } }
-    public string AppCpuText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "—";
+    public string AppCpuText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = "-";
     public double AppCpuPercent { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } }
     public string PressureText { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = string.Empty;
     public Brush PressureColor { get; private set { if (field == value) return; field = value; OnPropertyChanged(); } } = _brushGreen;
@@ -343,7 +343,7 @@ public partial class RamCleanerViewModel : INotifyPropertyChanged, IDisposable
         {
             long freed = await Task.Run(MemoryCleanerService.ClearDirectXShaderCaches);
             string freedText = MemoryCleanerService.FormatBytes(freed);
-            GuardStatusText = string.Format(L("RamCleaner_ShaderCleared"), freedText) + " — " + DateTime.Now.ToString("HH:mm:ss");
+            GuardStatusText = string.Format(L("RamCleaner_ShaderCleared"), freedText) + " - " + DateTime.Now.ToString("HH:mm:ss");
             if (NotifEnabled)
             {
                 ToastService.Show(string.Format(L("RamCleaner_ShaderCleared"), freedText));
@@ -366,7 +366,7 @@ public partial class RamCleanerViewModel : INotifyPropertyChanged, IDisposable
             }
 
             MemoryCleanerService.RestartGraphicsDriverPipeline();
-            GuardStatusText = L("RamCleaner_GpuPipelineReset") + " — " + DateTime.Now.ToString("HH:mm:ss");
+            GuardStatusText = L("RamCleaner_GpuPipelineReset") + " - " + DateTime.Now.ToString("HH:mm:ss");
             if (NotifEnabled)
             {
                 ToastService.Show(L("RamCleaner_GpuPipelineToast"));

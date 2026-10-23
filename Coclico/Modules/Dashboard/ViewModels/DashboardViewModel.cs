@@ -80,7 +80,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
         $"{DiskUsedGb.ToString("F1", CultureInfo.CurrentCulture)} GB / {DiskTotalGb.ToString("F1", CultureInfo.CurrentCulture)} GB";
     public double DiskUsagePercent => DiskTotalGb > 0 ? DiskUsedGb / DiskTotalGb * 100.0 : 0;
 
-    private string _uptimeText = "—";
+    private string _uptimeText = "-";
     public string UptimeText
     {
         get => _uptimeText;
@@ -287,7 +287,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
         try
         {
             double cpu = 0, ramUsed = 0, ramTotal = 0, diskUsed = 0, diskTotal = 0;
-            string uptime = "—";
+            string uptime = "-";
             int procs = 0;
 
             await Task.Run(() =>
@@ -325,7 +325,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                         ? $"{(int)up.TotalDays}j {up.Hours:D2}h {up.Minutes:D2}m"
                         : $"{up.Hours:D2}h {up.Minutes:D2}m {up.Seconds:D2}s";
                 }
-                catch { uptime = "—"; }
+                catch { uptime = "-"; }
 
                 try
                 {

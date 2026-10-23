@@ -413,7 +413,7 @@ public class CleaningService
                 }
                 else
                 {
-                    LoggingService.LogWarning($"[DeepCleaning] Aucune action de nettoyage pour la clé '{category.Key}' (catégorie '{category.Name}') — ignorée.");
+                    LoggingService.LogWarning($"[DeepCleaning] Aucune action de nettoyage pour la clé '{category.Key}' (catégorie '{category.Name}') - ignorée.");
                 }
             }
             catch (OperationCanceledException) { throw; }

@@ -60,7 +60,7 @@ public partial class MainWindow
 
             _pendingUpdate = e.Release;
             MarkUpdateButton(e.Release.TagName);
-            ToastService.Show($"Mise à jour disponible : {e.Release.TagName} — clique sur l'icône de synchronisation pour l'installer.");
+            ToastService.Show($"Mise à jour disponible : {e.Release.TagName} clique sur l'icône de synchronisation pour l'installer.");
         }
         catch (Exception ex)
         {
@@ -72,7 +72,7 @@ public partial class MainWindow
     {
         try
         {
-            UpdateCheckButton.ToolTip = $"{L("Main_CheckUpdatesTip")} — {tagName}";
+            UpdateCheckButton.ToolTip = $"{L("Main_CheckUpdatesTip")} {tagName}";
             if (UpdateCheckButton.Content is Wpf.Ui.Controls.SymbolIcon icon)
             {
                 icon.Foreground = FindResource("ArchitecturalYellowBrush") as Brush ?? icon.Foreground;

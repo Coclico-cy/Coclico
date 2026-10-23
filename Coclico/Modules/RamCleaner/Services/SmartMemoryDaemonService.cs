@@ -346,7 +346,7 @@ public sealed class SmartMemoryDaemonService : ISmartMemoryDaemonService
 
         try
         {
-            LoggingService.LogInfo($"[SmartMemoryDaemon] Déclenchement automatique — Mode={triggerMode}, Profil={_profile}, Protection1erPlan={_protectForeground}");
+            LoggingService.LogInfo($"[SmartMemoryDaemon] Déclenchement automatique - Mode={triggerMode}, Profil={_profile}, Protection1erPlan={_protectForeground}");
 
             long freed = 0;
             if (_profile == MemoryCleanerService.CleanProfile.Smart)

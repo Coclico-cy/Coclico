@@ -123,7 +123,7 @@ public partial class UpdateWindow : FluentWindow
                 return;
             }
 
-            StatusText.Text = "Installeur vérifié (SHA-256 + version) et démarré — Coclico va se fermer pour terminer la mise à jour.";
+            StatusText.Text = "Installeur vérifié (SHA-256 + version) et démarré - Coclico va se fermer pour terminer la mise à jour.";
             await Task.Delay(1200);
             ExitForUpdate();
         }

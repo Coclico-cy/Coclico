@@ -4,7 +4,7 @@
 
 # Coclico
 
-### Entretenir, régler et équiper son PC Windows — en confiance
+### Entretenir, régler et équiper son PC Windows - en confiance
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Plateforme](https://img.shields.io/badge/plateforme-Windows%2011-0078D4?logo=windows11&logoColor=white)](#configuration-requise)
 [![Licence : MIT](https://img.shields.io/badge/licence-MIT-green.svg)](LICENSE.txt)
@@ -65,7 +65,7 @@ Accueil, Paramètres et Aide restent toujours visibles.
 
 ## Les modules, un par un
 
-### Accueil — l'état du PC en un coup d'œil
+### Accueil - l'état du PC en un coup d'œil
 
 <p align="center">
   <img src="docs/accueil.png" alt="Tableau de bord de Coclico" width="640">
@@ -79,7 +79,7 @@ L'écran d'accueil affiche en direct le processeur, la mémoire et les disques. 
 
 Les tuiles sont personnalisables : tu choisis les raccourcis affichés sur ton accueil, et tu peux ajouter les tiens.
 
-### Poubelle PC — nettoyer sans risque
+### Poubelle PC - nettoyer sans risque
 
 <p align="center">
   <img src="docs/Nettoyage-pc.png" alt="Module Poubelle PC" width="640">
@@ -96,7 +96,7 @@ Le module analyse d'abord, supprime ensuite, et toujours avec ta confirmation. L
 
 Des préréglages sélectionnent un jeu de catégories en un clic (nettoyage rapide ou complet). Après chaque opération, un résumé indique l'espace libéré et le nombre de fichiers supprimés.
 
-### Réparation & Diagnostic — Windows en pleine forme
+### Réparation & Diagnostic - Windows en pleine forme
 
 <p align="center">
   <img src="docs/santer-defence.png" alt="Module Réparation & Diagnostic" width="640">
@@ -111,7 +111,7 @@ Un point central pour la santé de Windows :
 - Accès à l'outil de suppression de logiciels malveillants (MSRT) et au scan hors ligne de Defender (WDO) ;
 - Contrôle de la santé au démarrage de Windows.
 
-### Analyse Disque — où passe ton espace ?
+### Analyse Disque - où passe ton espace ?
 
 <p align="center">
   <img src="docs/espace-disque.png" alt="Module Analyse Disque" width="640">
@@ -123,7 +123,7 @@ Trois modes complémentaires :
 - **Doublons** : la recherche se fait en trois phases (taille, puis empreinte des 64 premiers Ko, puis empreinte SHA-256 complète). Seuls les fichiers au contenu *réellement identique* sont listés. Seuil au choix (1 à 100 Mo). Suppression **vers la Corbeille**, avec confirmation.
 - **Gros fichiers** : le top 50, 100 ou 200 des fichiers les plus volumineux d'un dossier, avec ouverture de l'emplacement et mise à la corbeille fichier par fichier.
 
-### Management RAM — une mémoire au top
+### Management RAM - une mémoire au top
 
 <p align="center">
   <img src="docs/ram-clean.png" alt="Module Management RAM" width="640">
@@ -134,7 +134,7 @@ Trois modes complémentaires :
 - Historique et total de mémoire libérée depuis le début de la session ;
 - **Nettoyage automatique intelligent** : par intervalle, par seuil d'utilisation, ou hybride. L'application au premier plan est protégée : Coclico ne purge jamais ce que tu es en train d'utiliser.
 
-### Réglage Réseau — neuf réglages utiles, zéro placebo
+### Réglage Réseau - neuf réglages utiles, zéro placebo
 
 <p align="center">
   <img src="docs/Réglage réseau.png" alt="Module Réglage Réseau" width="640">
@@ -152,7 +152,7 @@ Points clés :
 - La restauration remet les **vrais défauts Windows**, en un clic ;
 - La carte réseau est affichée en direct : état, ping, débit.
 
-### Management Alimentation PC — trois plans, honnêtes
+### Management Alimentation PC - trois plans, honnêtes
 
 <p align="center">
   <img src="docs/Mangement-power.png" alt="Module Management Alimentation PC" width="640">
@@ -162,16 +162,16 @@ Trois plans d'alimentation Coclico, créés et pilotés **uniquement via `powerc
 
 - **Coclico economie** : autonomie maximale. Boost économe, composants en économie d'énergie.
 - **Coclico optimal** : réactif sur secteur, économe sur batterie. L'écran s'éteint normalement. Compatible avec le mode adaptatif.
-- **Coclico performance** : réactivité maximale. Boost agressif, cœurs actifs, aucune mise en veille des composants — mais la batterie est respectée : le processeur peut baisser en fréquence et l'efficacité énergétique reste active sur batterie.
+- **Coclico performance** : réactivité maximale. Boost agressif, cœurs actifs, aucune mise en veille des composants mais la batterie est respectée : le processeur peut baisser en fréquence et l'efficacité énergétique reste active sur batterie.
 
 Points clés du module :
 
-- **Auto-configuré pour ton PC** : chaque paramètre est validé par `powercfg /q` avant d'être appliqué. Ce que ton matériel ne supporte pas est ignoré et compté — tu vois exactement ce qui a été appliqué ;
+- **Auto-configuré pour ton PC** : chaque paramètre est validé par `powercfg /q` avant d'être appliqué. Ce que ton matériel ne supporte pas est ignoré et compté tu vois exactement ce qui a été appliqué ;
 - **Mode adaptatif** : Coclico surveille la charge CPU et bascule tout seul vers « performance » sous charge soutenue, vers « économie » quand le PC redevient tranquille. Le mode se re-synchronise avec le plan réellement actif ;
-- **Test comparatif** : mesure le processeur sous chacun des trois plans (environ 15 secondes), affiche les résultats en barres et **restaure ton plan de départ** — même si ce n'est pas un plan Coclico. Le résultat est indicatif : un test de charge favorise par construction le plan le plus énergivore ;
+- **Test comparatif** : mesure le processeur sous chacun des trois plans (environ 15 secondes), affiche les résultats en barres et **restaure ton plan de départ** même si ce n'est pas un plan Coclico. Le résultat est indicatif : un test de charge favorise par construction le plan le plus énergivore ;
 - Les plans Coclico sont supprimables à tout moment. Coclico revient alors au plan Équilibré de Windows. Droits administrateur requis.
 
-### Applications — ta liste de programmes, claire
+### Applications - ta liste de programmes, claire
 
 <p align="center">
   <img src="docs/appplication.png" alt="Module Applications" width="640">
@@ -182,7 +182,7 @@ Points clés du module :
 - Désinstallation propre, via le désinstalleur officiel de chaque application, avec confirmation ;
 - Ajout de programmes manquants à la liste.
 
-### Installeur Winget — tes logiciels en un clic
+### Installeur Winget - tes logiciels en un clic
 
 <p align="center">
   <img src="docs/Installeur.png" alt="Catalogue de l'installeur Winget" width="640">
@@ -212,7 +212,7 @@ L'installeur gère aussi les **mises à jour** : les logiciels obsolètes sont p
   <img src="docs/update.png" alt="Mises à jour des logiciels" width="640">
 </p>
 
-### Assistant IA local — un coup de main, sans cloud
+### Assistant IA local - un coup de main, sans cloud
 
 <p align="center">
   <img src="docs/IA.png" alt="Assistant IA local" width="640">
@@ -225,7 +225,7 @@ Un assistant intégré, **100 % local**, disponible depuis n'importe quel module
 - L'assistant sait sur quel module tu te trouves. Il peut proposer des **actions Coclico** : chaque action est présentée et validée avant exécution ;
 - Aucune clé API cloud. Les fournisseurs cloud ont été supprimés du projet.
 
-### Notifications — l'historique de ce que Coclico a fait
+### Notifications - l'historique de ce que Coclico a fait
 
 <p align="center">
   <img src="docs/Notification.png" alt="Panneau de notifications" width="480">

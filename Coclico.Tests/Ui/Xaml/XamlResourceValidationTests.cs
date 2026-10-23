@@ -97,7 +97,7 @@ public sealed class XamlResourceValidationTests
 
         Assert.True(
             violations.Count == 0,
-            "Références XAML cassées (" + violations.Count + ") — ces erreurs provoquent des XamlParseException au chargement des vues :" + Environment.NewLine + string.Join(Environment.NewLine, violations));
+            "Références XAML cassées (" + violations.Count + ") - ces erreurs provoquent des XamlParseException au chargement des vues :" + Environment.NewLine + string.Join(Environment.NewLine, violations));
     }
 
     private static bool IsSourceFile(string path)
