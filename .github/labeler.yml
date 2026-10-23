@@ -1,0 +1,23 @@
+"module":
+  - changed-files:
+      - any-glob-to-any-file: "Coclico/Modules/**"
+
+"ai":
+  - changed-files:
+      - any-glob-to-any-file: "Coclico/Modules/AI/**"
+
+"installer":
+  - changed-files:
+      - any-glob-to-any-file: "Coclico.Installer/**"
+
+"tests":
+  - changed-files:
+      - any-glob-to-any-file: "Coclico.Tests/**"
+
+"ci":
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+"documentation":
+  - changed-files:
+      - any-glob-to-any-file: "**/*.md"
