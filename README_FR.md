@@ -8,6 +8,7 @@
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Plateforme](https://img.shields.io/badge/plateforme-Windows%2011-0078D4?logo=windows11&logoColor=white)](#configuration-requise)
 [![Licence : MIT](https://img.shields.io/badge/licence-MIT-green.svg)](LICENSE.txt)
+[![Total Downloads](https://img.shields.io/github/downloads/Coclico-cy/Coclico/total)](https://github.com/Coclico-cy/Coclico/releases)
 
 [English](README.md) · **Français** · [Dev (EN)](READMEDEV.md) · [Dev (FR)](READMEDEV_FR.md)
 
