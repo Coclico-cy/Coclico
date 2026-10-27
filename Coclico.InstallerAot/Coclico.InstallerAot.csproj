@@ -52,7 +52,7 @@
     <ItemGroup>
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" GeneratePathProperty="true" />
     <PackageReference Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" GeneratePathProperty="true" />
-    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.25547.20250602" GeneratePathProperty="true" />
+    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.27548.20260419" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(PkgSkiaSharp_NativeAssets_Win32)\runtimes\win-x64\native\libSkiaSharp.dll" LogicalName="libSkiaSharp.dll" Link="NativeLibs\libSkiaSharp.dll" />
