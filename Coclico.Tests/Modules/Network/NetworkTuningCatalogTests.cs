@@ -103,7 +103,7 @@ public sealed class NetworkTuningCatalogTests
     public void CatalogLocalizationKeysExistInFrenchDictionary()
     {
         string repoRoot = XamlResourceValidationTests.FindRepoRoot();
-        string frContent = File.ReadAllText(Path.Combine(repoRoot, "Coclico", "Resources", "Lang", "fr.xaml"));
+        string frContent = File.ReadAllText(Path.Join(repoRoot, "Coclico", "Resources", "Lang", "fr.xaml"));
         foreach (var parameter in NetworkTuningCatalog.Definitions)
         {
             Assert.True(frContent.Contains($"x:Key=\"{parameter.NameKey}\"", StringComparison.Ordinal),

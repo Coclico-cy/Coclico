@@ -79,7 +79,7 @@ public partial class AvatarCropWindow : Window
         double v = e.NewValue;
         _scale.ScaleX = v;
         _scale.ScaleY = v;
-        ZoomLabel.Text = ((int)(v * 100)).ToString() + "%";
+        ZoomLabel.Text = ((int)(v * 100)) + "%";
     }
 
     private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -91,7 +91,7 @@ public partial class AvatarCropWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
-        if (DialogResult != true && !string.IsNullOrEmpty(ResultFilePath))
+        if (DialogResult is not true && !string.IsNullOrEmpty(ResultFilePath))
         {
             try
             {
@@ -99,7 +99,7 @@ public partial class AvatarCropWindow : Window
                 ResultFilePath = null;
                 File.Delete(stale);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(ex, "AvatarCropWindow.OnClosed");
             }
@@ -121,8 +121,6 @@ public partial class AvatarCropWindow : Window
 
             double displayedWidth = _sourceBitmap.PixelWidth * _scale.ScaleX;
             double displayedHeight = _sourceBitmap.PixelHeight * _scale.ScaleY;
-
-            var overlayCenter = new Point(overlayLeft + (overlaySize / 2.0), overlayTop + (overlaySize / 2.0));
 
             double imgRenderedW = SrcImage.ActualWidth > 0 ? SrcImage.ActualWidth : displayedWidth;
             double imgRenderedH = SrcImage.ActualHeight > 0 ? SrcImage.ActualHeight : displayedHeight;
@@ -150,7 +148,7 @@ public partial class AvatarCropWindow : Window
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(resized));
 
-            string tmp = Path.Combine(Path.GetTempPath(), "coclico_avatar_" + Guid.NewGuid().ToString("N") + ".png");
+            string tmp = Path.Join(Path.GetTempPath(), "coclico_avatar_" + Guid.NewGuid().ToString("N") + ".png");
             using (var fs = new FileStream(tmp, FileMode.Create, FileAccess.Write))
             {
                 encoder.Save(fs);
@@ -160,7 +158,7 @@ public partial class AvatarCropWindow : Window
             DialogResult = true;
             Close();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "AvatarCropWindow.Save_Click");
             _ = MessageBox.Show($"Erreur lors du recadrage : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);

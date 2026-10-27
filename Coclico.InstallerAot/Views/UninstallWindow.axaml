@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ico="using:Coclico.Installer"
+        x:Class="Coclico.Installer.Views.UninstallWindow"
+        Title="Désinstaller Coclico"
+        Width="720" Height="700"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="{DynamicResource BgBaseBrush}">
+
+  <Window.Styles>
+    <Style Selector="Ellipse.ambientUnRed">
+      <Style.Animations>
+        <Animation Duration="0:0:11" IterationCount="INFINITE" PlaybackDirection="Alternate">
+          <KeyFrame Cue="0%"><Setter Property="Canvas.Left" Value="-160"/></KeyFrame>
+          <KeyFrame Cue="100%"><Setter Property="Canvas.Left" Value="-110"/></KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+  </Window.Styles>
+
+  <Border BorderBrush="#2A2228" BorderThickness="1" CornerRadius="8">
+    <Grid Background="{DynamicResource BgBaseBrush}">
+
+      <Canvas IsHitTestVisible="False" ClipToBounds="True" Opacity="0.22">
+        <Ellipse Width="600" Height="420" Canvas.Left="-160" Canvas.Top="-140" Classes="ambientUnRed">
+          <Ellipse.Fill>
+            <RadialGradientBrush>
+              <GradientStop Color="#FF453A" Offset="0"/>
+              <GradientStop Color="#4A110D" Offset="0.45"/>
+              <GradientStop Color="Transparent" Offset="1"/>
+            </RadialGradientBrush>
+          </Ellipse.Fill>
+        </Ellipse>
+      </Canvas>
+
+      <Grid RowDefinitions="Auto,*">
+        <Border x:Name="TitleBarBorder" Grid.Row="0" Height="40" Background="#0C0D12"
+                PointerPressed="TitleBar_PointerPressed">
+          <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+            <Image Grid.Column="0" Source="avares://Coclico.Installer/Resources/plage.png"
+                   Width="18" Height="18" Margin="14,0,8,0" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="Coclico — Désinstallation" FontWeight="SemiBold" FontSize="12.5"
+                       Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+            <Button Grid.Column="3" Classes="titlebarBtn close" Content="&#x2715;" Click="BtnTitleClose_Click"
+                    VerticalAlignment="Center"/>
+          </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="24" RowDefinitions="Auto,*">
+          <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+            <Border Width="56" Height="56" CornerRadius="14" Background="#261A1D"
+                    BorderBrush="#FF453A" BorderThickness="1.5" Margin="0,0,14,0">
+              <Image Source="avares://Coclico.Installer/Resources/plage.png" Width="34" Height="34"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+              <TextBlock x:Name="TxtUnTitle" Text="Désinstallation complète de Coclico" FontSize="19" FontWeight="Bold"/>
+              <TextBlock x:Name="TxtUnSubtitle" Text="Cette fenêtre supprime l'application, vos données et toutes ses traces sur le système."
+                         FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
+          </StackPanel>
+          <Grid x:Name="PanelMain" Grid.Row="1" RowDefinitions="Auto,*,Auto">
+
+            <Border Grid.Row="0" Background="#261A1D" CornerRadius="10" BorderBrush="#FF453A" BorderThickness="1"
+                    Padding="14,10" Margin="0,0,0,14">
+              <StackPanel Orientation="Horizontal">
+                <PathIcon Data="{x:Static ico:Ico.Warning}" Foreground="#FF453A" Width="18" Height="18" Margin="0,0,10,0"/>
+                <TextBlock x:Name="TxtUnWarning" Text="ATTENTION : cette opération est définitive. Aucune sauvegarde ne sera effectuée."
+                           FontWeight="SemiBold" FontSize="12" Foreground="#FF9E80" VerticalAlignment="Center" TextWrapping="Wrap"/>
+              </StackPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,14">
+              <Border Background="{DynamicResource BgCardBrush}" CornerRadius="12"
+                      BorderBrush="{DynamicResource BorderCardBrush}" BorderThickness="1" Padding="16,14">
+                <StackPanel>
+                  <TextBlock x:Name="TxtUnListTitle" Text="Les éléments suivants seront supprimés de manière permanente :"
+                             FontSize="12.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+
+                  <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                    <Border Width="30" Height="30" CornerRadius="8" Background="#261A1D" Margin="0,0,12,0">
+                      <PathIcon Data="{x:Static ico:Ico.Folder}" Foreground="#FF6B35" Width="15" Height="15"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock x:Name="TxtUnItem1" Text="Dossier d'installation" FontWeight="SemiBold" FontSize="12.5"/>
+                      <TextBlock x:Name="TxtInstallPath" Text="C:\...\Coclico" FontSize="11" Foreground="#888" TextWrapping="Wrap"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                    <Border Width="30" Height="30" CornerRadius="8" Background="#261A1D" Margin="0,0,12,0">
+                      <PathIcon Data="{x:Static ico:Ico.Desktop}" Foreground="#FF6B35" Width="15" Height="15"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock x:Name="TxtUnItem2" Text="Raccourcis Bureau et Menu Démarrer" FontWeight="SemiBold" FontSize="12.5"/>
+                      <TextBlock Text="Coclico.lnk" FontSize="11" Foreground="#888"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                    <Border Width="30" Height="30" CornerRadius="8" Background="#261A1D" Margin="0,0,12,0">
+                      <PathIcon Data="{x:Static ico:Ico.Gear}" Foreground="#FF6B35" Width="15" Height="15"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock x:Name="TxtUnItem3" Text="Données et configuration" FontWeight="SemiBold" FontSize="12.5"/>
+                      <TextBlock Text="%AppData%\Coclico\  ·  %LocalAppData%\Coclico\" FontSize="11" Foreground="#888"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                    <Border Width="30" Height="30" CornerRadius="8" Background="#261A1D" Margin="0,0,12,0">
+                      <PathIcon Data="{x:Static ico:Ico.Database}" Foreground="#FF6B35" Width="15" Height="15"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock x:Name="TxtUnItem4" Text="Entrées de registre Windows" FontWeight="SemiBold" FontSize="12.5"/>
+                      <TextBlock Text="Applications et fonctionnalités · Applications installées" FontSize="11" Foreground="#888"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,12">
+                    <Border Width="30" Height="30" CornerRadius="8" Background="#261A1D" Margin="0,0,12,0">
+                      <PathIcon Data="{x:Static ico:Ico.Delete}" Foreground="#FF6B35" Width="15" Height="15"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock x:Name="TxtUnItem5" Text="Cache et fichiers temporaires" FontWeight="SemiBold" FontSize="12.5"/>
+                      <TextBlock Text="%TEMP%\Coclico\*" FontSize="11" Foreground="#888"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <Border Background="#12131A" CornerRadius="10" BorderBrush="#252630" BorderThickness="1" Padding="14,10">
+                    <StackPanel>
+                      <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                        <TextBlock x:Name="TxtProgressStatus" Text="Prêt à désinstaller." FontSize="11.5"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="TxtProgressPercent" Text="" FontSize="11.5" FontWeight="Bold"
+                                   Foreground="#FF6B35" Grid.Column="1"/>
+                      </Grid>
+                      <ProgressBar x:Name="UninstallProgressBar" Height="6" Minimum="0" Maximum="100" Value="0"
+                                   Foreground="#FF453A"/>
+                    </StackPanel>
+                  </Border>
+                </StackPanel>
+              </Border>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2">
+              <CheckBox x:Name="ChkKeepUserData" Margin="0,0,0,8"
+                        Content="Conserver mes données (profils, réglages, modèles IA)" FontSize="11.5"/>
+              <CheckBox x:Name="ChkConfirmCompleteRemoval" Margin="0,0,0,14"
+                        Content="Je comprends que TOUTES les données Coclico seront supprimées définitivement et je confirme la désinstallation."
+                        FontSize="11.5"/>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="BtnCancelUninstall" Classes="secondary" Content="Annuler"
+                        Width="110" Height="38" Margin="0,0,10,0" Click="BtnCancel_Click"/>
+                <Button x:Name="BtnStartUninstall" Classes="danger" Content="Désinstaller TOUT"
+                        Width="170" Height="38" Click="BtnStartUninstall_Click"/>
+              </StackPanel>
+            </StackPanel>
+          </Grid>
+
+          <Grid x:Name="PanelGoodbye" Grid.Row="1" IsVisible="False" VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" Width="520">
+              <Border Width="84" Height="84" CornerRadius="42" Background="#11291F"
+                      BorderBrush="#1C4B37" BorderThickness="1.5" HorizontalAlignment="Center" Margin="0,0,0,18">
+                <PathIcon Data="{x:Static ico:Ico.Heart}" Foreground="#10B981" Width="38" Height="38"/>
+              </Border>
+
+              <TextBlock x:Name="TxtUnByeTitle" Text="Merci d'avoir utilisé Coclico !" FontSize="24" FontWeight="Bold"
+                         HorizontalAlignment="Center" Margin="0,0,0,8"/>
+              <TextBlock x:Name="TxtUnByeDesc" Text="La désinstallation est terminée : l'application, vos données, les raccourcis et les entrées de registre ont été supprimés avec succès."
+                         FontSize="12.5" Foreground="{DynamicResource TextSecondaryBrush}"
+                         TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,6"/>
+              <TextBlock x:Name="TxtUnByeFooter" Text="Nous espérons vous revoir très bientôt. Bonne continuation !"
+                         FontSize="13" FontWeight="SemiBold" Foreground="#FF6B35"
+                         TextAlignment="Center" Margin="0,0,0,22"/>
+
+              <Border Background="{DynamicResource BgCardBrush}" CornerRadius="12"
+                      BorderBrush="{DynamicResource BorderCardBrush}" BorderThickness="1"
+                      Padding="16,12" Margin="0,0,0,22">
+                <StackPanel>
+                  <TextBlock Text="Coclico" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                  <TextBlock Text="Créé et développé par Coclico" FontSize="11"
+                             Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+
+              <Button Classes="accent" Content="Fermer" Width="150" Height="40"
+                      HorizontalAlignment="Center" Click="BtnCancel_Click"/>
+            </StackPanel>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  </Border>
+</Window>

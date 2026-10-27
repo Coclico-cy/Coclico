@@ -12,7 +12,7 @@ namespace Coclico.Services;
 
 public sealed class AiChatService : IAiService, IDisposable
 {
-    private static readonly string DocsPath = Path.Combine(
+    private static readonly string DocsPath = Path.Join(
         AppDomain.CurrentDomain.BaseDirectory, "resource", "docs");
 
     private static readonly Lazy<RagService> _rag = new(() =>
@@ -26,6 +26,11 @@ public sealed class AiChatService : IAiService, IDisposable
     private static bool _nativeCudaConfigured;
     private static bool _nativeConfigLocked;
     private static bool _nativeEngineBroken;
+
+    private static void MarkNativeEngineBroken()
+    {
+        _nativeEngineBroken = true;
+    }
 
     private static readonly string[] TurnStopTokens =
     [
@@ -91,7 +96,7 @@ public sealed class AiChatService : IAiService, IDisposable
             {
                 Context.Dispose();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "AiChatService.ChatCtx.Dispose");
             }
@@ -150,7 +155,7 @@ public sealed class AiChatService : IAiService, IDisposable
 
     private static string ResolveModelFile(string fileName)
     {
-        string primary = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "model", fileName);
+        string primary = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "resource", "model", fileName);
         if (File.Exists(primary))
         {
             return primary;
@@ -159,15 +164,14 @@ public sealed class AiChatService : IAiService, IDisposable
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         string[] candidates =
         [
-            Path.Combine(baseDir, "..", "..", "..", "..", "Coclico", "bin", "Debug", "net10.0-windows10.0.22621.0", "resource", "model", fileName),
-            Path.Combine(baseDir, "..", "..", "..", "..", "Coclico", "bin", "Release", "net10.0-windows10.0.22621.0", "resource", "model", fileName),
-            Path.Combine(baseDir, "..", "..", "..", "..", "Coclico", "resource", "model", fileName),
-            Path.Combine(baseDir, "..", "..", "..", "..", "Coclico", "publish", "resource", "model", fileName)
+            Path.Join(baseDir, "..", "..", "..", "..", "Coclico", "bin", "Debug", "net10.0-windows10.0.22621.0", "resource", "model", fileName),
+            Path.Join(baseDir, "..", "..", "..", "..", "Coclico", "bin", "Release", "net10.0-windows10.0.22621.0", "resource", "model", fileName),
+            Path.Join(baseDir, "..", "..", "..", "..", "Coclico", "resource", "model", fileName),
+            Path.Join(baseDir, "..", "..", "..", "..", "Coclico", "publish", "resource", "model", fileName)
         ];
 
-        foreach (string candidate in candidates)
+        foreach (string full in candidates.Select(Path.GetFullPath))
         {
-            string full = Path.GetFullPath(candidate);
             if (File.Exists(full))
             {
                 return full;
@@ -183,7 +187,7 @@ public sealed class AiChatService : IAiService, IDisposable
         {
             await _settings.SaveAsync().ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "AiChatService.SaveSettings");
         }
@@ -311,7 +315,7 @@ public sealed class AiChatService : IAiService, IDisposable
             {
                 string nativeDir = AiHardwareService.ResolveNativeDirectory();
                 string? cuda12Dir = AiHardwareService.ResolveCudaDirectory();
-                string avx2Dir = Path.Combine(nativeDir, "avx2");
+                string avx2Dir = Path.Join(nativeDir, "avx2");
 
                 if (cuda12Dir == null)
                 {
@@ -339,10 +343,10 @@ public sealed class AiChatService : IAiService, IDisposable
                     Environment.SetEnvironmentVariable("PATH", extendedPath);
                 }
 
-                string llamaCuda = Path.Combine(cuda12Dir, "llama.dll");
-                string ggmlBase = Path.Combine(cuda12Dir, "ggml-base.dll");
-                string ggmlCuda = Path.Combine(cuda12Dir, "ggml-cuda.dll");
-                string ggmldll = Path.Combine(cuda12Dir, "ggml.dll");
+                string llamaCuda = Path.Join(cuda12Dir, "llama.dll");
+                string ggmlBase = Path.Join(cuda12Dir, "ggml-base.dll");
+                string ggmlCuda = Path.Join(cuda12Dir, "ggml-cuda.dll");
+                string ggmldll = Path.Join(cuda12Dir, "ggml.dll");
                 string? ggmlCpuPath = ResolveCpuNativeDll("ggml-cpu.dll");
 
                 if (ggmlCpuPath == null)
@@ -376,7 +380,7 @@ public sealed class AiChatService : IAiService, IDisposable
                 LoggingService.LogInfo("[AiChatService] Backend NVIDIA CUDA 12 initialisé avec succès.");
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(ex, "AiChatService.EnsureNativeBackendConfigured");
                 LoggingService.LogWarning($"[AiChatService] Impossible d'initialiser le backend GPU CUDA 12 : {ex.Message}. Exécution sur CPU (AVX2).");
@@ -388,7 +392,7 @@ public sealed class AiChatService : IAiService, IDisposable
     private static bool TryPrepareCpuBackend()
     {
         string nativeDir = AiHardwareService.ResolveNativeDirectory();
-        string avx2Dir = Path.Combine(nativeDir, "avx2");
+        string avx2Dir = Path.Join(nativeDir, "avx2");
 
         string? llamaCpu = ResolveCpuNativeDll("llama.dll");
         if (llamaCpu == null)
@@ -431,17 +435,12 @@ public sealed class AiChatService : IAiService, IDisposable
 
         try
         {
-            if (useGpu)
-            {
-                _ = NativeLibraryConfig.All
+            _ = useGpu
+                ? NativeLibraryConfig.All
                     .WithCuda(true)
                     .SkipCheck(true)
-                    .WithAutoFallback(false);
-            }
-            else
-            {
-                _ = NativeLibraryConfig.All.WithCuda(false).WithAutoFallback(true);
-            }
+                    .WithAutoFallback(false)
+                : NativeLibraryConfig.All.WithCuda(false).WithAutoFallback(true);
 
             _nativeConfigLocked = true;
         }
@@ -450,7 +449,7 @@ public sealed class AiChatService : IAiService, IDisposable
             _nativeConfigLocked = true;
             LoggingService.LogWarning("[AiChatService] Configuration du moteur natif déjà appliquée (bibliothèque chargée) : reconfiguration impossible sans redémarrer Coclico.");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "AiChatService.TryApplyLibraryConfig");
         }
@@ -462,12 +461,12 @@ public sealed class AiChatService : IAiService, IDisposable
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         string[] candidates =
         [
-            Path.Combine(nativeDir, fileName),
-            Path.Combine(nativeDir, "avx2", fileName),
-            Path.Combine(nativeDir, "avx", fileName),
-            Path.Combine(nativeDir, "avx512", fileName),
-            Path.Combine(baseDir, fileName),
-            Path.Combine(baseDir, "runtimes", "win-x64", "native", fileName)
+            Path.Join(nativeDir, fileName),
+            Path.Join(nativeDir, "avx2", fileName),
+            Path.Join(nativeDir, "avx", fileName),
+            Path.Join(nativeDir, "avx512", fileName),
+            Path.Join(baseDir, fileName),
+            Path.Join(baseDir, "runtimes", "win-x64", "native", fileName)
         ];
 
         foreach (string candidate in candidates)
@@ -491,11 +490,17 @@ public sealed class AiChatService : IAiService, IDisposable
                 return false;
             }
 
+            if (!NativeLibraryGuard.IsNativeLoadPathAllowed(path))
+            {
+                LoggingService.LogWarning($"[AiChatService] Bibliothèque native refusée par la politique de chargement : '{path}'.");
+                return false;
+            }
+
             try
             {
                 _ = System.Runtime.InteropServices.NativeLibrary.Load(path);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.DllNotFoundException or System.BadImageFormatException or System.EntryPointNotFoundException or System.TypeLoadException)
             {
                 LoggingService.LogWarning($"[AiChatService] Chargement natif impossible '{path}' : {ex.Message}");
                 return false;
@@ -507,11 +512,17 @@ public sealed class AiChatService : IAiService, IDisposable
 
     private static void TryLoadOptional(string path)
     {
+        if (!NativeLibraryGuard.IsNativeLoadPathAllowed(path))
+        {
+            LoggingService.LogWarning($"[AiChatService] Bibliothèque native refusée par la politique de chargement : '{path}'.");
+            return;
+        }
+
         try
         {
             _ = System.Runtime.InteropServices.NativeLibrary.Load(path);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.DllNotFoundException or System.BadImageFormatException or System.EntryPointNotFoundException or System.TypeLoadException)
         {
             LoggingService.LogWarning($"[AiChatService] Préchargement optionnel impossible '{path}' : {ex.Message}");
         }
@@ -523,33 +534,33 @@ public sealed class AiChatService : IAiService, IDisposable
         {
             string nativeDir = AiHardwareService.ResolveNativeDirectory();
             string? cuda12Dir = AiHardwareService.ResolveCudaDirectory();
-            string avx2Dir = Path.Combine(nativeDir, "avx2");
+            string avx2Dir = Path.Join(nativeDir, "avx2");
 
             var report = new StringBuilder();
             report.Append("[AiChatService] Diagnostic natif native: '").Append(nativeDir).Append("'");
-            report.Append(" | llama.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "llama.dll"), Path.Combine(avx2Dir, "llama.dll")));
-            report.Append(", ggml.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "ggml.dll"), Path.Combine(avx2Dir, "ggml.dll")));
-            report.Append(", ggml-base.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "ggml-base.dll"), Path.Combine(avx2Dir, "ggml-base.dll")));
-            report.Append(", ggml-cpu.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "ggml-cpu.dll"), Path.Combine(avx2Dir, "ggml-cpu.dll")));
-            report.Append(", mtmd.dll: ").Append(DescribePresence(Path.Combine(nativeDir, "mtmd.dll"), Path.Combine(avx2Dir, "mtmd.dll")));
+            report.Append(" | llama.dll: ").Append(DescribePresence(Path.Join(nativeDir, "llama.dll"), Path.Join(avx2Dir, "llama.dll")));
+            report.Append(", ggml.dll: ").Append(DescribePresence(Path.Join(nativeDir, "ggml.dll"), Path.Join(avx2Dir, "ggml.dll")));
+            report.Append(", ggml-base.dll: ").Append(DescribePresence(Path.Join(nativeDir, "ggml-base.dll"), Path.Join(avx2Dir, "ggml-base.dll")));
+            report.Append(", ggml-cpu.dll: ").Append(DescribePresence(Path.Join(nativeDir, "ggml-cpu.dll"), Path.Join(avx2Dir, "ggml-cpu.dll")));
+            report.Append(", mtmd.dll: ").Append(DescribePresence(Path.Join(nativeDir, "mtmd.dll"), Path.Join(avx2Dir, "mtmd.dll")));
 
             report.Append(cuda12Dir == null
                 ? " | cuda12: ABSENT"
-                : " | cuda12: llama.dll: " + DescribePresence(Path.Combine(cuda12Dir, "llama.dll")) +
-                  ", ggml.dll: " + DescribePresence(Path.Combine(cuda12Dir, "ggml.dll")) +
-                  ", ggml-base.dll: " + DescribePresence(Path.Combine(cuda12Dir, "ggml-base.dll")) +
-                  ", ggml-cuda.dll: " + DescribePresence(Path.Combine(cuda12Dir, "ggml-cuda.dll")));
+                : " | cuda12: llama.dll: " + DescribePresence(Path.Join(cuda12Dir, "llama.dll")) +
+                  ", ggml.dll: " + DescribePresence(Path.Join(cuda12Dir, "ggml.dll")) +
+                  ", ggml-base.dll: " + DescribePresence(Path.Join(cuda12Dir, "ggml-base.dll")) +
+                  ", ggml-cuda.dll: " + DescribePresence(Path.Join(cuda12Dir, "ggml-cuda.dll")));
 
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            report.Append(" | racine: cudart64_12.dll: ").Append(DescribePresence(Path.Combine(baseDir, "cudart64_12.dll")));
-            report.Append(", cublas64_12.dll: ").Append(DescribePresence(Path.Combine(baseDir, "cublas64_12.dll")));
-            report.Append(", cublasLt64_12.dll: ").Append(DescribePresence(Path.Combine(baseDir, "cublasLt64_12.dll")));
-            report.Append(", cufft64_11.dll: ").Append(DescribePresence(Path.Combine(baseDir, "cufft64_11.dll")));
-            report.Append(", nvrtc64_120_0.dll: ").Append(DescribePresence(Path.Combine(baseDir, "nvrtc64_120_0.dll")));
+            report.Append(" | racine: cudart64_12.dll: ").Append(DescribePresence(Path.Join(baseDir, "cudart64_12.dll")));
+            report.Append(", cublas64_12.dll: ").Append(DescribePresence(Path.Join(baseDir, "cublas64_12.dll")));
+            report.Append(", cublasLt64_12.dll: ").Append(DescribePresence(Path.Join(baseDir, "cublasLt64_12.dll")));
+            report.Append(", cufft64_11.dll: ").Append(DescribePresence(Path.Join(baseDir, "cufft64_11.dll")));
+            report.Append(", nvrtc64_120_0.dll: ").Append(DescribePresence(Path.Join(baseDir, "nvrtc64_120_0.dll")));
 
             LoggingService.LogWarning(report.ToString());
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "AiChatService.LogNativeDiagnostics");
         }
@@ -586,11 +597,6 @@ public sealed class AiChatService : IAiService, IDisposable
 
     private async Task InitializeLocalModelAsync(CancellationToken ct)
     {
-        if (_initialized)
-        {
-            return;
-        }
-
         await _initLock.WaitAsync(ct).ConfigureAwait(false);
         try
         {
@@ -646,11 +652,11 @@ public sealed class AiChatService : IAiService, IDisposable
                     }
                     catch (TypeInitializationException ex)
                     {
-                        _nativeEngineBroken = true;
+                        MarkNativeEngineBroken();
                         LogNativeDiagnostics();
                         throw new InvalidOperationException("Le moteur natif CUDA a échoué à son initialisation et ne peut plus être réinitialisé dans ce processus. Redémarrez Coclico et vérifiez le dossier cuda12 de l'installation.", ex);
                     }
-                    catch (Exception ex)
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException)
                     {
                         LoggingService.LogWarning("[AiChatService] Échec du chargement sur GPU (" + ex.Message + "). Basculement automatique sur CPU...");
                         DisposeModelInternal();
@@ -675,7 +681,7 @@ public sealed class AiChatService : IAiService, IDisposable
             }
             catch (TypeInitializationException ex)
             {
-                _nativeEngineBroken = true;
+                MarkNativeEngineBroken();
                 LogNativeDiagnostics();
                 throw new InvalidOperationException("Le moteur natif IA (repli CPU) a échoué à son initialisation et ne peut plus être réinitialisé dans ce processus. Redémarrez Coclico et vérifiez le dossier runtimes\\win-x64\\native de l'installation.", ex);
             }
@@ -1049,20 +1055,6 @@ public sealed class AiChatService : IAiService, IDisposable
             _ = _chatSem.Release();
         }
     }
-
-    public async Task ResetContextOnlyAsync(CancellationToken ct = default)
-    {
-        await _chatSem.WaitAsync(ct).ConfigureAwait(false);
-        try
-        {
-            ResetContextOnlyInternal();
-        }
-        finally
-        {
-            _ = _chatSem.Release();
-        }
-    }
-
     private void ResetContextOnlyInternal()
     {
         if (_model == null)
@@ -1121,7 +1113,7 @@ public sealed class AiChatService : IAiService, IDisposable
         {
             await UnloadLocalModelAsync().ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "AiChatService.OnIdleTimeout");
         }

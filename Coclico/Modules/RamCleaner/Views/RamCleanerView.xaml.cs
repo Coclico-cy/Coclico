@@ -68,7 +68,6 @@ public partial class RamCleanerView : UserControl
             TryFindResource("RamCleaner_GpuPipelineTitle") as string ?? string.Empty,
             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
-
     private void HistoryCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         _sparkline = null;

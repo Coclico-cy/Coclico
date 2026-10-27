@@ -39,7 +39,7 @@ public static class AppLog
                 _ = WriteAuditEntryAsync(audit, entry);
             }
         }
-        catch (Exception exSwallow)
+        catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
         {
             LoggingService.LogException(exSwallow, "AppLog.Action");
         }
@@ -51,7 +51,7 @@ public static class AppLog
         {
             await audit.LogAsync(entry).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, $"AppLog.Action({entry.Action})");
         }

@@ -39,7 +39,7 @@ public partial class SplashWindow : Window
         {
             LoggingService.LogInfo("Startup timed out or was cancelled from splash");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "SplashWindow.RunStartupAsync");
         }

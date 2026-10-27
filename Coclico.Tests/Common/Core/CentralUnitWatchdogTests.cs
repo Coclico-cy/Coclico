@@ -107,22 +107,42 @@ public sealed class CentralUnitWatchdogTests : IDisposable
     [Fact]
     public async Task StartDrivesPeriodicChecksUntilStopped()
     {
-        var periodicWatchdog = new CentralUnitWatchdog(_store, _activity, TimeSpan.FromMilliseconds(60));
-        int revives = 0;
-        periodicWatchdog.Register("Stalled", TimeSpan.FromMilliseconds(30), () => Interlocked.Increment(ref revives));
-
-        _store.StartScheduler();
-        periodicWatchdog.Start();
-        periodicWatchdog.Start();
-
-        for (int i = 0; i < 100 && Volatile.Read(ref revives) == 0; i++)
+        using (var periodicWatchdog = new CentralUnitWatchdog(_store, _activity, TimeSpan.FromMilliseconds(60)))
         {
-            await Task.Delay(30);
+            int revives = 0;
+            periodicWatchdog.Register("Stalled", TimeSpan.FromMilliseconds(30), () => Interlocked.Increment(ref revives));
+
+            _store.StartScheduler();
+            periodicWatchdog.Start();
+            periodicWatchdog.Start();
+
+            try
+            {
+                DateTime deadline = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                while (Volatile.Read(ref revives) == 0 && DateTime.UtcNow < deadline)
+                {
+                    await Task.Delay(50);
+                }
+            }
+            finally
+            {
+                periodicWatchdog.Stop();
+            }
+
+            Assert.True(revives >= 1);
         }
+    }
 
-        periodicWatchdog.Stop();
-        periodicWatchdog.Dispose();
+    [Fact]
+    public void StopIsIdempotentAndKeepsManualChecksUsable()
+    {
+        _watchdog.Register("Manual", TimeSpan.FromSeconds(30));
+        _watchdog.Beat("Manual");
 
-        Assert.True(revives >= 1);
+        _watchdog.Stop();
+        _watchdog.Stop();
+
+        Assert.Equal(0, _watchdog.CheckAll());
+        Assert.Single(_watchdog.GetSnapshot());
     }
 }

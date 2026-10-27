@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Coclico.Installer.App"
+             RequestedThemeVariant="Dark">
+  <Application.Resources>
+    <ResourceDictionary>
+      <SolidColorBrush x:Key="BgBaseBrush" Color="#07080B"/>
+      <SolidColorBrush x:Key="BgCardBrush" Color="#13141A"/>
+      <SolidColorBrush x:Key="BgSurfaceBrush" Color="#0C0D12"/>
+      <SolidColorBrush x:Key="BorderCardBrush" Color="#2A2226"/>
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FAF5F2"/>
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A0A0A0"/>
+      <SolidColorBrush x:Key="AccentPrimaryBrush" Color="#FF453A"/>
+      <SolidColorBrush x:Key="AccentSecondaryBrush" Color="#FF6B35"/>
+      <SolidColorBrush x:Key="AccentCyanBrush" Color="#22D3EE"/>
+      <SolidColorBrush x:Key="AccentSuccessBrush" Color="#10B981"/>
+      <SolidColorBrush x:Key="DangerBrush" Color="#FF453A"/>
+      <SolidColorBrush x:Key="DangerDarkBrush" Color="#B91C1C"/>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme/>
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="Button.accent">
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="14,0"/>
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Color="#FF453A" Offset="0"/>
+          <GradientStop Color="#FF6B35" Offset="1"/>
+        </LinearGradientBrush>
+      </Setter>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.accent:pointerover">
+      <Setter Property="Opacity" Value="0.92"/>
+    </Style>
+    <Style Selector="Button.accent:pressed">
+      <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+    <Style Selector="Button.accent:disabled">
+      <Setter Property="Opacity" Value="0.45"/>
+    </Style>
+    <Style Selector="Button.secondary">
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Background" Value="#1A1B22"/>
+      <Setter Property="BorderBrush" Value="#2D2E38"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="14,0"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.secondary:pointerover">
+      <Setter Property="Background" Value="#22232C"/>
+      <Setter Property="BorderBrush" Value="#3A3B46"/>
+    </Style>
+    <Style Selector="Button.secondary:pressed">
+      <Setter Property="Opacity" Value="0.85"/>
+    </Style>
+    <Style Selector="Button.secondary:disabled">
+      <Setter Property="Opacity" Value="0.45"/>
+    </Style>
+    <Style Selector="Button.danger">
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Background" Value="#B91C1C"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="14,0"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.danger:pointerover">
+      <Setter Property="Opacity" Value="0.92"/>
+    </Style>
+    <Style Selector="Button.danger:pressed">
+      <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+    <Style Selector="Button.danger:disabled">
+      <Setter Property="Opacity" Value="0.45"/>
+    </Style>
+    <Style Selector="Button.lang">
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Width" Value="70"/>
+      <Setter Property="Height" Value="28"/>
+      <Setter Property="Padding" Value="6,0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#CCC"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.lang:pointerover">
+      <Setter Property="Opacity" Value="0.85"/>
+    </Style>
+    <Style Selector="Button.titlebarBtn">
+      <Setter Property="Width" Value="44"/>
+      <Setter Property="Height" Value="32"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.titlebarBtn:pointerover">
+      <Setter Property="Background" Value="#26FFFFFF"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.titlebarBtn.close:pointerover">
+      <Setter Property="Background" Value="#C42B1C"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="CheckBox">
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <StackPanel Orientation="Horizontal" Background="Transparent" Spacing="8">
+            <Grid Width="18" Height="18">
+              <Border x:Name="Box" Width="18" Height="18" CornerRadius="4"
+                      Background="#14151C" BorderBrush="#3A3B46" BorderThickness="1"/>
+              <Path x:Name="Check" Data="M 3.5,9.5 L 7.5,13.5 L 14.5,4.5"
+                    Stroke="#07080B" StrokeThickness="2.2" IsVisible="False"/>
+            </Grid>
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              VerticalAlignment="Center"/>
+          </StackPanel>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="CheckBox:checked /template/ Border#Box">
+      <Setter Property="Background" Value="#FF453A"/>
+      <Setter Property="BorderBrush" Value="#FF6B35"/>
+    </Style>
+    <Style Selector="CheckBox:checked /template/ Path#Check">
+      <Setter Property="IsVisible" Value="True"/>
+    </Style>
+    <Style Selector="CheckBox:pointerover /template/ Border#Box">
+      <Setter Property="BorderBrush" Value="#4A4B56"/>
+    </Style>
+    <Style Selector="CheckBox:disabled">
+      <Setter Property="Opacity" Value="0.45"/>
+    </Style>
+    <Style Selector="ProgressBar">
+      <Setter Property="Background" Value="#191B24"/>
+      <Setter Property="Foreground" Value="{DynamicResource AccentSecondaryBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <Border x:Name="PART_Indicator"
+                    Background="{TemplateBinding Foreground}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    HorizontalAlignment="Left"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="#0D0E13"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+      <Setter Property="BorderBrush" Value="#252630"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="10,0"/>
+      <Setter Property="MinHeight" Value="34"/>
+      <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="#FF6B35"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="Background" Value="#0D0E13"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+      <Setter Property="BorderBrush" Value="#252630"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="10,6"/>
+      <Setter Property="MinHeight" Value="34"/>
+    </Style>
+    <Style Selector="ComboBoxItem">
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="ComboBoxItem:selected">
+      <Setter Property="Background" Value="#2A1E22"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Border.sep">
+      <Setter Property="Height" Value="1"/>
+      <Setter Property="Background" Value="#222"/>
+    </Style>
+    <Style Selector="PathIcon">
+      <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+      <Setter Property="Width" Value="16"/>
+      <Setter Property="Height" Value="16"/>
+    </Style>
+    <Style Selector="ScrollBar.vertical">
+      <Setter Property="Width" Value="6"/>
+    </Style>
+  </Application.Styles>
+</Application>

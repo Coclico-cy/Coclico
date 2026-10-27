@@ -38,12 +38,12 @@ public partial class HelpView : UserControl
     {
         var version = UpdateCheckService.GetCurrentVersion();
 
-        TxtVersionTitle.Text = string.Format(GetTemplate("Help_Version_Title"), version);
-        TxtVersionTag.Text = string.Format(GetTemplate("Help_Version_CurrentTag"), version);
+        TxtVersionTitle.Text = TextFormatService.Format(GetTemplate("Help_Version_Title"), version);
+        TxtVersionTag.Text = TextFormatService.Format(GetTemplate("Help_Version_CurrentTag"), version);
         TxtVersionCardTitle.Text = $"Coclico {version} ";
-        TxtVersionDesc.Text = string.Format(GetTemplate("Help_Version_Desc"), version);
-        TxtVersionNotesTitle.Text = string.Format(GetTemplate("Help_Version_NotesTitle"), version);
-        TxtInfoStatusText.Text = string.Format(GetTemplate("Help_Info_Status_Text"), version);
+        TxtVersionDesc.Text = TextFormatService.Format(GetTemplate("Help_Version_Desc"), version);
+        TxtVersionNotesTitle.Text = TextFormatService.Format(GetTemplate("Help_Version_NotesTitle"), version);
+        TxtInfoStatusText.Text = TextFormatService.Format(GetTemplate("Help_Info_Status_Text"), version);
     }
 
     private string GetTemplate(string key)

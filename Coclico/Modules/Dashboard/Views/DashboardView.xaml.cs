@@ -82,7 +82,7 @@ public partial class DashboardView : UserControl
                 WelcomeText.Text = greeting;
             }
         }
-        catch
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             WelcomeText.Text = greeting;
         }
@@ -100,26 +100,25 @@ public partial class DashboardView : UserControl
         CoreTilesGrid.Columns = s.GridColumns > 0 ? s.GridColumns : 3;
 
         HomeSectionsContainer.Children.Clear();
-        foreach (string secId in s.SectionOrder)
+        foreach (var section in s.SectionOrder
+            .Where(secId => _sectionsMap.ContainsKey(secId))
+            .Select(secId => (Id: secId, Element: _sectionsMap[secId])))
         {
-            if (_sectionsMap.TryGetValue(secId, out FrameworkElement? element))
+            bool isVisible = section.Id switch
             {
-                bool isVisible = secId switch
-                {
-                    "Header" => s.ShowHeader,
-                    "Metrics" => s.ShowMetrics,
-                    "QuickModes" => s.ShowQuickModes,
-                    "CoreTiles" => s.ShowCoreTiles,
-                    "CustomShortcuts" => s.ShowCustomShortcuts,
-                    "RecentActivity" => s.ShowRecentActivity,
-                    _ => true
-                };
+                "Header" => s.ShowHeader,
+                "Metrics" => s.ShowMetrics,
+                "QuickModes" => s.ShowQuickModes,
+                "CoreTiles" => s.ShowCoreTiles,
+                "CustomShortcuts" => s.ShowCustomShortcuts,
+                "RecentActivity" => s.ShowRecentActivity,
+                _ => true
+            };
 
-                element.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-                if (isVisible)
-                {
-                    _ = HomeSectionsContainer.Children.Add(element);
-                }
+            section.Element.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            if (isVisible)
+            {
+                _ = HomeSectionsContainer.Children.Add(section.Element);
             }
         }
 
@@ -154,7 +153,7 @@ public partial class DashboardView : UserControl
             tile.BorderBrush = border;
             tile.BorderThickness = new Thickness(thickness);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "DashboardView.ApplyTileStyle"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "DashboardView.ApplyTileStyle"); }
     }
 
     private void BtnCustomizeHome_Click(object sender, RoutedEventArgs e)
@@ -169,7 +168,7 @@ public partial class DashboardView : UserControl
             }
             _ = win.ShowDialog();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "DashboardView.BtnCustomizeHome_Click");
             ToastService.Show($"Erreur lors de l'ouverture de la personnalisation : {ex.Message}");
@@ -215,7 +214,7 @@ public partial class DashboardView : UserControl
                 mainWindow.NavigateTo(tag);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, $"DashboardView.NavigateTo({tag})");
         }
@@ -329,7 +328,7 @@ public partial class DashboardView : UserControl
             Title = "Sélectionner une application"
         };
 
-        if (dlg.ShowDialog() == true && CurrentViewModel is { } vm)
+        if (dlg.ShowDialog() is true && CurrentViewModel is { } vm)
         {
             string exeName = Path.GetFileNameWithoutExtension(dlg.FileName);
             vm.AddShortcut(new CustomShortcut

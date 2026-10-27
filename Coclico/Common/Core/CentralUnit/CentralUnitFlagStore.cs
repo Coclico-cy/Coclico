@@ -25,6 +25,7 @@ public sealed class CentralUnitFlagStore : IDisposable
     private readonly ConcurrentDictionary<string, byte> _criticalFlags = new(StringComparer.Ordinal);
     private readonly object _scheduleLock = new();
     private readonly Dictionary<string, DateTime> _schedules = new(StringComparer.Ordinal);
+    private DateTime _nextDueUtc = DateTime.MaxValue;
     private CancellationTokenSource _wakeCts = new();
     private CancellationTokenSource? _loopCts;
     private Task? _loopTask;
@@ -112,7 +113,11 @@ public sealed class CentralUnitFlagStore : IDisposable
         lock (_scheduleLock)
         {
             _schedules[flag] = dueUtc;
-            WakeSchedulerLocked();
+            if (dueUtc < _nextDueUtc)
+            {
+                _nextDueUtc = dueUtc;
+                WakeSchedulerLocked();
+            }
         }
     }
 
@@ -121,7 +126,6 @@ public sealed class CentralUnitFlagStore : IDisposable
         lock (_scheduleLock)
         {
             _schedules.Remove(flag);
-            WakeSchedulerLocked();
         }
     }
 
@@ -131,12 +135,9 @@ public sealed class CentralUnitFlagStore : IDisposable
         {
             DateTime threshold = DateTime.UtcNow + delay;
             List<string> postponed = new();
-            foreach (KeyValuePair<string, DateTime> schedule in _schedules)
+            foreach (KeyValuePair<string, DateTime> schedule in _schedules.Where(schedule => schedule.Value <= threshold && !_criticalFlags.ContainsKey(schedule.Key)))
             {
-                if (schedule.Value <= threshold && !_criticalFlags.ContainsKey(schedule.Key))
-                {
-                    postponed.Add(schedule.Key);
-                }
+                postponed.Add(schedule.Key);
             }
 
             foreach (string flag in postponed)
@@ -194,19 +195,13 @@ public sealed class CentralUnitFlagStore : IDisposable
         while (!loopToken.IsCancellationRequested)
         {
             TimeSpan delay;
-            CancellationTokenSource linked;
+            CancellationTokenSource? linked = null;
             try
             {
                 lock (_scheduleLock)
                 {
-                    DateTime next = DateTime.MaxValue;
-                    foreach (KeyValuePair<string, DateTime> schedule in _schedules)
-                    {
-                        if (schedule.Value < next)
-                        {
-                            next = schedule.Value;
-                        }
-                    }
+                    DateTime next = _schedules.Count == 0 ? DateTime.MaxValue : _schedules.Values.Min();
+                    _nextDueUtc = next;
 
                     TimeSpan remaining = next == DateTime.MaxValue ? MaxSchedulerSleep : next - DateTime.UtcNow;
                     delay = remaining <= TimeSpan.Zero ? TimeSpan.Zero : remaining > MaxSchedulerSleep ? MaxSchedulerSleep : remaining;
@@ -218,44 +213,37 @@ public sealed class CentralUnitFlagStore : IDisposable
                 break;
             }
 
-            if (delay == TimeSpan.Zero)
+            using (linked)
             {
-                linked.Dispose();
-                FireDueSchedules();
-                continue;
-            }
+                if (delay == TimeSpan.Zero)
+                {
+                    FireDueSchedules();
+                    continue;
+                }
 
-            try
-            {
-                await Task.Delay(delay, linked.Token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (ObjectDisposedException)
-            {
-                break;
-            }
-            finally
-            {
-                linked.Dispose();
+                try
+                {
+                    await Task.Delay(delay, linked.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException ex) { _ = ex; }
+                catch (ObjectDisposedException)
+                {
+                    break;
+                }
             }
         }
     }
 
     private void FireDueSchedules()
     {
-        List<string> due = new();
+        List<string> due;
         lock (_scheduleLock)
         {
             DateTime now = DateTime.UtcNow;
-            foreach (KeyValuePair<string, DateTime> schedule in _schedules)
-            {
-                if (schedule.Value <= now)
-                {
-                    due.Add(schedule.Key);
-                }
-            }
+            due = _schedules
+                .Where(schedule => schedule.Value <= now)
+                .Select(schedule => schedule.Key)
+                .ToList();
 
             foreach (string flag in due)
             {

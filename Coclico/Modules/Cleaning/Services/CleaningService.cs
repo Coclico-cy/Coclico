@@ -9,9 +9,11 @@ namespace Coclico.Modules.Cleaning.Services;
 
 public class CleaningService
 {
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     private static extern int SHEmptyRecycleBin(IntPtr hwnd, string? pszRootPath, uint dwFlags);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("dnsapi.dll")]
     private static extern bool DnsFlushResolverCache();
 
@@ -23,6 +25,7 @@ public class CleaningService
         public long i64NumItems;
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     private static extern int SHQueryRecycleBin(string? pszRootPath, ref SHQUERYRBINFO pSHQueryRBInfo);
 
@@ -39,7 +42,7 @@ public class CleaningService
                 totalItems = info.i64NumItems;
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.QueryRecycleBin"); }
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or System.InvalidOperationException) { LoggingService.LogException(ex, "CleaningService.QueryRecycleBin"); }
     }
 
     private const uint SHERB_NOCONFIRMATION = 0x00000001;
@@ -85,37 +88,6 @@ public class CleaningService
             ? $"{bytes / 1024.0:F0} {kbUnit}"
             : bytes < 1024L * 1024 * 1024 ? $"{bytes / (1024.0 * 1024):F1} {mbUnit}" : $"{bytes / (1024.0 * 1024 * 1024):F2} {gbUnit}";
     }
-
-    public async Task LaunchWindowsCleanupAsync()
-    {
-        string drive = GetWindowsDrive();
-        await Task.Run(async () =>
-        {
-            try
-            {
-                using var process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "cleanmgr.exe",
-                        Arguments = $"/d {drive}:",
-                        UseShellExecute = true,
-                        Verb = "runas",
-                        WindowStyle = ProcessWindowStyle.Normal
-                    }
-                };
-
-                _ = process.Start();
-                try { process.PriorityClass = ProcessPriorityClass.BelowNormal; } catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.LaunchWindowsCleanup"); }
-                await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Impossible de lancer le nettoyage Windows : {ex.Message}", ex);
-            }
-        });
-    }
-
     private static string GetWindowsDrive()
     {
         try
@@ -127,7 +99,7 @@ public class CleaningService
                 return root[0].ToString().ToUpperInvariant();
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.GetWindowsDrive"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "CleaningService.GetWindowsDrive"); }
         return "C";
     }
 
@@ -256,7 +228,6 @@ public class CleaningService
             string windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
 
-
             DateTime cleanupCutoff = DateTime.UtcNow.AddHours(-1);
             DateTime logsCutoff = DateTime.UtcNow.AddDays(-7);
 
@@ -275,7 +246,7 @@ public class CleaningService
                         case "TempFiles":
                         case "Fichiers temporaires Windows":
                             ScanDirectory(Path.GetTempPath(), cleanupCutoff, ref bytes, ref count);
-                            ScanDirectory(Path.Combine(windows, "Temp"), cleanupCutoff, ref bytes, ref count);
+                            ScanDirectory(Path.Join(windows, "Temp"), cleanupCutoff, ref bytes, ref count);
                             break;
 
                         case "RecycleBin":
@@ -290,12 +261,12 @@ public class CleaningService
 
                         case "Thumbnails":
                         case "Cache des miniatures":
-                            string thumbDir = Path.Combine(local, @"Microsoft\Windows\Explorer");
+                            string thumbDir = Path.Join(local, @"Microsoft\Windows\Explorer");
                             if (Directory.Exists(thumbDir))
                             {
                                 foreach (string f in Directory.EnumerateFiles(thumbDir, "thumbcache_*.db"))
                                 {
-                                    try { var fi = new FileInfo(f); bytes += fi.Length; count++; } catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.ScanAllCategories"); }
+                                    try { var fi = new FileInfo(f); bytes += fi.Length; count++; } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.ScanAllCategories"); }
                                 }
                             }
                             break;
@@ -312,37 +283,37 @@ public class CleaningService
                                 ScanDirectory(browserDir, cleanupCutoff, ref bytes, ref count);
                             }
 
-                            string firefoxProfilesDir = Path.Combine(local, @"Mozilla\Firefox\Profiles");
+                            string firefoxProfilesDir = Path.Join(local, @"Mozilla\Firefox\Profiles");
                             if (Directory.Exists(firefoxProfilesDir))
                             {
                                 foreach (string profile in Directory.EnumerateDirectories(firefoxProfilesDir))
                                 {
-                                    ScanDirectory(Path.Combine(profile, "cache2"), cleanupCutoff, ref bytes, ref count);
+                                    ScanDirectory(Path.Join(profile, "cache2"), cleanupCutoff, ref bytes, ref count);
                                 }
                             }
                             break;
 
                         case "SystemLogs":
                         case "Logs système & rapports d'erreur":
-                            ScanDirectory(Path.Combine(windows, "Logs"), logsCutoff, ref bytes, ref count);
-                            ScanDirectory(Path.Combine(windows, @"System32\LogFiles"), logsCutoff, ref bytes, ref count);
-                            ScanDirectory(Path.Combine(appData, @"Microsoft\Windows\WER"), logsCutoff, ref bytes, ref count);
-                            ScanDirectory(Path.Combine(local, @"Microsoft\Windows\WER"), logsCutoff, ref bytes, ref count);
+                            ScanDirectory(Path.Join(windows, "Logs"), logsCutoff, ref bytes, ref count);
+                            ScanDirectory(Path.Join(windows, @"System32\LogFiles"), logsCutoff, ref bytes, ref count);
+                            ScanDirectory(Path.Join(appData, @"Microsoft\Windows\WER"), logsCutoff, ref bytes, ref count);
+                            ScanDirectory(Path.Join(local, @"Microsoft\Windows\WER"), logsCutoff, ref bytes, ref count);
                             break;
 
                         case "WindowsUpdate":
                         case "Téléchargements Windows Update":
-                            ScanDirectory(Path.Combine(windows, @"SoftwareDistribution\Download"), cleanupCutoff, ref bytes, ref count);
+                            ScanDirectory(Path.Join(windows, @"SoftwareDistribution\Download"), cleanupCutoff, ref bytes, ref count);
                             break;
 
                         case "GpuShaders":
                         case "Cache des Shaders GPU (DirectX / NVIDIA / AMD)":
                             string[] shaderDirs =
                             [
-                                Path.Combine(local, "D3DSCache"),
-                                Path.Combine(local, @"NVIDIA\DXCache"),
-                                Path.Combine(local, @"NVIDIA\GLCache"),
-                                Path.Combine(local, @"AMD\DxcCache")
+                                Path.Join(local, "D3DSCache"),
+                                Path.Join(local, @"NVIDIA\DXCache"),
+                                Path.Join(local, @"NVIDIA\GLCache"),
+                                Path.Join(local, @"AMD\DxcCache")
                             ];
                             foreach (string shaderDir in shaderDirs)
                             {
@@ -353,17 +324,17 @@ public class CleaningService
 
                         case "MemoryDumps":
                         case "Dumps mémoire & plantages système":
-                            ScanDirectory(Path.Combine(windows, "Minidump"), cleanupCutoff, ref bytes, ref count);
-                            string memDmp = Path.Combine(windows, "MEMORY.DMP");
+                            ScanDirectory(Path.Join(windows, "Minidump"), cleanupCutoff, ref bytes, ref count);
+                            string memDmp = Path.Join(windows, "MEMORY.DMP");
                             if (File.Exists(memDmp))
                             {
-                                try { var fi = new FileInfo(memDmp); bytes += fi.Length; count++; } catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.ScanAllCategories"); }
+                                try { var fi = new FileInfo(memDmp); bytes += fi.Length; count++; } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.ScanAllCategories"); }
                             }
                             break;
 
                         case "DeliveryOptimization":
                         case "Optimisation de livraison (WaaS)":
-                            string waasDir = Path.Combine(windows, @"ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization");
+                            string waasDir = Path.Join(windows, @"ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization");
                             ScanDirectory(waasDir, cleanupCutoff, ref bytes, ref count);
                             break;
 
@@ -373,7 +344,7 @@ public class CleaningService
                             break;
                     }
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.ScanAllCategories"); }
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "CleaningService.ScanAllCategories"); }
 
                 cat.BytesFound = bytes;
                 cat.FileCount = count;
@@ -417,7 +388,7 @@ public class CleaningService
                 }
             }
             catch (OperationCanceledException) { throw; }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 result.Errors.Add($"{category.Name}: {ex.Message}");
                 LoggingService.LogException(ex, $"DeepCleaning.{category.Name}");
@@ -434,18 +405,10 @@ public class CleaningService
 
         return result;
     }
-
-    public async Task<long> EstimateCleanableBytesAsync(CancellationToken ct = default)
-    {
-        List<CleaningCategory> cats = GetAvailableCategories();
-        await ScanAllCategoriesAsync(cats, ct).ConfigureAwait(false);
-        return cats.Sum(c => c.BytesFound);
-    }
-
     private static async Task CleanWindowsTempAsync(CleaningCategory cat, CancellationToken ct)
     {
         string winTemp = Path.GetTempPath();
-        string systemTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp");
+        string systemTemp = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp");
         await CleanDirectorySafeAsync(winTemp, cat, ct);
         await CleanDirectorySafeAsync(systemTemp, cat, ct);
     }
@@ -461,13 +424,13 @@ public class CleaningService
                 cat.BytesFreed += rbBytes;
                 cat.FilesDeleted += (int)rbItems;
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "DeepCleaning.RecycleBin"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "DeepCleaning.RecycleBin"); }
         }, ct);
     }
 
     private static async Task CleanThumbnailCacheAsync(CleaningCategory cat, CancellationToken ct)
     {
-        string thumbCache = Path.Combine(
+        string thumbCache = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             @"Microsoft\Windows\Explorer");
 
@@ -490,10 +453,10 @@ public class CleaningService
                         fi.Delete();
                         cat.FilesDeleted++;
                     }
-                    catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanThumbnailCache"); }
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.CleanThumbnailCache"); }
                 }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "DeepCleaning.ThumbnailCache"); }
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.OperationCanceledException) { LoggingService.LogException(ex, "DeepCleaning.ThumbnailCache"); }
         }, ct);
     }
 
@@ -506,7 +469,7 @@ public class CleaningService
                 _ = DnsFlushResolverCache();
                 cat.FilesDeleted += 1;
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "DeepCleaning.FlushDns"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "DeepCleaning.FlushDns"); }
         }, ct);
     }
 
@@ -523,16 +486,12 @@ public class CleaningService
             }
         }
 
-        string firefoxProfilesDir = Path.Combine(localAppData, @"Mozilla\Firefox\Profiles");
+        string firefoxProfilesDir = Path.Join(localAppData, @"Mozilla\Firefox\Profiles");
         if (Directory.Exists(firefoxProfilesDir))
         {
-            foreach (string profile in Directory.EnumerateDirectories(firefoxProfilesDir))
+            foreach (string cache2 in Directory.EnumerateDirectories(firefoxProfilesDir).Select(profile => Path.Join(profile, "cache2")).Where(Directory.Exists))
             {
-                string cache2 = Path.Combine(profile, "cache2");
-                if (Directory.Exists(cache2))
-                {
-                    await CleanDirectorySafeAsync(cache2, cat, ct);
-                }
+                await CleanDirectorySafeAsync(cache2, cat, ct);
             }
         }
     }
@@ -541,10 +500,10 @@ public class CleaningService
     {
         string[] logPaths =
         [
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Logs"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"System32\LogFiles"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\Windows\WER"),
+            Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Logs"),
+            Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"System32\LogFiles"),
+            Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER"),
+            Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\Windows\WER"),
         ];
 
         foreach (string path in logPaths)
@@ -559,7 +518,7 @@ public class CleaningService
 
     private static async Task CleanWindowsUpdateDownloadAsync(CleaningCategory cat, CancellationToken ct)
     {
-        string softwareDist = Path.Combine(
+        string softwareDist = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"SoftwareDistribution\Download");
 
         if (Directory.Exists(softwareDist))
@@ -583,13 +542,13 @@ public class CleaningService
     private static async Task CleanCrashDumpsAsync(CleaningCategory cat, CancellationToken ct)
     {
         string windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-        string miniDump = Path.Combine(windows, "Minidump");
+        string miniDump = Path.Join(windows, "Minidump");
         if (Directory.Exists(miniDump))
         {
             await CleanDirectorySafeAsync(miniDump, cat, ct);
         }
 
-        string memDmp = Path.Combine(windows, "MEMORY.DMP");
+        string memDmp = Path.Join(windows, "MEMORY.DMP");
         if (File.Exists(memDmp))
         {
             try
@@ -599,13 +558,13 @@ public class CleaningService
                 File.Delete(memDmp);
                 cat.FilesDeleted++;
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanCrashDumps"); }
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "CleaningService.CleanCrashDumps"); }
         }
     }
 
     private static async Task CleanDeliveryOptimizationAsync(CleaningCategory cat, CancellationToken ct)
     {
-        string waasDir = Path.Combine(
+        string waasDir = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.Windows),
             @"ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization");
 
@@ -633,13 +592,13 @@ public class CleaningService
                 }
                 catch (OperationCanceledException)
                 {
-                    try { proc.Kill(entireProcessTree: true); } catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanWinSxS"); }
+                    try { proc.Kill(entireProcessTree: true); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.CleanWinSxS"); }
                     throw;
                 }
             }
         }
         catch (OperationCanceledException) { throw; }
-        catch (Exception ex) { LoggingService.LogException(ex, "DeepCleaning.WinSxS"); }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException) { LoggingService.LogException(ex, "DeepCleaning.WinSxS"); }
     }
 
     private static bool IsProtectedFile(FileInfo fi)
@@ -684,7 +643,7 @@ public class CleaningService
                 }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.PushSafeSubdirectories"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "CleaningService.PushSafeSubdirectories"); }
     }
 
     private static bool IsDeletableFile(FileInfo fi, string rootPath, DateTime cutoff)
@@ -712,12 +671,12 @@ public class CleaningService
     {
         return
         [
-            Path.Combine(localAppData, @"Google\Chrome\User Data\Default\Cache"),
-            Path.Combine(localAppData, @"Google\Chrome\User Data\Default\Code Cache"),
-            Path.Combine(localAppData, @"Microsoft\Edge\User Data\Default\Cache"),
-            Path.Combine(localAppData, @"Microsoft\Edge\User Data\Default\Code Cache"),
-            Path.Combine(localAppData, @"BraveSoftware\Brave-Browser\User Data\Default\Cache"),
-            Path.Combine(localAppData, @"Opera Software\Opera Stable\Cache"),
+            Path.Join(localAppData, @"Google\Chrome\User Data\Default\Cache"),
+            Path.Join(localAppData, @"Google\Chrome\User Data\Default\Code Cache"),
+            Path.Join(localAppData, @"Microsoft\Edge\User Data\Default\Cache"),
+            Path.Join(localAppData, @"Microsoft\Edge\User Data\Default\Code Cache"),
+            Path.Join(localAppData, @"BraveSoftware\Brave-Browser\User Data\Default\Cache"),
+            Path.Join(localAppData, @"Opera Software\Opera Stable\Cache"),
         ];
     }
 
@@ -746,19 +705,16 @@ public class CleaningService
 
                 try
                 {
-                    foreach (FileInfo fi in current.EnumerateFiles())
+                    foreach (FileInfo fi in current.EnumerateFiles().Where(fi => IsDeletableFile(fi, rootPath, cutoff)))
                     {
-                        if (IsDeletableFile(fi, rootPath, cutoff))
-                        {
-                            bytes += fi.Length;
-                            count++;
-                        }
+                        bytes += fi.Length;
+                        count++;
                     }
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.ScanDirectory"); }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.ScanDirectory"); }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.ScanDirectory"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.ScanDirectory"); }
     }
 
     private static async Task CleanDirectorySafeAsync(string path, CleaningCategory cat, CancellationToken ct)
@@ -799,10 +755,10 @@ public class CleaningService
                                     cat.FilesDeleted++;
                                 }
                             }
-                            catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanDirectorySafe"); }
+                            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.CleanDirectorySafe"); }
                         }
                     }
-                    catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanDirectorySafe"); }
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.CleanDirectorySafe"); }
 
                     if (!string.Equals(current.FullName, path, StringComparison.OrdinalIgnoreCase))
                     {
@@ -820,10 +776,10 @@ public class CleaningService
                             Directory.Delete(dir);
                         }
                     }
-                    catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanDirectorySafe"); }
+                    catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "CleaningService.CleanDirectorySafe"); }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.OperationCanceledException)
             {
                 LoggingService.LogException(ex, $"DeepCleaning.CleanDir({path})");
             }
@@ -871,13 +827,13 @@ public class CleaningService
                                     cat.FilesDeleted++;
                                 }
                             }
-                            catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanOldFiles"); }
+                            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.CleanOldFiles"); }
                         }
                     }
-                    catch (Exception ex) { LoggingService.LogException(ex, "CleaningService.CleanOldFiles"); }
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "CleaningService.CleanOldFiles"); }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, $"DeepCleaning.CleanOldFiles({path})");
             }

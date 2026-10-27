@@ -17,14 +17,14 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/first-interaction@v1
+      - uses: actions/first-interaction@3c71ce730280171fd1cfb57c00c774f8998586f7
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: |
             Thank you for your issue! A maintainer will review it soon. Please make sure the Coclico version and Windows version are mentioned.
-            
+
             Merci pour votre issue ! Un mainteneur va l'examiner prochainement. Pensez à vérifier que la version de Coclico et la version de Windows sont bien indiquées.
           pr-message: |
             Thank you for contributing to Coclico! Your pull request will be reviewed. Make sure the CI passes.
-            
+
             Merci pour votre contribution à Coclico ! Votre pull request va être examinée. Assurez-vous que la CI passe au vert.

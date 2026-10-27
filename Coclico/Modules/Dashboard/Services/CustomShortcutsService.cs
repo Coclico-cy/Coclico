@@ -42,7 +42,7 @@ public sealed class CustomShortcut
 
 public sealed class CustomShortcutsService
 {
-    private static readonly string ShortcutsFilePath = Path.Combine(
+    private static readonly string ShortcutsFilePath = Path.Join(
         SettingsService.GetUserDataDirectory(), "shortcuts.json");
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
@@ -74,7 +74,7 @@ public sealed class CustomShortcutsService
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "CustomShortcutsService.Load");
         }
@@ -95,7 +95,7 @@ public sealed class CustomShortcutsService
             string json = JsonSerializer.Serialize(Shortcuts.ToList(), JsonOptions);
             File.WriteAllText(ShortcutsFilePath, json);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "CustomShortcutsService.Save");
         }
@@ -223,7 +223,7 @@ public sealed class CustomShortcutsService
                     break;
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, $"CustomShortcutsService.ExecuteShortcutAsync({shortcut.Title})");
             ToastService.Show($"Impossible de lancer '{shortcut.Title}' : {ex.Message}");
@@ -240,7 +240,7 @@ public sealed class CustomShortcutsService
 
         ISecurityPolicy? policy = ServiceContainer.GetOptional<ISecurityPolicy>();
 
-        if (policy?.IsCommandBlocked(trimmed.ToLowerInvariant()) == true)
+        if (policy?.IsCommandBlocked(trimmed.ToLowerInvariant()) is true)
         {
             return false;
         }

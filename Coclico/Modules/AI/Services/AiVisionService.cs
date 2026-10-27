@@ -36,7 +36,7 @@ public static class AiVisionService
             (byte[] bytes, string mime) = ProcessImageBitmap(bitmap, MaxDimension);
             return new AttachedImage(Convert.ToBase64String(bytes), mime, LoadBitmapSource(bytes), "Capture_Ecran.jpg");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "AiVisionService.CaptureScreen");
             return null;
@@ -61,7 +61,7 @@ public static class AiVisionService
             (byte[] bytes, string mime) = ProcessBitmapSource(imageSource, MaxDimension);
             return new AttachedImage(Convert.ToBase64String(bytes), mime, LoadBitmapSource(bytes), "Presse_Papier.jpg");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "AiVisionService.FromClipboard");
             return null;
@@ -87,7 +87,7 @@ public static class AiVisionService
             (byte[] bytes, string mime) = ProcessImageBitmap(original, MaxDimension);
             return new AttachedImage(Convert.ToBase64String(bytes), mime, LoadBitmapSource(bytes), Path.GetFileName(path));
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "AiVisionService.FromFilePath");
             return null;
@@ -149,7 +149,8 @@ public static class AiVisionService
         }
 
         using var encoderParams = new EncoderParameters(1);
-        encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 85L);
+        using var qualityParameter = new EncoderParameter(Encoder.Quality, 85L);
+        encoderParams.Param[0] = qualityParameter;
         bitmap.Save(ms, jpegCodec, encoderParams);
         return (ms.ToArray(), "image/jpeg");
     }

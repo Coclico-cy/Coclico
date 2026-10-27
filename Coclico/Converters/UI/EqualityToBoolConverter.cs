@@ -37,7 +37,7 @@ public class EqualityToBoolConverter : IMultiValueConverter, IValueConverter
                 {
                     return Enum.Parse(targetType, parameter.ToString()!, true);
                 }
-                catch (Exception exSwallow)
+                catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
                 {
                     Services.LoggingService.LogException(exSwallow, "EqualityToBoolConverter.ConvertBackEnum");
                 }

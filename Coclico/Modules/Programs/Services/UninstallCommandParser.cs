@@ -47,7 +47,7 @@ public static class UninstallCommandParser
                 return null;
             }
 
-            string msiExe = Path.Combine(Environment.SystemDirectory, "msiexec.exe");
+            string msiExe = Path.Join(Environment.SystemDirectory, "msiexec.exe");
             return new ParsedUninstallCommand(File.Exists(msiExe) ? msiExe : "msiexec.exe", msiArgs, IsUri: false, IsMsi: true);
         }
 

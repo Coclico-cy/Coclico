@@ -26,6 +26,12 @@ public sealed class ProcessExecutionService : IProcessExecutionService
             return new ProcessExecutionResult(false, -1, string.Empty, string.Empty, "Executable path cannot be empty.");
         }
 
+        if (!IntegrityGate.IsSensitiveOperationAllowed("process-execution", out string integrityReason))
+        {
+            LoggingService.LogError($"[ProcessExecutionService] Execute blocked: {integrityReason}");
+            return new ProcessExecutionResult(false, -1, string.Empty, string.Empty, integrityReason);
+        }
+
         List<string> argList = arguments?.ToList() ?? [];
         string rawArgString = string.Join(" ", argList);
         string fullCommand = $"{executable} {rawArgString}".Trim();
@@ -91,7 +97,7 @@ public sealed class ProcessExecutionService : IProcessExecutionService
                 {
                     proc.Kill(entireProcessTree: true);
                 }
-                catch (Exception exSwallow)
+                catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
                 {
                     LoggingService.LogException(exSwallow, "ProcessExecutionService.KillOnCancel");
                 }
@@ -118,7 +124,7 @@ public sealed class ProcessExecutionService : IProcessExecutionService
                 StandardError: stderr,
                 ErrorMessage: exitCode != 0 ? $"Process exited with code {exitCode}" : null);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, $"ProcessExecutionService.ExecuteAsync({executable})");
             return new ProcessExecutionResult(false, -1, string.Empty, string.Empty, ex.Message);
@@ -179,6 +185,13 @@ public sealed class ProcessExecutionService : IProcessExecutionService
         {
             return false;
         }
+
+        if (!IntegrityGate.IsSensitiveOperationAllowed(asAdmin ? "launch-as-admin" : "launch-application", out string launchReason))
+        {
+            LoggingService.LogError($"[ProcessExecutionService] Launch blocked: {launchReason}");
+            return false;
+        }
+
         string safeArguments = RequoteArguments(arguments);
 
         string fullCommand = string.IsNullOrWhiteSpace(safeArguments) ? appPath : $"{appPath} {safeArguments}";
@@ -205,7 +218,7 @@ public sealed class ProcessExecutionService : IProcessExecutionService
             _ = Process.Start(psi);
             return true;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, $"ProcessExecutionService.LaunchApplication({appPath})");
             return false;

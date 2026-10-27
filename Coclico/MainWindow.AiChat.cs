@@ -57,7 +57,7 @@ public partial class MainWindow
                 PreloadPredictedViews(targetTag!);
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "MainWindow.AiChatPanel_ActionRequested"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "MainWindow.AiChatPanel_ActionRequested"); }
     }
 
     private void BtnFloatingAi_Click(object sender, RoutedEventArgs e)
@@ -84,7 +84,7 @@ public partial class MainWindow
         {
             _ = ServiceContainer.GetOptional<IAiService>()?.UnloadAsync();
             try { CentralUnitService.Current.NotifyAiActivity(); }
-            catch (Exception ex) { LoggingService.LogException(ex, "MainWindow.ToggleChatPanel.NotifyAiActivity"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "MainWindow.ToggleChatPanel.NotifyAiActivity"); }
             var anim = new DoubleAnimation(Motion.ChatPanelWidth, Motion.ChatClose)
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }

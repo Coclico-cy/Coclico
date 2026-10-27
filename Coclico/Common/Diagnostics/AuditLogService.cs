@@ -27,7 +27,7 @@ public sealed class AuditLogService : IAuditLog, IDisposable
 
     public AuditLogService()
     {
-        _auditDir = Path.Combine(
+        _auditDir = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Coclico", "audit");
         _ = Directory.CreateDirectory(_auditDir);
@@ -78,14 +78,14 @@ public sealed class AuditLogService : IAuditLog, IDisposable
                             entries.Add(entry);
                         }
                     }
-                    catch (Exception exSwallow)
+                    catch (Exception exSwallow) when (exSwallow is System.Text.Json.JsonException or System.FormatException)
                     {
                         LoggingService.LogException(exSwallow, "AuditLogService.DeserializeEntry");
                     }
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "AuditLogService.GetRecentAsync");
         }
@@ -111,7 +111,7 @@ public sealed class AuditLogService : IAuditLog, IDisposable
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "AuditLogService.Prune");
         }
@@ -125,7 +125,7 @@ public sealed class AuditLogService : IAuditLog, IDisposable
         {
             _ = _consumer.Wait(1000);
         }
-        catch (Exception exSwallow)
+        catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
         {
             LoggingService.LogException(exSwallow, "AuditLogService.Dispose");
         }
@@ -134,56 +134,34 @@ public sealed class AuditLogService : IAuditLog, IDisposable
 
     private async Task ConsumeAuditAsync()
     {
-        string? currentPath = null;
-        FileStream? stream = null;
-        StreamWriter? writer = null;
-
         try
         {
+            string currentPath = CurrentAuditFilePath();
             await foreach (AuditEntry entry in _channel.Reader.ReadAllAsync(_cts.Token).ConfigureAwait(false))
             {
                 string expectedPath = CurrentAuditFilePath();
                 if (currentPath != expectedPath)
                 {
-                    writer?.Dispose();
-                    stream?.Dispose();
                     currentPath = expectedPath;
-                    stream = new FileStream(currentPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite, 4096, useAsync: true);
-                    writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = false };
                 }
 
-                if (writer != null)
-                {
-                    string json = JsonSerializer.Serialize(entry, _json);
-                    await writer.WriteLineAsync(json).ConfigureAwait(false);
-                    if (_channel.Reader.Count == 0)
-                    {
-                        await writer.FlushAsync().ConfigureAwait(false);
-                    }
-                }
+                await WriteAuditEntryAsync(currentPath, entry).ConfigureAwait(false);
             }
         }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
+        catch (OperationCanceledException ex) { _ = ex; }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException or System.OperationCanceledException)
         {
             System.Diagnostics.Debug.WriteLine($"[AuditLogService] Consumer error: {ex}");
         }
-        finally
-        {
-            try
-            {
-                if (writer != null)
-                {
-                    await writer.FlushAsync().ConfigureAwait(false);
-                    writer.Dispose();
-                }
-                stream?.Dispose();
-            }
-            catch (Exception exSwallow)
-            {
-                LoggingService.LogException(exSwallow, "AuditLogService.ConsumerCleanup");
-            }
-        }
+    }
+
+    private async Task WriteAuditEntryAsync(string path, AuditEntry entry)
+    {
+        using FileStream stream = new(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite, 4096, useAsync: true);
+        using StreamWriter writer = new(stream, Encoding.UTF8) { AutoFlush = false };
+        string json = JsonSerializer.Serialize(entry, _json);
+        await writer.WriteLineAsync(json).ConfigureAwait(false);
+        await writer.FlushAsync().ConfigureAwait(false);
     }
 
     private static async IAsyncEnumerable<string> ReadLinesFromEndAsync(string filePath)
@@ -207,7 +185,7 @@ public sealed class AuditLogService : IAuditLog, IDisposable
                 allLines = content.Split('\n');
             }
         }
-        catch (Exception exSwallow)
+        catch (Exception exSwallow) when (exSwallow is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(exSwallow, "AuditLogService.TailRead");
         }
@@ -221,6 +199,6 @@ public sealed class AuditLogService : IAuditLog, IDisposable
     private string CurrentAuditFilePath()
     {
         string today = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd");
-        return Path.Combine(_auditDir, $"audit-{today}.log");
+        return Path.Join(_auditDir, $"audit-{today}.log");
     }
 }

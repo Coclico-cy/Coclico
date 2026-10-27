@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -34,22 +35,22 @@ public class AppSettings
     public string WingetScope { get; set; } = "machine";
 
     [JsonPropertyName("launchAtStartup")]
-    public bool LaunchAtStartup { get; set; } = false;
+    public bool LaunchAtStartup { get; set; }
 
     [JsonPropertyName("minimizeToTray")]
-    public bool MinimizeToTray { get; set; } = false;
+    public bool MinimizeToTray { get; set; }
 
     [JsonPropertyName("firstRun")]
     public bool FirstRun { get; set; } = true;
 
     [JsonPropertyName("skipUninstallConfirmation")]
-    public bool SkipUninstallConfirmation { get; set; } = false;
+    public bool SkipUninstallConfirmation { get; set; }
 
     [JsonPropertyName("hasSeenWelcome")]
-    public bool HasSeenWelcome { get; set; } = false;
+    public bool HasSeenWelcome { get; set; }
 
     [JsonPropertyName("hasSeenCoclico20Welcome")]
-    public bool HasSeenCoclico20Welcome { get; set; } = false;
+    public bool HasSeenCoclico20Welcome { get; set; }
 
     [JsonPropertyName("launchMode")]
     public string LaunchMode { get; set; } = "Normal";
@@ -59,6 +60,27 @@ public class AppSettings
 
     [JsonPropertyName("auditRetentionDays")]
     public int AuditRetentionDays { get; set; } = 90;
+
+    [JsonPropertyName("diagnosticEnableHardwareSensors")]
+    public bool DiagnosticEnableHardwareSensors { get; set; } = true;
+
+    [JsonPropertyName("diagnosticEnableLiveMonitoring")]
+    public bool DiagnosticEnableLiveMonitoring { get; set; }
+
+    [JsonPropertyName("diagnosticHistoryRetentionCount")]
+    public int DiagnosticHistoryRetentionCount { get; set; } = 30;
+
+    [JsonPropertyName("diagnosticHistoryRetentionDays")]
+    public int DiagnosticHistoryRetentionDays { get; set; } = 30;
+
+    [JsonPropertyName("diagnosticNetworkProbeTimeoutMs")]
+    public int DiagnosticNetworkProbeTimeoutMs { get; set; } = 2000;
+
+    [JsonPropertyName("diagnosticMaxParallelChecks")]
+    public int DiagnosticMaxParallelChecks { get; set; } = 3;
+
+    [JsonPropertyName("diagnosticEnableExternalBandwidthTest")]
+    public bool DiagnosticEnableExternalBandwidthTest { get; set; }
 
     [JsonPropertyName("aiIdleTimeoutMinutes")]
     public int AiIdleTimeoutMinutes { get; set; } = 5;
@@ -70,7 +92,8 @@ public class AppSettings
     public string AiModel { get; set; } = "IA-support-chat.gguf";
 
     [JsonPropertyName("ollamaEndpoint")]
-    public string OllamaEndpoint { get; set; } = "http://localhost:11434";
+    public string OllamaEndpoint { get; set; } =
+        new UriBuilder(Uri.UriSchemeHttp, IPAddress.Loopback.ToString(), 11434).Uri.ToString().TrimEnd('/');
 
     [JsonPropertyName("aiEnableFloatingButton")]
     public bool AiEnableFloatingButton { get; set; } = true;
@@ -85,7 +108,7 @@ public class AppSettings
     public int AiGpuLayers { get; set; } = 32;
 
     [JsonPropertyName("autoCleanEnabled")]
-    public bool AutoCleanEnabled { get; set; } = false;
+    public bool AutoCleanEnabled { get; set; }
 
     [JsonPropertyName("autoCleanMode")]
     public string AutoCleanMode { get; set; } = "Interval";
@@ -106,7 +129,7 @@ public class AppSettings
     public string MenuExpandedGroups { get; set; } = "Maintenance,Performance,Applications";
 
     [JsonPropertyName("adaptivePowerEnabled")]
-    public bool AdaptivePowerEnabled { get; set; } = false;
+    public bool AdaptivePowerEnabled { get; set; }
 
     [JsonPropertyName("powerPreferredMode")]
     public string PowerPreferredMode { get; set; } = "Optimal";
@@ -125,10 +148,10 @@ public class SettingsService
         public const double CardMax = 0.40;
     }
 
-    public static readonly string SettingsDir = Path.Combine(
+    public static readonly string SettingsDir = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico");
 
-    private static readonly string SettingsPath = Path.Combine(SettingsDir, "settings.json");
+    private static readonly string SettingsPath = Path.Join(SettingsDir, "settings.json");
     private static readonly JsonSerializerOptions _writeOptions = new() { WriteIndented = true };
     private static readonly SemaphoreSlim _ioLock = new(1, 1);
     private static readonly string[] ValidLanguages = ["en", "fr"];
@@ -148,12 +171,12 @@ public class SettingsService
         try
         {
             _ = Directory.CreateDirectory(SettingsDir);
-            _ = Directory.CreateDirectory(Path.Combine(SettingsDir, "profiles"));
-            _ = Directory.CreateDirectory(Path.Combine(SettingsDir, "avatars"));
-            _ = Directory.CreateDirectory(Path.Combine(SettingsDir, "logs"));
-            _ = Directory.CreateDirectory(Path.Combine(SettingsDir, "cache"));
+            _ = Directory.CreateDirectory(Path.Join(SettingsDir, "profiles"));
+            _ = Directory.CreateDirectory(Path.Join(SettingsDir, "avatars"));
+            _ = Directory.CreateDirectory(Path.Join(SettingsDir, "logs"));
+            _ = Directory.CreateDirectory(Path.Join(SettingsDir, "cache"));
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "SettingsService.GetUserDataDirectory");
         }
@@ -167,7 +190,7 @@ public class SettingsService
             string dir = GetUserDataDirectory();
             _ = Process.Start(new ProcessStartInfo("explorer.exe", dir) { UseShellExecute = true });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "SettingsService.OpenUserDataDirectory");
         }
@@ -195,7 +218,7 @@ public class SettingsService
                 Settings = new AppSettings();
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             Settings = new AppSettings();
             LoggingService.LogException(ex, "SettingsService.Load");
@@ -229,6 +252,81 @@ public class SettingsService
         Save();
     }
 
+    public async Task<bool> ExportToAsync(string destinationPath)
+    {
+        if (string.IsNullOrWhiteSpace(destinationPath))
+        {
+            return false;
+        }
+
+        try
+        {
+            string? dir = Path.GetDirectoryName(destinationPath);
+            if (!string.IsNullOrEmpty(dir))
+            {
+                _ = Directory.CreateDirectory(dir);
+            }
+
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                string json = JsonSerializer.Serialize(Settings, _writeOptions);
+                await File.WriteAllTextAsync(destinationPath, json).ConfigureAwait(false);
+            }
+            finally
+            {
+                _ = _ioLock.Release();
+            }
+
+            LoggingService.LogInfo($"[SettingsService] Réglages exportés vers « {destinationPath} »");
+            return true;
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            LoggingService.LogException(ex, "SettingsService.ExportTo");
+            return false;
+        }
+    }
+
+    public async Task<bool> ImportFromAsync(string sourcePath)
+    {
+        if (string.IsNullOrWhiteSpace(sourcePath) || !File.Exists(sourcePath))
+        {
+            return false;
+        }
+
+        try
+        {
+            string json = await File.ReadAllTextAsync(sourcePath).ConfigureAwait(false);
+            AppSettings imported = JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+            AppSettings copy = Sanitize(imported, out _);
+
+            copy.FirstRun = Settings.FirstRun;
+            copy.HasSeenWelcome = Settings.HasSeenWelcome;
+            copy.HasSeenCoclico20Welcome = Settings.HasSeenCoclico20Welcome;
+            copy.SkippedUpdateVersion = Settings.SkippedUpdateVersion;
+
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                Settings = copy;
+            }
+            finally
+            {
+                _ = _ioLock.Release();
+            }
+
+            await SaveCoreAsync().ConfigureAwait(false);
+            LoggingService.LogInfo($"[SettingsService] Réglages importés depuis « {sourcePath} »");
+            return true;
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
+        {
+            LoggingService.LogException(ex, "SettingsService.ImportFrom");
+            return false;
+        }
+    }
+
     public void EnableAutostart()
     {
         try
@@ -241,11 +339,11 @@ public class SettingsService
             }
 
             string exePath = Process.GetCurrentProcess().MainModule?.FileName
-                ?? Path.Combine(AppContext.BaseDirectory, "Coclico.exe");
+                ?? Path.Join(AppContext.BaseDirectory, "Coclico.exe");
 
             key.SetValue("Coclico", '"' + exePath + '"');
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Security.SecurityException or System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "SettingsService.EnableAutostart");
         }
@@ -259,7 +357,7 @@ public class SettingsService
                 .OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", writable: true);
             key?.DeleteValue("Coclico", throwOnMissingValue: false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "SettingsService.DisableAutostart");
         }
@@ -282,7 +380,7 @@ public class SettingsService
                 Settings = new AppSettings();
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             Settings = new AppSettings();
             LoggingService.LogException(ex, "SettingsService.Load");
@@ -309,7 +407,7 @@ public class SettingsService
             await File.WriteAllTextAsync(tempPath, json).ConfigureAwait(false);
             File.Move(tempPath, SettingsPath, overwrite: true);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "SettingsService.Save");
         }

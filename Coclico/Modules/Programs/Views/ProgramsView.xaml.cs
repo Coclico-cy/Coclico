@@ -36,7 +36,7 @@ public partial class ProgramsView : UserControl
                 Title = "Sélectionner une application"
             };
 
-            return dialog.ShowDialog() == true ? dialog.FileName : null;
+            return dialog.ShowDialog() is true ? dialog.FileName : null;
         };
 
         ViewModel.BeginEditName = () =>

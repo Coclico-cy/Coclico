@@ -33,8 +33,10 @@
 13. [Tests](#13-tests)
 14. [Build, format, CI and release](#14-build-format-ci-and-release)
 15. [The installer pipeline](#15-the-installer-pipeline)
-16. [Security practices](#16-security-practices)
-17. [Publishing a release](#17-publishing-a-release)
+16. [Release integrity and signing](#16-release-integrity-and-signing)
+17. [Security practices](#17-security-practices)
+18. [Code scanning and P/Invoke rules](#18-code-scanning-and-pinvoke-rules)
+19. [Publishing a release](#19-publishing-a-release)
 
 ---
 
@@ -60,14 +62,16 @@ Notable build settings in `Coclico/Coclico.csproj`:
 - `EnableWindowsTargeting`: CI can build the Windows target from a non-Windows agent.
 - `InternalsVisibleTo("Coclico.Tests")`: the test project can reach `internal` members.
 
-The solution (`Coclico.slnx`, also mirrored as `Coclico.sln`) contains **two projects**:
+The solution (`Coclico.slnx`) contains **four projects**:
 
 ```text
-Coclico/         WPF application (the main app)
-Coclico.Tests/   xunit tests (references Coclico through InternalsVisibleTo)
+Coclico/              WPF application (the main app)
+Coclico.Security/     Release security: integrity manifests, signing tool, trust store
+Coclico.InstallerAot/  Avalonia NativeAOT installer (see §15)
+Coclico.Tests/        xunit tests (references Coclico through InternalsVisibleTo)
 ```
 
-`Coclico.Installer/` is **not** part of the solution: it is a standalone WPF project compiled only by `installer/build-installer.ps1` (see §15).
+`Coclico.Security` (`OutputType=Exe`, `net10.0`, `IsAotCompatible=true`) hosts the security domain, the infrastructure and the signing tool (`Tool/Program.cs`: `keygen | sign | verify | check`). Both the application and the installer reference it; thanks to source-generated JSON (`SecurityJsonContext`), the installer compiles it cleanly in NativeAOT.
 
 ## 2. Application startup
 
@@ -156,11 +160,13 @@ Repository root:
 | `READMEDEV.md` / `READMEDEV_FR.md` | This developer documentation (EN / FR) |
 | `docs/` | Screenshots used by the READMEs |
 | `installer/build-installer.ps1` | The installer build script (§15) |
+| `installer/Key/` | Local-only signing key (gitignored `key.keyfile` and remembered password); never committed |
+| `Coclico/Security/trust-policy.json` | Anchored trusted signing keys and update policy (§16) |
 | `.github/workflows/` | CI, release, repository automation (§14) |
 
 ## 5. The modules, one by one
 
-`Modules/` contains eleven folders, one per feature. They all follow the shape of §4: logic in services, UI in views.
+`Modules/` contains twelve folders, one per feature. They all follow the shape of §4: logic in services, UI in views.
 
 ### Dashboard (`Modules/Dashboard`)
 
@@ -179,6 +185,22 @@ The built-in, fully local assistant the chat panel opened with `Ctrl+Space`. Det
 - `ISecurityPolicy` / `SecurityPolicyService`: the central command policy. `IProcessExecutionService` consults it before running anything (§10). Forbidden commands are blocked in one single place, covered by `SecurityPolicyTests`.
 - `SystemHealthService`: system status checks.
 - `StartupHealthService`: reviews what runs at Windows startup.
+
+### PC Diagnostics (`Modules/Diagnostics`)
+
+The global PC diagnostics hub: it gathers and correlates hardware, system, network, storage and software information. **Every scan is read-only**, no system setting is ever changed, and each run is cancellable.
+
+- `DiagnosticOrchestrator` (`IDiagnosticOrchestrator`): runs checks with limited concurrency (3 by default), a per-check timeout, per-check error isolation (one failure never fails the run), then merge, dedupe, severity/confidence sort and sanitization before persistence.
+- Eleven `IDiagnosticCheck` implementations (one per domain): `WindowsHealthCheck`, `CpuCheck`, `GpuCheck`, `MemoryCheck`, `StorageCheck`, `NetworkCheck`, `PowerBatteryCheck`, `DeviceCheck`, `ProcessesCheck`, `SecurityCheck`, `MotherboardCheck`. **Quick** mode runs only cheap checks; **Full** adds the motherboard/BIOS check; **Targeted** runs only the selected categories. Checks reuse the existing services (`SystemHealthService`, `MemoryCleanerService`, `StartupHealthService`, `DriveInfo`, event logs, documented WMI/CIM) without duplicating their scans.
+- `DiagnosticRuleEngine`: **deterministic, pure, versioned** rule engine (`RulesVersion`). Thresholds are explicit, documented constants; a missing value never produces a finding (neither "healthy" nor "failing"); severity and confidence are two separate axes; no opaque 0-100 global score.
+- `DiagnosticActionCatalog`: **closed** catalog of typed actions (navigation to existing modules only). A finding never carries a free shell command; the local AI may explain results but cannot invent metrics, change severities or execute anything.
+- `DiagnosticHistoryService` (`IDiagnosticHistoryService`): local JSON history under `%APPDATA%\Coclico\diagnostics\`, atomic writes, 30 runs / 30 days retention, resilient to corrupt files.
+- `DiagnosticReportExporter`: versioned `.json` and human-readable `.txt` export, always through a user save dialog.
+- `DiagnosticPrivacySanitizer`: masks profile paths, machine/user names and serial numbers before any persistence or export; sensitive metrics (MAC, serial) are masked entirely.
+- `WmiHardwareTelemetryService` (`IHardwareTelemetryService`): MVP sensor provider (ACPI thermal zone through WMI). **LibreHardwareMonitorLib is not adopted** for now: the stable NuGet release is 0.9.6 (MPL-2.0) while visible 0.9.7 builds are frequent prereleases; a prerelease is not acceptable in a production package. The provider sits behind an interface for a documented later addition.
+- `AppSettings`: `diagnosticEnableHardwareSensors`, `diagnosticEnableLiveMonitoring` (default false), `diagnosticHistoryRetentionCount/Days` (30/30), `diagnosticNetworkProbeTimeoutMs` (2000, bounded), `diagnosticMaxParallelChecks` (3), `diagnosticEnableExternalBandwidthTest` (default false).
+- Navigation: tag `Diagnostics`, "PC Diagnostics" entry in the Maintenance group, AI action `open_diagnostics`.
+- Tests in `Coclico.Tests/Modules/Diagnostics/`: rule engine (thresholds, missing data, sorting, dedupe, no free commands), orchestrator (fake checks: quick/full/targeted, error isolation, timeout, cancellation, progress), history (round-trip, retention, corrupt file), sanitizer, summary builder, and dynamic language-key validation (`DiagnosticResourceKeyTests`).
 
 ### Disk Analysis (`Modules/DiskAnalyzer`)
 
@@ -229,7 +251,7 @@ All screenshots live in `docs/`. They also illustrate the user guides.
 
 <p align="center">
   <img src="docs/accueil.png" alt="Dashboard" width="400">
-  <img src="docs/Menu.png" alt="Menu" width="400">
+  <img src="docs/menu.png" alt="Menu" width="400">
   <br>
   <em>Dashboard (left) and navigation drawer (right) three collapsible groups.</em>
 </p>
@@ -296,7 +318,6 @@ private static readonly (string Tag, Func<UIElement> Factory)[] ModuleRegistry =
 [
     ("Home", static () => ServiceContainer.GetOptional<DashboardView>() ?? new DashboardView()),
     ("Programs", static () => new ProgramsView()),
-    // ... 11 entries in total
 ];
 ```
 
@@ -348,7 +369,7 @@ Concrete example: the PC Power Management module (`Modules/Power`). Steps:
 
 ## 13. Tests
 
-`Coclico.Tests` (xunit): everything must pass before any merge. `InternalsVisibleTo("Coclico.Tests")` reaches `internal` members. Current coverage:
+`Coclico.Tests` (xunit): everything must pass before any merge. `InternalsVisibleTo("Coclico.Tests")` reaches `internal` members. The `Security/` folder holds the 61 release-security tests: keyfile encryption, integrity manifest building and RSA-PSS verification, trust policy, tamper-evident journal, path and archive guards, fuzzing. Current coverage:
 
 | File | What it covers |
 | --- | --- |
@@ -372,6 +393,12 @@ Concrete example: the PC Power Management module (`Modules/Power`). Steps:
 | `Modules/DiskAnalyzer/DiskAnalyzerTests.cs` | Tree scan, `FormatSize`, STA instantiation |
 | `Modules/DiskAnalyzer/DuplicateFinderTests.cs` | 3-phase duplicates, thresholds, top-N |
 | `Modules/HealthDefense/SecurityPolicyTests.cs` | Blocked commands |
+| `Modules/Diagnostics/DiagnosticRuleEngineTests.cs` | Rules: thresholds, missing data, sorting, dedupe, no free commands |
+| `Modules/Diagnostics/DiagnosticOrchestratorTests.cs` | Quick/full/targeted modes, error isolation, timeout, cancellation, progress |
+| `Modules/Diagnostics/DiagnosticHistoryServiceTests.cs` | History: round-trip, retention, corrupt file, atomic write |
+| `Modules/Diagnostics/DiagnosticPrivacySanitizerTests.cs` | Path, serial, machine name masking, sensitive metrics |
+| `Modules/Diagnostics/DiagnosticSummaryBuilderTests.cs` | Honest counters, no global score |
+| `Modules/Diagnostics/DiagnosticResourceKeyTests.cs` | Dynamic language keys present in fr.xaml and en.xaml |
 | `Modules/Network/NetworkSettingsGuardTests.cs` | Network value validation |
 | `Modules/Network/NetworkTuningCatalogTests.cs` | Catalog of the 9 settings |
 | `Modules/Power/AdaptivePowerRulesTests.cs` | Adaptive rule: thresholds, hysteresis, cooldown |
@@ -380,6 +407,12 @@ Concrete example: the PC Power Management module (`Modules/Power`). Steps:
 | `Modules/RamCleaner/MemoryCleanerServiceTests.cs` | Memory purge profiles |
 | `Modules/Settings/ProfileServiceTests.cs` | User profiles |
 | `Ui/Xaml/XamlResourceValidationTests.cs` | `StaticResource` resolution, dictionaries, image paths |
+| `Security/KeyfileProtectorTests.cs` | Keyfile encryption: KDF, AES-GCM round-trip, 128-character password rule |
+| `Security/ManifestVerifierTests.cs` | Manifest building, canonicalization, RSA-PSS signature verification |
+| `Security/UpdatePolicyTests.cs` | Trusted keys, activation/revocation, minimum versions and generations |
+| `Security/SecurityJournalTests.cs` | Tamper-evident security journal |
+| `Security/PathValidatorTests.cs` | Safe path validation |
+| `Security/SecurityFuzzTests.cs` | Fuzzed inputs on manifest, journal and archive guards |
 
 ## 14. Build, format, CI and release
 
@@ -394,10 +427,18 @@ dotnet test Coclico.slnx --configuration Release --no-build --no-restore
 
 > Format rule: all new code must pass `dotnet format --verify-no-changes`. If a local check fails, run `dotnet format Coclico.slnx` (without `--verify`) and commit the result.
 
+### Zero-warning policy
+
+All four projects (`Coclico`, `Coclico.Security`, `Coclico.Tests`, `Coclico.InstallerAot`) define `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`, and `installer/build-installer.ps1` passes `-warnaserror` to every `dotnet publish`. Any warning therefore fails the build and the installer. For a full sweep (incremental builds do not re-emit existing warnings): `dotnet build Coclico.slnx -t:Rebuild -warnaserror`, in both Debug and Release.
+
+**Documented exception — IL3053 in `Coclico.InstallerAot`**: this NativeAOT warning originates from `MicroCom.Runtime` (a third-party Avalonia dependency, COM interop that is not statically AOT-provable). Audit: the affected COM paths are not used at runtime by the installer; the warning is suppressed in a targeted way via `<NoWarn>IL3053</NoWarn>` in `Coclico.InstallerAot.csproj`. Everything else stays an error. The source code is intentionally comment-free; this rationale lives here, in the documentation.
+
+**AOT guard**: `Coclico.Security` sets `<IsAotCompatible>true</IsAotCompatible>`. Because the installer compiles the security project NativeAOT, any reflection-based serialization or dynamic-code usage added to it fails the build immediately (IL2026/IL3050 become errors), on Windows and Linux alike.
+
 Workflows in `.github/workflows/`:
 
 - **`ci.yml`** on every push/PR to `main`: restore → format check → Release build → tests → on pushes to `main`, a win-x64 publish is uploaded as an artifact.
-- **`release.yml`** triggered by a `vX.Y.Z` tag: tag ↔ `version.txt` consistency, format + tests, publish, installer via `./installer/build-installer.ps1 -SkipPublish`, portable ZIP + `SHA256SUMS.txt`, GitHub release.
+- **`release.yml`** triggered by a `vX.Y.Z` tag: tag ↔ `version.txt` consistency, restore, installer via `./installer/build-installer.ps1 -CI` (non-interactive, unsigned: no signing key exists on CI), portable ZIP + `SHA256SUMS.txt`, GitHub release.
 - **`codeql.yml`** CodeQL security scanning.
 - **`dependency-review.yml`** dependency review of package changes.
 - **`scorecard.yml`** OpenSSF Scorecard.
@@ -411,9 +452,10 @@ What `installer/build-installer.ps1` does, step by step (interactive console, FR
 2. **Tests first**: `dotnet test` runs before anything is packaged (skip with `-SkipTests`). The installer is never built on a red suite.
 3. **Cleanup**: `publish/` and `artifacts/installer_build` are cleaned (skip with `-SkipClean`).
 4. **Publish Coclico**: `dotnet publish` win-x64, **framework-dependent** (`--self-contained false`), no single file, no PDBs → `publish/`.
-5. **Payload**: `publish/` is zipped into `payload.zip` inside `Coclico.Installer/`. Excluded: `.pdb` files and, unless `-IncludeCuda`, the CUDA runtime files. Without the CUDA DLLs, LLamaSharp cleanly uses the bundled CPU backend; NVIDIA users download the CUDA runtime during installation instead that is how the installer stays small.
-6. **Final installer**: `Coclico.Installer` is published as a compressed self-contained SingleFile with `payload.zip` embedded → `artifacts/installer/Coclico-<version>.exe` (`-Full-CUDA` variant), SHA-256 printed.
-7. `-SkipPublish` reuses the existing `publish/` folder (this is what the release CI does after its own publish).
+5. **Integrity signing** (§16): the script looks for `installer\Key\key.keyfile`. First run: it offers to generate an RSA-4096 signing key protected by a password of exactly 128 characters. Subsequent runs: the existing key is recognized, its password is requested once and can be remembered encrypted by Windows (DPAPI, current-user profile, gitignored `installer\Key\key.pwd.protected`) so later builds ask for nothing. With the key unlocked, every file of `publish/` is hashed into a signed `integrity.json`. Empty password or `-CI`: unsigned build, the rest of the pipeline is unchanged.
+6. **Payload**: `publish/` is zipped into `payload.zip` inside `Coclico.InstallerAot/` (build artifact — never commit it, it is gitignored). Excluded: `.pdb` files and, unless `-IncludeCuda`, the CUDA runtime files. Without the CUDA DLLs, LLamaSharp cleanly uses the bundled CPU backend; NVIDIA users download the CUDA runtime during installation instead that is how the installer stays small. When signing is enabled, `integrity.json` travels inside the payload and is verified at install time.
+7. **Final installer**: `Coclico.InstallerAot` is published as a native SingleFile with `payload.zip` embedded → `artifacts/installer/Coclico-<version>.exe` (`-Full-CUDA` variant), SHA-256 printed. `ValidateExecutableReferencesMatchSelfContained=false` lets the self-contained installer reference the `Coclico.Security` executable project.
+8. `-SkipPublish` reuses the existing `publish/` folder. The release CI runs the full script with `-CI`: non-interactive and unsigned, since no signing key exists on CI.
 
 At install time, the standalone `Coclico.Installer` project takes over (`Services/`):
 
@@ -424,23 +466,38 @@ At install time, the standalone `Coclico.Installer` project takes over (`Service
 - `InstallService` installs for the current user (default `%LOCALAPPDATA%\Programs\Coclico`), creates shortcuts (`ShortcutHelper`), registers the uninstall entry, deploys the uninstaller, closes a running Coclico first, and preserves settings and data on uninstall.
 - `InstallerLocalization` FR/EN installer strings.
 
-## 16. Security practices
+## 16. Release integrity and signing
+
+`Coclico.Security` (domain + infrastructure + signing tool) implements the end-to-end integrity of releases. Vulnerability reporting lives in `SECURITY.md`.
+
+- **Signing key**: RSA 4096, generated into `installer\Key\key.keyfile`, never committed (gitignored together with every `.key`, `.pem` and the remembered password). The private key is sealed with AES-GCM under a key derived (HKDF-SHA256) from a password of exactly 128 characters; the public key lands in `installer\Key\key.pub`, and its keyId is the SHA-256 of the public key.
+- **Trust anchor**: `Coclico/Security/trust-policy.json` is committed in the repository: trusted keys (keyId, base64 public key, `activeFromUtc`, optional `revokedUtc`) plus the update policy (minimum allowed version, last known good version, minimum security generation). The application verifies updates against it; the installer embeds it as a resource and verifies the payload before touching anything.
+- **Integrity manifest**: `sign` hashes every payload file (SHA-256), canonicalizes the manifest and signs it (RSA-PSS-SHA256) into `integrity.json`. `verify` re-checks a payload against its manifest and the trust policy. The tool runs through `dotnet run --project Coclico.Security` (`keygen | sign | verify | check`).
+- **Install time**: `PayloadGuard.VerifyStaging` verifies the extracted payload (manifest presence and format, per-file hash, signature, trusted keyId) against the embedded trust policy before `InstallService` copies anything. `ArchiveGuard` bounds entry count, entry size and total size, and blocks path traversal.
+- **Runtime**: downloaded updates are verified twice (at download and again before launch) by `ReleaseAuthentication` and `IntegrityRuntimeService`; `NativeLibraryGuard` blocks native DLL planting.
+- **AOT-safe by construction**: `IsAotCompatible=true` and source-generated JSON (`SecurityJsonContext`) keep the project NativeAOT-compatible; any reflection-based serialization added later fails the build immediately. Manifest JSON options are strict and fixed: depth limit 8, no comments, no trailing commas, indented writes, case-insensitive reads.
+
+## 17. Security practices
 
 - **Confirmations** before any destructive action; **Recycle Bin** (`SHFileOperation` + `FOF_ALLOWUNDO`) instead of permanent deletion for user files.
 - **Network**: no registry writes `netsh` and PowerShell only; every value validated by `NetworkSettingsGuard`; one-click restore of the real Windows defaults.
 - **Power**: only `powercfg`, every setting validated with `powercfg /q`, Coclico plans deletable at any time, back to the Balanced plan first.
 - **Command filtering**: go through `IProcessExecutionService` whenever possible (`ISecurityPolicy` blocks forbidden commands, tested).
 - **Local-only AI**: no cloud key vault; Ollama restricted to loopback; guards tested; actions sanitized and confirmed.
-- **Updates**: HTTPS and GitHub domains only, mandatory SHA-256 verified at download **and** again before launch, file version checked without executing; releases ship `SHA256SUMS.txt`.
+- **Updates**: HTTPS and GitHub domains only, mandatory SHA-256 verified at download **and** again before launch, file version checked without executing; releases ship `SHA256SUMS.txt`; payloads are additionally covered by a signed integrity manifest verified against the anchored trust policy (§16).
 - **On-demand elevation**: the app starts as a standard user; affected modules show their state.
 - **Logs**: never contain personal data; `LoggingService.LogException` in every `catch`; async errors routed by `AsyncEventSafe` and triaged by the CentralUnit.
 
-## 17. Publishing a release
+## 18. Code scanning and P/Invoke rules
+
+Coclico intentionally relies on Windows P/Invoke calls (memory trimming, GPU detection, recycle bin, working sets). The CodeQL rules `cs/call-to-unmanaged-code` and `cs/unmanaged-code` flag every such call by design, so they are excluded via `query-filters` in `.github/codeql/codeql-config.yml`. All other CodeQL rules are analyzed and must stay at zero alerts.
+
+## 19. Publishing a release
 
 1. Update `version.txt` at the repository root the single source of the version, picked up by the build and the installer script.
 2. Adjust the version shown in the status bar of `MainWindow.xaml` if needed.
 3. Merge to `main` (CI runs: format, build, tests).
-4. Create the tag: `git tag vX.Y.Z && git push origin vX.Y.Z`. The release (installer + portable ZIP + SHA256SUMS.txt) is generated automatically, provided the tag matches the version.
+4. Create the tag: `git tag vX.Y.Z && git push origin vX.Y.Z`. The release (installer + portable ZIP + SHA256SUMS.txt) is generated automatically, provided the tag matches the version. The CI-built installer is unsigned (no signing key on CI); a signed installer is built locally with `./installer/build-installer.ps1` once the key is anchored in `Coclico/Security/trust-policy.json`.
 5. Check the GitHub release: the three expected files, and the SHA-256 printed by the local installer script matches `SHA256SUMS.txt`.
 
 ---

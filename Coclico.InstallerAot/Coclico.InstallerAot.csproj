@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <PublishAot>true</PublishAot>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+    <PublishTrimmed>true</PublishTrimmed>
+    <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+    <TrimMode>partial</TrimMode>
+    <NoWarn>$(NoWarn);IL3053</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>Coclico.Installer</RootNamespace>
+    <AssemblyName>Coclico.Installer</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Product>Coclico Setup</Product>
+    <Description>Installeur Coclico — Avalonia NativeAOT</Description>
+    <Copyright>© $([System.DateTime]::UtcNow.Year) Coclico</Copyright>
+
+    <SatelliteResourceLanguages>fr</SatelliteResourceLanguages>
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <ItemGroup>
+    <TrimmerRootAttribute Include="System.Reflection.AssemblyInformationalVersionAttribute" />
+  </ItemGroup>
+
+  <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.8" />
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Coclico.Security\Coclico.Security.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="payload.zip" Condition="Exists('payload.zip')">
+      <LogicalName>Coclico.Installer.payload.zip</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\ai-models.json">
+      <LogicalName>Coclico.Installer.Assets.ai-models.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Coclico\Security\trust-policy.json">
+      <LogicalName>Coclico.Installer.trust-policy.json</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+    <ItemGroup>
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" GeneratePathProperty="true" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" GeneratePathProperty="true" />
+    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.25547.20250602" GeneratePathProperty="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(PkgSkiaSharp_NativeAssets_Win32)\runtimes\win-x64\native\libSkiaSharp.dll" LogicalName="libSkiaSharp.dll" Link="NativeLibs\libSkiaSharp.dll" />
+    <EmbeddedResource Include="$(PkgHarfBuzzSharp_NativeAssets_Win32)\runtimes\win-x64\native\libHarfBuzzSharp.dll" LogicalName="libHarfBuzzSharp.dll" Link="NativeLibs\libHarfBuzzSharp.dll" />
+    <EmbeddedResource Include="$(PkgAvalonia_Angle_Windows_Natives)\runtimes\win-x64\native\av_libglesv2.dll" LogicalName="av_libglesv2.dll" Link="NativeLibs\av_libglesv2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Resources\plage.png" Condition="Exists('Resources\plage.png')" />
+  </ItemGroup>
+
+</Project>

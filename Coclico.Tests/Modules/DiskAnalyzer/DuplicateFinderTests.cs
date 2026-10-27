@@ -7,7 +7,7 @@ public sealed class DuplicateFinderTests
 {
     private static string CreateTempDir()
     {
-        return Path.Combine(Path.GetTempPath(), "coclico-dup-test-" + Guid.NewGuid().ToString("N")[..8]);
+        return Path.Join(Path.GetTempPath(), "coclico-dup-test-" + Guid.NewGuid().ToString("N")[..8]);
     }
 
     private static void CleanupDir(string dir)
@@ -16,14 +16,14 @@ public sealed class DuplicateFinderTests
         {
             Directory.Delete(dir, true);
         }
-        catch { }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
     }
 
     [Fact]
     public async Task FindDuplicatesAsync_GroupsOnlyRealDuplicates()
     {
         string dir = CreateTempDir();
-        string sub = Path.Combine(dir, "Sub");
+        string sub = Path.Join(dir, "Sub");
         _ = Directory.CreateDirectory(sub);
 
         byte[] contentA = new byte[2048];
@@ -31,9 +31,9 @@ public sealed class DuplicateFinderTests
         byte[] contentB = new byte[2048];
         contentB.AsSpan(0, 256).Fill(9);
 
-        string a1 = Path.Combine(dir, "a1.bin");
-        string a2 = Path.Combine(sub, "a2-copy.bin");
-        string b1 = Path.Combine(dir, "b1.bin");
+        string a1 = Path.Join(dir, "a1.bin");
+        string a2 = Path.Join(sub, "a2-copy.bin");
+        string b1 = Path.Join(dir, "b1.bin");
 
         await File.WriteAllBytesAsync(a1, contentA);
         await File.WriteAllBytesAsync(a2, contentA);
@@ -64,8 +64,8 @@ public sealed class DuplicateFinderTests
         string dir = CreateTempDir();
         _ = Directory.CreateDirectory(dir);
 
-        string tiny1 = Path.Combine(dir, "tiny1.bin");
-        string tiny2 = Path.Combine(dir, "tiny2.bin");
+        string tiny1 = Path.Join(dir, "tiny1.bin");
+        string tiny2 = Path.Join(dir, "tiny2.bin");
 
         await File.WriteAllBytesAsync(tiny1, new byte[100]);
         await File.WriteAllBytesAsync(tiny2, new byte[100]);
@@ -92,7 +92,7 @@ public sealed class DuplicateFinderTests
         long[] sizes = [4096, 1024, 16384, 2048, 8192];
         for (int i = 0; i < sizes.Length; i++)
         {
-            await File.WriteAllBytesAsync(Path.Combine(dir, $"f{i}.bin"), new byte[sizes[i]]);
+            await File.WriteAllBytesAsync(Path.Join(dir, $"f{i}.bin"), new byte[sizes[i]]);
         }
 
         try

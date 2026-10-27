@@ -108,7 +108,7 @@ public sealed class SecurityPolicyTests
     [Fact]
     public void IsApplicationAllowed_ExeOutsideApprovedLocations_IsRefused()
     {
-        string exe = Path.Combine(Path.GetTempPath(), "untrusted_policy_test.exe");
+        string exe = Path.Join(Path.GetTempPath(), "untrusted_policy_test.exe");
         File.WriteAllText(exe, "stub");
 
         try
@@ -124,7 +124,7 @@ public sealed class SecurityPolicyTests
     [Fact]
     public void IsApplicationAllowed_NonExeFile_IsRefused()
     {
-        string file = Path.Combine(Path.GetTempPath(), "policy_test.txt");
+        string file = Path.Join(Path.GetTempPath(), "policy_test.txt");
         File.WriteAllText(file, "data");
 
         try

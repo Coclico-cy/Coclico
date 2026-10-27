@@ -84,8 +84,8 @@ public sealed class ResourceGuardService : IDisposable
     {
         CentralUnitWatchdog.Current.Unregister(Subsystem);
         Stop();
-        try { _self.Dispose(); } catch (Exception exSelf) { LoggingService.LogException(exSelf, "ResourceGuardService.Dispose"); }
-        try { _cts.Dispose(); } catch (Exception exCts) { LoggingService.LogException(exCts, "ResourceGuardService.Dispose:Cts"); }
+        try { _self.Dispose(); } catch (Exception exSelf) when (exSelf is not System.OutOfMemoryException) { LoggingService.LogException(exSelf, "ResourceGuardService.Dispose"); }
+        try { _cts.Dispose(); } catch (Exception exCts) when (exCts is not System.OutOfMemoryException) { LoggingService.LogException(exCts, "ResourceGuardService.Dispose:Cts"); }
     }
 
     private async Task RunGuardLoopAsync(CancellationToken ct)
@@ -113,7 +113,7 @@ public sealed class ResourceGuardService : IDisposable
                     CentralUnitWatchdog.Current.Beat(Subsystem);
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "ResourceGuardService.Tick");
                 CentralCircuitBreaker.Current.RecordFailure(Subsystem, ex);

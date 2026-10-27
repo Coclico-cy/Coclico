@@ -134,24 +134,24 @@ public sealed class AiToolExecutionService
             return "ANALYZE_CRASHES";
         }
 
-        if (upper.Contains("RAM") || upper.Contains("MEMOIRE") || upper.Contains("MÉMOIRE"))
+        bool demandeRam = upper.Contains("RAM") || upper.Contains("MEMOIRE") || upper.Contains("MÉMOIRE");
+        bool demandeNettoyageRam = upper.Contains("CLEAN") || upper.Contains("NETTOY") || upper.Contains("PURGE") ||
+            upper.Contains("VIDER") || upper.Contains("LIBERER") || upper == "RAM" || upper == "RAM_CLEAN" ||
+            upper == "CLEAN_MEMOIRE";
+
+        if (demandeRam && demandeNettoyageRam)
         {
-            if (upper.Contains("CLEAN") || upper.Contains("NETTOY") || upper.Contains("PURGE") ||
-                upper.Contains("VIDER") || upper.Contains("LIBERER") || upper == "RAM" || upper == "RAM_CLEAN" ||
-                upper == "CLEAN_MEMOIRE")
-            {
-                return "CLEAN_RAM";
-            }
+            return "CLEAN_RAM";
         }
 
-        if (upper.Contains("TEMP") || upper.Contains("CACHE") || upper.Contains("CORBEILLE"))
+        bool demandeTemp = upper.Contains("TEMP") || upper.Contains("CACHE") || upper.Contains("CORBEILLE");
+        bool demandeNettoyageTemp = upper.Contains("CLEAN") || upper.Contains("NETTOYAGE") || upper.Contains("NETTOYER") ||
+            upper.Contains("VIDER") || upper.Contains("PURGE") || upper == "TEMP" || upper == "CACHE" ||
+            upper.Contains("TEMP_CACHE") || upper.Contains("CORBEILLE");
+
+        if (demandeTemp && demandeNettoyageTemp)
         {
-            if (upper.Contains("CLEAN") || upper.Contains("NETTOYAGE") || upper.Contains("NETTOYER") ||
-                upper.Contains("VIDER") || upper.Contains("PURGE") || upper == "TEMP" || upper == "CACHE" ||
-                upper.Contains("TEMP_CACHE") || upper.Contains("CORBEILLE"))
-            {
-                return "CLEAN_TEMP";
-            }
+            return "CLEAN_TEMP";
         }
 
         if (upper.Contains("SFC") || upper.Contains("SCANNOW"))
@@ -184,13 +184,18 @@ public sealed class AiToolExecutionService
             return "RESET_UPDATE";
         }
 
-        return upper.Contains("DIAGNOSE") || upper.Contains("DIAGNOSTIC")
+        bool demandeDiagnostic = upper.Contains("DIAGNOSE") || upper.Contains("DIAGNOSTIC");
+        bool demandeNavigation = upper.Contains("NAVIGAT") || upper.Contains("NAVIGU");
+        bool demandeOuvertureApp = upper.Contains("OPEN_APP") || upper.Contains("LANCER_APP") || upper.Contains("OUVRIR_APP");
+        bool demandeInstallation = upper.Contains("WINGET") || upper.Contains("INSTALL");
+
+        return demandeDiagnostic
             ? "DIAGNOSE_SYSTEM"
-            : upper.Contains("NAVIGAT") || upper.Contains("NAVIGU")
+            : demandeNavigation
             ? "NAVIGATE"
-            : upper.Contains("OPEN_APP") || upper.Contains("LANCER_APP") || upper.Contains("OUVRIR_APP")
+            : demandeOuvertureApp
             ? "OPEN_APP"
-            : upper.Contains("WINGET") || upper.Contains("INSTALL") ? "INSTALL_WINGET" : upper;
+            : demandeInstallation ? "INSTALL_WINGET" : upper;
     }
 
     public List<AiActionRequest> ExtractActions(string text)
@@ -237,9 +242,11 @@ public sealed class AiToolExecutionService
             return list;
         }
 
-        if ((clean.Contains("ram") || clean.Contains("memoire") || clean.Contains("mémoire")) &&
-            (clean.Contains("profil") || clean.Contains("mode")) &&
-            (clean.Contains("gamer") || clean.Contains("extreme") || clean.Contains("extrême") || clean.Contains("ultra") || clean.Contains("agressif") || clean.Contains("smart")))
+        bool demandeProfilRam = (clean.Contains("ram") || clean.Contains("memoire") || clean.Contains("mémoire")) &&
+                                 (clean.Contains("profil") || clean.Contains("mode"));
+        bool profilRamConnu = clean.Contains("gamer") || clean.Contains("extreme") || clean.Contains("extrême") || clean.Contains("ultra") || clean.Contains("agressif") || clean.Contains("smart");
+
+        if (demandeProfilRam && profilRamConnu)
         {
             string prof = clean.Contains("gamer") ? "Gamer" :
                           clean.Contains("extreme") || clean.Contains("extrême") || clean.Contains("ultra") ? "Extreme" :
@@ -248,9 +255,11 @@ public sealed class AiToolExecutionService
             return list;
         }
 
-        if ((clean.Contains("ram") || clean.Contains("memoire") || clean.Contains("mémoire")) &&
-            (clean.Contains("nettoy") || clean.Contains("nettoi") || clean.Contains("vide") || clean.Contains("vider") ||
-             clean.Contains("liber") || clean.Contains("libér") || clean.Contains("purg") || clean.Contains("optimis") || clean.Contains("clean") || clean.Contains("lancer")))
+        bool mentionneRam = clean.Contains("ram") || clean.Contains("memoire") || clean.Contains("mémoire");
+        bool demandeNettoyage = clean.Contains("nettoy") || clean.Contains("nettoi") || clean.Contains("vide") || clean.Contains("vider") ||
+             clean.Contains("liber") || clean.Contains("libér") || clean.Contains("purg") || clean.Contains("optimis") || clean.Contains("clean") || clean.Contains("lancer");
+
+        if (mentionneRam && demandeNettoyage)
         {
             list.Add(new AiActionRequest("CLEAN_RAM", null, "[ACTION:CLEAN_RAM]"));
             return list;
@@ -276,8 +285,11 @@ public sealed class AiToolExecutionService
             return list;
         }
 
-        if (clean.Contains("antivirus") || clean.Contains("defender") ||
-            ((clean.Contains("scan") || clean.Contains("analyse") || clean.Contains("analys")) && (clean.Contains("virus") || clean.Contains("malware"))))
+        bool demandeAntivirus = clean.Contains("antivirus") || clean.Contains("defender");
+        bool demandeScanVirus = (clean.Contains("scan") || clean.Contains("analyse") || clean.Contains("analys")) &&
+                                 (clean.Contains("virus") || clean.Contains("malware"));
+
+        if (demandeAntivirus || demandeScanVirus)
         {
             list.Add(new AiActionRequest("DEFENDER_SCAN", null, "[ACTION:DEFENDER_SCAN]"));
             return list;
@@ -291,9 +303,11 @@ public sealed class AiToolExecutionService
             return list;
         }
 
-        if (clean.Contains("diagnostic") || clean.Contains("diagnostique") ||
+        bool demandeBilan = clean.Contains("diagnostic") || clean.Contains("diagnostique") ||
             clean.Contains("bilan du pc") || clean.Contains("etat du pc") || clean.Contains("état du pc") ||
-            clean.Contains("sante du pc") || clean.Contains("santé du pc") || clean.Contains("performances du pc"))
+            clean.Contains("sante du pc") || clean.Contains("santé du pc") || clean.Contains("performances du pc");
+
+        if (demandeBilan)
         {
             list.Add(new AiActionRequest("DIAGNOSE_SYSTEM", null, "[ACTION:DIAGNOSE_SYSTEM]"));
             return list;
@@ -784,7 +798,7 @@ public sealed class AiToolExecutionService
                     _ => new AiActionResult(false, $"Action inconnue : {action.ActionType}")
                 };
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, $"AiToolExecutionService.ExecuteActionAsync({action.ActionType})");
             return new AiActionResult(false, $"Erreur lors de l'exécution : {ex.Message}");
@@ -989,7 +1003,7 @@ public sealed class AiToolExecutionService
         {
             upgrades = await winget.GetAvailableUpgradesAsync(ct).ConfigureAwait(false);
         }
-        catch
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             upgrades = null;
         }
@@ -1018,7 +1032,7 @@ public sealed class AiToolExecutionService
             {
                 var sb = new StringBuilder();
                 string winDir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-                string minidumpDir = Path.Combine(winDir, "Minidump");
+                string minidumpDir = Path.Join(winDir, "Minidump");
                 int dumpCount = 0;
                 DateTime? lastDumpDate = null;
 
@@ -1043,22 +1057,20 @@ public sealed class AiToolExecutionService
                     {
                         scanned++;
                         EventLogEntry entry = sysLog.Entries[i];
-                        if (entry.EntryType == EventLogEntryType.Error || entry.InstanceId == 41 || entry.InstanceId == 1001 || entry.InstanceId == 6008)
+                        bool entreeCritique = entry.EntryType == EventLogEntryType.Error || entry.InstanceId == 41 || entry.InstanceId == 1001 || entry.InstanceId == 6008;
+                        if (entreeCritique && entry.TimeGenerated > sevenDaysAgo)
                         {
-                            if (entry.TimeGenerated > sevenDaysAgo)
+                            string msg = entry.Message.Split('\n')[0].Trim();
+                            if (msg.Length > 80)
                             {
-                                string msg = entry.Message.Split('\n')[0].Trim();
-                                if (msg.Length > 80)
-                                {
-                                    msg = msg[..80] + "...";
-                                }
-
-                                criticalEvents.Add($"[{entry.TimeGenerated:dd/MM HH:mm}] {entry.Source} : {msg}");
+                                msg = msg[..80] + "...";
                             }
+
+                            criticalEvents.Add($"[{entry.TimeGenerated:dd/MM HH:mm}] {entry.Source} : {msg}");
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not System.OutOfMemoryException)
                 {
                     LoggingService.LogException(ex, "AiToolExecution.AnalyzeCrashes.EventLog");
                 }
@@ -1091,7 +1103,7 @@ public sealed class AiToolExecutionService
                     $"⚠️ Analyse terminée : {dumpCount} crash(s) mémoire / plantage(s) récents répertoriés.",
                     sb.ToString());
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 return new AiActionResult(false, $"Erreur lors de l'analyse des crashs : {ex.Message}");
             }
@@ -1256,7 +1268,7 @@ public sealed class AiToolExecutionService
                     _ = Process.Start(new ProcessStartInfo(policyResolved) { UseShellExecute = true });
                     return new AiActionResult(true, $"Application '{appName}' lancée.");
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
                 {
                     return new AiActionResult(false, $"Impossible de lancer '{appName}' : {ex.Message}");
                 }
@@ -1304,7 +1316,7 @@ public sealed class AiToolExecutionService
                     _ = Process.Start(new ProcessStartInfo(targetExe) { UseShellExecute = true });
                     return new AiActionResult(true, $"Application '{Path.GetFileNameWithoutExtension(targetExe)}' lancée.");
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.ComponentModel.Win32Exception or System.InvalidOperationException)
                 {
                     return new AiActionResult(false, $"Échec du lancement de '{targetExe}' : {ex.Message}");
                 }
@@ -1360,34 +1372,37 @@ public sealed class AiToolExecutionService
                     _ = sb.AppendLine($"• Disque {drive.Name.TrimEnd('\\')} : {freeGb:F1} Go libres sur {totalGb:F1} Go");
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(ex, "AiToolExecution.Diagnostics.Drives");
             }
 
-            Process[] procs = Process.GetProcesses();
+            List<(string Name, long WorkingSet)> procEntries = new();
+            foreach (Process p in Process.GetProcesses())
+            {
+                using (p)
+                {
+                    try
+                    {
+                        procEntries.Add((p.ProcessName, p.WorkingSet64));
+                    }
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException)
+                    {
+                        procEntries.Add((p.ProcessName, 0));
+                    }
+                }
+            }
             try
             {
-                IEnumerable<string> topProcs = procs
-                    .OrderByDescending(p => { try { return p.WorkingSet64; } catch { return 0; } })
+                IEnumerable<string> topProcs = procEntries
+                    .OrderByDescending(e => e.WorkingSet)
                     .Take(5)
-                    .Select(p =>
-                    {
-                        try { return $"{p.ProcessName} ({p.WorkingSet64 / (1024 * 1024)} Mo)"; }
-                        catch { return p.ProcessName; }
-                    });
+                    .Select(e => $"{e.Name} ({e.WorkingSet / (1024 * 1024)} Mo)");
                 _ = sb.AppendLine($"• Top 5 processus RAM : {string.Join(", ", topProcs)}");
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "AiToolExecution.Diagnostics.TopProcesses");
-            }
-            finally
-            {
-                foreach (Process p in procs)
-                {
-                    try { p.Dispose(); } catch (Exception ex) { LoggingService.LogException(ex, "AiToolExecutionService.GetLiveDiagnosticsAsync.DisposeProcesses"); }
-                }
             }
 
             return sb.ToString();

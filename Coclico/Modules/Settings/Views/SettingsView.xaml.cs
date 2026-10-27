@@ -94,4 +94,53 @@ public partial class SettingsView : UserControl
         bool? result = confirmationDialog.ShowDialog();
         return (result == true, confirmationDialog.DontAskAgain);
     }
+
+    private async void BtnExportSettings_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Exporter les réglages Coclico",
+            Filter = "Fichier de réglages Coclico (*.json)|*.json",
+            FileName = $"coclico-reglages-{DateTime.Now:yyyy-MM-dd}.json"
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        bool ok = await ServiceContainer.GetRequired<SettingsService>().ExportToAsync(dialog.FileName);
+        if (ok)
+        {
+            ToastService.ShowInfo("Réglages exportés avec succès.");
+        }
+        else
+        {
+            ToastService.ShowWarning("L'export a échoué — consultez les journaux de Coclico.");
+        }
+    }
+
+    private async void BtnImportSettings_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = "Importer des réglages Coclico",
+            Filter = "Fichier de réglages Coclico (*.json)|*.json"
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        bool ok = await ServiceContainer.GetRequired<SettingsService>().ImportFromAsync(dialog.FileName);
+        if (ok)
+        {
+            ToastService.ShowInfo("Réglages importés. Redémarrez Coclico pour que tout s'applique pleinement.");
+        }
+        else
+        {
+            ToastService.ShowWarning("Import impossible : fichier introuvable ou invalide (consultez les journaux).");
+        }
+    }
 }

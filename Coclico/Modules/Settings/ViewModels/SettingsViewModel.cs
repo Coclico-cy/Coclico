@@ -384,13 +384,6 @@ public partial class SettingsViewModel : INotifyPropertyChanged
         _settings.Settings.ThemePreset = "Custom";
         _settings.Save();
     }
-
-    [RelayCommand]
-    private void SaveAll()
-    {
-        _settings.Save();
-    }
-
     public void RefreshProfiles()
     {
         List<AppProfile> profiles = _profiles.GetAllProfiles();
@@ -439,7 +432,7 @@ public partial class SettingsViewModel : INotifyPropertyChanged
         _profiles.Save(profile);
         NewProfileName = string.Empty;
         RefreshProfiles();
-        ToastService.Show(string.Format(L("Settings_ProfileCreated"), name));
+        ToastService.Show(TextFormatService.Format(L("Settings_ProfileCreated"), name));
     }
 
     [RelayCommand]
@@ -454,7 +447,7 @@ public partial class SettingsViewModel : INotifyPropertyChanged
             }
 
             RefreshProfiles();
-            ToastService.Show(string.Format(L("Settings_ProfileDeleted"), profile.Name));
+            ToastService.Show(TextFormatService.Format(L("Settings_ProfileDeleted"), profile.Name));
         }
         else
         {
@@ -488,7 +481,7 @@ public partial class SettingsViewModel : INotifyPropertyChanged
 
         RenameProfileName = string.Empty;
         RefreshProfiles();
-        ToastService.Show(string.Format(L("Settings_ProfileRenamed"), newName));
+        ToastService.Show(TextFormatService.Format(L("Settings_ProfileRenamed"), newName));
     }
 
     public void RefreshCacheInfo()
@@ -506,11 +499,11 @@ public partial class SettingsViewModel : INotifyPropertyChanged
                 ? $"{bytes / 1_048_576.0:F1} {(isEn ? "MB" : "Mo")}"
                 : $"{bytes / 1024.0:F1} {(isEn ? "KB" : "Ko")}";
 
-            CachePathText = Path.Combine(
+            CachePathText = Path.Join(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Coclico", "cache");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "SettingsViewModel.RefreshCacheInfo");
         }
@@ -525,7 +518,7 @@ public partial class SettingsViewModel : INotifyPropertyChanged
             RefreshCacheInfo();
             ToastService.Show(L("Settings_CacheCleared"));
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "SettingsViewModel.ClearCache");
         }
@@ -534,7 +527,7 @@ public partial class SettingsViewModel : INotifyPropertyChanged
     [RelayCommand]
     private void OpenCacheFolder()
     {
-        string dir = Path.Combine(
+        string dir = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Coclico", "cache");
         _ = Directory.CreateDirectory(dir);
@@ -575,19 +568,19 @@ public partial class SettingsViewModel : INotifyPropertyChanged
                 var exeDir = Path.GetDirectoryName(exePath);
                 if (!string.IsNullOrEmpty(exeDir))
                 {
-                    var customInstallerPath = Path.Combine(exeDir, "Coclico.Installer.exe");
+                    var customInstallerPath = Path.Join(exeDir, "Coclico.Installer.exe");
                     if (File.Exists(customInstallerPath))
                     {
                         installerPath = customInstallerPath;
                     }
-                    else if (File.Exists(Path.Combine(exeDir, localSetupName)))
+                    else if (File.Exists(Path.Join(exeDir, localSetupName)))
                     {
-                        installerPath = Path.Combine(exeDir, localSetupName);
+                        installerPath = Path.Join(exeDir, localSetupName);
                     }
-                    var uninstallDir = Path.Combine(exeDir, "Uninstall");
+                    var uninstallDir = Path.Join(exeDir, "Uninstall");
                     if (Directory.Exists(uninstallDir))
                     {
-                        var uninstallerInDir = Path.Combine(uninstallDir, "Coclico.Installer.exe");
+                        var uninstallerInDir = Path.Join(uninstallDir, "Coclico.Installer.exe");
                         if (File.Exists(uninstallerInDir))
                         {
                             installerPath = uninstallerInDir;
@@ -604,12 +597,12 @@ public partial class SettingsViewModel : INotifyPropertyChanged
                     var exeDir = Path.GetDirectoryName(exePath2);
                     if (!string.IsNullOrEmpty(exeDir))
                     {
-                        var artifactsPath = Path.Combine(exeDir, "..", "..", "artifacts", "installer", localSetupName);
+                        var artifactsPath = Path.Join(exeDir, "..", "..", "artifacts", "installer", localSetupName);
                         if (File.Exists(artifactsPath))
                         {
                             installerPath = artifactsPath;
                         }
-                        var customInstallerArtifacts = Path.Combine(exeDir, "..", "..", "Coclico.Installer", "bin", "Release", "Coclico.Installer.exe");
+                        var customInstallerArtifacts = Path.Join(exeDir, "..", "..", "Coclico.Installer", "bin", "Release", "Coclico.Installer.exe");
                         if (File.Exists(customInstallerArtifacts))
                         {
                             installerPath = customInstallerArtifacts;
@@ -620,14 +613,14 @@ public partial class SettingsViewModel : INotifyPropertyChanged
 
             if (string.IsNullOrEmpty(installerPath))
             {
-                var programFilesPath = Path.Combine(
+                var programFilesPath = Path.Join(
                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                     "Coclico", localSetupName);
                 if (File.Exists(programFilesPath))
                 {
                     installerPath = programFilesPath;
                 }
-                var customInstallerProgramFiles = Path.Combine(
+                var customInstallerProgramFiles = Path.Join(
                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                     "Coclico", "Coclico.Installer.exe");
                 if (File.Exists(customInstallerProgramFiles))
@@ -638,7 +631,7 @@ public partial class SettingsViewModel : INotifyPropertyChanged
 
             if (string.IsNullOrEmpty(installerPath))
             {
-                var localAppDataPath = Path.Combine(
+                var localAppDataPath = Path.Join(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "Programs", "Coclico", "Uninstall", "Coclico.Installer.exe");
                 if (File.Exists(localAppDataPath))
@@ -674,12 +667,12 @@ public partial class SettingsViewModel : INotifyPropertyChanged
                         }
                     }
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "SettingsViewModel.Uninstall.RegistryFallback"); }
+                catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException or System.ComponentModel.Win32Exception or System.InvalidOperationException) { LoggingService.LogException(ex, "SettingsViewModel.Uninstall.RegistryFallback"); }
 
                 ToastService.ShowError(L("Settings_Uninstall_Failed"));
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Security.SecurityException or System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             ToastService.ShowError($"{L("Settings_Uninstall_Error")}: {ex.Message}");
         }

@@ -190,7 +190,7 @@ public partial class CleaningViewModel : INotifyPropertyChanged
             if (SelectedCleanableBytes > 0)
             {
                 string fmt = _loc?.Get("Cleaning_Btn_CleanSelectionWithTotal") ?? "Nettoyer la sélection ({0})";
-                return string.Format(fmt, SelectedCleanableText);
+                return TextFormatService.Format(fmt, SelectedCleanableText);
             }
             return _loc?.Get("Cleaning_Btn_CleanSelection") ?? "Nettoyer la sélection";
         }
@@ -245,14 +245,9 @@ public partial class CleaningViewModel : INotifyPropertyChanged
         UpdateSizes();
         if (!IsCleaning && !IsScanning)
         {
-            if (_hasCompletedScan)
-            {
-                StatusMessage = string.Format(_loc?.Get("Cleaning_Status_ScanCompleted") ?? "Analyse terminée : {0} d'espace libérable détecté.", TotalCleanableText);
-            }
-            else
-            {
-                StatusMessage = _loc?.Get("Cleaning_Status_Ready") ?? "Prêt pour l'analyse";
-            }
+            StatusMessage = _hasCompletedScan
+                ? TextFormatService.Format(_loc?.Get("Cleaning_Status_ScanCompleted") ?? "Analyse terminée : {0} d'espace libérable détecté.", TotalCleanableText)
+                : _loc?.Get("Cleaning_Status_Ready") ?? "Prêt pour l'analyse";
         }
     }
 
@@ -260,9 +255,8 @@ public partial class CleaningViewModel : INotifyPropertyChanged
     {
         Categories.Clear();
         List<CleaningCategory> available = _cleaningService.GetAvailableCategories();
-        foreach (CleaningCategory data in available)
+        foreach (var item in available.Select(data => new CleaningCategoryViewModel(data, _loc)))
         {
-            var item = new CleaningCategoryViewModel(data, _loc);
             item.PropertyChanged += OnCategoryPropertyChanged;
             Categories.Add(item);
         }
@@ -359,15 +353,15 @@ public partial class CleaningViewModel : INotifyPropertyChanged
             }
             UpdateSizes();
             _hasCompletedScan = true;
-            StatusMessage = string.Format(_loc?.Get("Cleaning_Status_ScanCompleted") ?? "Analyse terminée : {0} d'espace libérable détecté.", TotalCleanableText);
+            StatusMessage = TextFormatService.Format(_loc?.Get("Cleaning_Status_ScanCompleted") ?? "Analyse terminée : {0} d'espace libérable détecté.", TotalCleanableText);
         }
         catch (OperationCanceledException)
         {
             StatusMessage = _loc?.Get("Cleaning_Status_Cancelled") ?? "Analyse annulée.";
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
-            StatusMessage = string.Format(_loc?.Get("Cleaning_Status_Error") ?? "Erreur lors de l'analyse : {0}", ex.Message);
+            StatusMessage = TextFormatService.Format(_loc?.Get("Cleaning_Status_Error") ?? "Erreur lors de l'analyse : {0}", ex.Message);
             LoggingService.LogException(ex, "CleaningVM.ScanAsync");
         }
         finally
@@ -392,7 +386,7 @@ public partial class CleaningViewModel : INotifyPropertyChanged
             return;
         }
 
-        string confirmMsg = string.Format(
+        string confirmMsg = TextFormatService.Format(
             _loc?.Get("Cleaning_Dialog_ConfirmMsg") ?? "Voulez-vous supprimer les fichiers sélectionnés ?\n\nEstimation : {0} répartis sur {1} catégories.",
             SelectedCleanableText, selected.Count);
         string confirmTitle = _loc?.Get("Cleaning_ConfirmTitle") ?? "Confirmation de nettoyage";
@@ -424,7 +418,7 @@ public partial class CleaningViewModel : INotifyPropertyChanged
             List<CleaningCategory> selectedData = selected.Select(c => c.Data).ToList();
             CleaningResult result = await _cleaningService.ExecuteDeepCleanAsync(selectedData, progressReporter, _cts.Token);
             Progress = 100;
-            StatusMessage = string.Format(_loc?.Get("Cleaning_Status_CleanCompleted") ?? "✅ Nettoyage terminé ! {0} libérés ({1} fichiers supprimés).", CleaningService.FormatSize(result.TotalBytesFreed), result.FilesDeleted);
+            StatusMessage = TextFormatService.Format(_loc?.Get("Cleaning_Status_CleanCompleted") ?? "✅ Nettoyage terminé ! {0} libérés ({1} fichiers supprimés).", CleaningService.FormatSize(result.TotalBytesFreed), result.FilesDeleted);
 
             await _cleaningService.ScanAllCategoriesAsync(Categories.Select(c => c.Data).ToList(), CancellationToken.None);
             foreach (CleaningCategoryViewModel item in Categories)
@@ -437,9 +431,9 @@ public partial class CleaningViewModel : INotifyPropertyChanged
         {
             StatusMessage = _loc?.Get("Cleaning_Status_Cancelled") ?? "Nettoyage interrompu par l'utilisateur.";
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
-            StatusMessage = string.Format(_loc?.Get("Cleaning_Status_Error") ?? "Erreur lors du nettoyage : {0}", ex.Message);
+            StatusMessage = TextFormatService.Format(_loc?.Get("Cleaning_Status_Error") ?? "Erreur lors du nettoyage : {0}", ex.Message);
             LoggingService.LogException(ex, "CleaningVM.CleanAsync");
         }
         finally
@@ -452,7 +446,7 @@ public partial class CleaningViewModel : INotifyPropertyChanged
 
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        if (Application.Current?.Dispatcher?.CheckAccess() == true)
+        if (Application.Current?.Dispatcher?.CheckAccess() is true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

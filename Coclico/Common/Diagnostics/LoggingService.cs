@@ -5,7 +5,7 @@ namespace Coclico.Services;
 
 public static class LoggingService
 {
-    private static readonly string LogDir = Path.Combine(
+    private static readonly string LogDir = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Coclico", "logs");
 
@@ -36,7 +36,7 @@ public static class LoggingService
                 _ = Directory.CreateDirectory(LogDir);
                 PurgeLegacyLogs();
             }
-            catch { }
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
 
             Log.Logger = new LoggerConfiguration()
 #if DEBUG
@@ -45,7 +45,7 @@ public static class LoggingService
                 .MinimumLevel.Information()
 #endif
                 .WriteTo.File(
-                    Path.Combine(LogDir, "coclico-.log"),
+                    Path.Join(LogDir, "coclico-.log"),
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 14,
                     shared: true,
@@ -59,22 +59,22 @@ public static class LoggingService
 
     public static void LogInfo(string message)
     {
-        try { Log.Information("{Message}", message); } catch { }
+        try { Log.Information("{Message}", message); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
     }
 
     public static void LogWarning(string message)
     {
-        try { Log.Warning("{Message}", message); } catch { }
+        try { Log.Warning("{Message}", message); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
     }
 
     public static void LogError(string message)
     {
-        try { Log.Error("{Message}", message); } catch { }
+        try { Log.Error("{Message}", message); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
     }
 
     public static void LogDebug(string message)
     {
-        try { Log.Debug("{Message}", message); } catch { }
+        try { Log.Debug("{Message}", message); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
     }
 
     public static void LogException(Exception? ex, string? context = null)
@@ -95,12 +95,12 @@ public static class LoggingService
                 Log.Error(ex, "{Message}", ex.Message);
             }
         }
-        catch { }
+        catch (Exception erreurLog) when (erreurLog is not System.OutOfMemoryException) { _ = erreurLog; }
     }
 
     public static Task ShutdownAsync()
     {
-        try { Log.CloseAndFlush(); } catch { }
+        try { Log.CloseAndFlush(); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
         return Task.CompletedTask;
     }
 
@@ -118,9 +118,9 @@ public static class LoggingService
                         File.Delete(file);
                     }
                 }
-                catch { }
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
             }
         }
-        catch { }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
     }
 }

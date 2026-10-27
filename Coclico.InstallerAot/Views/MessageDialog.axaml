@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ico="using:Coclico.Installer"
+        x:Class="Coclico.Installer.Views.MessageDialog"
+        Title="Coclico Setup"
+        Width="440" SizeToContent="Height" MaxHeight="420"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="{DynamicResource BgBaseBrush}"
+        SystemDecorations="None">
+  <Border BorderBrush="#2A2228" BorderThickness="1" CornerRadius="8" Background="#0C0D12">
+    <StackPanel Margin="22,18,22,18">
+
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+        <PathIcon x:Name="DlgIcon" Data="{x:Static ico:Ico.Warning}" Foreground="#FF453A"
+                  Width="22" Height="22" Margin="0,0,10,0"/>
+        <TextBlock x:Name="DlgTitle" Text="Erreur" FontSize="15" FontWeight="Bold"
+                   VerticalAlignment="Center"/>
+      </StackPanel>
+
+      <TextBlock x:Name="DlgMessage" Text="" FontSize="12.5"
+                 Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+
+      <Button Classes="accent" Content="OK" Width="110" Height="36"
+              HorizontalAlignment="Right" Click="BtnOk_Click"/>
+    </StackPanel>
+  </Border>
+</Window>

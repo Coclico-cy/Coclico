@@ -79,7 +79,7 @@ public static class AiHardwareService
 
         foreach (string dll in new[] { "llama.dll", "ggml.dll", "ggml-base.dll", "ggml-cuda.dll" })
         {
-            if (!File.Exists(Path.Combine(cudaDir, dll)))
+            if (!File.Exists(Path.Join(cudaDir, dll)))
             {
                 return false;
             }
@@ -99,22 +99,21 @@ public static class AiHardwareService
     public static string ResolveNativeDirectory()
     {
         List<string> candidates = BuildCandidateDirectories();
-        return candidates.FirstOrDefault(d => Directory.Exists(Path.Combine(d, "cuda12")))
+        return candidates.FirstOrDefault(d => Directory.Exists(Path.Join(d, "cuda12")))
             ?? candidates.FirstOrDefault(Directory.Exists)
             ?? candidates[0];
     }
 
     public static string? ResolveCudaDirectory()
     {
-        string cudaDir = Path.Combine(ResolveNativeDirectory(), "cuda12");
+        string cudaDir = Path.Join(ResolveNativeDirectory(), "cuda12");
         return Directory.Exists(cudaDir) ? cudaDir : null;
     }
 
     public static string? ResolveDllPath(string fileName)
     {
-        foreach (string candidate in BuildCandidateDirectories())
+        foreach (string path in BuildCandidateDirectories().Select(candidate => Path.Join(candidate, fileName)))
         {
-            string path = Path.Combine(candidate, fileName);
             if (File.Exists(path))
             {
                 return path;
@@ -130,7 +129,7 @@ public static class AiHardwareService
         {
             EnsureSufficientDiskSpace(installPath);
 
-            string cudaDir = Path.Combine(installPath, "runtimes", "win-x64", "native", "cuda12");
+            string cudaDir = Path.Join(installPath, "runtimes", "win-x64", "native", "cuda12");
             _ = Directory.CreateDirectory(cudaDir);
 
             await DownloadAndExtractFolderAsync(
@@ -164,8 +163,8 @@ public static class AiHardwareService
         string baseDir = AppContext.BaseDirectory;
         var candidates = new List<string>
         {
-            Path.Combine(baseDir, "runtimes", "win-x64", "native"),
-            Path.Combine(baseDir, "native"),
+            Path.Join(baseDir, "runtimes", "win-x64", "native"),
+            Path.Join(baseDir, "native"),
             baseDir
         };
 
@@ -175,14 +174,12 @@ public static class AiHardwareService
             for (int i = 0; i < 5 && dir?.Parent != null; i++)
             {
                 dir = dir.Parent;
-                candidates.Add(Path.Combine(dir.FullName, "Coclico", "bin", "Debug", "net10.0-windows10.0.22621.0", "runtimes", "win-x64", "native"));
-                candidates.Add(Path.Combine(dir.FullName, "Coclico", "bin", "Release", "net10.0-windows10.0.22621.0", "runtimes", "win-x64", "native"));
-                candidates.Add(Path.Combine(dir.FullName, "runtimes", "win-x64", "native"));
+                candidates.Add(Path.Join(dir.FullName, "Coclico", "bin", "Debug", "net10.0-windows10.0.22621.0", "runtimes", "win-x64", "native"));
+                candidates.Add(Path.Join(dir.FullName, "Coclico", "bin", "Release", "net10.0-windows10.0.22621.0", "runtimes", "win-x64", "native"));
+                candidates.Add(Path.Join(dir.FullName, "runtimes", "win-x64", "native"));
             }
         }
-        catch
-        {
-        }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
 
         return candidates;
     }
@@ -219,13 +216,9 @@ public static class AiHardwareService
                     continue;
                 }
 
-                foreach (string instanceKey in device.GetSubKeyNames())
+                foreach (RegistryKey instance in device.GetSubKeyNames().Select(device.OpenSubKey).OfType<RegistryKey>())
                 {
-                    using RegistryKey? instance = device.OpenSubKey(instanceKey);
-                    if (instance == null)
-                    {
-                        continue;
-                    }
+                    using var instanceHandle = instance;
 
                     if (displayOnly && !IsDisplayAdapter(instance))
                     {
@@ -240,9 +233,7 @@ public static class AiHardwareService
                 }
             }
         }
-        catch
-        {
-        }
+        catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
 
         return (bestVendor, bestName);
     }
@@ -255,7 +246,7 @@ public static class AiHardwareService
             object? classGuid = control?.GetValue("ClassGUID");
             return classGuid != null && string.Equals(classGuid.ToString(), DisplayClassGuid, StringComparison.OrdinalIgnoreCase);
         }
-        catch
+        catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException)
         {
             return false;
         }
@@ -330,9 +321,7 @@ public static class AiHardwareService
         {
             throw;
         }
-        catch
-        {
-        }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
     }
 
     private static async Task DownloadAndExtractFolderAsync(
@@ -341,44 +330,54 @@ public static class AiHardwareService
         IProgress<AiCudaProgress> progress, CancellationToken ct)
     {
         string url = $"{NugetFlatContainer}{packageId}/{version}/{packageId}.{version}.nupkg";
-        string tempNupkg = Path.Combine(Path.GetTempPath(), $"coclico-{packageId}.nupkg");
+        string tempNupkg = Path.Join(Path.GetTempPath(), $"coclico-{packageId}.nupkg");
+        string extractDir = Path.Join(Path.GetTempPath(), $"coclico-extract-{packageId}");
 
         try
         {
             await DownloadFileAsync(url, tempNupkg, label, stepIndex, progress, ct).ConfigureAwait(false);
 
-            using var archive = ZipFile.OpenRead(tempNupkg);
-            foreach (ZipArchiveEntry entry in archive.Entries)
+            if (Directory.Exists(extractDir))
             {
-                if (!entry.FullName.StartsWith(entryFolder, StringComparison.OrdinalIgnoreCase) ||
-                    !entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                Directory.Delete(extractDir, recursive: true);
+            }
+
+            using (var archive = ZipFile.OpenRead(tempNupkg))
+            {
+                archive.ExtractToDirectory(extractDir, overwriteFiles: true);
+            }
+
+            foreach (string file in Directory.EnumerateFiles(extractDir, "*.dll", SearchOption.AllDirectories))
+            {
+                string relative = Path.GetRelativePath(extractDir, file).Replace('\\', '/');
+                if (!relative.StartsWith(entryFolder, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
 
-                string fileName = entry.FullName[entryFolder.Length..];
-                if (string.IsNullOrWhiteSpace(fileName))
-                {
-                    continue;
-                }
-
-                string destination = Path.Combine(targetDir, fileName.Replace('/', '\\'));
-                _ = Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
-                entry.ExtractToFile(destination, overwrite: true);
+                File.Copy(file, Path.Join(targetDir, Path.GetFileName(file)), overwrite: true);
             }
         }
         finally
         {
-            try { File.Delete(tempNupkg); } catch { }
+            try
+            {
+                File.Delete(tempNupkg);
+                if (Directory.Exists(extractDir))
+                {
+                    Directory.Delete(extractDir, recursive: true);
+                }
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
         }
     }
 
     private static async Task DownloadAndJoinCublasLtAsync(
         string installPath, IProgress<AiCudaProgress> progress, CancellationToken ct)
     {
-        string tempFragment0 = Path.Combine(Path.GetTempPath(), "coclico-cublaslt.f00");
-        string tempFragment1 = Path.Combine(Path.GetTempPath(), "coclico-cublaslt.f01");
-        string targetFile = Path.Combine(installPath, "cublasLt64_12.dll");
+        string tempFragment0 = Path.Join(Path.GetTempPath(), "coclico-cublaslt.f00");
+        string tempFragment1 = Path.Join(Path.GetTempPath(), "coclico-cublaslt.f01");
+        string targetFile = Path.Join(installPath, "cublasLt64_12.dll");
 
         try
         {
@@ -418,8 +417,8 @@ public static class AiHardwareService
         }
         finally
         {
-            try { File.Delete(tempFragment0); } catch { }
-            try { File.Delete(tempFragment1); } catch { }
+            try { File.Delete(tempFragment0); } catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
+            try { File.Delete(tempFragment1); } catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
         }
     }
 
@@ -429,7 +428,7 @@ public static class AiHardwareService
         IProgress<AiCudaProgress> progress, CancellationToken ct)
     {
         string url = $"{NugetFlatContainer}{packageId}/{version}/{packageId}.{version}.nupkg";
-        string tempNupkg = Path.Combine(Path.GetTempPath(), $"coclico-{packageId}.nupkg");
+        string tempNupkg = Path.Join(Path.GetTempPath(), $"coclico-{packageId}.nupkg");
 
         try
         {
@@ -442,11 +441,15 @@ public static class AiHardwareService
                 throw new InvalidDataException($"Fragment introuvable dans le package {packageId}.");
             }
 
-            entry.ExtractToFile(destinationFile, overwrite: true);
+            using (Stream source = entry.Open())
+            using (FileStream target = File.Create(destinationFile))
+            {
+                source.CopyTo(target);
+            }
         }
         finally
         {
-            try { File.Delete(tempNupkg); } catch { }
+            try { File.Delete(tempNupkg); } catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
         }
     }
 

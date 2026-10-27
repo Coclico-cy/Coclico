@@ -3,18 +3,19 @@ using Xunit;
 
 namespace Coclico.Tests;
 
+[Collection("ServiceContainerSerial")]
 public sealed class DiskAnalyzerTests
 {
     [Fact]
     public async Task ScanAsync_ComputesSizesAndHierarchyCorrectly()
     {
-        string dir = Path.Combine(Path.GetTempPath(), "coclico-disk-test-" + Guid.NewGuid().ToString("N")[..8]);
-        string sub1 = Path.Combine(dir, "Sub1");
-        string sub2 = Path.Combine(sub1, "Sub2");
+        string dir = Path.Join(Path.GetTempPath(), "coclico-disk-test-" + Guid.NewGuid().ToString("N")[..8]);
+        string sub1 = Path.Join(dir, "Sub1");
+        string sub2 = Path.Join(sub1, "Sub2");
         _ = Directory.CreateDirectory(sub2);
-        await File.WriteAllBytesAsync(Path.Combine(dir, "a.bin"), new byte[1000]);
-        await File.WriteAllBytesAsync(Path.Combine(sub1, "b.bin"), new byte[2000]);
-        await File.WriteAllBytesAsync(Path.Combine(sub2, "c.bin"), new byte[4000]);
+        await File.WriteAllBytesAsync(Path.Join(dir, "a.bin"), new byte[1000]);
+        await File.WriteAllBytesAsync(Path.Join(sub1, "b.bin"), new byte[2000]);
+        await File.WriteAllBytesAsync(Path.Join(sub2, "c.bin"), new byte[4000]);
 
         try
         {
@@ -40,7 +41,7 @@ public sealed class DiskAnalyzerTests
             {
                 Directory.Delete(dir, true);
             }
-            catch { }
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
         }
     }
 
@@ -64,7 +65,7 @@ public sealed class DiskAnalyzerTests
             {
                 view = new Coclico.Modules.DiskAnalyzer.Views.DiskAnalyzerView();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 error = ex;
             }

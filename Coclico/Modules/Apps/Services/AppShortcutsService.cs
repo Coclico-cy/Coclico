@@ -13,7 +13,7 @@ public sealed class AppShortcutsService
             desktop = Path.GetTempPath();
         }
 
-        return Path.Combine(desktop, "Coclico Apps");
+        return Path.Join(desktop, "Coclico Apps");
     }
 
     public int CopyStartMenuShortcuts(IEnumerable<string> appNames, IProgress<string>? log = null)
@@ -23,8 +23,8 @@ public sealed class AppShortcutsService
 
         string[] startMenus =
         [
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Start Menu\Programs"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\Start Menu\Programs")
+            Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Start Menu\Programs"),
+            Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\Start Menu\Programs")
         ];
 
         string[] names = appNames.Where(static n => !string.IsNullOrWhiteSpace(n)).ToArray();
@@ -40,13 +40,13 @@ public sealed class AppShortcutsService
                     continue;
                 }
 
-                string target = Path.Combine(shortcutDir, Path.GetFileName(shortcut));
+                string target = Path.Join(shortcutDir, Path.GetFileName(shortcut));
                 try
                 {
                     File.Copy(shortcut, target, overwrite: true);
                     copied++;
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
                 {
                     LoggingService.LogException(ex, $"AppShortcutsService.CopyStartMenuShortcuts({target})");
                 }

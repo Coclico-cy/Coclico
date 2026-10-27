@@ -90,4 +90,26 @@ public sealed class CentralUnitVariablesTests
         Assert.Single(received);
         Assert.Equal("first", received[0]);
     }
+
+    [Fact]
+    public void UnsubscribeRemovesOnlyTheTargetedHandler()
+    {
+        var variables = new CentralUnitVariables();
+        var first = new List<string>();
+        var second = new List<string>();
+
+        Action unsubscribeFirst = variables.Subscribe(
+            CentralVariables.NetworkStats,
+            (_, _) => first.Add("first"));
+        _ = variables.Subscribe(
+            CentralVariables.NetworkStats,
+            (_, _) => second.Add("second"));
+
+        variables.Publish(CentralVariables.NetworkStats, 1);
+        unsubscribeFirst();
+        variables.Publish(CentralVariables.NetworkStats, 2);
+
+        Assert.Single(first);
+        Assert.Equal(2, second.Count);
+    }
 }

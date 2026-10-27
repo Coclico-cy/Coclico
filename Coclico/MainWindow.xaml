@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ui:FluentWindow x:Class="Coclico.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -437,6 +438,25 @@
                                     </RadioButton.Content>
                                 </RadioButton>
 
+                                <RadioButton x:Name="NavDiagnostics" Tag="Diagnostics" GroupName="NavGroup"
+                                             Style="{StaticResource NavItemStyle}"
+                                             Click="NavItem_Click"
+                                             ToolTip="{DynamicResource Menu_Diagnostics}"
+                                             AutomationProperties.Name="Navigation - Diagnostic du PC">
+                                    <RadioButton.Content>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:SymbolIcon Symbol="DesktopPulse24" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="NavDiagnostics_Lbl" Grid.Column="1"
+                                                       Text="{DynamicResource Menu_Diagnostics}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </RadioButton.Content>
+                                </RadioButton>
+
                                 <RadioButton x:Name="NavDisk" Tag="DiskAnalyzer" GroupName="NavGroup"
                                              Style="{StaticResource NavItemStyle}"
                                              Click="NavItem_Click"
@@ -732,9 +752,16 @@
                                         <TextBlock Text="{DynamicResource Menu_WingetInstaller}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
+                                <Border Tag="UpdateCenter" MouseDown="DropdownItem_MouseDown" Cursor="Hand" Margin="0,0,0,4" Padding="12,10"
+                                        Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="ArrowSync24" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Menu_UpdateCenter}" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
 
-<Border x:Name="MenuGroupMaintenance" Tag="Maintenance" MouseDown="MenuGroupToggle_MouseDown" Cursor="Hand"
+                            <Border x:Name="MenuGroupMaintenance" Tag="Maintenance" MouseDown="MenuGroupToggle_MouseDown" Cursor="Hand"
                                     Margin="6,8,6,0" Padding="12,9"
                                     Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" CornerRadius="8">
                                 <Grid>

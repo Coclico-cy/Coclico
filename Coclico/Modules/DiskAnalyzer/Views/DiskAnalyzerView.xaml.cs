@@ -47,7 +47,7 @@ public partial class DiskAnalyzerView : UserControl
                 dialog.InitialDirectory = current;
             }
 
-            return dialog.ShowDialog() == true ? dialog.FolderName : null;
+            return dialog.ShowDialog() is true ? dialog.FolderName : null;
         };
 
         ViewModel.SunburstRenderRequested += OnSunburstRenderRequested;

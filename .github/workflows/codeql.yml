@@ -8,6 +8,9 @@ on:
   schedule:
     - cron: "0 6 * * 1"
 
+permissions:
+  contents: read
+
 jobs:
   analyze:
     name: "Analyser avec CodeQL"
@@ -20,10 +23,10 @@ jobs:
 
     steps:
       - name: "Récupérer le code"
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: "Initialiser CodeQL"
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
         with:
           languages: csharp
           config-file: ./.github/codeql/codeql-config.yml
@@ -35,6 +38,29 @@ jobs:
           dotnet build Coclico.slnx -c Release
 
       - name: "Analyser"
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
         with:
+          category: "/language:csharp"
+          output: sarif-results
+          upload: false
+
+      - name: "Exclure le code généré (obj/bin) du SARIF"
+        shell: pwsh
+        run: |
+          $chemin = "sarif-results/csharp.sarif"
+          $sarif = Get-Content $chemin -Raw | ConvertFrom-Json
+          foreach ($run in $sarif.runs) {
+            if ($run.results) {
+              $run.results = @($run.results | Where-Object {
+                $uri = $_.locations[0].physicalLocation.artifactLocation.uri
+                ($null -eq $uri) -or (-not ($uri -match '(^|/)obj/' -or $uri -match '(^|/)bin/'))
+              })
+            }
+          }
+          $sarif | ConvertTo-Json -Depth 100 | Set-Content $chemin -Encoding utf8
+
+      - name: "Publier les résultats"
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
+        with:
+          sarif_file: sarif-results/csharp.sarif
           category: "/language:csharp"

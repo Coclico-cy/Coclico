@@ -86,12 +86,12 @@ public partial class InstalledProgramsService
         ["System"] = "Outils Windows",
     };
 
-    private static string CategoriesSettingsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "categories.json");
-    private static string FilterGroupsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "filter_groups.json");
-    private static string CustomAppsDataPath => Path.Combine(
+    private static string CategoriesSettingsPath => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "categories.json");
+    private static string FilterGroupsPath => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "filter_groups.json");
+    private static string CustomAppsDataPath => Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Coclico", "custom_apps_data.json");
-    private static string ManualAppsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "manual_apps.json");
+    private static string ManualAppsPath => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "manual_apps.json");
 
     private List<ProgramInfo>? _memoryCache;
     private readonly object _memoryCacheLock = new();
@@ -192,13 +192,7 @@ public partial class InstalledProgramsService
                         .Distinct(StringComparer.OrdinalIgnoreCase)
                         .ToList();
 
-                    foreach (string def in GetDefaultCategories())
-                    {
-                        if (!migrated.Contains(def, StringComparer.OrdinalIgnoreCase))
-                        {
-                            migrated.Add(def);
-                        }
-                    }
+                    migrated.AddRange(GetDefaultCategories().Where(def => !migrated.Contains(def, StringComparer.OrdinalIgnoreCase)));
 
                     if (!migrated.SequenceEqual(loaded, StringComparer.OrdinalIgnoreCase))
                     {
@@ -209,7 +203,7 @@ public partial class InstalledProgramsService
                 }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.GetCategories"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.GetCategories"); }
         return GetDefaultCategories();
     }
 
@@ -233,7 +227,7 @@ public partial class InstalledProgramsService
             File.WriteAllText(tmp, content);
             File.Move(tmp, CategoriesSettingsPath, overwrite: true);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.SaveCategories"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.SaveCategories"); }
     }
 
     public List<FilterGroup> GetFilterGroups()
@@ -258,7 +252,7 @@ public partial class InstalledProgramsService
                 return groups;
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.GetFilterGroups"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.GetFilterGroups"); }
         return GetDefaultFilterGroups();
     }
 
@@ -287,7 +281,7 @@ public partial class InstalledProgramsService
             File.WriteAllText(tmp, content);
             File.Move(tmp, FilterGroupsPath, overwrite: true);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.SaveFilterGroups"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.SaveFilterGroups"); }
     }
 
     public async ValueTask<List<ProgramInfo>> GetAllInstalledProgramsAsync(
@@ -310,20 +304,19 @@ public partial class InstalledProgramsService
                 List<ProgramInfo>? cached = await ServiceContainer.GetRequired<ICacheService>().GetAsync<List<ProgramInfo>>(cacheKey).ConfigureAwait(false);
                 if (cached != null && cached.Count > 0)
                 {
-                    Dictionary<string, CustomAppEntry> cachedCustomData = LoadCustomAppsData();
-                    foreach (ProgramInfo p in cached)
+                    IReadOnlyDictionary<string, CustomAppEntry> cachedCustomData = LoadCustomAppsData();
+                    foreach (var personnalise in cached
+                        .Select(p => (Programme: p, Entree: TryGetCustomAppEntry(cachedCustomData, p, out CustomAppEntry entry) ? entry : null))
+                        .Where(personnalise => personnalise.Entree != null))
                     {
-                        if (TryGetCustomAppEntry(cachedCustomData, p, out CustomAppEntry entry))
+                        if (personnalise.Entree!.Name != null)
                         {
-                            if (entry.Name != null)
-                            {
-                                p.Name = entry.Name;
-                            }
+                            personnalise.Programme.Name = personnalise.Entree.Name;
+                        }
 
-                            if (entry.Category != null)
-                            {
-                                p.Category = entry.Category;
-                            }
+                        if (personnalise.Entree!.Category != null)
+                        {
+                            personnalise.Programme.Category = personnalise.Entree.Category;
                         }
                     }
                     lock (_memoryCacheLock)
@@ -333,14 +326,14 @@ public partial class InstalledProgramsService
                     return cached;
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or System.Net.Sockets.SocketException)
             {
                 LoggingService.LogException(ex, "InstalledProgramsService.GetAllInstalledProgramsAsync.CacheRead");
             }
         }
 
         var rawList = new List<ProgramInfo>(512);
-        Dictionary<string, CustomAppEntry> customData = LoadCustomAppsData();
+        IReadOnlyDictionary<string, CustomAppEntry> customData = LoadCustomAppsData();
 
         int maxPar = Math.Max(1, Environment.ProcessorCount);
         using var sem = new SemaphoreSlim(maxPar);
@@ -467,7 +460,7 @@ public partial class InstalledProgramsService
             var ttl = TimeSpan.FromHours(6);
             await ServiceContainer.GetRequired<ICacheService>().SetAsync(cacheKey, finalizedList, ttl).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "InstalledProgramsService.GetAllInstalledProgramsAsync.CacheWrite");
         }
@@ -514,13 +507,15 @@ public partial class InstalledProgramsService
             return "Composant";
         }
 
-        return name.Contains("adobe") || name.Contains("premiere") || name.Contains("vegas") || name.Contains("da vinci") || name.Contains("blender") || name.Contains("editing") || name.Contains("montage")
-            ? "Video Montage"
-            : name.Contains("visual studio") || name.Contains("code") || name.Contains("docker") || name.Contains("sql") || name.Contains("office") || name.Contains("excel") || name.Contains("word")
-            ? "Professionnel"
-            : path.Contains("\\windows\\") || name.Contains("system") || p.Source == "Microsoft Store"
-            ? "Outils Windows"
-            : IsKnownGame(p.Name) || path.Contains("games") || path.Contains("jeux") ? "Jeux" : "Logiciel";
+        bool outilVideo = name.Contains("adobe") || name.Contains("premiere") || name.Contains("vegas") || name.Contains("da vinci") || name.Contains("blender") || name.Contains("editing") || name.Contains("montage");
+        bool outilPro = name.Contains("visual studio") || name.Contains("code") || name.Contains("docker") || name.Contains("sql") || name.Contains("office") || name.Contains("excel") || name.Contains("word");
+        bool outilSysteme = path.Contains("\\windows\\") || name.Contains("system") || p.Source == "Microsoft Store";
+        bool jeu = IsKnownGame(p.Name) || path.Contains("games") || path.Contains("jeux");
+
+        return outilVideo ? "Video Montage"
+            : outilPro ? "Professionnel"
+            : outilSysteme ? "Outils Windows"
+            : jeu ? "Jeux" : "Logiciel";
     }
 
     private static List<ProgramInfo> ScanEA(CancellationToken cancellationToken)
@@ -567,7 +562,7 @@ public partial class InstalledProgramsService
                 });
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.ScanEA"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Security.SecurityException) { LoggingService.LogException(ex, "InstalledProgramsService.ScanEA"); }
         return list;
     }
 
@@ -608,7 +603,7 @@ public partial class InstalledProgramsService
                 }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.ScanRockstar"); }
+        catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "InstalledProgramsService.ScanRockstar"); }
         return list;
     }
 
@@ -619,28 +614,25 @@ public partial class InstalledProgramsService
         string path = p.InstallPath;
         string exe = p.ExePath;
 
-        if (name.AsSpan().ContainsAny(BlacklistValues))
+        bool autoriseControleIcue = name.Contains("center", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("control", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("icue", StringComparison.OrdinalIgnoreCase);
+
+        if (name.AsSpan().ContainsAny(BlacklistValues) && !autoriseControleIcue)
         {
-            if (!name.Contains("center", StringComparison.OrdinalIgnoreCase) &&
-                !name.Contains("control", StringComparison.OrdinalIgnoreCase) &&
-                !name.Contains("icue", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
+            return false;
         }
 
-        if (path.Contains("\\windows\\system32", StringComparison.OrdinalIgnoreCase) ||
+        bool cheminSystemeWindows = path.Contains("\\windows\\system32", StringComparison.OrdinalIgnoreCase) ||
             path.Contains("\\windows\\syswow64", StringComparison.OrdinalIgnoreCase) ||
             path.Contains("\\windows\\winsxs", StringComparison.OrdinalIgnoreCase) ||
             path.Contains("\\windows\\installer", StringComparison.OrdinalIgnoreCase) ||
             exe.Contains("\\windows\\system32", StringComparison.OrdinalIgnoreCase) ||
-            exe.Contains("\\windows\\syswow64", StringComparison.OrdinalIgnoreCase))
+            exe.Contains("\\windows\\syswow64", StringComparison.OrdinalIgnoreCase);
+
+        if (cheminSystemeWindows)
         {
-            bool isAllowed = false;
-            foreach (string a in SystemAllowList)
-            {
-                if (name.Contains(a, StringComparison.OrdinalIgnoreCase)) { isAllowed = true; break; }
-            }
+            bool isAllowed = SystemAllowList.Any(a => name.Contains(a, StringComparison.OrdinalIgnoreCase));
 
             if (p.Source != "Windows")
             {
@@ -653,18 +645,14 @@ public partial class InstalledProgramsService
             }
         }
 
-        foreach (string sp in SystemPublisherBlocklist)
+        bool autoriseJeuPanneau = name.Contains("center", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("control", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("dashboard", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("game", StringComparison.OrdinalIgnoreCase);
+
+        if (!autoriseJeuPanneau && SystemPublisherBlocklist.Any(sp => pub.Contains(sp, StringComparison.OrdinalIgnoreCase)))
         {
-            if (pub.Contains(sp, StringComparison.OrdinalIgnoreCase))
-            {
-                if (!name.Contains("center", StringComparison.OrdinalIgnoreCase) &&
-                    !name.Contains("control", StringComparison.OrdinalIgnoreCase) &&
-                    !name.Contains("dashboard", StringComparison.OrdinalIgnoreCase) &&
-                    !name.Contains("game", StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-            }
+            return false;
         }
 
         return name.Length >= 2 && !name.Contains("msiexec", StringComparison.OrdinalIgnoreCase);
@@ -684,9 +672,9 @@ public partial class InstalledProgramsService
             return list;
         }
 
-        dynamic shell;
+        object shell;
         try { shell = Activator.CreateInstance(shellType)!; }
-        catch (Exception ex) { LoggingService.LogException(ex, "ScanStartMenu.CreateShell"); return list; }
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or System.InvalidOperationException) { LoggingService.LogException(ex, "ScanStartMenu.CreateShell"); return list; }
 
         foreach (string rootPath in paths)
         {
@@ -712,8 +700,10 @@ public partial class InstalledProgramsService
 
                 try
                 {
-                    dynamic shortcut = shell.CreateShortcut(shortcutPath);
-                    string targetPath = shortcut.TargetPath;
+                    object? shortcut = shellType.InvokeMember(
+                        "CreateShortcut", System.Reflection.BindingFlags.InvokeMethod, null, shell, new object?[] { shortcutPath });
+                    string? targetPath = shortcut?.GetType().InvokeMember(
+                        "TargetPath", System.Reflection.BindingFlags.GetProperty, null, shortcut, null) as string;
 
                     if (string.IsNullOrEmpty(targetPath) || !targetPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
                     {
@@ -737,7 +727,7 @@ public partial class InstalledProgramsService
                         SizeBytes = new FileInfo(targetPath).Length
                     });
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.ScanStartMenu.ReadShortcut"); }
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Runtime.InteropServices.COMException or System.InvalidOperationException) { LoggingService.LogException(ex, "InstalledProgramsService.ScanStartMenu.ReadShortcut"); }
             }
         }
         return list;
@@ -761,14 +751,9 @@ public partial class InstalledProgramsService
                         continue;
                     }
 
-                    foreach (string subkeyName in key.GetSubKeyNames())
+                    foreach (RegistryKey subkey in key.GetSubKeyNames().Select(key.OpenSubKey).OfType<RegistryKey>())
                     {
-                        using RegistryKey? subkey = key.OpenSubKey(subkeyName);
-                        if (subkey == null)
-                        {
-                            continue;
-                        }
-
+                        using var subkeyScope = subkey;
                         string? name = subkey.GetValue("DisplayName") as string;
                         if (string.IsNullOrEmpty(name))
                         {
@@ -802,7 +787,7 @@ public partial class InstalledProgramsService
 
                         if (sizeBytes == 0 && !string.IsNullOrEmpty(exePath) && File.Exists(exePath))
                         {
-                            try { sizeBytes = new FileInfo(exePath).Length; } catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.ScanRegistryUninstall.ReadFileSize"); }
+                            try { sizeBytes = new FileInfo(exePath).Length; } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "InstalledProgramsService.ScanRegistryUninstall.ReadFileSize"); }
                         }
 
                         list.Add(new ProgramInfo
@@ -819,7 +804,7 @@ public partial class InstalledProgramsService
                         });
                     }
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.ScanRegistryUninstall.ReadSubkey"); }
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Security.SecurityException) { LoggingService.LogException(ex, "InstalledProgramsService.ScanRegistryUninstall.ReadSubkey"); }
             }
         }
         return list;
@@ -828,7 +813,7 @@ public partial class InstalledProgramsService
     private static List<ProgramInfo> ScanEpicGames(CancellationToken cancellationToken)
     {
         var list = new List<ProgramInfo>();
-        string epicManifests = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Epic", "EpicGamesLauncher", "Data", "Manifests");
+        string epicManifests = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Epic", "EpicGamesLauncher", "Data", "Manifests");
 
         if (!Directory.Exists(epicManifests))
         {
@@ -853,7 +838,7 @@ public partial class InstalledProgramsService
                 {
                     string installDir = pathMatch.Groups[1].Value.Replace("\\\\", "\\");
                     string exeName = exeMatch.Success ? exeMatch.Groups[1].Value : "";
-                    string exePath = Path.Combine(installDir, exeName);
+                    string exePath = Path.Join(installDir, exeName);
                     string appNameId = Path.GetFileNameWithoutExtension(file);
 
                     long sizeBytes = 0;
@@ -876,7 +861,7 @@ public partial class InstalledProgramsService
                     });
                 }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.ScanEpicGames.ReadManifest"); }
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "InstalledProgramsService.ScanEpicGames.ReadManifest"); }
         }
         return list;
     }
@@ -891,7 +876,7 @@ public partial class InstalledProgramsService
             return list;
         }
 
-        string appsPath = Path.Combine(steamPath, "steamapps");
+        string appsPath = Path.Join(steamPath, "steamapps");
         if (!Directory.Exists(appsPath))
         {
             return list;
@@ -913,7 +898,7 @@ public partial class InstalledProgramsService
                 if (nameMatch.Success && dirMatch.Success)
                 {
                     string name = nameMatch.Groups[1].Value;
-                    string installDir = Path.Combine(appsPath, "common", dirMatch.Groups[1].Value);
+                    string installDir = Path.Join(appsPath, "common", dirMatch.Groups[1].Value);
                     string? exePath = FindMainExecutable(installDir);
                     string appId = Path.GetFileNameWithoutExtension(file).Replace("appmanifest_", "");
 
@@ -937,7 +922,7 @@ public partial class InstalledProgramsService
                     });
                 }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.ScanSteam.ReadManifest"); }
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "InstalledProgramsService.ScanSteam.ReadManifest"); }
         }
         return list;
     }
@@ -951,14 +936,9 @@ public partial class InstalledProgramsService
             return list;
         }
 
-        foreach (string subkeyName in key.GetSubKeyNames())
+        foreach (RegistryKey subkey in key.GetSubKeyNames().Select(key.OpenSubKey).OfType<RegistryKey>())
         {
-            using RegistryKey? subkey = key.OpenSubKey(subkeyName);
-            if (subkey == null)
-            {
-                continue;
-            }
-
+            using var subkeyScope = subkey;
             string? name = subkey.GetValue("gameName") as string;
             string? path = subkey.GetValue("path") as string;
             string? exe = subkey.GetValue("exe") as string;
@@ -968,7 +948,7 @@ public partial class InstalledProgramsService
                 continue;
             }
 
-            string exePath = string.IsNullOrEmpty(exe) ? (FindMainExecutable(path) ?? string.Empty) : Path.Combine(path, exe);
+            string exePath = string.IsNullOrEmpty(exe) ? (FindMainExecutable(path) ?? string.Empty) : Path.Join(path, exe);
 
             list.Add(new ProgramInfo
             {
@@ -1038,20 +1018,25 @@ public partial class InstalledProgramsService
                 return list;
             }
 
-            dynamic shell = null!;
+            object? shell = null;
             try
             {
-                shell = Activator.CreateInstance(shellType)!;
-                dynamic folder = shell.NameSpace("shell:AppsFolder");
-                foreach (dynamic item in folder.Items())
+                shell = Activator.CreateInstance(shellType);
+                object? folder = shellType.InvokeMember(
+                    "NameSpace", System.Reflection.BindingFlags.InvokeMethod, null, shell, new object?[] { "shell:AppsFolder" });
+                object? folderItems = folder?.GetType().InvokeMember(
+                    "Items", System.Reflection.BindingFlags.InvokeMethod, null, folder, null);
+                foreach (object item in (System.Collections.IEnumerable)folderItems!)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
                         break;
                     }
 
-                    string name = item.Name;
-                    string path = item.Path;
+                    string name = item.GetType().InvokeMember(
+                        "Name", System.Reflection.BindingFlags.GetProperty, null, item, null) as string ?? string.Empty;
+                    string path = item.GetType().InvokeMember(
+                        "Path", System.Reflection.BindingFlags.GetProperty, null, item, null) as string ?? string.Empty;
 
                     if (path.Contains('!'))
                     {
@@ -1074,7 +1059,7 @@ public partial class InstalledProgramsService
                 }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "ScanUWPApps"); }
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or System.InvalidOperationException) { LoggingService.LogException(ex, "ScanUWPApps"); }
         return list;
     }
 
@@ -1088,7 +1073,7 @@ public partial class InstalledProgramsService
     }
 
     private static bool TryGetCustomAppEntry(
-        Dictionary<string, CustomAppEntry> data,
+        IReadOnlyDictionary<string, CustomAppEntry> data,
         ProgramInfo app,
         out CustomAppEntry entry)
     {
@@ -1102,11 +1087,11 @@ public partial class InstalledProgramsService
         return data.TryGetValue(fallbackKey, out entry!);
     }
 
-    private Dictionary<string, CustomAppEntry> LoadCustomAppsData()
+    private IReadOnlyDictionary<string, CustomAppEntry> LoadCustomAppsData()
     {
         if (_customAppsDataCache != null)
         {
-            return _customAppsDataCache;
+            return new Dictionary<string, CustomAppEntry>(_customAppsDataCache);
         }
 
         try
@@ -1152,7 +1137,7 @@ public partial class InstalledProgramsService
                 }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.LoadCustomAppsData"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.LoadCustomAppsData"); }
         _customAppsDataCache = new Dictionary<string, CustomAppEntry>(StringComparer.OrdinalIgnoreCase);
         return _customAppsDataCache;
     }
@@ -1181,7 +1166,7 @@ public partial class InstalledProgramsService
     {
         try
         {
-            Dictionary<string, CustomAppEntry> data = LoadCustomAppsData();
+            Dictionary<string, CustomAppEntry> data = new(LoadCustomAppsData());
             if (!string.IsNullOrWhiteSpace(category))
             {
                 category = MigrateCategory(category);
@@ -1223,9 +1208,9 @@ public partial class InstalledProgramsService
                 }
             }
 
-            try { _ = ServiceContainer.GetRequired<ICacheService>().InvalidateAsync("programs_scan_v1"); } catch (Exception ex2) { LoggingService.LogException(ex2, "InstalledProgramsService.SaveCustomAppDataByKey.InvalidateCache"); }
+            try { _ = ServiceContainer.GetRequired<ICacheService>().InvalidateAsync("programs_scan_v1"); } catch (Exception ex2) when (ex2 is not System.OutOfMemoryException) { LoggingService.LogException(ex2, "InstalledProgramsService.SaveCustomAppDataByKey.InvalidateCache"); }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.SaveCustomAppData"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.SaveCustomAppData"); }
     }
 
     public void AddManualApplication(ProgramInfo app)
@@ -1236,7 +1221,7 @@ public partial class InstalledProgramsService
             apps.Add(app);
             SaveManualApplications(apps);
             InvalidateMemoryCache();
-            try { _ = ServiceContainer.GetRequired<ICacheService>().InvalidateAsync("programs_scan_v1"); } catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.AddManualApplication.InvalidateCache"); }
+            try { _ = ServiceContainer.GetRequired<ICacheService>().InvalidateAsync("programs_scan_v1"); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "InstalledProgramsService.AddManualApplication.InvalidateCache"); }
 
             string? customName = string.IsNullOrWhiteSpace(app.Name) ? null : app.Name;
             string? customCat = string.IsNullOrWhiteSpace(app.Category) ? null : app.Category;
@@ -1257,7 +1242,7 @@ public partial class InstalledProgramsService
                 return JsonSerializer.Deserialize<List<ProgramInfo>>(content) ?? [];
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.LoadManualApplications"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.LoadManualApplications"); }
         return [];
     }
 
@@ -1274,7 +1259,7 @@ public partial class InstalledProgramsService
             string content = JsonSerializer.Serialize(apps);
             File.WriteAllText(ManualAppsPath, content);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.SaveManualApplications"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "InstalledProgramsService.SaveManualApplications"); }
     }
 
     private static string NormalizeName(string name)
@@ -1345,7 +1330,7 @@ public partial class InstalledProgramsService
                        .FirstOrDefault(f => !f.Contains("uninstall", StringComparison.OrdinalIgnoreCase) &&
                                             !f.Contains("crash", StringComparison.OrdinalIgnoreCase))?.ToString();
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "InstalledProgramsService.FindMainExecutable"); return null; }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "InstalledProgramsService.FindMainExecutable"); return null; }
     }
 
     private static void AccumulateShortcutsSafely(string path, List<string> results)
@@ -1358,21 +1343,10 @@ public partial class InstalledProgramsService
                 AccumulateShortcutsSafely(directory, results);
             }
         }
-        catch (UnauthorizedAccessException) { }
-        catch (IOException) { }
-        catch (Exception) { }
+        catch (UnauthorizedAccessException ex) { _ = ex; }
+        catch (IOException ex) { _ = ex; }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
     }
-
-    public static List<ProgramInfo> DetectGames(List<ProgramInfo> allPrograms)
-    {
-        return allPrograms.Where(p =>
-            p.Source is "Steam" or "Epic Games" or "GOG" or "Ubisoft" or "EA" or "Rockstar" ||
-            p.InstallPath.Contains("games", StringComparison.OrdinalIgnoreCase) ||
-            p.InstallPath.Contains("jeux", StringComparison.OrdinalIgnoreCase) ||
-            IsKnownGame(p.Name) || p.Category == "Jeux"
-        ).ToList();
-    }
-
     public static bool IsKnownGame(string name)
     {
         return KnownGamesSet.Any(k => name.Contains(k, StringComparison.OrdinalIgnoreCase));

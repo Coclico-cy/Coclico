@@ -46,7 +46,7 @@ Coclico démarre en utilisateur standard. Les outils qui ont besoin des droits a
 Le menu principal est un accordéon, inspiré des Paramètres Windows. Les modules sont rangés en trois sections dépliables, qui se souviennent de ce que tu as ouvert :
 
 <p align="center">
-  <img src="docs/Menu.png" alt="Menu principal de Coclico" width="480">
+  <img src="docs/menu.png" alt="Menu principal de Coclico" width="480">
 </p>
 
 | Section | Modules |
@@ -62,6 +62,7 @@ Accueil, Paramètres et Aide restent toujours visibles.
 | **Sécurité d'abord** | Chaque action destructive demande une confirmation. Les fichiers supprimés partent à la Corbeille. Les réglages réseau et alimentation sont réversibles en un clic. |
 | **Matériel respecté** | Les plans d'alimentation sont créés uniquement via `powercfg`. Chaque paramètre est validé par rapport à ton PC avant d'être appliqué. |
 | **IA locale** | Un modèle GGUF local ou un serveur Ollama local. Aucune clé cloud. Adresses `localhost` uniquement. |
+| **Installations vérifiées** | Chaque fichier du payload est haché dans un manifeste signé par la clé RSA-4096 du projet ; l'installeur refuse tout ce qui ne se vérifie pas contre les clés de confiance ancrées dans le dépôt. |
 
 ## Les modules, un par un
 
@@ -133,6 +134,7 @@ Trois modes complémentaires :
 - Purge manuelle avec plusieurs profils : rapide, normal, profond, intelligent ;
 - Historique et total de mémoire libérée depuis le début de la session ;
 - **Nettoyage automatique intelligent** : par intervalle, par seuil d'utilisation, ou hybride. L'application au premier plan est protégée : Coclico ne purge jamais ce que tu es en train d'utiliser.
+- **Comment ça marche, honnêtement** : la purge demande à Windows de réduire le working set des processus en arrière-plan (l'application au premier plan est protégée). Windows gère la mémoire tout seul : la RAM libérée n'est pas un gain de vitesse en soi, et les pages réduites peuvent être rechargées à la réutilisation. Sers-t'en pour libérer de la mémoire avant un jeu ou une tâche lourde — pas comme un accélérateur magique.
 
 ### Réglage Réseau - neuf réglages utiles, zéro placebo
 
@@ -201,7 +203,7 @@ Quelques packs disponibles : Pack Gaming, Pack Manette, Pack Pilotes GPU, Pack N
 **Exemple : jouer à la manette hors Steam.** Le Pack Manette prépare tout pour une DualShock 4 ou une DualSense :
 
 1. **DS4Windows** : le logiciel qui configure la manette (vibration, gyroscope, profils par jeu). Téléchargé depuis son dépôt GitHub officiel.
-2. **ViGEmBus** : le pilote de manette virtuelle. C'est lui qui fait croire à Windows qu'une manette Xbox est branchée.
+2. **ViGEmBus** : le pilote de manette virtuelle. C'est lui qui fait croire à Windows qu'une manette Xbox est branchée. (Projet retiré par son auteur en 2023 : fonctionnel, mais plus mis à jour.)
 3. **HidHide** : masque la manette physique. Sans lui, certains jeux voient la manette deux fois.
 
 Un seul clic, et les trois sont installés dans le bon ordre. Le même principe s'applique à tous les packs.
@@ -268,7 +270,7 @@ Rends-toi sur la page [GitHub Releases](https://github.com/Coclico-cy/Coclico/re
 - `Coclico-<version>.exe` : l'assistant d'installation guidé ;
 - ou l'archive ZIP Windows x64 : pour une installation portable.
 
-L'installateur s'installe pour le compte Windows actuel, propose un raccourci bureau et conserve les réglages et données de Coclico lors d'une désinstallation. L'installation standard omet le volumineux runtime CUDA facultatif : ne le choisis que sur un système NVIDIA compatible. L'installeur n'est pas signé numériquement : Windows peut afficher un avertissement sur son éditeur.
+L'installateur s'installe pour le compte Windows actuel, propose un raccourci bureau et conserve les réglages et données de Coclico lors d'une désinstallation. L'installation standard omet le volumineux runtime CUDA facultatif : ne le choisis que sur un système NVIDIA compatible. Le binaire de l'installeur ne porte pas de signature Authenticode : Windows peut afficher un avertissement sur son éditeur ; l'intégrité reste cryptographique : chaque fichier du payload est haché dans un manifeste signé par la clé RSA-4096 du projet, et l'installeur vérifie ce manifeste contre les clés de confiance ancrées dans le dépôt avant d'installer quoi que ce soit.
 
 Chaque version fournit un fichier `SHA256SUMS.txt` pour vérifier les deux téléchargements.
 
@@ -308,9 +310,11 @@ Coclico/                 Application WPF
   Common/                Services partagés (noyau, diagnostics, exécution, interface)
   Modules/               Accueil, IA, nettoyage, réseau, alimentation, disque, applications…
   Resources/             Thèmes, langues et icônes
-Coclico.Installer/       Installeur autonome (compilé par le script, hors solution)
-Coclico.Tests/           Tests unitaires et validation XAML
-installer/               Script de génération de l'installeur
+  Security/              trust-policy.json : clés de signature ancrées
+Coclico.Security/        Sécurité des releases : outil de signature, manifestes d'intégrité, trust store
+Coclico.InstallerAot/    Installeur autonome (Avalonia, NativeAOT)
+Coclico.Tests/           Tests unitaires, validation XAML et sécurité
+installer/               Script de génération de l'installeur et clé de signature locale (jamais commitée)
 docs/                    Captures d'écran des README
 .github/workflows/       CI, tests et publication
 ```

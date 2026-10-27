@@ -123,16 +123,9 @@ public static class DuplicateFinderService
 
     internal static List<List<FileMeta>> CandidateGroups(Dictionary<long, List<FileMeta>> index)
     {
-        List<List<FileMeta>> groups = [];
-        foreach (List<FileMeta> group in index.Values)
-        {
-            if (group.Count > 1)
-            {
-                groups.Add(group);
-            }
-        }
-
-        return groups;
+        return index.Values
+            .Where(group => group.Count > 1)
+            .ToList();
     }
 
     internal static List<List<FileMeta>> FilterHardlinkedFiles(List<List<FileMeta>> groups)
@@ -181,16 +174,10 @@ public static class DuplicateFinderService
             }
         });
 
-        List<List<FileMeta>> result = [];
-        foreach (ConcurrentBag<FileMeta> bag in byHash.Values)
-        {
-            if (bag.Count > 1)
-            {
-                result.Add([.. bag]);
-            }
-        }
-
-        return result;
+        return byHash.Values
+            .Where(bag => bag.Count > 1)
+            .Select(bag => bag.ToList())
+            .ToList();
     }
 
     internal static IReadOnlyList<DuplicateGroup> ToDuplicateGroups(List<List<FileMeta>> groups, int maxGroups)
@@ -263,12 +250,8 @@ public static class DuplicateFinderService
         {
             size = new FileInfo(path).Length;
         }
-        catch (IOException)
-        {
-        }
-        catch (UnauthorizedAccessException)
-        {
-        }
+        catch (IOException ex) { _ = ex; }
+        catch (UnauthorizedAccessException ex) { _ = ex; }
 
         return new FileMeta(path, size);
     }
@@ -356,6 +339,7 @@ public static class DuplicateFinderService
         public uint FileIndexLow;
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetFileInformationByHandle(SafeFileHandle handle, out ByHandleFileInformation information);

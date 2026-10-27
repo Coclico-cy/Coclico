@@ -10,6 +10,7 @@ namespace Coclico.Modules.Power.Views;
 public partial class PowerOptimizerView : UserControl
 {
     private readonly CpuPowerService _cpuPower = ServiceContainer.GetRequired<CpuPowerService>();
+    private bool _batteryReportRunning;
     private readonly AdaptivePowerService _adaptive = ServiceContainer.GetRequired<AdaptivePowerService>();
     private readonly DispatcherTimer _gaugeTimer;
     private readonly Action<string> _onAdaptiveStatus;
@@ -79,7 +80,7 @@ public partial class PowerOptimizerView : UserControl
                 UpdateAdaptiveUi();
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "PowerOptimizerView.LoadState");
         }
@@ -176,7 +177,7 @@ public partial class PowerOptimizerView : UserControl
                 ToastService.ShowError("Impossible de créer tous les plans Coclico.");
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "PowerOptimizerView.CreatePlans");
             ToastService.ShowError("Erreur pendant la configuration des plans.");
@@ -214,7 +215,7 @@ public partial class PowerOptimizerView : UserControl
                 ToastService.ShowError(message);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, $"PowerOptimizerView.ActivateMode({mode})");
             ToastService.ShowError("Erreur pendant l'activation du plan.");
@@ -268,7 +269,7 @@ public partial class PowerOptimizerView : UserControl
                 ToastService.ShowError(message);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "PowerOptimizerView.DeletePlans");
             ToastService.ShowError("Erreur pendant la suppression des plans.");
@@ -298,7 +299,7 @@ public partial class PowerOptimizerView : UserControl
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "PowerOptimizerView.ToggleAdaptive");
             ToastService.ShowError("Erreur du mode adaptatif.");
@@ -366,14 +367,9 @@ public partial class PowerOptimizerView : UserControl
             {
                 StatusText.Text = "Restauration du plan de départ...";
                 CoclicoPowerMode? originalMode = PowerPlanCatalog.TryGetModeFromPlanName(original.Name);
-                if (originalMode is { } mode)
-                {
-                    _ = await _cpuPower.ActivatePlanAsync(mode);
-                }
-                else
-                {
-                    _ = await _cpuPower.ActivateRawSchemeAsync(original.Guid, original.Name);
-                }
+                _ = originalMode is { } mode
+                    ? await _cpuPower.ActivatePlanAsync(mode)
+                    : await _cpuPower.ActivateRawSchemeAsync(original.Guid, original.Name);
             }
 
             BenchmarkProgress.Value = 100;
@@ -387,7 +383,7 @@ public partial class PowerOptimizerView : UserControl
                 ? "Aucun plan testé."
                 : $"Test terminé : meilleur plan « {PowerPlanCatalog.GetPlanName(results.First(r => Math.Abs(r.Score - top) < 0.01).Mode)} ». Résultat indicatif : un test de charge favorise par construction le plan le plus énergivore.";
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "PowerOptimizerView.Benchmark");
             ToastService.ShowError("Erreur pendant le test comparatif.");
@@ -472,6 +468,39 @@ public partial class PowerOptimizerView : UserControl
                     ? FindResource("SuccessBrush") as Brush ?? border.BorderBrush
                     : FindResource("BorderSubtleBrush") as Brush ?? border.BorderBrush;
             }
+        }
+    }
+    private async void BtnBatteryReport_Click(object sender, RoutedEventArgs e)
+    {
+        if (_batteryReportRunning)
+        {
+            return;
+        }
+
+        _batteryReportRunning = true;
+        try
+        {
+            StatusText.Text = "Génération du rapport batterie Windows (powercfg)…";
+            string? reportPath = await BatteryReportService.GenerateReportAsync();
+
+            if (reportPath == null)
+            {
+                StatusText.Text = "Rapport batterie non généré (PC fixe sans batterie ou powercfg indisponible — détails dans les journaux).";
+                ToastService.ShowWarning("Impossible de générer le rapport batterie : sur un PC fixe sans batterie, Windows n'en produit pas.");
+                return;
+            }
+
+            StatusText.Text = $"Rapport batterie généré : {reportPath}";
+            BatteryReportService.OpenReport(reportPath);
+        }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
+        {
+            LoggingService.LogException(ex, "PowerOptimizerView.BatteryReport");
+            StatusText.Text = "Erreur inattendue pendant la génération du rapport batterie (détails dans les journaux).";
+        }
+        finally
+        {
+            _batteryReportRunning = false;
         }
     }
 }

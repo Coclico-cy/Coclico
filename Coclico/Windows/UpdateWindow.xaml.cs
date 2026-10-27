@@ -35,9 +35,10 @@ public partial class UpdateWindow : FluentWindow
         }
 
         var lines = new List<string>();
-        foreach (string rawLine in body.Replace("\r\n", "\n").Split('\n'))
+        string[] trimmedLines = body.Replace("\r\n", "\n").Split('\n').Select(rawLine => rawLine.Trim()).ToArray();
+        for (int i = 0; i < trimmedLines.Length; i++)
         {
-            string line = rawLine.Trim();
+            string line = trimmedLines[i];
             if (line.Length == 0)
             {
                 if (lines.Count > 0 && lines[^1].Length > 0)
@@ -98,7 +99,7 @@ public partial class UpdateWindow : FluentWindow
         DownloadProgress.Value = 0;
         StatusText.Text = "Téléchargement de la mise à jour...";
 
-        string savePath = Path.Combine(Path.GetTempPath(), asset.Name);
+        string savePath = Path.Join(Path.GetTempPath(), asset.Name);
         var progress = new Progress<long>(bytes =>
         {
             DownloadProgress.Value = bytes;
@@ -127,7 +128,7 @@ public partial class UpdateWindow : FluentWindow
             await Task.Delay(1200);
             ExitForUpdate();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "UpdateWindow.Install");
             StatusText.Text = "Erreur pendant la mise à jour. Réessayez plus tard.";
@@ -156,7 +157,7 @@ public partial class UpdateWindow : FluentWindow
             _settings.Settings.SkippedUpdateVersion = _release.TagName;
             _settings.Save();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "UpdateWindow.Skip");
         }
@@ -170,9 +171,7 @@ public partial class UpdateWindow : FluentWindow
         {
             ServiceContainer.GetRequired<SettingsService>().Settings.MinimizeToTray = false;
         }
-        catch
-        {
-        }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
 
         Application.Current.Shutdown();
     }

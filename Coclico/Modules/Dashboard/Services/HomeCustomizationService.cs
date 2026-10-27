@@ -8,7 +8,7 @@ namespace Coclico.Services;
 
 public sealed class HomeCustomizationService
 {
-    private static readonly string CustomizationFilePath = Path.Combine(
+    private static readonly string CustomizationFilePath = Path.Join(
         SettingsService.GetUserDataDirectory(), "home_customization.json");
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
@@ -43,7 +43,7 @@ public sealed class HomeCustomizationService
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "HomeCustomizationService.Load");
         }
@@ -55,13 +55,7 @@ public sealed class HomeCustomizationService
     private static void EnsureDefaultSections(HomeCustomizationSettings settings)
     {
         settings.SectionOrder ??= [];
-        foreach (string sec in HomeCustomizationSettings.DefaultSectionOrder)
-        {
-            if (!settings.SectionOrder.Contains(sec))
-            {
-                settings.SectionOrder.Add(sec);
-            }
-        }
+        settings.SectionOrder.AddRange(HomeCustomizationSettings.DefaultSectionOrder.Where(sec => !settings.SectionOrder.Contains(sec)));
     }
 
     public void Save()
@@ -75,7 +69,7 @@ public sealed class HomeCustomizationService
                 CustomizationChanged?.Invoke(this, EventArgs.Empty);
             });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "HomeCustomizationService.Save");
         }
@@ -92,7 +86,7 @@ public sealed class HomeCustomizationService
                 CustomizationChanged?.Invoke(this, EventArgs.Empty);
             });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "HomeCustomizationService.SaveAsync");
         }
@@ -178,27 +172,5 @@ public sealed class HomeCustomizationService
         var b = new SolidColorBrush(c);
         b.Freeze();
         return b;
-    }
-
-    public Brush GetTileBg(string tileKey, Brush defaultBg)
-    {
-        return Settings.Style switch
-        {
-            HomeThemeStyle.Minimalist => MinimalistBg,
-            HomeThemeStyle.Glassmorphism => GlassBg,
-            HomeThemeStyle.VibrantNeon => defaultBg,
-            _ => defaultBg
-        };
-    }
-
-    public Brush GetTileBorder(string tileKey, Brush defaultBorder, Brush neonAccent)
-    {
-        return Settings.Style switch
-        {
-            HomeThemeStyle.Minimalist => MinimalistBorder,
-            HomeThemeStyle.Glassmorphism => GlassBorder,
-            HomeThemeStyle.VibrantNeon => neonAccent,
-            _ => defaultBorder
-        };
     }
 }

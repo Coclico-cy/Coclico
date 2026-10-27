@@ -16,7 +16,7 @@ public static class CentralVariables
 public sealed class CentralUnitVariables
 {
     private readonly ConcurrentDictionary<string, object?> _values = new(StringComparer.Ordinal);
-    private readonly ConcurrentDictionary<string, List<Action<string, object?>>> _handlers = new(StringComparer.Ordinal);
+    private readonly ConcurrentDictionary<string, Action<string, object?>[]> _handlers = new(StringComparer.Ordinal);
     private readonly object _handlerLock = new();
     private long _publishedCount;
 
@@ -34,10 +34,9 @@ public sealed class CentralUnitVariables
 
         _values[key] = boxed;
         Interlocked.Increment(ref _publishedCount);
-        foreach (Action<string, object?> handler in GetHandlers(key))
+        if (_handlers.TryGetValue(key, out Action<string, object?>[]? handlers) && handlers is not null && handlers.Length > 0)
         {
-            try { handler(key, boxed); }
-            catch { }
+            InvokeHandlers(key, boxed, handlers);
         }
 
         ValueChanged?.Invoke(key, boxed);
@@ -69,43 +68,48 @@ public sealed class CentralUnitVariables
     {
         lock (_handlerLock)
         {
-            if (!_handlers.TryGetValue(key, out List<Action<string, object?>>? list) || list is null)
+            _handlers.TryGetValue(key, out Action<string, object?>[]? current);
+            Action<string, object?>[] updated = new Action<string, object?>[(current?.Length ?? 0) + 1];
+            if (current is not null && current.Length > 0)
             {
-                list = new List<Action<string, object?>>();
-                _handlers[key] = list;
+                Array.Copy(current, updated, current.Length);
             }
 
-            list.Add(handler);
+            updated[^1] = handler;
+            _handlers[key] = updated;
         }
 
-        if (_values.TryGetValue(key, out object? current))
+        if (_values.TryGetValue(key, out object? currentValue))
         {
-            try { handler(key, current); }
-            catch { }
+            try { handler(key, currentValue); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
         }
 
         return () =>
         {
             lock (_handlerLock)
             {
-                if (_handlers.TryGetValue(key, out List<Action<string, object?>>? list) && list is not null)
+                if (_handlers.TryGetValue(key, out Action<string, object?>[]? existing) && existing is not null)
                 {
-                    _ = list.Remove(handler);
+                    int index = Array.IndexOf(existing, handler);
+                    if (index >= 0)
+                    {
+                        Action<string, object?>[] updated = new Action<string, object?>[existing.Length - 1];
+                        Array.Copy(existing, 0, updated, 0, index);
+                        Array.Copy(existing, index + 1, updated, index, existing.Length - index - 1);
+                        _handlers[key] = updated;
+                    }
                 }
             }
         };
     }
 
-    private List<Action<string, object?>> GetHandlers(string key)
+    private static void InvokeHandlers(string key, object? value, Action<string, object?>[] handlers)
     {
-        lock (_handlerLock)
+        foreach (Action<string, object?> handler in handlers)
         {
-            if (_handlers.TryGetValue(key, out List<Action<string, object?>>? list) && list is not null)
-            {
-                return new List<Action<string, object?>>(list);
-            }
-
-            return new List<Action<string, object?>>();
+            try { handler(key, value); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
         }
     }
 }

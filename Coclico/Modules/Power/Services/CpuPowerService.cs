@@ -53,7 +53,7 @@ public sealed class CpuPowerService
             {
                 return NativePower.HasBattery();
             }
-            catch
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 return false;
             }
@@ -68,7 +68,7 @@ public sealed class CpuPowerService
             {
                 return NativePower.IsOnAcPower();
             }
-            catch
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 return true;
             }
@@ -80,9 +80,8 @@ public sealed class CpuPowerService
         (_, string output) = await RunPowerCfgAsync("/list", ct).ConfigureAwait(false);
         List<PowerSchemeInfo> schemes = [];
 
-        foreach (string rawLine in output.Split('\n'))
+        foreach (string line in output.Split('\n').Select(rawLine => rawLine.Trim()))
         {
-            string line = rawLine.Trim();
             Match guidMatch = GuidRegex.Match(line);
             if (!guidMatch.Success)
             {
@@ -373,9 +372,7 @@ public sealed class CpuPowerService
             {
                 psi.StandardOutputEncoding = Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.OEMCodePage);
             }
-            catch
-            {
-            }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
 
             using Process? proc = Process.Start(psi);
             if (proc == null)
@@ -397,7 +394,7 @@ public sealed class CpuPowerService
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, $"CpuPowerService.RunPowerCfg({arguments})");
             return (-1, ex.Message);
@@ -417,6 +414,7 @@ public sealed class CpuPowerService
             public int BatteryFullLifeTime;
         }
 
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         [DllImport("kernel32.dll", SetLastError = false)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS status);

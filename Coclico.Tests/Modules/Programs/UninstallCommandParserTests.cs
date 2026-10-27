@@ -59,7 +59,7 @@ public sealed class UninstallCommandParserTests
     [Fact]
     public void Parse_QuotedPath_SplitsExeAndArgs()
     {
-        string exe = Path.Combine(Path.GetTempPath(), "unins_test.exe");
+        string exe = Path.Join(Path.GetTempPath(), "unins_test.exe");
         File.WriteAllText(exe, "stub");
 
         try
@@ -79,7 +79,7 @@ public sealed class UninstallCommandParserTests
     [Fact]
     public void Parse_UnquotedWithArgs_FindsExePath()
     {
-        string exe = Path.Combine(Path.GetTempPath(), "unins_quoted_test.exe");
+        string exe = Path.Join(Path.GetTempPath(), "unins_quoted_test.exe");
         File.WriteAllText(exe, "stub");
 
         try

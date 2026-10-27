@@ -33,8 +33,8 @@ public sealed class DiskItemNode
 
         var culture = CultureInfo.GetCultureInfo("fr-FR");
         return unit <= 1
-            ? string.Format(culture, "{0:0} {1}", value, units[unit])
-            : string.Format(culture, "{0:0.#} {1}", value, units[unit]);
+            ? TextFormatService.Format(culture, "{0:0} {1}", value, units[unit])
+            : TextFormatService.Format(culture, "{0:0.#} {1}", value, units[unit]);
     }
 }
 
@@ -59,7 +59,7 @@ public static class DiskAnalyzerService
                 .Where(d => d.IsReady && d.DriveType == DriveType.Fixed)
                 .ToList();
         }
-        catch
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             return [];
         }
@@ -111,14 +111,10 @@ public static class DiskAnalyzerService
                                 _ = Interlocked.Add(ref totalBytes, file.Length);
                                 _ = Interlocked.Increment(ref totalFiles);
                             }
-                            catch
-                            {
-                            }
+                            catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
                         }
                     }
-                    catch
-                    {
-                    }
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
 
                     try
                     {
@@ -141,9 +137,7 @@ public static class DiskAnalyzerService
                             }
                         }
                     }
-                    catch
-                    {
-                    }
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
 
                     if (Interlocked.Increment(ref reportCounter) % 512 == 0)
                     {

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="Coclico.Modules.UpdateCenter.Views.UpdateCenterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Coclico.Modules.UpdateCenter.ViewModels">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+
+        <LinearGradientBrush x:Key="UpdateAnimBrush" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#FF9500" Offset="0"/>
+            <GradientStop Color="#FF3B30" Offset="0.5"/>
+            <GradientStop Color="#AF52DE" Offset="1"/>
+        </LinearGradientBrush>
+    </UserControl.Resources>
+    <Grid Margin="24,16,24,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Update Center" FontSize="22" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding LastScanSummary}" Opacity="0.7" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="Mettre à jour la sélection"
+                    Command="{Binding UpdateSelectedCommand}"
+                    Padding="16,8"
+                    Margin="16,0"
+                    VerticalAlignment="Center"/>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <TextBlock Text="&#x1F50D;" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Width="220"
+                         Padding="8,6"
+                         VerticalContentAlignment="Center"/>
+                <Button Content="Vérifier tout"
+                        Command="{Binding CheckAllCommand}"
+                        MinWidth="140"
+                        Padding="16,8"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="1">
+            <ProgressBar Height="4" IsIndeterminate="True" Margin="0,0,0,6"
+                         Foreground="{StaticResource UpdateAnimBrush}">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="Scanning">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="Updating">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+            <TextBlock FontSize="10.5" Opacity="0.7" Margin="0,0,0,10">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value=""/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="Scanning">
+                                <Setter Property="Text" Value="Recherche des mises à jour en cours…"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="Updating">
+                                <Setter Property="Text" Value="Téléchargement et installation en cours…"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
+
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Sections}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:UpdateSectionViewModel}">
+                    <Expander IsExpanded="{Binding IsExpanded}" Margin="0,0,0,8">
+                        <Expander.Header>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Opacity="0.6" Margin="8,0,0,0">
+                                    <TextBlock.Text>
+                                        <Binding Path="AvailableCount" StringFormat="{}{0} disponible(s)"/>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <ProgressBar DockPanel.Dock="Right" Width="16" Height="16"
+                                             IsIndeterminate="True"
+                                             Foreground="{StaticResource UpdateAnimBrush}"
+                                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>
+                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15"/>
+                            </DockPanel>
+                        </Expander.Header>
+                        <ItemsControl ItemsSource="{Binding Items}" Margin="24,8,0,4">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:UpdateItemViewModel}">
+                                    <StackPanel Margin="0,4">
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding StatusLabel}" Opacity="0.6" Margin="12,0,0,0"/>
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding SourceLabel}" Opacity="0.45" Margin="12,0,0,0"/>
+                                            <TextBlock DockPanel.Dock="Right" Opacity="0.7" Margin="12,0,0,0">
+                                                <Run Text="{Binding CurrentVersion, Mode=OneWay}"/><Run Text=" → "/><Run Text="{Binding AvailableVersion, Mode=OneWay}"/>
+                                            </TextBlock>
+                                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding IsSelectable}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+                                        </DockPanel>
+
+                                        <ProgressBar Height="3" IsIndeterminate="True" Margin="0,3,0,0"
+                                                     Foreground="{StaticResource UpdateAnimBrush}">
+                                            <ProgressBar.Style>
+                                                <Style TargetType="ProgressBar">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Updating">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ProgressBar.Style>
+                                        </ProgressBar>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

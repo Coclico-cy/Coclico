@@ -141,4 +141,18 @@ public sealed class CentralUnitFlagStoreTests : IDisposable
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
             () => _store.WaitAsync(CentralFlags.NetworkStatsDue, postponedCts.Token));
     }
+
+    [Fact]
+    public async Task SchedulerFiresTheEarliestScheduleFirst()
+    {
+        _store.StartScheduler();
+        _store.Schedule(CentralFlags.DashboardRefreshDue, DateTime.UtcNow.AddSeconds(2));
+        _store.Schedule(CentralFlags.GuardTickDue, DateTime.UtcNow.AddMilliseconds(100));
+
+        using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        bool fired = await _store.WaitAsync(CentralFlags.GuardTickDue, timeoutCts.Token);
+
+        Assert.True(fired);
+        Assert.Equal(1, _store.ScheduledCount);
+    }
 }

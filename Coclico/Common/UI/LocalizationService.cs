@@ -18,7 +18,7 @@ public class LocalizationService
         {
             _currentDict = new ResourceDictionary { Source = BuildUri("fr") };
         }
-        catch (Exception exSwallow)
+        catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
         {
             LoggingService.LogException(exSwallow, "LocalizationService.CtorLoad");
         }
@@ -43,14 +43,14 @@ public class LocalizationService
 
             LanguageChanged?.Invoke(targetCode);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "LocalizationService.SetLanguage");
 
             if (langCode != "fr" && CurrentLanguage != "fr")
             {
                 try { SetLanguage("fr"); }
-                catch (Exception exSwallow) { LoggingService.LogException(exSwallow, "LocalizationService.SetLanguageFallback"); }
+                catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException) { LoggingService.LogException(exSwallow, "LocalizationService.SetLanguageFallback"); }
             }
         }
     }
@@ -63,7 +63,7 @@ public class LocalizationService
                 ? Application.Current.Dispatcher.Invoke(() => GetInternal(key))
                 : GetInternal(key);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "LocalizationService.Get");
         }
@@ -111,7 +111,7 @@ public class LocalizationService
             {
                 dict = new ResourceDictionary { Source = uri };
             }
-            catch (Exception exSwallow) { LoggingService.LogException(exSwallow, "LocalizationService.SetLanguageNoApp"); }
+            catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException) { LoggingService.LogException(exSwallow, "LocalizationService.SetLanguageNoApp"); }
         }
 
         return dict;
@@ -119,7 +119,7 @@ public class LocalizationService
 
     private string GetInternal(string key)
     {
-        if (_currentDict?.Contains(key) == true)
+        if (_currentDict?.Contains(key) is true)
         {
             string? val = _currentDict[key] as string;
             if (!string.IsNullOrEmpty(val))
@@ -128,7 +128,7 @@ public class LocalizationService
             }
         }
 
-        if (Application.Current?.Resources.Contains(key) == true)
+        if (Application.Current?.Resources.Contains(key) is true)
         {
             string? val = Application.Current.Resources[key] as string;
             if (!string.IsNullOrEmpty(val))
@@ -151,7 +151,7 @@ public class LocalizationService
                     }
                 }
             }
-            catch (Exception exSwallow) { LoggingService.LogException(exSwallow, "LocalizationService.FallbackLoad"); }
+            catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException) { LoggingService.LogException(exSwallow, "LocalizationService.FallbackLoad"); }
         }
 
         return key;

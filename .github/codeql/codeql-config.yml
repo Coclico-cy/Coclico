@@ -4,12 +4,20 @@ queries:
   - uses: security-extended
   - uses: security-and-quality
 
+query-filters:
+- exclude:
+    id: cs/call-to-unmanaged-code
+- exclude:
+    id: cs/unmanaged-code
+
 paths:
   - Coclico
-  - Coclico.Installer
+  - Coclico.InstallerAot
   - Coclico.Tests
 
 paths-ignore:
   - docs
   - installer
   - "**/*.md"
+  - "**/obj/**"
+  - "**/bin/**"

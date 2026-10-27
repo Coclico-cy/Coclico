@@ -28,7 +28,7 @@ public class HexToBrushConverter : IValueConverter
             _ = _cache.TryAdd(hex, brush);
             return brush;
         }
-        catch
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             Services.LoggingService.LogError($"[HexToBrushConverter] Invalid hex color: {value}");
             return FallbackBrush;

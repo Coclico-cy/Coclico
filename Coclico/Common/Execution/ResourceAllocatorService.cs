@@ -58,7 +58,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
         {
             return Fail(processId, "Access denied (system process)");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, $"QoS.SetPriority PID={processId}");
             return Fail(processId, ex.Message);
@@ -85,7 +85,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
         {
             return Fail(processId, "Process has exited");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, $"QoS.SetAffinity PID={processId}");
             return Fail(processId, ex.Message);
@@ -111,7 +111,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
         {
             return Fail(processId, "Process not found");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, $"QoS.TrimWS PID={processId}");
             return Fail(processId, ex.Message);
@@ -149,7 +149,7 @@ public sealed class ResourceAllocatorService : IResourceAllocator
             using var proc = Process.GetProcessById(processId);
             return ToPriorityLevel(proc.PriorityClass);
         }
-        catch
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             return null;
         }
@@ -160,32 +160,31 @@ public sealed class ResourceAllocatorService : IResourceAllocator
         var result = new List<ProcessQosSnapshot>(256);
         foreach (Process proc in Process.GetProcesses())
         {
-            try
+            using (proc)
             {
-                PriorityLevel priority = PriorityLevel.Normal;
                 try
                 {
-                    priority = ToPriorityLevel(proc.PriorityClass);
-                }
-                catch (Exception exSwallow)
-                {
-                    LoggingService.LogException(exSwallow, "ResourceAllocatorService.SnapshotPriority");
-                }
+                    PriorityLevel priority = PriorityLevel.Normal;
+                    try
+                    {
+                        priority = ToPriorityLevel(proc.PriorityClass);
+                    }
+                    catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
+                    {
+                        LoggingService.LogException(exSwallow, "ResourceAllocatorService.SnapshotPriority");
+                    }
 
-                result.Add(new ProcessQosSnapshot(
-                    Pid: proc.Id,
-                    Name: proc.ProcessName,
-                    Priority: priority,
-                    AffinityMask: proc.ProcessorAffinity.ToInt64(),
-                    WorkingSetMb: proc.WorkingSet64 / BytesPerMb));
-            }
-            catch (Exception exSwallow)
-            {
-                LoggingService.LogException(exSwallow, "ResourceAllocatorService.SnapshotEntry");
-            }
-            finally
-            {
-                try { proc.Dispose(); } catch { }
+                    result.Add(new ProcessQosSnapshot(
+                        Pid: proc.Id,
+                        Name: proc.ProcessName,
+                        Priority: priority,
+                        AffinityMask: proc.ProcessorAffinity.ToInt64(),
+                        WorkingSetMb: proc.WorkingSet64 / BytesPerMb));
+                }
+                catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
+                {
+                    LoggingService.LogException(exSwallow, "ResourceAllocatorService.SnapshotEntry");
+                }
             }
         }
 

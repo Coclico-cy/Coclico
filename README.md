@@ -46,7 +46,7 @@ Coclico starts as a standard user. Tools that need administrator rights ask for 
 The main menu is a grouped accordion, inspired by Windows Settings. Modules live in three collapsible sections that remember what you expanded:
 
 <p align="center">
-  <img src="docs/Menu.png" alt="Coclico main menu" width="480">
+  <img src="docs/menu.png" alt="Coclico main menu" width="480">
 </p>
 
 | Section | Modules |
@@ -62,6 +62,7 @@ Home, Settings and Help always stay visible.
 | **Safety first** | Every destructive action asks for confirmation. Deleted files go to the Recycle Bin. Network and power settings roll back in one click. |
 | **Hardware aware** | Power plans are created only through `powercfg`. Every setting is validated against your actual PC before it is applied. |
 | **Local AI** | A local GGUF model or a local Ollama server. No cloud keys. Loopback addresses only. |
+| **Verified installs** | Every payload file is hashed into a manifest signed with an RSA-4096 key; the installer refuses anything that does not verify against the trusted keys anchored in the repository. |
 
 ## The modules, one by one
 
@@ -133,6 +134,7 @@ Three complementary modes:
 - Manual purge with several profiles: quick, normal, deep, smart;
 - History and total memory freed since the session started;
 - **Smart automatic cleaning**: by interval, by usage threshold, or hybrid. The foreground application is protected: Coclico never purges what you are currently using.
+- **How this works, honestly**: purging asks Windows to trim the working sets of background processes (the foreground app is protected). Windows manages memory on its own: freed RAM is not a speed gain in itself, and trimmed pages can be reloaded when you reopen an app. Use it to release memory pressure before a game or a heavy task — not as a magic booster.
 
 ### Network Settings - nine useful settings, zero placebo
 
@@ -201,7 +203,7 @@ Some available packs: Gaming Pack, Controller Pack, GPU Drivers Pack, Browsers P
 **Example: play with a controller outside Steam.** The Controller Pack sets up everything for a DualShock 4 or a DualSense:
 
 1. **DS4Windows**: the software that configures the controller (vibration, gyroscope, per-game profiles). Downloaded from its official GitHub repository.
-2. **ViGEmBus**: the virtual controller driver. It makes Windows believe an Xbox controller is plugged in.
+2. **ViGEmBus**: the virtual controller driver. It makes Windows believe an Xbox controller is plugged in. (Upstream project retired by its author in 2023: still functional, but no longer updated.)
 3. **HidHide**: hides the physical controller. Without it, some games see the controller twice.
 
 One click, and all three are installed in the right order. The same principle applies to every pack.
@@ -268,7 +270,7 @@ Open the [GitHub Releases](https://github.com/Coclico-cy/Coclico/releases) page:
 - `Coclico-<version>.exe`: the guided installer;
 - or the Windows x64 ZIP: for a portable folder install.
 
-Setup installs for the current Windows account, offers an optional desktop shortcut, and preserves Coclico settings and data when uninstalled. The standard setup omits the large optional CUDA runtime: choose that component only on a compatible NVIDIA system. The installer is not code-signed, so Windows may show a publisher warning.
+Setup installs for the current Windows account, offers an optional desktop shortcut, and preserves Coclico settings and data when uninstalled. The standard setup omits the large optional CUDA runtime: choose that component only on a compatible NVIDIA system. The installer binary carries no Authenticode signature, so Windows may show a publisher warning; integrity is still cryptographic: each payload file is hashed into a manifest signed with the project RSA-4096 key, and the installer verifies that manifest against the trusted keys anchored in the repository before installing anything.
 
 Every release ships a `SHA256SUMS.txt` file to verify both downloads.
 
@@ -308,9 +310,11 @@ Coclico/                 WPF application
   Common/                Shared services (core, diagnostics, execution, UI)
   Modules/               Home, AI, cleaning, network, power, disk, programs…
   Resources/             Themes, languages and icons
-Coclico.Installer/       Standalone installer (built by the script, outside the solution)
-Coclico.Tests/           Unit and XAML validation tests
-installer/               Installer build script
+  Security/              trust-policy.json: anchored release signing keys
+Coclico.Security/        Release security: signing tool, integrity manifests, trust store
+Coclico.InstallerAot/    Standalone installer (Avalonia, NativeAOT)
+Coclico.Tests/           Unit, XAML and security tests
+installer/               Installer build script and local signing key (never committed)
 docs/                    Screenshots used by the READMEs
 .github/workflows/       Build, test and release automation
 ```

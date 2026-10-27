@@ -95,7 +95,7 @@ public class StartupService
                     _ = Coclico.Converters.FileIconConverter.PreloadAllAsync(iconPaths);
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "StartupService.AppsScan");
             }
@@ -109,7 +109,7 @@ public class StartupService
                 "Services Windows opérationnels",
                 "Services système opérationnels");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "StartupService.HealthCheck");
         }
@@ -188,7 +188,7 @@ public class StartupService
         {
             action();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, context);
         }
@@ -200,7 +200,7 @@ public class StartupService
         {
             await action().ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, context);
         }
@@ -213,7 +213,7 @@ public class StartupService
             using WindowsIdentity? id = WindowsIdentity.GetCurrent();
             return new WindowsPrincipal(id).IsInRole(WindowsBuiltInRole.Administrator);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "StartupService.IsAdministrator");
             return false;
@@ -231,7 +231,7 @@ public class StartupService
         MemoryCleanerService.RamInfo ram = MemoryCleanerService.GetRamInfo();
         double availGb = ram.AvailPhysBytes / (1024.0 * 1024.0 * 1024.0);
         double totalGb = ram.TotalPhysBytes / (1024.0 * 1024.0 * 1024.0);
-        return string.Format(loc?.Get("Startup_RamFree") ?? "{0:F1} Go Libre / {1:F0} Go", availGb, totalGb);
+        return TextFormatService.Format(loc?.Get("Startup_RamFree") ?? "{0:F1} Go Libre / {1:F0} Go", availGb, totalGb);
     }
 
     private static string BuildGpuInfo()
@@ -247,7 +247,7 @@ public class StartupService
 
             return gpu.IsIntegrated ? $"{name} (Intégré)" : $"{name} (Dédié)";
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "StartupService.BuildGpuInfo");
             return "DirectX DWM";

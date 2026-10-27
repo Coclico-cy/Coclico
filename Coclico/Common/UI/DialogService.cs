@@ -23,19 +23,19 @@ public sealed class DialogService : IDialogService
     public string? ShowOpenFileDialog(string title, string filter)
     {
         var dlg = new OpenFileDialog { Title = title, Filter = filter };
-        return dlg.ShowDialog() == true ? dlg.FileName : null;
+        return dlg.ShowDialog() is true ? dlg.FileName : null;
     }
 
     public string? ShowSaveFileDialog(string title, string filter, string defaultExt)
     {
         var dlg = new SaveFileDialog { Title = title, Filter = filter, DefaultExt = defaultExt };
-        return dlg.ShowDialog() == true ? dlg.FileName : null;
+        return dlg.ShowDialog() is true ? dlg.FileName : null;
     }
 
     public string? ShowFolderDialog(string title)
     {
         var dlg = new OpenFolderDialog { Title = title };
-        return dlg.ShowDialog() == true ? dlg.FolderName : null;
+        return dlg.ShowDialog() is true ? dlg.FolderName : null;
     }
 
     public bool? ShowDialog<TDialog>(object? viewModel = null) where TDialog : Window, new()

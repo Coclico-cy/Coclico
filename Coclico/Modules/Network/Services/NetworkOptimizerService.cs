@@ -21,7 +21,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
 
     private const string AdapterKeywords = "'*EEE','EnableGreenEthernet','GigaLite','AdvancedEEE','*FlowControl','*InterruptModeration'";
 
-    private static readonly string BackupFilePath = Path.Combine(
+    private static readonly string BackupFilePath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Coclico",
         "network-tuning-backup.json");
@@ -87,7 +87,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
                             mtu = v4.Mtu;
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception ex) when (ex is not System.OutOfMemoryException)
                     {
                         LoggingService.LogException(ex, "NetworkOptimizerService.GetNetworkAdaptersAsync:Mtu");
                     }
@@ -120,7 +120,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
                     });
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "NetworkOptimizerService.GetNetworkAdaptersAsync");
             }
@@ -178,7 +178,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
             await File.WriteAllTextAsync(BackupFilePath, JsonSerializer.Serialize(backup), ct).ConfigureAwait(false);
             return true;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.CaptureBackupAsync");
             return false;
@@ -300,7 +300,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
         {
             report.Summary = "Réglage annulé.";
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.ApplyTuningAsync");
             report.Summary = "Erreur pendant le réglage : " + ex.Message;
@@ -355,7 +355,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
             onLog?.Invoke($"{restored} valeur(s) d'origine restaurée(s).");
             return restored > 0;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.RestoreInitialValuesAsync");
             return false;
@@ -396,7 +396,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
             onLog?.Invoke("Paramètres d'origine Windows restaurés.");
             return true;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.RestoreWindowsDefaultsAsync");
             return false;
@@ -454,7 +454,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
             string heuristicsOutput = await RunProcessOutputAsync("netsh.exe", "int tcp show heuristics", ct).ConfigureAwait(false);
             ApplyTcpLines(settings, heuristicsOutput);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.GetTcpSettingsAsync");
         }
@@ -464,14 +464,8 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
 
     internal static void ApplyTcpLines(TcpGlobalSettings settings, string netshOutput)
     {
-        foreach (string line in netshOutput.Split('\n'))
+        foreach (string[] parts in netshOutput.Split('\n').Select(line => line.Split(':', 2)).Where(parts => parts.Length == 2))
         {
-            string[] parts = line.Split(':', 2);
-            if (parts.Length != 2)
-            {
-                continue;
-            }
-
             string key = parts[0].Trim().ToLowerInvariant();
             string val = NormalizeNetshValue(parts[1]);
 
@@ -545,17 +539,13 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
             (int exit, string output) = await RunProcessWithExitAsync("powershell.exe", BuildPowerShellArguments(script), ct).ConfigureAwait(false);
             if (exit == 0)
             {
-                foreach (string line in output.Split('\n'))
+                foreach (string[] pair in output.Split('\n').Select(line => line.Split('=', 2)).Where(pair => pair.Length == 2 && pair[0].Trim().Length > 0))
                 {
-                    string[] pair = line.Split('=', 2);
-                    if (pair.Length == 2 && pair[0].Trim().Length > 0)
-                    {
-                        props[pair[0].Trim()] = pair[1].Trim();
-                    }
+                    props[pair[0].Trim()] = pair[1].Trim();
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.GetAdapterPropertiesAsync");
         }
@@ -729,7 +719,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
                     return false;
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.ApplyParameterValueAsync:" + id);
             return false;
@@ -805,7 +795,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.GetPhysicalAdapterGuids");
         }
@@ -864,7 +854,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
 
             return (success, summary);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             return (false, ex.Message);
         }
@@ -897,7 +887,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
             await Task.WhenAll(stdoutTask, stderrTask, exitTask).ConfigureAwait(false);
             return await stdoutTask.ConfigureAwait(false);
         }
-        catch
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             return string.Empty;
         }
@@ -932,7 +922,7 @@ public sealed class NetworkOptimizerService : INetworkOptimizerService
             string error = await stderrTask.ConfigureAwait(false);
             return (proc.ExitCode, !string.IsNullOrWhiteSpace(output) ? output : error);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerService.RunProcessWithExitAsync");
             return (-1, ex.Message);

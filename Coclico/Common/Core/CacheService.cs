@@ -6,7 +6,7 @@ namespace Coclico.Services;
 
 public sealed class CacheService : ICacheService
 {
-    private static readonly string CacheDir = Path.Combine(
+    private static readonly string CacheDir = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "cache");
 
     private const int LockStripeCount = 32;
@@ -30,7 +30,7 @@ public sealed class CacheService : ICacheService
         {
             WriteEntry(path, value, ttl);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.Set");
         }
@@ -54,7 +54,7 @@ public sealed class CacheService : ICacheService
         {
             return TryReadEntry(path, out value);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.TryGet");
             value = default;
@@ -75,7 +75,7 @@ public sealed class CacheService : ICacheService
         {
             return HasValidExpiry(path);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.Has");
             return false;
@@ -101,7 +101,7 @@ public sealed class CacheService : ICacheService
         }
     }
 
-    public void Set<T>(string subdir, string key, T value, TimeSpan? ttl = null)
+    public void SetInSubdir<T>(string subdir, string key, T value, TimeSpan? ttl = null)
     {
         string path = GetPath(subdir, key);
         SemaphoreSlim sem = GetLock(path);
@@ -111,7 +111,7 @@ public sealed class CacheService : ICacheService
             _ = Directory.CreateDirectory(GetSubdirPath(subdir));
             WriteEntry(path, value, ttl);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "CacheService.Set(subdir)");
         }
@@ -121,7 +121,7 @@ public sealed class CacheService : ICacheService
         }
     }
 
-    public T? Get<T>(string subdir, string key)
+    public T? GetFromSubdir<T>(string subdir, string key)
     {
         string path = GetPath(subdir, key);
         SemaphoreSlim sem = GetLock(path);
@@ -130,7 +130,7 @@ public sealed class CacheService : ICacheService
         {
             return TryReadEntry(path, out T? value) ? value : default;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.Get(subdir)");
             return default;
@@ -141,7 +141,7 @@ public sealed class CacheService : ICacheService
         }
     }
 
-    public bool Has(string subdir, string key)
+    public bool HasInSubdir(string subdir, string key)
     {
         string path = GetPath(subdir, key);
         SemaphoreSlim sem = GetLock(path);
@@ -150,7 +150,7 @@ public sealed class CacheService : ICacheService
         {
             return HasValidExpiry(path);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.Has(subdir)");
             return false;
@@ -161,7 +161,7 @@ public sealed class CacheService : ICacheService
         }
     }
 
-    public void Invalidate(string subdir, string key)
+    public void InvalidateInSubdir(string subdir, string key)
     {
         string path = GetPath(subdir, key);
         SemaphoreSlim sem = GetLock(path);
@@ -186,7 +186,7 @@ public sealed class CacheService : ICacheService
                 DeleteAllJsonFiles(dir, allDirectories: false);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "CacheService.ClearSubdir");
         }
@@ -198,7 +198,7 @@ public sealed class CacheService : ICacheService
         {
             DeleteAllJsonFiles(CacheDir, allDirectories: true);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.Clear");
         }
@@ -216,7 +216,7 @@ public sealed class CacheService : ICacheService
 
             return total;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "CacheService.GetCacheSizeBytes");
             return 0;
@@ -236,7 +236,7 @@ public sealed class CacheService : ICacheService
         return value;
     }
 
-    public T GetOrSet<T>(string subdir, string key, Func<T> factory, TimeSpan? ttl = null)
+    public T GetOrSetInSubdir<T>(string subdir, string key, Func<T> factory, TimeSpan? ttl = null)
     {
         string path = GetPath(subdir, key);
         if (TryReadEntry(path, out T? cached))
@@ -245,7 +245,7 @@ public sealed class CacheService : ICacheService
         }
 
         T value = factory();
-        Set(subdir, key, value, ttl);
+        SetInSubdir(subdir, key, value, ttl);
         return value;
     }
 
@@ -258,7 +258,7 @@ public sealed class CacheService : ICacheService
         {
             await WriteEntryAsync(path, value, ttl).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.SetAsync");
         }
@@ -283,7 +283,7 @@ public sealed class CacheService : ICacheService
         {
             return await TryReadEntryAsync<T>(path).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.TryGetAsync");
             return (false, default);
@@ -303,7 +303,7 @@ public sealed class CacheService : ICacheService
         {
             return await HasValidExpiryAsync(path).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.HasAsync");
             return false;
@@ -337,14 +337,14 @@ public sealed class CacheService : ICacheService
             {
                 DeleteAllJsonFiles(CacheDir, allDirectories: true);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "CacheService.ClearAsync");
             }
         });
     }
 
-    public async Task SetAsync<T>(string subdir, string key, T value, TimeSpan? ttl = null)
+    public async Task SetInSubdirAsync<T>(string subdir, string key, T value, TimeSpan? ttl = null)
     {
         string path = GetPath(subdir, key);
         SemaphoreSlim sem = GetLock(path);
@@ -354,7 +354,7 @@ public sealed class CacheService : ICacheService
             _ = Directory.CreateDirectory(GetSubdirPath(subdir));
             await WriteEntryAsync(path, value, ttl).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "CacheService.SetAsync(subdir)");
         }
@@ -364,7 +364,7 @@ public sealed class CacheService : ICacheService
         }
     }
 
-    public async Task<T?> GetAsync<T>(string subdir, string key)
+    public async Task<T?> GetFromSubdirAsync<T>(string subdir, string key)
     {
         string path = GetPath(subdir, key);
         SemaphoreSlim sem = GetLock(path);
@@ -374,7 +374,7 @@ public sealed class CacheService : ICacheService
             (bool found, T? value) = await TryReadEntryAsync<T>(path).ConfigureAwait(false);
             return found ? value : default;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.GetAsync(subdir)");
             return default;
@@ -385,7 +385,7 @@ public sealed class CacheService : ICacheService
         }
     }
 
-    public async Task InvalidateAsync(string subdir, string key)
+    public async Task InvalidateInSubdirAsync(string subdir, string key)
     {
         string path = GetPath(subdir, key);
         SemaphoreSlim sem = GetLock(path);
@@ -412,7 +412,7 @@ public sealed class CacheService : ICacheService
                     DeleteAllJsonFiles(dir, allDirectories: false);
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(ex, "CacheService.ClearSubdirAsync");
             }
@@ -433,7 +433,7 @@ public sealed class CacheService : ICacheService
         return value;
     }
 
-    public async Task<T> GetOrSetAsync<T>(string subdir, string key, Func<Task<T>> factory, TimeSpan? ttl = null)
+    public async Task<T> GetOrSetInSubdirAsync<T>(string subdir, string key, Func<Task<T>> factory, TimeSpan? ttl = null)
     {
         string path = GetPath(subdir, key);
         (bool found, T? cached) = await TryReadEntryAsync<T>(path).ConfigureAwait(false);
@@ -443,7 +443,7 @@ public sealed class CacheService : ICacheService
         }
 
         T value = await factory().ConfigureAwait(false);
-        await SetAsync(subdir, key, value, ttl).ConfigureAwait(false);
+        await SetInSubdirAsync(subdir, key, value, ttl).ConfigureAwait(false);
         return value;
     }
 
@@ -522,7 +522,7 @@ public sealed class CacheService : ICacheService
         {
             CentralUnitStigmergy.Current.RecordCacheOutcome(key, wasFresh);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.RecordCacheOutcome");
         }
@@ -602,7 +602,7 @@ public sealed class CacheService : ICacheService
         {
             return CentralUnitStigmergy.Current.GetAdaptedTtl(key, baseTtl);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CacheService.AdaptTtl");
             return baseTtl;
@@ -656,9 +656,9 @@ public sealed class CacheService : ICacheService
                 File.Delete(path);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
-            LoggingService.LogException(ex, "CacheService.DeleteBestEffort");
+            LoggingService.LogWarning($"[CacheService] Fichier cache occupé, suppression ignorée : {ex.Message}");
         }
     }
 
@@ -673,7 +673,7 @@ public sealed class CacheService : ICacheService
             {
                 File.Delete(file);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(ex, "CacheService.DeleteAllJsonFiles");
             }
@@ -699,17 +699,17 @@ public sealed class CacheService : ICacheService
 
     private string GetSubdirPath(string subdir)
     {
-        return Path.Combine(CacheDir, SanitizeKey(subdir));
+        return Path.Join(CacheDir, SanitizeKey(subdir));
     }
 
     private string GetPath(string subdir, string key)
     {
-        return Path.Combine(GetSubdirPath(subdir), SanitizeKey(key) + ".cache.json");
+        return Path.Join(GetSubdirPath(subdir), SanitizeKey(key) + ".cache.json");
     }
 
     private string GetPath(string key)
     {
-        return Path.Combine(CacheDir, SanitizeKey(key) + ".cache.json");
+        return Path.Join(CacheDir, SanitizeKey(key) + ".cache.json");
     }
 
     private class CacheEntry<T>

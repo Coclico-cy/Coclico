@@ -168,7 +168,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                 _procCounter = new PerformanceCounter("System", "Processes");
                 _ = _procCounter.NextValue();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "DashboardViewModel.CounterInit");
             }
@@ -232,21 +232,21 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
     private async Task RunModeZenAsync()
     {
         try { await RunModeAsync(MemoryCleanerService.CleanProfile.Quick, cleanTemp: true); }
-        catch (Exception ex) { LoggingService.LogException(ex, "DashboardViewModel.ModeZen"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "DashboardViewModel.ModeZen"); }
     }
 
     [RelayCommand]
     private async Task RunModeGamerAsync()
     {
         try { await RunModeAsync(MemoryCleanerService.CleanProfile.Deep, cleanTemp: false); }
-        catch (Exception ex) { LoggingService.LogException(ex, "DashboardViewModel.ModeGamer"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "DashboardViewModel.ModeGamer"); }
     }
 
     [RelayCommand]
     private async Task RunModeWorkAsync()
     {
         try { await RunModeAsync(MemoryCleanerService.CleanProfile.Normal, cleanTemp: false); }
-        catch (Exception ex) { LoggingService.LogException(ex, "DashboardViewModel.ModeWork"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "DashboardViewModel.ModeWork"); }
     }
 
     private async Task RunModeAsync(MemoryCleanerService.CleanProfile profile, bool cleanTemp)
@@ -263,7 +263,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                     foreach (string f in Directory.EnumerateFiles(temp, "*",
                         SearchOption.TopDirectoryOnly))
                     {
-                        try { File.Delete(f); } catch (Exception ex) { LoggingService.LogException(ex, "DashboardViewModel.RunModeAsync"); }
+                        try { File.Delete(f); } catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "DashboardViewModel.RunModeAsync"); }
                     }
                 });
             }
@@ -271,7 +271,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
             string key = Application.Current.Resources["Dashboard_ModeActivated"] as string ?? "Mode activé !";
             ToastService.Show("\u2713 " + key);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "DashboardViewModel.RunModeAsync");
         }
@@ -299,7 +299,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                         cpu = Math.Round(_cpuCounter.NextValue(), 1);
                     }
                 }
-                catch (Exception ex) { cpu = 0; LoggingService.LogException(ex, "DashboardVM.CpuSample"); }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { cpu = 0; LoggingService.LogException(ex, "DashboardVM.CpuSample"); }
 
                 try
                 {
@@ -308,7 +308,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                     ramUsed = Math.Round(info.UsedPhysBytes / (1024.0 * 1024 * 1024), 1);
                     CentralUnitService.Current.Variables.Publish(CentralVariables.RamInfo, info);
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "DashboardVM.RamSample"); }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "DashboardVM.RamSample"); }
 
                 try
                 {
@@ -316,7 +316,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                     diskTotal = Math.Round(drive.TotalSize / (1024.0 * 1024 * 1024), 1);
                     diskUsed = Math.Round((drive.TotalSize - drive.TotalFreeSpace) / (1024.0 * 1024 * 1024), 1);
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "DashboardVM.DiskSample"); }
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "DashboardVM.DiskSample"); }
 
                 try
                 {
@@ -325,7 +325,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                         ? $"{(int)up.TotalDays}j {up.Hours:D2}h {up.Minutes:D2}m"
                         : $"{up.Hours:D2}h {up.Minutes:D2}m {up.Seconds:D2}s";
                 }
-                catch { uptime = "-"; }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { uptime = "-"; }
 
                 try
                 {
@@ -334,7 +334,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
                         procs = (int)_procCounter.NextValue();
                     }
                 }
-                catch { procs = 0; }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { procs = 0; }
             }, ct);
 
             int apps = ServiceContainer.GetRequired<InstalledProgramsService>().GetInstalledAppsCount();
@@ -383,8 +383,8 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
             CentralCircuitBreaker.Current.RecordSuccess(Subsystem);
             CentralUnitWatchdog.Current.Beat(Subsystem);
         }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
+        catch (OperationCanceledException ex) { _ = ex; }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "DashboardViewModel.RefreshAllAsync");
             CentralCircuitBreaker.Current.RecordFailure(Subsystem, ex);
@@ -521,7 +521,7 @@ public partial class DashboardViewModel : INotifyPropertyChanged, IDisposable
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
     {
-        if (Application.Current?.Dispatcher?.CheckAccess() == true)
+        if (Application.Current?.Dispatcher?.CheckAccess() is true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

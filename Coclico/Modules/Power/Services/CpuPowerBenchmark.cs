@@ -8,7 +8,7 @@ public static class CpuPowerBenchmark
     public static double Run(TimeSpan duration, CancellationToken ct)
     {
         byte[] buffer = new byte[1024 * 1024];
-        new Random(2026).NextBytes(buffer);
+        RandomNumberGenerator.Fill(buffer);
 
         long totalBytes = 0;
         int workers = Math.Max(1, Environment.ProcessorCount);

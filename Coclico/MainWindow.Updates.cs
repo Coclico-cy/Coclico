@@ -35,7 +35,7 @@ public partial class MainWindow
                 ToastService.ShowInfo(L("MainWindow_LatestVersion"));
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "MainWindow.UpdateCheck");
             ToastService.ShowError(L("MainWindow_UpdateCheckError"));
@@ -62,7 +62,7 @@ public partial class MainWindow
             MarkUpdateButton(e.Release.TagName);
             ToastService.Show($"Mise à jour disponible : {e.Release.TagName} clique sur l'icône de synchronisation pour l'installer.");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "MainWindow.OnUpdateAvailable");
         }
@@ -78,9 +78,7 @@ public partial class MainWindow
                 icon.Foreground = FindResource("ArchitecturalYellowBrush") as Brush ?? icon.Foreground;
             }
         }
-        catch
-        {
-        }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
     }
 
     private void OpenUpdateWindow(GitHubRelease release)
@@ -90,7 +88,7 @@ public partial class MainWindow
             var window = new UpdateWindow(release, UpdateCheckService.GetCurrentVersion()) { Owner = this };
             _ = window.ShowDialog();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "MainWindow.OpenUpdateWindow");
             ToastService.ShowError("Impossible d'ouvrir le dialogue de mise à jour.");

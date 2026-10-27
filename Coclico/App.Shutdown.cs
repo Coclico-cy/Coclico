@@ -24,7 +24,7 @@ public partial class App
 
                         foreach (Window window in windows)
                         {
-                            try { window.Hide(); } catch (Exception ex) { LoggingService.LogException(ex, "App.PerformApplicationShutdown.HideWindow"); }
+                            try { window.Hide(); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.PerformApplicationShutdown.HideWindow"); }
                         }
                     }
 
@@ -39,36 +39,39 @@ public partial class App
                 }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.PerformApplicationShutdown.HideWindows"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.PerformApplicationShutdown.HideWindows"); }
 
         try { CentralUnitWatchdog.Current.Dispose(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.Watchdog"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.Watchdog"); }
 
         try { CentralUnitService.Current.Shutdown(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.CentralUnit"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.CentralUnit"); }
+
+        try { ServiceContainer.GetOptional<IntegrityRuntimeService>()?.Dispose(); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.DisposeIntegrityRuntime"); }
 
         try { ServiceContainer.GetOptional<ResourceGuardService>()?.Stop(); ServiceContainer.GetOptional<ResourceGuardService>()?.Dispose(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.DisposeResourceGuard"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.DisposeResourceGuard"); }
 
         try { ServiceContainer.GetOptional<ThemeService>()?.Dispose(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.DisposeThemeService"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.DisposeThemeService"); }
 
         try { (ServiceContainer.GetOptional<IAiService>() as IDisposable)?.Dispose(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.DisposeAiChat"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.DisposeAiChat"); }
 
         try { ServiceContainer.GetOptional<ProcessWatcherService>()?.Dispose(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.DisposeProcessWatcher"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.DisposeProcessWatcher"); }
 
         try { ServiceContainer.GetOptional<NetworkMonitorService>()?.Dispose(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.DisposeNetworkMonitor"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.DisposeNetworkMonitor"); }
 
         try { ServiceContainer.GetOptional<TrayService>()?.Dispose(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.DisposeTrayService"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.DisposeTrayService"); }
 
         try { ServiceContainer.Shutdown(); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.Shutdown.ServiceContainerShutdown"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.Shutdown.ServiceContainerShutdown"); }
 
         try { _ = Task.Run(async () => await LoggingService.ShutdownAsync().ConfigureAwait(false)).Wait(TimeSpan.FromSeconds(2)); }
-        catch (Exception ex) { LoggingService.LogException(ex, "App.PerformApplicationShutdown.LoggingShutdown"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.PerformApplicationShutdown.LoggingShutdown"); }
     }
 }

@@ -16,13 +16,6 @@ public sealed record PowerSettingOverride(
     uint AcValue,
     uint DcValue);
 
-public sealed record PowerPlanDefinition(
-    CoclicoPowerMode Mode,
-    string PlanName,
-    string Description,
-    string BaseSchemeGuid,
-    IReadOnlyList<PowerSettingOverride> Settings);
-
 public static class PowerPlanCatalog
 {
     public const string BasePowerSaverGuid = "a1841308-3541-4fab-bc81-f71556f20b4a";

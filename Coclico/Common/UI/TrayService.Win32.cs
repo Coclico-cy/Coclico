@@ -125,7 +125,7 @@ public partial class TrayService : IDisposable
                 _hMenu = IntPtr.Zero;
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "TrayService.Dispose");
         }
@@ -234,33 +234,43 @@ public partial class TrayService : IDisposable
         public IntPtr hBalloonIcon;
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     private static extern bool Shell_NotifyIcon(int dwMessage, ref NOTIFYICONDATAW lpData);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern IntPtr CreatePopupMenu();
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool AppendMenuW(IntPtr hMenu, uint uFlags, UIntPtr uIDNewItem, string lpNewItem);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool DestroyMenu(IntPtr hMenu);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern uint TrackPopupMenuEx(IntPtr hMenu, uint uFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool GetCursorPos(out POINT lpPoint);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern IntPtr SendMessageW(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern IntPtr LoadIconW(IntPtr hInstance, IntPtr lpIconName);
 

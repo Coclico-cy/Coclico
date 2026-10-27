@@ -54,7 +54,7 @@ public sealed class KeyboardShortcutsService : IDisposable
     private const uint MOD_NOREPEAT = 0x4000;
     private const int WM_HOTKEY = 0x0312;
 
-    private static readonly string DataPath = Path.Combine(
+    private static readonly string DataPath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Coclico", "keyboard_shortcuts.json");
 
@@ -66,7 +66,9 @@ public sealed class KeyboardShortcutsService : IDisposable
     private HwndSource? _hwndSource;
     private int _nextId = 9000;
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")] private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")] private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
     public event Action<KeyboardShortcut>? ShortcutTriggered;
@@ -81,12 +83,6 @@ public sealed class KeyboardShortcutsService : IDisposable
         Load();
         RegisterAll();
     }
-
-    public List<KeyboardShortcut> GetShortcuts()
-    {
-        return [.. _shortcuts];
-    }
-
     public void AddShortcut(KeyboardShortcut shortcut)
     {
         int existing = _shortcuts.FindIndex(s =>
@@ -146,7 +142,7 @@ public sealed class KeyboardShortcutsService : IDisposable
                 }
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "KeyboardShortcutsService.Load"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "KeyboardShortcutsService.Load"); }
     }
 
     public void Save()
@@ -156,7 +152,7 @@ public sealed class KeyboardShortcutsService : IDisposable
             _ = Directory.CreateDirectory(Path.GetDirectoryName(DataPath)!);
             File.WriteAllText(DataPath, JsonSerializer.Serialize(_shortcuts, _saveOptions));
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "KeyboardShortcutsService.Save"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "KeyboardShortcutsService.Save"); }
     }
 
     public void Dispose()

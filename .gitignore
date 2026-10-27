@@ -1,13 +1,10 @@
-## .gitignore pour projet C# WPF (Coclico)
 
-# Build outputs
 [Bb]in/
 [Oo]bj/
 out/
 build/
 dist/
 
-# Visual Studio
 .vs/
 *.user
 *.suo
@@ -15,11 +12,9 @@ dist/
 *.sln.docstates
 *.userprefs
 
-# Rider / JetBrains
 .idea/
 *.DotSettings.user
 
-# NuGet
 *.nupkg
 *.snupkg
 **/[Pp]ackages/
@@ -28,44 +23,37 @@ dist/
 *.nuget.targets
 nuget.config
 
-# Test results
 TestResults/
 **/TestResults/
 *.trx
 *.coverage
 *.coveragexml
 
-# Publish & Installer output
 publish/
 publish-portable/
 artifacts/
 *.pubxml
 *.pubxml.user
 
-# Installer build intermediates (produced by installer/build-installer.ps1)
-Coclico.Installer/payload.zip
+Coclico.InstallerAot/payload.zip
+Coclico.InstallerAot/uninstaller.bin
 Coclico.Installer/uninstaller.bin
 
-# Local backups (git history is the backup)
 *.backup
 *.bak
 
-# Logs
 *.log
 logs/
 
-# OS
 .DS_Store
 Thumbs.db
 desktop.ini
 __pycache__/
 *.py[cod]
 
-# AI Model (large binary, not in repo)
 resource/model/*.gguf
 resource/model/*.bin
 
-# Coclico user data (generated at runtime)
 AppData/
 **/Coclico/logs/
 **/Coclico/cache/
@@ -73,11 +61,22 @@ AppData/
 **/Coclico/errors/
 **/Coclico/settings.json
 
-# Sensitive
 *.pfx
 *.p12
 secrets.json
 appsettings.Development.json
 
-# Worktrees
 .worktrees/
+
+alertes*.json
+
+audit-reports/
+audit-solution-*.txt
+
+*_wpftmp.csproj
+
+installer/Key/*.keyfile
+installer/Key/*.pwd.protected
+*.key
+*.pem
+*.pub

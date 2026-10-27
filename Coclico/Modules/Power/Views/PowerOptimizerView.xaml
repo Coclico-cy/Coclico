@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <UserControl x:Class="Coclico.Modules.Power.Views.PowerOptimizerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -285,6 +286,37 @@
                                      Foreground="{DynamicResource PrimaryBrush}" Visibility="Collapsed"/>
                         <StackPanel x:Name="BenchmarkResults" Margin="0,10,0,0"/>
                     </StackPanel>
+                </Border>
+
+                <Border Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource CornerCard}" Padding="20,16" Margin="0,0,0,14">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="BatteryCharge24" FontSize="15" Foreground="{DynamicResource ArchitecturalYellowBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="RAPPORT BATTERIE WINDOWS" FontSize="11" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="Génère le rapport officiel de Windows (powercfg /batteryreport) : capacité réelle restante, usure et historique de charge de votre batterie. Lecture seule — le rapport s'ouvre ensuite dans votre navigateur par défaut. Sur un PC fixe sans batterie, Windows ne produit pas de rapport."
+                                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <Button x:Name="BtnBatteryReport" Grid.Column="1" Click="BtnBatteryReport_Click" Cursor="Hand"
+                                Background="{DynamicResource BgElevatedBrush}" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1"
+                                Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="11.5"
+                                Padding="16,8" Margin="16,0,0,0" VerticalAlignment="Center"
+                                AutomationProperties.Name="Générer le rapport batterie de Windows">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="{StaticResource CornerBtn}"/>
+                                </Style>
+                            </Button.Resources>
+                            Générer le rapport
+                        </Button>
+                    </Grid>
                 </Border>
 
                 <TextBlock x:Name="StatusText" Text="" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}"

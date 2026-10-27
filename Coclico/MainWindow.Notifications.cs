@@ -68,7 +68,7 @@ public partial class MainWindow
             UpdateNotificationBadge(_notificationService.UnreadCount);
             UpdateNotificationsEmptyState();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "MainWindow.NotificationsInit");
         }

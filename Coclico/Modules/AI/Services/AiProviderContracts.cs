@@ -83,7 +83,7 @@ public static class AiModelCatalog
     {
         try
         {
-            string path = Path.Combine(
+            string path = Path.Join(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Coclico", "ai-models.json");
             if (!File.Exists(path))
@@ -120,7 +120,7 @@ public static class AiModelCatalog
             LoggingService.LogInfo($"[AiModelCatalog] {extra.Count} modele(s) charge(s) depuis {path}");
             return merged;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "AiModelCatalog.LoadModels");
             return DefaultModels;

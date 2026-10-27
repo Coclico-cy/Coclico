@@ -48,7 +48,7 @@ public sealed class UpdateVersionTests
     [Fact]
     public void ReadInstallerVersion_MissingFile_ReturnsNull()
     {
-        Assert.Null(UpdateManager.ReadInstallerVersion(Path.Combine(Path.GetTempPath(), "coclico-absent-" + Guid.NewGuid().ToString("N") + ".exe")));
+        Assert.Null(UpdateManager.ReadInstallerVersion(Path.Join(Path.GetTempPath(), "coclico-absent-" + Guid.NewGuid().ToString("N") + ".exe")));
     }
 
     [Theory]

@@ -8,48 +8,63 @@ namespace Coclico.Services;
 
 public static class MemoryCleanerService
 {
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll")]
     private static extern bool SetProcessWorkingSetSize(IntPtr hProcess, IntPtr dwMin, IntPtr dwMax);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll")]
     private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll")]
     private static extern bool CloseHandle(IntPtr hObject);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("ntdll.dll", EntryPoint = "NtSetSystemInformation")]
     private static extern int NtSetSystemInformationInt(int SystemInformationClass, ref int SystemInformation, int SystemInformationLength);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool SetSystemFileCacheSize(IntPtr MinimumFileCacheSize, IntPtr MaximumFileCacheSize, uint Flags);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("advapi32.dll")]
     private static extern int RegFlushKey(IntPtr hKey);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("dnsapi.dll")]
     private static extern bool DnsFlushResolverCache();
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern IntPtr GetProcessHeap();
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern UIntPtr HeapCompact(IntPtr hHeap, uint dwFlags);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool OpenClipboard(IntPtr hWndNewOwner);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern bool EmptyClipboard();
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern bool CloseClipboard();
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", SetLastError = true)]
     private static extern IntPtr GetForegroundWindow();
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
@@ -72,12 +87,14 @@ public static class MemoryCleanerService
             _ = GetWindowThreadProcessId(hwnd, out uint pid);
             return (int)pid;
         }
-        catch { return -1; }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { return -1; }
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("iphlpapi.dll", SetLastError = true)]
     private static extern int FlushIpNetTable(uint dwIfIndex);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GlobalMemoryStatusEx([In, Out] ref MEMORYSTATUSEX lpBuffer);
@@ -104,12 +121,15 @@ public static class MemoryCleanerService
         public int Attr;
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
     private static extern bool OpenProcessToken(IntPtr h, int acc, ref IntPtr phtok);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     private static extern bool LookupPrivilegeValue(string? host, string name, ref long pluid);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
     private static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall, ref TokPriv1Luid newst, int len, IntPtr prev, IntPtr relen);
 
@@ -151,23 +171,20 @@ public static class MemoryCleanerService
             if (OpenProcessToken(Process.GetCurrentProcess().Handle, 0x0020 | 0x0008, ref htok))
             {
                 bool success = false;
-                if (LookupPrivilegeValue(null, privilege, ref tp.Luid))
+                if (LookupPrivilegeValue(null, privilege, ref tp.Luid) && AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero))
                 {
-                    if (AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero))
+                    int err = Marshal.GetLastWin32Error();
+                    success = err == 0;
+                    if (!success && err == 1300)
                     {
-                        int err = Marshal.GetLastWin32Error();
-                        success = err == 0;
-                        if (!success && err == 1300)
-                        {
-                            LoggingService.LogWarning($"[MemoryCleaner] Privilege '{privilege}' not assigned in current token (elevation required).");
-                        }
+                        LoggingService.LogWarning($"[MemoryCleaner] Privilege '{privilege}' not assigned in current token (elevation required).");
                     }
                 }
                 _ = CloseHandle(htok);
                 return success;
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, $"[MemoryCleaner] AcquirePrivilege failed for '{privilege}'"); }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException or System.Runtime.InteropServices.COMException) { LoggingService.LogException(ex, $"[MemoryCleaner] AcquirePrivilege failed for '{privilege}'"); }
         return false;
     }
 
@@ -233,32 +250,34 @@ public static class MemoryCleanerService
 
         int fgPid = protectForeground ? GetForegroundProcessId() : -1;
         int selfPid;
-        try { selfPid = Process.GetCurrentProcess().Id; } catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.EmptyWorkingSets"); selfPid = -1; }
+        try { selfPid = Process.GetCurrentProcess().Id; } catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException) { LoggingService.LogException(ex, "MemoryCleanerService.EmptyWorkingSets"); selfPid = -1; }
 
         foreach (Process proc in Process.GetProcesses())
         {
-            try
+            using (proc)
             {
-                int pid = proc.Id;
-                if (pid <= 4 || pid == selfPid || pid == specificExcludePid || (protectForeground && pid == fgPid))
+                try
                 {
-                    continue;
-                }
+                    int pid = proc.Id;
+                    if (pid <= 4 || pid == selfPid || pid == specificExcludePid || (protectForeground && pid == fgPid))
+                    {
+                        continue;
+                    }
 
-                if (_criticalProcessNames.Contains(proc.ProcessName))
-                {
-                    continue;
-                }
+                    if (_criticalProcessNames.Contains(proc.ProcessName))
+                    {
+                        continue;
+                    }
 
-                nint h = OpenProcess(PROCESS_ALL_TRIM, false, pid);
-                if (h != IntPtr.Zero)
-                {
-                    _ = SetProcessWorkingSetSize(h, new IntPtr(-1), new IntPtr(-1));
-                    _ = CloseHandle(h);
+                    nint h = OpenProcess(PROCESS_ALL_TRIM, false, pid);
+                    if (h != IntPtr.Zero)
+                    {
+                        _ = SetProcessWorkingSetSize(h, new IntPtr(-1), new IntPtr(-1));
+                        _ = CloseHandle(h);
+                    }
                 }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "MemoryCleanerService.EmptyWorkingSets.TrimProcess"); }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.EmptyWorkingSets.TrimProcess"); }
-            finally { try { proc.Dispose(); } catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.EmptyWorkingSets.DisposeProcess"); } }
         }
 
         Thread.Sleep(200);
@@ -320,7 +339,7 @@ public static class MemoryCleanerService
             RamInfo after = GetRamInfo();
             return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] ClearSystemFileCache failed"); return 0; }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] ClearSystemFileCache failed"); return 0; }
     }
 
     public static long FlushRegistryCache()
@@ -334,7 +353,7 @@ public static class MemoryCleanerService
             RamInfo after = GetRamInfo();
             return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] FlushRegistryCache failed"); return 0; }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] FlushRegistryCache failed"); return 0; }
     }
 
     public static long FlushDnsCache()
@@ -346,7 +365,7 @@ public static class MemoryCleanerService
             RamInfo after = GetRamInfo();
             return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] FlushDnsCache failed"); return 0; }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] FlushDnsCache failed"); return 0; }
     }
 
     public static long ForceGcCollect()
@@ -375,7 +394,7 @@ public static class MemoryCleanerService
             RamInfo after = GetRamInfo();
             return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] NtMemoryCommand failed"); return 0; }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] NtMemoryCommand failed"); return 0; }
     }
 
     private static int NtMemoryCommandRaw(int command)
@@ -538,6 +557,7 @@ public static class MemoryCleanerService
     [StructLayout(LayoutKind.Sequential)]
     private struct FILETIME { public uint Low; public uint High; }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool GetSystemTimes(
         out FILETIME idleTime, out FILETIME kernelTime, out FILETIME userTime);
@@ -576,7 +596,7 @@ public static class MemoryCleanerService
             _ = SetProcessWorkingSetSize(self.Handle, new IntPtr(-1), new IntPtr(-1));
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, blocking: false);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] TrimSelfWorkingSet failed"); }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException) { LoggingService.LogException(ex, "[MemoryCleaner] TrimSelfWorkingSet failed"); }
     }
 
     public static void TrimProcessWorkingSetById(int processId)
@@ -592,7 +612,7 @@ public static class MemoryCleanerService
                 _ = CloseHandle(h);
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] TrimProcessWorkingSetById failed"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] TrimProcessWorkingSetById failed"); }
     }
 
     public struct ProcessMemInfo
@@ -608,24 +628,26 @@ public static class MemoryCleanerService
         var heap = new PriorityQueue<ProcessMemInfo, long>(n + 1);
         foreach (Process p in Process.GetProcesses())
         {
-            try
+            using (p)
             {
-                var info = new ProcessMemInfo
+                try
                 {
-                    Name = p.ProcessName,
-                    WorkingSetMb = p.WorkingSet64 / (1024 * 1024),
-                    PrivateMb = p.PrivateMemorySize64 / (1024 * 1024),
-                    Pid = p.Id,
-                };
-                heap.Enqueue(info, info.WorkingSetMb);
+                    var info = new ProcessMemInfo
+                    {
+                        Name = p.ProcessName,
+                        WorkingSetMb = p.WorkingSet64 / (1024 * 1024),
+                        PrivateMb = p.PrivateMemorySize64 / (1024 * 1024),
+                        Pid = p.Id,
+                    };
+                    heap.Enqueue(info, info.WorkingSetMb);
 
-                if (heap.Count > n)
-                {
-                    _ = heap.Dequeue();
+                    if (heap.Count > n)
+                    {
+                        _ = heap.Dequeue();
+                    }
                 }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] GetTopProcessesByMemory: failed to read process info"); }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] GetTopProcessesByMemory: failed to read process info"); }
-            finally { try { p.Dispose(); } catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] GetTopProcessesByMemory: failed to dispose process"); } }
         }
 
         var result = new List<ProcessMemInfo>(heap.Count);
@@ -662,7 +684,7 @@ public static class MemoryCleanerService
                 break;
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] GetGpuInfo: failed to read SharedUsage"); }
+        catch (Exception ex) when (ex is System.Management.ManagementException or System.Runtime.InteropServices.COMException) { LoggingService.LogException(ex, "[MemoryCleaner] GetGpuInfo: failed to read SharedUsage"); }
         return result;
     }
 
@@ -684,7 +706,7 @@ public static class MemoryCleanerService
             {
                 info.Name = o["Caption"]?.ToString() ?? "GPU";
                 ulong ram = 0UL;
-                try { ram = Convert.ToUInt64(o["AdapterRAM"] ?? 0UL); } catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] GetGpuInfo: failed to read AdapterRAM"); }
+                try { ram = Convert.ToUInt64(o["AdapterRAM"] ?? 0UL); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] GetGpuInfo: failed to read AdapterRAM"); }
                 info.AdapterRamMb = (long)(ram / (1024 * 1024));
                 info.IsIntegrated = info.Name.Contains("Intel", StringComparison.OrdinalIgnoreCase)
                                    || info.Name.Contains("UHD", StringComparison.OrdinalIgnoreCase)
@@ -694,7 +716,7 @@ public static class MemoryCleanerService
                 break;
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] GetGpuInfo failed"); }
+        catch (Exception ex) when (ex is System.Management.ManagementException or System.Runtime.InteropServices.COMException) { LoggingService.LogException(ex, "[MemoryCleaner] GetGpuInfo failed"); }
 
         if (found)
         {
@@ -772,12 +794,12 @@ public static class MemoryCleanerService
         string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         return
         [
-            Path.Combine(localAppData, "D3DSCache"),
-            Path.Combine(localAppData, "NVIDIA", "DXCache"),
-            Path.Combine(localAppData, "NVIDIA", "GLCache"),
-            Path.Combine(localAppData, "AMD", "DxCache"),
-            Path.Combine(localAppData, "AMD", "DxcCache"),
-            Path.Combine(localAppData, "Intel", "ShaderCache")
+            Path.Join(localAppData, "D3DSCache"),
+            Path.Join(localAppData, "NVIDIA", "DXCache"),
+            Path.Join(localAppData, "NVIDIA", "GLCache"),
+            Path.Join(localAppData, "AMD", "DxCache"),
+            Path.Join(localAppData, "AMD", "DxcCache"),
+            Path.Join(localAppData, "Intel", "ShaderCache")
         ];
     }
 
@@ -805,13 +827,13 @@ public static class MemoryCleanerService
                             fi.Delete();
                             freed += fi.Length;
                         }
-                        catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.ClearDirectXShaderCaches.DeleteFile"); }
+                        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "MemoryCleanerService.ClearDirectXShaderCaches.DeleteFile"); }
                     }
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.ClearDirectXShaderCaches.EnumerateFiles"); }
+                catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "MemoryCleanerService.ClearDirectXShaderCaches.EnumerateFiles"); }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "[MemoryCleaner] ClearDirectXShaderCaches");
         }
@@ -832,7 +854,7 @@ public static class MemoryCleanerService
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
             keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "[MemoryCleaner] RestartGraphicsDriverPipeline failed");
         }
@@ -980,25 +1002,27 @@ public static class MemoryCleanerService
                     _ = CloseHandle(h);
                 }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.TrimKernelWorkingSet.TrimPid"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "MemoryCleanerService.TrimKernelWorkingSet.TrimPid"); }
         }
 
         foreach (Process p in Process.GetProcesses())
         {
-            try
+            using (p)
             {
-                if (_kernelProcessNames.Contains(p.ProcessName))
+                try
                 {
-                    nint h = OpenProcess(PROCESS_ALL_TRIM, false, p.Id);
-                    if (h != IntPtr.Zero)
+                    if (_kernelProcessNames.Contains(p.ProcessName))
                     {
-                        _ = SetProcessWorkingSetSize(h, new IntPtr(-1), new IntPtr(-1));
-                        _ = CloseHandle(h);
+                        nint h = OpenProcess(PROCESS_ALL_TRIM, false, p.Id);
+                        if (h != IntPtr.Zero)
+                        {
+                            _ = SetProcessWorkingSetSize(h, new IntPtr(-1), new IntPtr(-1));
+                            _ = CloseHandle(h);
+                        }
                     }
                 }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "MemoryCleanerService.TrimKernelWorkingSet.TrimKernelProcess"); }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.TrimKernelWorkingSet.TrimKernelProcess"); }
-            finally { try { p.Dispose(); } catch (Exception ex2) { LoggingService.LogException(ex2, "MemoryCleanerService.TrimKernelWorkingSet.DisposeProcess"); } }
         }
 
         Thread.Sleep(150);
@@ -1029,7 +1053,7 @@ public static class MemoryCleanerService
             }, ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] FlushSuperFetchAsync failed"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] FlushSuperFetchAsync failed"); }
         RamInfo after = GetRamInfo();
         return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
     }
@@ -1043,7 +1067,7 @@ public static class MemoryCleanerService
             CollectAndCompactManagedHeap();
             TrimSelfWorkingSet();
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] CompactAllHeaps failed"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] CompactAllHeaps failed"); }
         RamInfo after = GetRamInfo();
         return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
     }
@@ -1053,7 +1077,7 @@ public static class MemoryCleanerService
         RamInfo before = GetRamInfo();
         try
         {
-            var done = new ManualResetEventSlim(false);
+            using var done = new ManualResetEventSlim(false);
             var thread = new Thread(() =>
             {
                 try
@@ -1064,15 +1088,19 @@ public static class MemoryCleanerService
                         finally { _ = CloseClipboard(); }
                     }
                 }
-                catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.ClearClipboard.ClipboardThread"); }
-                finally { done.Set(); }
+                catch (Exception ex) when (ex is System.Runtime.InteropServices.ExternalException or System.InvalidOperationException) { LoggingService.LogException(ex, "MemoryCleanerService.ClearClipboard.ClipboardThread"); }
+                finally
+                {
+                    try { done.Set(); }
+                    catch (ObjectDisposedException ex) { _ = ex; }
+                }
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.IsBackground = true;
             thread.Start();
             _ = done.Wait(TimeSpan.FromSeconds(3));
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] ClearClipboard failed"); }
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.ExternalException or System.InvalidOperationException) { LoggingService.LogException(ex, "[MemoryCleaner] ClearClipboard failed"); }
         RamInfo after = GetRamInfo();
         return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
     }
@@ -1081,7 +1109,7 @@ public static class MemoryCleanerService
     {
         RamInfo before = GetRamInfo();
         try { _ = FlushIpNetTable(0); }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] FlushArpCache failed"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "[MemoryCleaner] FlushArpCache failed"); }
         RamInfo after = GetRamInfo();
         return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
     }
@@ -1100,7 +1128,7 @@ public static class MemoryCleanerService
             using var p = System.Diagnostics.Process.Start(psi);
             _ = (p?.WaitForExit(3000));
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "[MemoryCleaner] FlushNetBiosCache failed"); }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException) { LoggingService.LogException(ex, "[MemoryCleaner] FlushNetBiosCache failed"); }
         RamInfo after = GetRamInfo();
         return Math.Max(0, after.AvailPhysBytes - before.AvailPhysBytes);
     }
@@ -1113,20 +1141,22 @@ public static class MemoryCleanerService
 
         foreach (Process p in Process.GetProcesses())
         {
-            try
+            using (p)
             {
-                if (p.SessionId > 0)
+                try
                 {
-                    nint h = OpenProcess(PROCESS_ALL_TRIM, false, p.Id);
-                    if (h != IntPtr.Zero)
+                    if (p.SessionId > 0)
                     {
-                        _ = SetProcessWorkingSetSize(h, new IntPtr(-1), new IntPtr(-1));
-                        _ = CloseHandle(h);
+                        nint h = OpenProcess(PROCESS_ALL_TRIM, false, p.Id);
+                        if (h != IntPtr.Zero)
+                        {
+                            _ = SetProcessWorkingSetSize(h, new IntPtr(-1), new IntPtr(-1));
+                            _ = CloseHandle(h);
+                        }
                     }
                 }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "MemoryCleanerService.TrimAllSessionsWorkingSets.TrimProcess"); }
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "MemoryCleanerService.TrimAllSessionsWorkingSets.TrimProcess"); }
-            finally { try { p.Dispose(); } catch (Exception ex2) { LoggingService.LogException(ex2, "MemoryCleanerService.TrimAllSessionsWorkingSets.DisposeProcess"); } }
         }
 
         Thread.Sleep(200);

@@ -17,7 +17,7 @@ public sealed class CentralUnitStigmergy
     public static readonly TimeSpan DefaultTransitionHalfLife = TimeSpan.FromHours(6);
     public static readonly TimeSpan DefaultHourlyHalfLife = TimeSpan.FromDays(3);
 
-    private static readonly string DefaultPersistencePath = Path.Combine(
+    private static readonly string DefaultPersistencePath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "stigmergy.json");
 
     public static CentralUnitStigmergy Current { get; } = new(persistencePath: DefaultPersistencePath);
@@ -345,7 +345,7 @@ public sealed class CentralUnitStigmergy
                 File.WriteAllText(tmpPath, json);
                 File.Move(tmpPath, _persistencePath, overwrite: true);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
             {
                 LoggingService.LogException(ex, "CentralUnitStigmergy.SaveState");
             }
@@ -377,7 +377,7 @@ public sealed class CentralUnitStigmergy
                 SaveState();
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CentralUnitStigmergy.MaybeSave");
         }
@@ -410,7 +410,7 @@ public sealed class CentralUnitStigmergy
                 _lastSaveUtc = DateTime.UtcNow;
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "CentralUnitStigmergy.LoadState");
         }
@@ -581,7 +581,7 @@ public sealed class CentralUnitStigmergy
                     File.Delete(_persistencePath);
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(ex, "CentralUnitStigmergy.Clear");
             }

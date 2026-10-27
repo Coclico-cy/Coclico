@@ -148,7 +148,7 @@ public partial class AiChatView : UserControl
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             ToastService.Show($"Échec de l'installation du runtime CUDA : {ex.Message}");
             MessageBox.Show(
@@ -208,7 +208,7 @@ public partial class AiChatView : UserControl
             BannerDownloadLocal.Visibility = isAvail ? Visibility.Collapsed : Visibility.Visible;
             if (!isAvail)
             {
-                TxtBannerModelNotice.Text = string.Format(
+                TxtBannerModelNotice.Text = TextFormatService.Format(
                     TryFindResource("Ai_BannerModelMissing") as string ?? "Modèle local '{0}' non présent sur le disque (~{1} Mo).",
                     modelInfo.DisplayName, modelInfo.SizeEstimateMb);
             }
@@ -470,7 +470,7 @@ public partial class AiChatView : UserControl
             });
             _aiService.RecordExchange(promptText, confirmMsg);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             await Dispatcher.InvokeAsync(() =>
             {
@@ -652,10 +652,8 @@ public partial class AiChatView : UserControl
                     }
                     _aiService.RecordExchange(text, confirmMsg);
                 }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
+                catch (OperationCanceledException ex) { _ = ex; }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException)
                 {
                     await Dispatcher.InvokeAsync(() =>
                     {
@@ -727,7 +725,7 @@ public partial class AiChatView : UserControl
                 foreach (AiActionRequest proposedAction in distinctActions)
                 {
                     Border? card = null;
-                    bool confirmed = true;
+                    bool confirmed;
                     if (!_autoExecuteActions && AiToolExecutionService.RequiresConfirmation(proposedAction.ActionType))
                     {
                         var tcs = new TaskCompletionSource<bool>();
@@ -777,7 +775,7 @@ public partial class AiChatView : UserControl
                 SetThinking(false);
             });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.InvalidOperationException or System.OperationCanceledException)
         {
             await Dispatcher.InvokeAsync(() =>
             {
@@ -867,7 +865,7 @@ public partial class AiChatView : UserControl
             return;
         }
         string dest = (_aiService as AiChatService)?.GetLocalModelFullPath(modelInfo.Id)
-                   ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "model", modelInfo.Id);
+                   ?? Path.Join(AppDomain.CurrentDomain.BaseDirectory, "resource", "model", modelInfo.Id);
         string? dir = Path.GetDirectoryName(dest);
         if (!string.IsNullOrEmpty(dir))
         {
@@ -922,7 +920,7 @@ public partial class AiChatView : UserControl
             ToastService.Show($"Modèle {modelInfo.DisplayName} téléchargé avec succès !");
             UpdateStatus();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Net.Http.HttpRequestException or System.Net.Sockets.SocketException)
         {
             try
             {
@@ -931,7 +929,7 @@ public partial class AiChatView : UserControl
                     File.Delete(tmp);
                 }
             }
-            catch (Exception cleanupEx)
+            catch (Exception cleanupEx) when (cleanupEx is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(cleanupEx, "AiChatView.DownloadCleanup");
             }

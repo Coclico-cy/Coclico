@@ -16,6 +16,7 @@ public class FileIconConverter : IValueConverter
     private static readonly LruIconCache _cache = new(MaxCacheSize);
     private static readonly BitmapSource _placeholder = CreatePlaceholder();
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("gdi32.dll")]
     private static extern bool DeleteObject(IntPtr hObject);
 
@@ -67,7 +68,7 @@ public class FileIconConverter : IValueConverter
                         _cache.Add(path, bitmap);
                     }
                 }
-                catch (Exception exSwallow)
+                catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
                 {
                     Services.LoggingService.LogException(exSwallow, "FileIconConverter.PreloadIcon");
                 }
@@ -95,7 +96,7 @@ public class FileIconConverter : IValueConverter
                 _cache.Add(path, bitmap);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             Services.LoggingService.LogException(ex, "FileIconConverter.LoadIconAsync");
         }

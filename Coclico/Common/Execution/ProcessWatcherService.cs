@@ -78,7 +78,7 @@ public sealed class ProcessWatcherService : IDisposable
             watcher.Start();
             return watcher;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, context);
             return null;
@@ -97,7 +97,7 @@ public sealed class ProcessWatcherService : IDisposable
                 watcher = null;
             }
         }
-        catch (Exception exSwallow)
+        catch (Exception exSwallow) when (exSwallow is not System.OutOfMemoryException)
         {
             LoggingService.LogException(exSwallow, context);
         }
@@ -128,7 +128,7 @@ public sealed class ProcessWatcherService : IDisposable
             using var targetInstance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
             return targetInstance["Name"]?.ToString();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, context);
             return null;

@@ -252,9 +252,7 @@ public sealed class AdaptivePowerService
             {
                 await loop.ConfigureAwait(false);
             }
-            catch
-            {
-            }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
         }
 
         lock (_stateLock)
@@ -318,7 +316,7 @@ public sealed class AdaptivePowerService
         {
             await _settings.SaveAsync().ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "AdaptivePowerService.SaveSettingsNow");
         }
@@ -379,7 +377,7 @@ public sealed class AdaptivePowerService
             {
                 break;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "AdaptivePowerService.Loop");
             }
@@ -415,7 +413,7 @@ public sealed class AdaptivePowerService
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "AdaptivePowerService.SyncCurrentMode");
         }
@@ -437,9 +435,9 @@ public sealed class AdaptivePowerService
         return reason switch
         {
             AdaptivePowerReason.HighLoad =>
-                string.Format(loc?.Get("Power_Reason_HighLoad") ?? "Charge {0:0}% maintenue, passage en performance.", loadPercent),
+                TextFormatService.Format(loc?.Get("Power_Reason_HighLoad") ?? "Charge {0:0}% maintenue, passage en performance.", loadPercent),
             AdaptivePowerReason.LowLoad =>
-                string.Format(loc?.Get("Power_Reason_LowLoad") ?? "Charge {0:0}% maintenue, passage en economie.", loadPercent),
+                TextFormatService.Format(loc?.Get("Power_Reason_LowLoad") ?? "Charge {0:0}% maintenue, passage en economie.", loadPercent),
             AdaptivePowerReason.Cooldown =>
                 loc?.Get("Power_Reason_Cooldown") ?? "Repos entre deux changements de plan.",
             _ =>
@@ -458,6 +456,7 @@ public sealed class AdaptivePowerService
             public readonly long Value => ((long)High << 32) | Low;
         }
 
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         [DllImport("kernel32.dll", SetLastError = false)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetSystemTimes(out FileTimeStruct idle, out FileTimeStruct kernel, out FileTimeStruct user);

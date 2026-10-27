@@ -85,7 +85,6 @@ public class ProgramDisplayInfo : INotifyPropertyChanged
 public partial class ProgramsViewModel : INotifyPropertyChanged
 {
     private readonly InstalledProgramsService _programsService = ServiceContainer.GetRequired<InstalledProgramsService>();
-    private InstalledProgramsService.FilterGroup _selectedFilterGroup;
     private List<ProgramDisplayInfo> _allPrograms = [];
     private List<ProgramDisplayInfo> _games = [];
     private Action<string>? _genericInputCallback;
@@ -101,18 +100,6 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
     public ObservableCollection<string> Categories { get; private set; }
     public ObservableCollection<InstalledProgramsService.FilterGroup> FilterGroups { get; private set; }
     public ObservableCollection<ProgramDisplayInfo> RecentPrograms { get; } = [];
-
-    public InstalledProgramsService.FilterGroup SelectedFilterGroup
-    {
-        get => _selectedFilterGroup;
-        set
-        {
-            _selectedFilterGroup = value;
-            OnNotifyPropertyChanged();
-            UpdateUI();
-        }
-    }
-
     public string SelectedCategory
     {
         get;
@@ -143,13 +130,6 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
         get;
         set { field = value; OnNotifyPropertyChanged(); }
     }
-
-    public bool IsConfigOpen
-    {
-        get;
-        set { field = value; OnNotifyPropertyChanged(); }
-    }
-
     public bool IsGridMode
     {
         get;
@@ -337,7 +317,7 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
         {
             return Application.Current?.TryFindResource(key) as string ?? ServiceContainer.GetOptional<LocalizationService>()?.Get(key) ?? key;
         }
-        catch { return key; }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { return key; }
     }
 
     public ProgramsViewModel()
@@ -356,8 +336,6 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
             group.PropertyChanged += OnGroupChanged;
         }
 
-        _selectedFilterGroup = FilterGroups.FirstOrDefault()
-            ?? new InstalledProgramsService.FilterGroup { Name = "Bibliothèque", IsStatic = true };
 
         IsGridMode = true;
         _ = LoadProgramsAsync();
@@ -495,7 +473,7 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
                 UpdateUI();
             }, DispatcherPriority.Background);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "ProgramsViewModel.LoadProgramsAsync");
         }
@@ -509,13 +487,22 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
     {
         string searchText = SearchText?.Trim() ?? string.Empty;
 
+        static bool Contient(string? valeur, string recherche)
+        {
+            return !string.IsNullOrEmpty(valeur) && valeur.Contains(recherche, StringComparison.OrdinalIgnoreCase);
+        }
+
         bool MatchesSearch(ProgramDisplayInfo program)
         {
-            return string.IsNullOrEmpty(searchText) ||
-            (!string.IsNullOrEmpty(program.Name) && program.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
-            (!string.IsNullOrEmpty(program.Publisher) && program.Publisher.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
-            (!string.IsNullOrEmpty(program.Source) && program.Source.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
-            (!string.IsNullOrEmpty(program.Category) && program.Category.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return true;
+            }
+
+            return Contient(program.Name, searchText) ||
+            Contient(program.Publisher, searchText) ||
+            Contient(program.Source, searchText) ||
+            Contient(program.Category, searchText);
         }
 
         IEnumerable<ProgramDisplayInfo> query = CurrentTab switch
@@ -601,7 +588,7 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
     private async Task LaunchAppAndForgetAsync(ProgramDisplayInfo app)
     {
         try { await LaunchApp(app); }
-        catch (Exception ex) { LoggingService.LogException(ex, "ProgramsViewModel.LaunchAppAndForget"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "ProgramsViewModel.LaunchAppAndForget"); }
     }
 
     private async Task LaunchApp(ProgramDisplayInfo app)
@@ -644,10 +631,10 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
             }
 
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "ProgramsViewModel.LaunchApp");
-            Notify?.Invoke(string.Format(L("Programs_LaunchError"), ex.Message), null);
+            Notify?.Invoke(TextFormatService.Format(L("Programs_LaunchError"), ex.Message), null);
         }
         finally
         {
@@ -705,7 +692,7 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
         if (app != null && !string.IsNullOrEmpty(app.InstallPath))
         {
             try { _ = Process.Start("explorer.exe", app.InstallPath); }
-            catch (Exception ex) { LoggingService.LogException(ex, "ProgramsViewModel.OpenFolder"); }
+            catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException) { LoggingService.LogException(ex, "ProgramsViewModel.OpenFolder"); }
         }
     }
 
@@ -723,9 +710,9 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
             try
             {
                 Clipboard.SetText(path);
-                Notify?.Invoke(string.Format(L("Programs_PathCopied"), path), null);
+                Notify?.Invoke(TextFormatService.Format(L("Programs_PathCopied"), path), null);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "ProgramsViewModel.CopyPath");
             }
@@ -798,7 +785,7 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
         }
 
         bool confirm = Confirm?.Invoke(
-            string.Format(L("Programs_ConfirmUninstall"), app.Name),
+            TextFormatService.Format(L("Programs_ConfirmUninstall"), app.Name),
             L("Programs_ConfirmUninstallTitle")) ?? false;
 
         if (!confirm)
@@ -867,10 +854,10 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
                 $"Le programme de désinstallation est introuvable : {parsed.ExecutableOrUri}",
                 null);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "ProgramsViewModel.Uninstall");
-            Notify?.Invoke(string.Format(L("Programs_UninstallError"), ex.Message), L("Common_Error"));
+            Notify?.Invoke(TextFormatService.Format(L("Programs_UninstallError"), ex.Message), L("Common_Error"));
         }
     }
 
@@ -897,13 +884,6 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
 
         return true;
     }
-
-    [RelayCommand]
-    private void OpenConfig() => IsConfigOpen = true;
-
-    [RelayCommand]
-    private void CloseConfig() => IsConfigOpen = false;
-
     [RelayCommand]
     private void CloseManualAdd() => IsManualAddOpen = false;
 
@@ -944,155 +924,6 @@ public partial class ProgramsViewModel : INotifyPropertyChanged
             IsGenericInputOpen = false;
         }
     }
-
-    [RelayCommand]
-    private void AddGroup()
-    {
-        if (FilterGroups.Count >= 6)
-        {
-            Notify?.Invoke("Maximum 5 groupes personnalisés autorisés.", null);
-            return;
-        }
-
-        ShowGenericInput("NOUVEAU GROUPE", "Nom du nouveau groupe :", "Mon Groupe", input =>
-        {
-            if (FilterGroups.Any(g => g.Name.Equals(input, StringComparison.OrdinalIgnoreCase)))
-            {
-                Notify?.Invoke(L("Programs_GroupNameExists"), null);
-                return;
-            }
-            var newGroup = new InstalledProgramsService.FilterGroup { Name = input, IsStatic = false };
-            newGroup.PropertyChanged += OnGroupChanged;
-            FilterGroups.Add(newGroup);
-            _programsService.SaveFilterGroups(FilterGroups.ToList());
-            UpdateUI();
-        });
-    }
-
-    [RelayCommand]
-    private void EditGroup(InstalledProgramsService.FilterGroup? group)
-    {
-        if (group == null || group.IsStatic)
-        {
-            return;
-        }
-
-        ShowGenericInput("MODIFIER GROUPE", "Nouveau nom :", group.Name, input =>
-        {
-            group.Name = input;
-            _programsService.SaveFilterGroups(FilterGroups.ToList());
-            UpdateUI();
-        });
-    }
-
-    [RelayCommand]
-    private void DeleteGroup(InstalledProgramsService.FilterGroup? group)
-    {
-        if (group == null || group.IsStatic)
-        {
-            return;
-        }
-
-        group.PropertyChanged -= OnGroupChanged;
-        _ = FilterGroups.Remove(group);
-        if (SelectedFilterGroup == group)
-        {
-            SelectedFilterGroup = FilterGroups.FirstOrDefault()
-                ?? new InstalledProgramsService.FilterGroup { Name = "Bibliothèque", IsStatic = true };
-        }
-
-        _programsService.SaveFilterGroups(FilterGroups.ToList());
-        UpdateUI();
-    }
-
-    [RelayCommand]
-    private void AddCategory()
-    {
-        if (Categories.Count >= 256)
-        {
-            Notify?.Invoke("Maximum 255 catégories autorisées.", null);
-            return;
-        }
-
-        ShowGenericInput("NOUVELLE CATÉGORIE", "Nom de la catégorie :", "Autre", input =>
-        {
-            if (Categories.Any(c => c.Equals(input, StringComparison.OrdinalIgnoreCase)))
-            {
-                Notify?.Invoke(L("Programs_CategoryExists"), null);
-                return;
-            }
-            Categories.Add(input);
-            _programsService.SaveCategories(Categories.ToList());
-            UpdateUI();
-        });
-    }
-
-    [RelayCommand]
-    private void EditCategory(string? category)
-    {
-        if (string.IsNullOrEmpty(category) || category == "Tout")
-        {
-            return;
-        }
-
-        ShowGenericInput("MODIFIER CATÉGORIE", "Nouveau nom :", category, input =>
-        {
-            int index = Categories.IndexOf(category);
-            if (index != -1)
-            {
-                string oldName = Categories[index];
-                Categories[index] = input;
-                if (SelectedCategory == category)
-                {
-                    SelectedCategory = input;
-                }
-
-                foreach (ProgramDisplayInfo p in _allPrograms.Where(x => x.Category == oldName))
-                {
-                    p.Category = input;
-                    _programsService.SaveCustomAppData(p.ExePath, p.InstallPath, p.Name, null, input);
-                }
-                foreach (ProgramDisplayInfo p in _games.Where(x => x.Category == oldName))
-                {
-                    p.Category = input;
-                    _programsService.SaveCustomAppData(p.ExePath, p.InstallPath, p.Name, null, input);
-                }
-
-                _programsService.SaveCategories(Categories.ToList());
-            }
-            UpdateUI();
-        });
-    }
-
-    [RelayCommand]
-    private void DeleteCategory(string? category)
-    {
-        if (string.IsNullOrEmpty(category) || category == "Tout")
-        {
-            return;
-        }
-
-        foreach (ProgramDisplayInfo p in _allPrograms.Where(x => x.Category == category))
-        {
-            p.Category = "Logiciel";
-            _programsService.SaveCustomAppData(p.ExePath, p.InstallPath, p.Name, null, "Logiciel");
-        }
-        foreach (ProgramDisplayInfo p in _games.Where(x => x.Category == category))
-        {
-            p.Category = "Logiciel";
-            _programsService.SaveCustomAppData(p.ExePath, p.InstallPath, p.Name, null, "Logiciel");
-        }
-
-        _ = Categories.Remove(category);
-        if (SelectedCategory == category)
-        {
-            SelectedCategory = "Tout";
-        }
-
-        _programsService.SaveCategories(Categories.ToList());
-        UpdateUI();
-    }
-
     private static string FormatSize(long bytes)
     {
         return bytes <= 0

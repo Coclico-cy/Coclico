@@ -23,7 +23,7 @@ public sealed class SecurityPolicyModel
 
 public sealed class SecurityPolicyService : ISecurityPolicy
 {
-    private static readonly string PolicyPath = Path.Combine(
+    private static readonly string PolicyPath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Coclico", "security-policy.json");
 
@@ -37,6 +37,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
         "reg delete hklm", "reg delete hkcc",
         "net user", "net localgroup administrators",
         "icacls", "takeown", "cacls", "sc delete", "sc stop",
+        "rd /s", "rmdir /s", "del /f", "del /q", "erase /s", "vssadmin delete", "wbadmin delete", "reg delete hkcr",
     ];
 
     private static readonly IReadOnlyList<string> _defaultPsPatterns =
@@ -55,11 +56,13 @@ public sealed class SecurityPolicyService : ISecurityPolicy
         "disable-windowsoptionalfeature",
         "net user", "net localgroup", "add-localgroup",
         "new-localuser", "remove-itemproperty",
+        "remove-item -recurse:$true", "ri -r", "rm -r", "rm -rec", "del -r", "erase -r", "-ec ", "-encoded ", "downloaddata", "start-bitstransfer", "certutil -urlcache", "bitsadmin",
     ];
 
     private static readonly IReadOnlyList<string> _defaultPsWildcards =
     [
         @"set-itemproperty.*hklm",
+        @"set-itemproperty.*hkcr", @"set-itemproperty.*hkcc", @"new-itemproperty.*hkcr", @"remove-itemproperty.*hkcr",
     ];
 
     private static readonly IReadOnlyList<string> _defaultProtectedPaths =
@@ -75,7 +78,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
         Environment.GetFolderPath(Environment.SpecialFolder.Windows),
         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
+        Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
         Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
     ];
 
@@ -140,7 +143,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
 
         foreach (string p in _cmdPatterns)
         {
-            if (collapsed.Contains(p, StringComparison.Ordinal))
+            if (collapsed.Contains(p, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -156,7 +159,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
     {
         foreach (string p in _psPatterns)
         {
-            if (normalizedPs.Contains(p, StringComparison.Ordinal))
+            if (normalizedPs.Contains(p, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -177,7 +180,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
     {
         foreach (string seg in _protectedPaths)
         {
-            if (lowerCasePath.Contains(seg, StringComparison.Ordinal))
+            if (lowerCasePath.Contains(seg, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -216,7 +219,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
 
         if (_standardSystemApps.TryGetValue(trimmed, out string? exeName))
         {
-            resolvedPath = Path.Combine(Environment.SystemDirectory, exeName);
+            resolvedPath = Path.Join(Environment.SystemDirectory, exeName);
             if (File.Exists(resolvedPath))
             {
                 return true;
@@ -325,7 +328,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
                 $"+{model.BlockedPowerShellPatterns.Count} ps, " +
                 $"+{model.ProtectedPathSegments.Count} paths)");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(ex, "SecurityPolicyService.MergeFromFileAsync");
         }
@@ -342,7 +345,7 @@ public sealed class SecurityPolicyService : ISecurityPolicy
                     RegexOptions.Compiled | RegexOptions.IgnoreCase,
                     TimeSpan.FromMilliseconds(100)));
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, $"SecurityPolicy.CompileWildcard({p})");
             }

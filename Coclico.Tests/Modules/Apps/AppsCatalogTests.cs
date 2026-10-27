@@ -19,7 +19,7 @@ public sealed class AppsCatalogTests
 
     private static List<CatalogApp> LoadCatalog()
     {
-        string path = Path.Combine(
+        string path = Path.Join(
             XamlResourceValidationTests.FindRepoRoot(),
             "Coclico", "Modules", "Apps", "Assets", "apps.json");
         Assert.True(File.Exists(path), $"Catalogue introuvable : {path}");
@@ -80,7 +80,7 @@ public sealed class AppsCatalogTests
     {
         List<CatalogApp> apps = LoadCatalog();
         Assert.Contains(apps, a => a.WingetId == "beeradmoore.dlss-swapper");
-        Assert.DoesNotContain(apps, a => a.WingetId?.Contains("beeradmore", StringComparison.OrdinalIgnoreCase) == true);
+        Assert.DoesNotContain(apps, a => a.WingetId?.Contains("beeradmore", StringComparison.OrdinalIgnoreCase) is true);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public sealed class AppsCatalogTests
 
     private static List<PackDefinition> LoadPacks()
     {
-        string path = Path.Combine(
+        string path = Path.Join(
             XamlResourceValidationTests.FindRepoRoot(),
             "Coclico", "Modules", "Apps", "Assets", "apppacks.json");
         Assert.True(File.Exists(path), $"Fichier packs introuvable : {path}");

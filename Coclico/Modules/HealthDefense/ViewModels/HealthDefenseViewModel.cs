@@ -15,6 +15,10 @@ public class HealthDefenseViewModel : INotifyPropertyChanged
 
     public ObservableCollection<string> OutputLog { get; } = [];
 
+    public ObservableCollection<StartupEntryItem> StartupEntries { get; } = [];
+
+    public ObservableCollection<SmartDiskItem> DiskHealth { get; } = [];
+
     public bool IsBusy
     {
         get;
@@ -94,6 +98,8 @@ public class HealthDefenseViewModel : INotifyPropertyChanged
     public IAsyncRelayCommand ResetUpdateCommand { get; }
     public IRelayCommand CancelCommand { get; }
     public IRelayCommand ClearLogCommand { get; }
+    public IRelayCommand RefreshStartupCommand { get; }
+    public IAsyncRelayCommand CheckDiskHealthCommand { get; }
 
     public HealthDefenseViewModel(SystemHealthService healthService)
     {
@@ -113,8 +119,11 @@ public class HealthDefenseViewModel : INotifyPropertyChanged
         ResetUpdateCommand = new AsyncRelayCommand(ResetUpdateAsync);
         CancelCommand = new RelayCommand(CancelOperation);
         ClearLogCommand = new RelayCommand(OutputLog.Clear);
+        RefreshStartupCommand = new RelayCommand(LoadStartupEntries);
+        CheckDiskHealthCommand = new AsyncRelayCommand(CheckDiskHealthAsync);
 
         _ = RefreshStatusAsync();
+        LoadStartupEntries();
     }
 
     public async Task RefreshStatusAsync()
@@ -149,7 +158,8 @@ public class HealthDefenseViewModel : INotifyPropertyChanged
 
         IsBusy = true;
         BusyActionTitle = actionTitle;
-        _cts = new CancellationTokenSource();
+        using CancellationTokenSource cts = new();
+        _cts = cts;
 
         try
         {
@@ -161,7 +171,7 @@ public class HealthDefenseViewModel : INotifyPropertyChanged
         {
             AppendLog($"⚠️ Opération annulée par l'utilisateur.");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             AppendLog($"❌ Erreur : {ex.Message}");
             LoggingService.LogException(ex, $"HealthDefenseVM.{actionTitle}");
@@ -170,7 +180,6 @@ public class HealthDefenseViewModel : INotifyPropertyChanged
         {
             IsBusy = false;
             BusyActionTitle = string.Empty;
-            _cts?.Dispose();
             _cts = null;
             await RefreshStatusAsync();
         }
@@ -305,6 +314,62 @@ public class HealthDefenseViewModel : INotifyPropertyChanged
         {
             SystemHealthService.DiagnosticResult res = await _healthService.ResetWindowsUpdateAsync(AppendLog, ct);
             LastScanSummary = res.Summary;
+        });
+    }
+
+    private void LoadStartupEntries()
+    {
+        try
+        {
+            List<StartupEntry> entries = StartupManagerService.ListStartupEntries();
+
+            StartupEntries.Clear();
+            foreach (StartupEntry entry in entries)
+            {
+                StartupEntries.Add(new StartupEntryItem(entry, ToggleStartupEntry));
+            }
+
+            AppendLog($"Gestionnaire de démarrage : {StartupEntries.Count} entrée(s) chargée(s) (HKCU, HKLM, dossier Démarrage).");
+        }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
+        {
+            AppendLog("⚠️ Impossible de lister les programmes au démarrage.");
+            LoggingService.LogException(ex, "HealthDefenseVM.LoadStartupEntries");
+        }
+    }
+
+    private bool ToggleStartupEntry(StartupEntryItem item, bool enabled)
+    {
+        bool ok = StartupManagerService.SetEntryEnabled(item.Entry, enabled);
+        AppendLog(ok
+            ? $"Démarrage : « {item.Name} » {(enabled ? "réactivée" : "désactivée")} — réversible à tout moment, rien n'est supprimé."
+            : $"⚠️ Impossible de modifier « {item.Name} » : entrée système (HKLM) qui exige les droits administrateur.");
+        return ok;
+    }
+
+    private async Task CheckDiskHealthAsync()
+    {
+        await ExecuteActionWrapperAsync("Vérification S.M.A.R.T. des disques", async _ =>
+        {
+            AppendLog("Lecture de l'état S.M.A.R.T. des disques physiques (lecture seule)…");
+            List<SmartDiskStatus> statuses = await Task.Run(SmartDiskService.GetDiskStatus);
+
+            DiskHealth.Clear();
+            foreach (SmartDiskStatus status in statuses)
+            {
+                DiskHealth.Add(new SmartDiskItem(status));
+            }
+
+            if (statuses.Count == 0)
+            {
+                AppendLog("⚠️ Aucune donnée de santé exposée par Windows pour vos disques (cas rare : certains contrôleurs RAID matériels).");
+            }
+            else
+            {
+                AppendLog(statuses.Exists(s => s.PredictsFailure)
+                    ? $"❌ Santé disque : {statuses.Count} disque(s) vérifié(s), au moins un signale un risque de panne imminente. Sauvegardez vos données importantes !"
+                    : $"Santé disque : {statuses.Count} disque(s) vérifié(s), aucun signe de panne imminente.");
+            }
         });
     }
 

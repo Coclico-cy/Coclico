@@ -23,7 +23,7 @@ public static class RecycleBinHelper
         {
             return SendToRecycleBinIFileOperation(paths);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "RecycleBinHelper.IFileOperation");
             return SendToRecycleBinLegacy(paths);
@@ -83,9 +83,11 @@ public static class RecycleBinHelper
         public string lpszProgressTitle;
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     private static extern int SHFileOperation(ref SHFILEOPSTRUCTW operation);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern int SHCreateItemFromParsingName(
         [MarshalAs(UnmanagedType.LPWStr)] string pszPath,

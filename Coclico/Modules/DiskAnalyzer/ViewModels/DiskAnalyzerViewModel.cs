@@ -393,7 +393,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
         {
             _scanCts?.Cancel();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "DiskAnalyzerViewModel.CancelScan");
         }
@@ -410,7 +410,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             await Task.Delay(150).ConfigureAwait(true);
         }
 
-        var scanCts = new CancellationTokenSource();
+        using CancellationTokenSource scanCts = new();
         _scanCts = scanCts;
         IsScanning = true;
         _liveRenderShown = false;
@@ -454,7 +454,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             UpdateZonesList();
             SunburstRenderRequested?.Invoke(SunburstRender.Animated);
 
-            ScanStatusText = string.Format(L("Disk_StatusDone"), DiskItemNode.FormatSize(root.SizeBytes), $"{root.FileCount:N0}");
+            ScanStatusText = TextFormatService.Format(L("Disk_StatusDone"), DiskItemNode.FormatSize(root.SizeBytes), $"{root.FileCount:N0}");
         }
         catch (OperationCanceledException)
         {
@@ -465,7 +465,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
 
             ScanStatusText = L("Disk_StatusCancelled");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.OperationCanceledException)
         {
             if (!ReferenceEquals(_scanCts, scanCts))
             {
@@ -476,7 +476,6 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
         }
         finally
         {
-            scanCts.Dispose();
             if (ReferenceEquals(_scanCts, scanCts))
             {
                 _scanCts = null;
@@ -511,7 +510,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
         {
             snapshot = DiskAnalyzerService.BuildSnapshot(root, RingCount, MaxZonesPerRing);
         }
-        catch
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             return;
         }
@@ -670,7 +669,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             return;
         }
 
-        ZonesTitleText = string.Format(L("Disk_ZonesFor"), zone.Name.ToUpperInvariant());
+        ZonesTitleText = TextFormatService.Format(L("Disk_ZonesFor"), zone.Name.ToUpperInvariant());
         long total = Math.Max(1, zone.Size);
         ZonesSubTitleText = $"{zone.Children.Count:N0} éléments · {zone.Files:N0} fichiers · {DiskItemNode.FormatSize(zone.Size)}";
         var rows = new List<ZoneRow>();
@@ -775,7 +774,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
         {
             Process.Start(new ProcessStartInfo { FileName = _current.FullName, UseShellExecute = true });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "DiskAnalyzerViewModel.OpenExplorer");
         }
@@ -862,8 +861,8 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
         {
             DuplicatesSummaryText = p.Phase switch
             {
-                1 => string.Format(L("Disk_DupInventory"), $"{p.FilesExamined:N0}"),
-                2 => string.Format(L("Disk_DupQuickHash"), $"{p.FilesExamined:N0}"),
+                1 => TextFormatService.Format(L("Disk_DupInventory"), $"{p.FilesExamined:N0}"),
+                2 => TextFormatService.Format(L("Disk_DupQuickHash"), $"{p.FilesExamined:N0}"),
                 3 => L("Disk_DupVerify"),
                 _ => L("Disk_DupDone")
             };
@@ -878,7 +877,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             {
                 FileName = g.FileName,
                 CountText = $"{g.FileCount} fichiers identiques",
-                WastedText = string.Format(L("Disk_Wasted"), DiskItemNode.FormatSize(g.WastedBytes)),
+                WastedText = TextFormatService.Format(L("Disk_Wasted"), DiskItemNode.FormatSize(g.WastedBytes)),
                 Files = g.Paths.Select(p => new DuplicateFileRow
                 {
                     Path = p,
@@ -892,14 +891,14 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             long wasted = groups.Sum(g => g.WastedBytes);
             DuplicatesSummaryText = rows.Count == 0
                 ? L("Disk_DupNone")
-                : string.Format(L("Disk_DupSummary"), rows.Count, DiskItemNode.FormatSize(wasted));
+                : TextFormatService.Format(L("Disk_DupSummary"), rows.Count, DiskItemNode.FormatSize(wasted));
             DuplicatesStatusText = "";
         }
         catch (OperationCanceledException)
         {
             DuplicatesSummaryText = L("Disk_DupCancelled");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "DiskAnalyzerViewModel.DuplicatesScan");
             DuplicatesSummaryText = L("Disk_DupError");
@@ -947,16 +946,12 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             {
                 bytes += new FileInfo(path).Length;
             }
-            catch (IOException)
-            {
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
+            catch (IOException ex) { _ = ex; }
+            catch (UnauthorizedAccessException ex) { _ = ex; }
         }
 
         bool confirm = Confirm?.Invoke(
-            string.Format(L("Disk_DupConfirmDelete"), targets.Count, DiskItemNode.FormatSize(bytes)),
+            TextFormatService.Format(L("Disk_DupConfirmDelete"), targets.Count, DiskItemNode.FormatSize(bytes)),
             "Suppression des doublons sélectionnés") ?? false;
 
         if (!confirm)
@@ -968,7 +963,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
         {
             if (RecycleBinHelper.SendToRecycleBin(targets))
             {
-                ToastService.Show(string.Format(L("Disk_BinSentMany"), targets.Count));
+                ToastService.Show(TextFormatService.Format(L("Disk_BinSentMany"), targets.Count));
                 await RunDuplicatesScanAsync();
             }
             else
@@ -976,7 +971,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
                 DuplicatesStatusText = L("Disk_BinRefusedSome");
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "DiskAnalyzerViewModel.DeleteDuplicates");
             DuplicatesStatusText = L("Disk_DupDeleteError");
@@ -1032,13 +1027,13 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             LargeFiles = rows;
             LargeStatusText = files.Count == 0
                 ? L("Disk_StatusNoFiles")
-                : string.Format(L("Disk_LargeDone"), files.Count, DiskItemNode.FormatSize(files[0].SizeBytes));
+                : TextFormatService.Format(L("Disk_LargeDone"), files.Count, DiskItemNode.FormatSize(files[0].SizeBytes));
         }
         catch (OperationCanceledException)
         {
             LargeStatusText = L("Disk_StatusCancelled");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "DiskAnalyzerViewModel.LargeScan");
             LargeStatusText = L("Disk_LargeError");
@@ -1091,7 +1086,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
                 LargeFiles = _largeFiles;
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "DiskAnalyzerViewModel.DeleteLargeFile");
             LargeStatusText = "Erreur pendant la suppression.";
@@ -1111,7 +1106,7 @@ public partial class DiskAnalyzerViewModel : INotifyPropertyChanged
             string args = selectFile ? $"/select,\"{path}\"" : $"\"{directory}\"";
             _ = Process.Start(new ProcessStartInfo("explorer.exe", args) { UseShellExecute = true });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "DiskAnalyzerViewModel.OpenInExplorer");
         }

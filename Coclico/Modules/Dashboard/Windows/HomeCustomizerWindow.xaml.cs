@@ -52,7 +52,7 @@ public partial class HomeCustomizerWindow : Window
             WinScale.BeginAnimation(ScaleTransform.ScaleYProperty, animScaleY);
             BeginAnimation(OpacityProperty, animFade);
         }
-        catch
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             Opacity = 1;
         }
@@ -62,7 +62,7 @@ public partial class HomeCustomizerWindow : Window
     {
         if (e.LeftButton == MouseButtonState.Pressed)
         {
-            try { DragMove(); } catch (Exception ex) { LoggingService.LogException(ex, "HomeCustomizerWindow.Window_MouseDown"); }
+            try { DragMove(); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "HomeCustomizerWindow.Window_MouseDown"); }
         }
     }
 
@@ -112,7 +112,7 @@ public partial class HomeCustomizerWindow : Window
             panel.BeginAnimation(OpacityProperty, fade);
             panel.RenderTransform.BeginAnimation(TranslateTransform.YProperty, slide);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "HomeCustomizerWindow.AnimatePanelTransition"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "HomeCustomizerWindow.AnimatePanelTransition"); }
     }
 
     private void InitializeForm()
@@ -186,18 +186,17 @@ public partial class HomeCustomizerWindow : Window
                                   s.ShowRecentActivity)
         };
 
-        foreach (string secId in s.SectionOrder)
+        foreach (var section in s.SectionOrder
+            .Where(secId => map.ContainsKey(secId))
+            .Select(secId => (Id: secId, Info: map[secId])))
         {
-            if (map.TryGetValue(secId, out (string Title, string Desc, bool Visible) info))
+            _sections.Add(new SectionItemViewModel
             {
-                _sections.Add(new SectionItemViewModel
-                {
-                    Id = secId,
-                    Title = info.Title,
-                    Description = info.Desc,
-                    IsVisible = info.Visible
-                });
-            }
+                Id = section.Id,
+                Title = section.Info.Title,
+                Description = section.Info.Desc,
+                IsVisible = section.Info.Visible
+            });
         }
     }
 
@@ -272,12 +271,12 @@ public partial class HomeCustomizerWindow : Window
             return;
         }
 
-        _service.Settings.ShowTileRam = ChkTileRam.IsChecked == true;
-        _service.Settings.ShowTileCleaning = ChkTileCleaning.IsChecked == true;
-        _service.Settings.ShowTilePrograms = ChkTilePrograms.IsChecked == true;
-        _service.Settings.ShowTileInstaller = ChkTileInstaller.IsChecked == true;
-        _service.Settings.ShowTileHealth = ChkTileHealth.IsChecked == true;
-        _service.Settings.ShowTileNetwork = ChkTileNetwork.IsChecked == true;
+        _service.Settings.ShowTileRam = ChkTileRam.IsChecked is true;
+        _service.Settings.ShowTileCleaning = ChkTileCleaning.IsChecked is true;
+        _service.Settings.ShowTilePrograms = ChkTilePrograms.IsChecked is true;
+        _service.Settings.ShowTileInstaller = ChkTileInstaller.IsChecked is true;
+        _service.Settings.ShowTileHealth = ChkTileHealth.IsChecked is true;
+        _service.Settings.ShowTileNetwork = ChkTileNetwork.IsChecked is true;
         _service.NotifyChanged();
     }
 
@@ -289,7 +288,7 @@ public partial class HomeCustomizerWindow : Window
         }
 
         string? id = cb.Tag?.ToString();
-        bool isChecked = cb.IsChecked == true;
+        bool isChecked = cb.IsChecked is true;
 
         switch (id)
         {

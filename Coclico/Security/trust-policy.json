@@ -1,0 +1,8 @@
+{
+  "keys": [],
+  "updatePolicy": {
+    "minimumAllowedVersion": "2.2.0",
+    "lastKnownGoodVersion": "2.2.0",
+    "minimumSecurityGeneration": 1
+  }
+}

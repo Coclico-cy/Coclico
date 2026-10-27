@@ -39,7 +39,7 @@ public class UserAccountService
 
             LoadAvatar();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "UserAccountService.LoadUserData");
         }
@@ -57,34 +57,26 @@ public class UserAccountService
 
             string[] possiblePaths =
             [
-                Path.Combine(roamingAppData, @"Microsoft\Windows\AccountPictures"),
+                Path.Join(roamingAppData, @"Microsoft\Windows\AccountPictures"),
                 Environment.ExpandEnvironmentVariables(@"%PUBLIC%\AccountPictures"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "Local", "Packages", "Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy", "LocalState", "Assets"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\User Account Pictures"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\User Account Pictures", userSid),
-                Path.Combine(localAppData, @"Microsoft\Windows\CloudExperienceHost")
+                Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "Local", "Packages", "Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy", "LocalState", "Assets"),
+                Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\User Account Pictures"),
+                Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\User Account Pictures", userSid),
+                Path.Join(localAppData, @"Microsoft\Windows\CloudExperienceHost")
             ];
 
             string? bestPicture = null;
             DateTime latestTime = DateTime.MinValue;
 
-            foreach (string path in possiblePaths)
+            foreach (string path in possiblePaths.Where(path => Directory.Exists(path)))
             {
-                if (Directory.Exists(path))
+                foreach (string file in Directory.EnumerateFiles(path).Where(file => _imageExtensions.Contains(Path.GetExtension(file).ToLowerInvariant())))
                 {
-                    foreach (string file in Directory.EnumerateFiles(path))
+                    var info = new FileInfo(file);
+                    if (info.Length > 10000 && info.LastWriteTime > latestTime)
                     {
-                        if (!_imageExtensions.Contains(Path.GetExtension(file).ToLowerInvariant()))
-                        {
-                            continue;
-                        }
-
-                        var info = new FileInfo(file);
-                        if (info.Length > 10000 && info.LastWriteTime > latestTime)
-                        {
-                            latestTime = info.LastWriteTime;
-                            bestPicture = file;
-                        }
+                        latestTime = info.LastWriteTime;
+                        bestPicture = file;
                     }
                 }
             }
@@ -101,13 +93,13 @@ public class UserAccountService
                     bitmap.EndInit();
                     Avatar = bitmap;
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not System.OutOfMemoryException)
                 {
                     LoggingService.LogException(ex, "UserAccountService.LoadAvatar");
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "UserAccountService.LoadAvatar.Global");
         }
@@ -119,7 +111,7 @@ public class UserAccountService
         {
             _ = Process.Start(new ProcessStartInfo($"ms-settings:{page}") { UseShellExecute = true });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException)
         {
             _ = MessageBox.Show($"Could not open settings: {ex.Message}");
         }
@@ -135,9 +127,9 @@ public class UserAccountService
             }
 
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string avatarsDir = Path.Combine(appData, "Coclico", "avatars");
+            string avatarsDir = Path.Join(appData, "Coclico", "avatars");
             _ = Directory.CreateDirectory(avatarsDir);
-            string dest = Path.Combine(avatarsDir, UserName + Path.GetExtension(filePath).ToLower());
+            string dest = Path.Join(avatarsDir, UserName + Path.GetExtension(filePath).ToLower());
 
             File.Copy(filePath, dest, true);
 

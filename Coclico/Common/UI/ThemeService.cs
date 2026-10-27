@@ -30,7 +30,7 @@ public class ThemeService : IDisposable
         SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
 
         try { ServiceContainer.GetRequired<SettingsService>().Save(); }
-        catch { }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
 
         GC.SuppressFinalize(this);
     }
@@ -105,7 +105,7 @@ public class ThemeService : IDisposable
             ss.Settings.AccentColor = hexColor;
             SaveSettingsDebounced();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "ThemeService.ApplyAccentColor");
         }
@@ -165,7 +165,7 @@ public class ThemeService : IDisposable
             ss.Settings.BackgroundMode = preferenceToSave;
             SaveSettingsDebounced();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "ThemeService.ApplyBackground");
         }
@@ -182,7 +182,7 @@ public class ThemeService : IDisposable
 
             ApplyBackground(ss.Settings.BackgroundMode);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "ThemeService.ApplyBackgroundOpacity");
         }
@@ -212,7 +212,7 @@ public class ThemeService : IDisposable
             ss.Settings.CardOpacity = opacity;
             SaveSettingsDebounced();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "ThemeService.ApplyCardOpacity");
         }
@@ -233,7 +233,7 @@ public class ThemeService : IDisposable
             {
                 ServiceContainer.GetRequired<SettingsService>().Save();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "ThemeService.SaveSettingsDebounced");
             }
@@ -282,7 +282,7 @@ public class ThemeService : IDisposable
             object? value = key.GetValue("AppsUseLightTheme");
             return value is int intVal && intVal != 0;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Security.SecurityException or System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "ThemeService.IsSystemUsingLightTheme");
             return false;

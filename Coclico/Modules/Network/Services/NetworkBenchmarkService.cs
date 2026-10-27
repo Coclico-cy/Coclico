@@ -42,7 +42,7 @@ public sealed class NetworkBenchmarkService : INetworkBenchmarkService
                     failed++;
                 }
             }
-            catch
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 failed++;
             }
@@ -179,7 +179,7 @@ public sealed class NetworkBenchmarkService : INetworkBenchmarkService
             double seconds = Math.Max(0.05, sw.Elapsed.TotalSeconds);
             return Math.Round(totalBytes * 8.0 / seconds / 1_000_000.0, 1);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or System.Net.Sockets.SocketException)
         {
             LoggingService.LogException(ex, "NetworkBenchmarkService.MeasureDownloadMbpsAsync");
             return null;
@@ -203,7 +203,7 @@ public sealed class NetworkBenchmarkService : INetworkBenchmarkService
             double seconds = Math.Max(0.05, sw.Elapsed.TotalSeconds);
             return Math.Round(UploadBytes * 8.0 / seconds / 1_000_000.0, 1);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or System.Net.Sockets.SocketException)
         {
             LoggingService.LogException(ex, "NetworkBenchmarkService.MeasureUploadMbpsAsync");
             return null;

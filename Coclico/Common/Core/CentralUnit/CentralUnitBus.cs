@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Coclico.Services;
 
@@ -11,15 +12,26 @@ public enum CentralRequestPriority
 
 public sealed class CentralUnitBus
 {
+    private const int DefaultMaxCacheEntries = 256;
+
     private readonly ConcurrentDictionary<string, CacheEntry> _cache = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, object> _inFlight = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, Func<object, CancellationToken, Task>> _routes = new(StringComparer.Ordinal);
+    private readonly int _maxCacheEntries;
     private long _droppedRequests;
     private long _routedRequests;
+    private long _evictedEntries;
+
+    public CentralUnitBus(int maxCacheEntries = DefaultMaxCacheEntries)
+    {
+        _maxCacheEntries = Math.Max(4, maxCacheEntries);
+    }
 
     public long DroppedRequests => Interlocked.Read(ref _droppedRequests);
 
     public long RoutedRequests => Interlocked.Read(ref _routedRequests);
+
+    public long EvictedEntries => Interlocked.Read(ref _evictedEntries);
 
     public async Task<T> QueryAsync<T>(string key, Func<CancellationToken, Task<T>> factory, TimeSpan ttl, CentralRequestPriority priority = CentralRequestPriority.Normal, CancellationToken cancellationToken = default)
     {
@@ -94,6 +106,8 @@ public sealed class CentralUnitBus
         {
             return false;
         }
+
+        entry.LastAccessStamp = Stopwatch.GetTimestamp();
         value = typed;
         return true;
     }
@@ -101,8 +115,29 @@ public sealed class CentralUnitBus
     private async Task<T> ExecuteFactoryAsync<T>(string key, Func<CancellationToken, Task<T>> factory, TimeSpan ttl, CancellationToken cancellationToken)
     {
         T value = await factory(cancellationToken).ConfigureAwait(false);
-        _cache[key] = new CacheEntry { Value = value, StoredUtc = DateTime.UtcNow };
+        _cache[key] = new CacheEntry
+        {
+            Value = value,
+            StoredUtc = DateTime.UtcNow,
+            LastAccessStamp = Stopwatch.GetTimestamp()
+        };
+        EvictIfOverCapacity();
         return value;
+    }
+
+    private void EvictIfOverCapacity()
+    {
+        if (_cache.Count <= _maxCacheEntries)
+        {
+            return;
+        }
+
+        List<KeyValuePair<string, CacheEntry>> ordered = _cache.OrderBy(entry => entry.Value.LastAccessStamp).ToList();
+        int excess = _cache.Count - _maxCacheEntries;
+        int evicted = ordered
+            .Take(excess)
+            .Count(entry => _cache.TryRemove(KeyValuePair.Create(entry.Key, entry.Value)));
+        _ = Interlocked.Add(ref _evictedEntries, evicted);
     }
 
     private sealed class CacheEntry
@@ -110,5 +145,7 @@ public sealed class CentralUnitBus
         public object? Value { get; init; }
 
         public DateTime StoredUtc { get; init; }
+
+        public long LastAccessStamp { get; set; }
     }
 }

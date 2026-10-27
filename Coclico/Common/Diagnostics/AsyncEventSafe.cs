@@ -19,10 +19,8 @@ public static class AsyncEventSafe
                 await handler().ConfigureAwait(true);
             }
         }
-        catch (OperationCanceledException)
-        {
-        }
-        catch (Exception ex)
+        catch (OperationCanceledException ex) { _ = ex; }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, operationName);
         }

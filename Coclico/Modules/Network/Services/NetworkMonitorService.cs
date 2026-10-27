@@ -30,6 +30,7 @@ public class NetworkMonitorService : IDisposable
     private double _lastPingMs = -1;
     private volatile bool _pingDue = true;
     private volatile bool _consumerVisible;
+    private int _disposeState;
 
     public IObservable<NetworkStats> StatsStream => _subject.AsObservable();
     public NetworkStats CurrentStats => _subject.Value;
@@ -112,7 +113,7 @@ public class NetworkMonitorService : IDisposable
                 return reply.RoundtripTime;
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkMonitorService.ProbeLatencyAsync");
         }
@@ -121,7 +122,7 @@ public class NetworkMonitorService : IDisposable
 
     private async Task RefreshAsync()
     {
-        if (!CentralCircuitBreaker.Current.IsAllowed(Subsystem))
+        if (_disposeState != 0 || !CentralCircuitBreaker.Current.IsAllowed(Subsystem))
         {
             return;
         }
@@ -173,12 +174,21 @@ public class NetworkMonitorService : IDisposable
             }
 
             var snapshot = new NetworkStats(now, totalSent, totalReceived, uploadKbps, downloadKbps, tcpConnections, pingMs);
+            if (_cts.IsCancellationRequested || Volatile.Read(ref _disposeState) != 0)
+            {
+                return;
+            }
+
             _subject.OnNext(snapshot);
             CentralUnitService.Current.Variables.Publish(CentralVariables.NetworkStats, snapshot);
             CentralCircuitBreaker.Current.RecordSuccess(Subsystem);
             CentralUnitWatchdog.Current.Beat(Subsystem);
         }
-        catch (Exception ex)
+        catch (ObjectDisposedException)
+        {
+            return;
+        }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkMonitorService.RefreshAsync");
             CentralCircuitBreaker.Current.RecordFailure(Subsystem, ex);
@@ -188,15 +198,27 @@ public class NetworkMonitorService : IDisposable
 
     public void Dispose()
     {
+        if (Interlocked.Exchange(ref _disposeState, 1) != 0)
+        {
+            return;
+        }
+
         CentralUnitWatchdog.Current.Unregister(Subsystem);
         CentralUnitService.Current.Activity.LevelChanged -= _onActivityChanged;
         CentralUnitService.Current.Flags.CancelSchedule(CentralFlags.NetworkStatsDue);
-        _cts.Cancel();
+        try
+        {
+            _cts.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            LoggingService.LogWarning("NetworkMonitorService: token source already disposed");
+        }
         try
         {
             _ = _loop.Wait(2000);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkMonitorService.Dispose:Loop");
         }
@@ -206,7 +228,7 @@ public class NetworkMonitorService : IDisposable
             _subject.OnCompleted();
             _subject.Dispose();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkMonitorService.Dispose:Subject");
         }

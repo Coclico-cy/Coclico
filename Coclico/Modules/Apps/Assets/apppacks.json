@@ -3,7 +3,7 @@
   "packs": [
     { "id": "pack-browsers", "name": "Pack Navigateurs", "description": "Installer ton navigateur préféré, au choix.", "appIds": ["zen", "firefox", "brave", "vivaldi", "chrome", "operagx"] },
     { "id": "pack-gaming", "name": "Pack Gaming", "description": "Les plateformes et lanceurs de jeux incontournables.", "appIds": ["steam", "epic", "ubisoft", "ea", "gog", "discord"] },
-    { "id": "pack-controller", "name": "Pack Manette", "description": "DS4Windows avec ses pilotes ViGEmBus et HidHide, prêts pour les manettes DualShock 4 / DualSense.", "appIds": ["ds4windows", "vigembus", "hidhide"] },
+    { "id": "pack-controller", "name": "Pack Manette", "description": "DS4Windows avec HidHide et le pilote ViGEmBus (projet retiré par son auteur en 2023 : fonctionnel mais plus maintenu), prêts pour les manettes DualShock 4 / DualSense.", "appIds": ["ds4windows", "vigembus", "hidhide"] },
     { "id": "pack-gaming-tools", "name": "Pack Outils Gaming", "description": "Améliorer, mesurer et gérer ta bibliothèque de jeux.", "appIds": ["dlss-swapper", "capframex", "playnite"] },
     { "id": "pack-gpu-drivers", "name": "Pack Pilotes GPU", "description": "Pilotes graphiques propres et outils associés NVIDIA / AMD.", "appIds": ["ddu", "nvcleanstall", "nvidia-profile-inspector", "radeon-software-slimmer"] },
     { "id": "pack-diagnostic", "name": "Pack Diagnostic PC", "description": "Vérifier la santé du PC et de ses composants.", "appIds": ["hwinfo", "crystaldiskinfo", "userdiag", "cpuz", "hwmonitor"] },

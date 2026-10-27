@@ -44,10 +44,12 @@ public sealed class MultiProviderClient
         string? base64Image = null,
         [EnumeratorCancellation] CancellationToken ct = default)
     {
-        string baseUrl = string.IsNullOrWhiteSpace(endpoint) ? "http://localhost:11434" : endpoint.Trim().TrimEnd('/');
+        string baseUrl = string.IsNullOrWhiteSpace(endpoint)
+            ? new UriBuilder(Uri.UriSchemeHttp, IPAddress.Loopback.ToString(), 11434).Uri.ToString().TrimEnd('/')
+            : endpoint.Trim().TrimEnd('/');
         if (!IsLocalEndpoint(baseUrl))
         {
-            yield return "Ollama doit être configuré sur la machine locale (localhost ou adresse de boucle locale).";
+            yield return "Ollama doit être configuré sur la machine locale (adresse de boucle locale).";
             yield break;
         }
 

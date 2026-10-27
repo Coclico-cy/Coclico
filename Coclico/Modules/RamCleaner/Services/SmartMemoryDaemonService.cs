@@ -233,7 +233,7 @@ public sealed class SmartMemoryDaemonService : ISmartMemoryDaemonService
             {
                 break;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "SmartMemoryDaemonService.Loop");
                 CentralCircuitBreaker.Current.RecordFailure(Subsystem, ex);
@@ -381,7 +381,7 @@ public sealed class SmartMemoryDaemonService : ISmartMemoryDaemonService
             ToastService.Show($"[Auto-Clean {profileLabel}] {summary}");
             CentralCircuitBreaker.Current.RecordSuccess(Subsystem);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "SmartMemoryDaemonService.TriggerAutoCleanAsync");
             CentralCircuitBreaker.Current.RecordFailure(Subsystem, ex);

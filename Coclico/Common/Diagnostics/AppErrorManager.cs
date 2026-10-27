@@ -40,7 +40,7 @@ public sealed class AppErrorManager : IAppErrorManager, IDisposable
 
     public AppErrorManager()
     {
-        _errorLogDir = Path.Combine(
+        _errorLogDir = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Coclico", "errors");
         _ = Directory.CreateDirectory(_errorLogDir);
@@ -137,7 +137,7 @@ public sealed class AppErrorManager : IAppErrorManager, IDisposable
         try
         {
             await _writeLock.WaitAsync();
-            string logFile = Path.Combine(_errorLogDir, $"errors-{DateTime.UtcNow:yyyy-MM-dd}.ndjson");
+            string logFile = Path.Join(_errorLogDir, $"errors-{DateTime.UtcNow:yyyy-MM-dd}.ndjson");
             string entry = JsonSerializer.Serialize(new
             {
                 timestamp = error.Timestamp,
@@ -152,7 +152,7 @@ public sealed class AppErrorManager : IAppErrorManager, IDisposable
             });
             await File.AppendAllTextAsync(logFile, entry + Environment.NewLine);
         }
-        catch (Exception exSwallow)
+        catch (Exception exSwallow) when (exSwallow is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException)
         {
             LoggingService.LogException(exSwallow, "AppErrorManager.WriteErrorLogAsync");
         }
@@ -175,7 +175,7 @@ public sealed class AppErrorManager : IAppErrorManager, IDisposable
             {
                 ((EventHandler<TArgs>)d).Invoke(sender, args);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, $"AppErrorManager.{eventName} handler");
             }

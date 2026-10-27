@@ -34,9 +34,19 @@ public sealed class NotificationService
         }
 
         string resolvedTitle = string.IsNullOrWhiteSpace(title) ? "Coclico" : title;
+        ToastService.ShowNotification(resolvedTitle, message);
+    }
+
+    public void Record(string title, string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
         NotificationEntry entry = new()
         {
-            Title = resolvedTitle,
+            Title = string.IsNullOrWhiteSpace(title) ? "Coclico" : title,
             Message = message,
             Timestamp = DateTime.Now
         };
@@ -53,8 +63,6 @@ public sealed class NotificationService
             UnreadCountChanged?.Invoke(_unreadCount);
             HistoryChanged?.Invoke();
         });
-
-        ToastService.ShowNotification(resolvedTitle, message);
     }
 
     public void MarkAllRead()

@@ -59,7 +59,7 @@ public sealed class CentralUnitBusTests
         var bus = new CentralUnitBus();
         int lowCalls = 0;
         int criticalCalls = 0;
-        TimeSpan ttl = TimeSpan.FromMilliseconds(100);
+        TimeSpan ttl = TimeSpan.FromSeconds(1);
 
         _ = await bus.QueryAsync("Central.Tests.Low", ct =>
         {
@@ -67,7 +67,7 @@ public sealed class CentralUnitBusTests
             return Task.FromResult(1);
         }, ttl, CentralRequestPriority.Low);
 
-        await Task.Delay(150);
+        await Task.Delay(600);
 
         _ = await bus.QueryAsync("Central.Tests.Low", ct =>
         {
@@ -83,7 +83,7 @@ public sealed class CentralUnitBusTests
             return Task.FromResult(1);
         }, ttl, CentralRequestPriority.Critical);
 
-        await Task.Delay(60);
+        await Task.Delay(700);
 
         _ = await bus.QueryAsync("Central.Tests.Critical", ct =>
         {
@@ -174,5 +174,37 @@ public sealed class CentralUnitBusTests
         var bus = new CentralUnitBus();
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => bus.SendAsync("Central.Tests.Unknown", "command"));
+    }
+
+    [Fact]
+    public async Task CacheEvictsLeastRecentlyUsedEntriesBeyondCapacity()
+    {
+        var bus = new CentralUnitBus(maxCacheEntries: 4);
+        int factoryCalls = 0;
+
+        Task<int> Query(string key) => bus.QueryAsync(key, ct =>
+        {
+            Interlocked.Increment(ref factoryCalls);
+            return Task.FromResult(1);
+        }, TimeSpan.FromMinutes(1));
+
+        await Query("Central.Tests.A");
+        await Query("Central.Tests.B");
+        await Query("Central.Tests.C");
+        await Query("Central.Tests.D");
+        _ = await Query("Central.Tests.A");
+        await Query("Central.Tests.E");
+
+        Assert.Equal(5, factoryCalls);
+        Assert.Equal(1, bus.EvictedEntries);
+
+        await Query("Central.Tests.B");
+
+        Assert.Equal(6, factoryCalls);
+        Assert.Equal(2, bus.EvictedEntries);
+
+        _ = await Query("Central.Tests.A");
+
+        Assert.Equal(6, factoryCalls);
     }
 }

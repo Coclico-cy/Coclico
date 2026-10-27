@@ -15,7 +15,7 @@ public sealed class StartupHealthService
     {
         public bool IsHealthy { get; set; } = true;
         public string Message { get; set; } = string.Empty;
-        public bool RequiresAdmin { get; set; } = false;
+        public bool RequiresAdmin { get; set; }
     }
 
     public async Task<HealthReport> CheckAndRepairAsync(bool autoRepair = false)
@@ -57,7 +57,7 @@ public sealed class StartupHealthService
                             report.Message = $"Le service '{svcName}' est arrêté et nécessite les droits Admin pour démarrer.";
                             return report;
                         }
-                        catch (Exception ex)
+                        catch (Exception ex) when (ex is not System.OutOfMemoryException)
                         {
                             LoggingService.LogException(ex, $"StartupHealthService.CheckService({svcName})");
                             report.IsHealthy = false;
@@ -67,7 +67,7 @@ public sealed class StartupHealthService
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, $"StartupHealthService.CheckService({svcName})");
             }
@@ -93,7 +93,7 @@ public sealed class StartupHealthService
             IPHostEntry entry = await Dns.GetHostEntryAsync("www.microsoft.com");
             return entry.AddressList.Length > 0;
         }
-        catch { return false; }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or System.Net.Sockets.SocketException) { return false; }
     }
 
     private async Task<bool> IsWingetOperational()
@@ -120,40 +120,17 @@ public sealed class StartupHealthService
             }
             catch (OperationCanceledException)
             {
-                try { proc.Kill(); } catch (Exception ex) { LoggingService.LogException(ex, "StartupHealthService.IsWingetOperational"); }
+                try { proc.Kill(); } catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "StartupHealthService.IsWingetOperational"); }
                 return false;
             }
 
             return proc.ExitCode == 0;
         }
-        catch { return false; }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException or System.OperationCanceledException) { return false; }
     }
 
     public void ResetWingetCache()
     {
         _lastWingetAvailable = false;
     }
-
-    public SystemHealthSnapshot GetCurrentHealth()
-    {
-        MemoryCleanerService.RamInfo ramInfo = MemoryCleanerService.GetRamInfo();
-
-        return new SystemHealthSnapshot(
-            WingetAvailable: _lastWingetAvailable,
-            InternetAvailable: _lastInternetAvailable,
-            RollbackSnapshotCount: 0,
-            CpuPercent: MemoryCleanerService.GetSystemCpuPercent(),
-            MemoryUsedMb: ramInfo.UsedPhysBytes / (1024 * 1024),
-            MemoryTotalMb: ramInfo.TotalPhysBytes / (1024 * 1024),
-            CheckedAt: DateTimeOffset.UtcNow);
-    }
 }
-
-public sealed record SystemHealthSnapshot(
-    bool WingetAvailable,
-    bool InternetAvailable,
-    int RollbackSnapshotCount,
-    double CpuPercent,
-    long MemoryUsedMb,
-    long MemoryTotalMb,
-    DateTimeOffset CheckedAt);

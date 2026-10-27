@@ -11,8 +11,8 @@ namespace Coclico.Modules.Apps.Views;
 
 public partial class AppsView : UserControl
 {
-    private AppsViewModel? _subscribedVm;
-    private NotifyCollectionChangedEventHandler? _logHandler;
+    private readonly AppsViewModel? _subscribedVm;
+    private readonly NotifyCollectionChangedEventHandler? _logHandler;
     private bool _isSubscribed;
 
     public AppsViewModel? ViewModel => DataContext as AppsViewModel;

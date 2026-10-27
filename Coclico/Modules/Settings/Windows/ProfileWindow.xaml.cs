@@ -72,7 +72,7 @@ public partial class ProfileWindow : Window
         {
             Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.gif|All files|*.*"
         };
-        if (dlg.ShowDialog(this) == true)
+        if (dlg.ShowDialog(this) is true)
         {
             try
             {
@@ -81,7 +81,7 @@ public partial class ProfileWindow : Window
                 if (ok == true && !string.IsNullOrEmpty(crop.ResultFilePath))
                 {
                     _userService.SetCustomAvatar(crop.ResultFilePath);
-                    try { File.Delete(crop.ResultFilePath); } catch (Exception ex) { LoggingService.LogException(ex, "ProfileWindow.Avatar_Click.DeleteTempFile"); }
+                    try { File.Delete(crop.ResultFilePath); } catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "ProfileWindow.Avatar_Click.DeleteTempFile"); }
 
                     if (_userService.Avatar != null)
                     {
@@ -90,7 +90,7 @@ public partial class ProfileWindow : Window
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
             {
                 LoggingService.LogException(ex, "ProfileWindow.Avatar_Click");
                 _ = MessageBox.Show($"Impossible de charger l'image : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);

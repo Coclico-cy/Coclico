@@ -20,7 +20,7 @@ public partial class App : Application
             {
                 ServiceContainer.GetOptional<IAppErrorManager>()?.Report(AppErrorCode.SYS_StartupFailed, e.ExceptionObject as Exception);
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.AppDomainUnhandledException.Report"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.AppDomainUnhandledException.Report"); }
         };
 
         TaskScheduler.UnobservedTaskException += (s, e) =>
@@ -30,7 +30,7 @@ public partial class App : Application
             {
                 ServiceContainer.GetOptional<IAppErrorManager>()?.Report(AppErrorCode.SYS_StartupFailed, e.Exception);
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.UnobservedTaskException.Report"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.UnobservedTaskException.Report"); }
             e.SetObserved();
         };
     }
@@ -88,6 +88,7 @@ public partial class App : Application
                     _ = services.AddSingleton<ISmartMemoryDaemonService, SmartMemoryDaemonService>();
                     _ = services.AddSingleton<UpdateManager>();
                     _ = services.AddSingleton<UpdateCheckService>();
+                    _ = services.AddSingleton<IntegrityRuntimeService>();
 
                     _ = services.AddSingleton<TrayService>();
                     _ = services.AddSingleton<NotificationService>();
@@ -107,6 +108,31 @@ public partial class App : Application
                     _ = services.AddSingleton<Coclico.Modules.Power.Services.CpuPowerService>();
                     _ = services.AddSingleton<Coclico.Modules.Power.Services.AdaptivePowerService>();
 
+                    _ = services.AddSingleton<Coclico.Modules.Diagnostics.Services.DiagnosticPrivacySanitizer>();
+                    _ = services.AddSingleton<Coclico.Modules.Diagnostics.Services.IDiagnosticHistoryService, Coclico.Modules.Diagnostics.Services.DiagnosticHistoryService>();
+                    _ = services.AddSingleton<Coclico.Modules.Diagnostics.Services.Hardware.IHardwareTelemetryService, Coclico.Modules.Diagnostics.Services.Hardware.WmiHardwareTelemetryService>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.WindowsHealthCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.CpuCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.GpuCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.MemoryCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.StorageCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.NetworkCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.PowerBatteryCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.DeviceCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.ProcessesCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.SecurityCheck>();
+                    _ = services.AddTransient<Coclico.Modules.Diagnostics.Services.IDiagnosticCheck, Coclico.Modules.Diagnostics.Services.Checks.MotherboardCheck>();
+                    _ = services.AddSingleton<Coclico.Modules.Diagnostics.Services.IDiagnosticOrchestrator, Coclico.Modules.Diagnostics.Services.DiagnosticOrchestrator>();
+
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.Services.SecureProcessRunner>();
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.Services.WingetUpdateService>();
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.Services.DriverUpdateService>();
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.Services.SystemUpdateService>();
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.Services.RestorePointService>();
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.Services.UpdateScanService>();
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.ViewModels.UpdateCenterViewModel>();
+                    _ = services.AddSingleton<Coclico.Modules.UpdateCenter.Views.UpdateCenterView>();
+
                     _ = services.AddTransient<Coclico.ViewModels.DashboardViewModel>();
                     _ = services.AddTransient<Coclico.ViewModels.CleaningViewModel>();
                     _ = services.AddTransient<Coclico.ViewModels.SettingsViewModel>();
@@ -116,6 +142,7 @@ public partial class App : Application
                     _ = services.AddTransient<Coclico.ViewModels.RamCleanerViewModel>();
                     _ = services.AddTransient<Coclico.ViewModels.ProgramsViewModel>();
                     _ = services.AddTransient<Coclico.ViewModels.DiskAnalyzerViewModel>();
+                    _ = services.AddTransient<Coclico.ViewModels.DiagnosticViewModel>();
                 });
 
                 string appVersion = System.Reflection.Assembly.GetExecutingAssembly()
@@ -123,7 +150,7 @@ public partial class App : Application
                     ?.InformationalVersion ?? "unknown";
                 LoggingService.LogInfo($"Coclico v{appVersion} starting DI container built successfully");
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LogException(ex);
                 LoggingService.LogException(ex, "App.DIInit");
@@ -137,10 +164,16 @@ public partial class App : Application
             }
 
             try { CentralUnitService.Current.Initialize(); }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.CentralUnitInit"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.CentralUnitInit"); }
 
             try { CentralUnitWatchdog.Current.Start(); }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.WatchdogStart"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.WatchdogStart"); }
+
+            try { NativeLibraryGuard.Initialize(); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.NativeLibraryGuardInit"); }
+
+            try { ServiceContainer.GetRequired<IntegrityRuntimeService>().Start(); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.IntegrityRuntimeStart"); }
 
             var splash = new SplashWindow();
             splash.Show();
@@ -148,7 +181,7 @@ public partial class App : Application
             await splash.RunStartupAsync();
 
             try { CentralUnitService.Current.MarkStartupCompleted(); }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.MarkStartupCompleted"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.MarkStartupCompleted"); }
 
             try
             {
@@ -157,7 +190,7 @@ public partial class App : Application
                 audit.Prune(TimeSpan.FromDays(retentionDays));
                 LoggingService.LogInfo($"[App] Audit pruned rétention {retentionDays} jours.");
             }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.AuditPrune"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.AuditPrune"); }
 
             AppSettings settings = ServiceContainer.GetRequired<SettingsService>().Settings;
             if (settings.FirstRun)
@@ -167,7 +200,7 @@ public partial class App : Application
             }
 
             try { ServiceContainer.GetRequired<LocalizationService>().SetLanguage(settings.Language); }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.ApplyLanguage"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.ApplyLanguage"); }
 
             var mainWindow = new MainWindow();
             MainWindow = mainWindow;
@@ -179,14 +212,14 @@ public partial class App : Application
                 mainWindow.WindowState = WindowState.Minimized;
                 mainWindow.Show();
                 try { CentralUnitService.Current.SetWindowVisible(false); }
-                catch (Exception ex) { LoggingService.LogException(ex, "App.LaunchModeMinimized"); }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.LaunchModeMinimized"); }
             }
             else if (launchModeSetting == nameof(LaunchMode.Tray))
             {
                 mainWindow.Show();
                 mainWindow.Hide();
                 try { CentralUnitService.Current.SetTrayMinimized(true); }
-                catch (Exception ex) { LoggingService.LogException(ex, "App.LaunchModeTray"); }
+                catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.LaunchModeTray"); }
             }
             else if (launchModeSetting == nameof(LaunchMode.Maximized))
             {
@@ -199,7 +232,7 @@ public partial class App : Application
             }
 
             try { ServiceContainer.GetRequired<ThemeService>().ApplyCurrentSettings(); }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.ApplyTheme"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.ApplyTheme"); }
 
             splash.Close();
             _ = mainWindow.Activate();
@@ -207,7 +240,7 @@ public partial class App : Application
             _ = Task.Run(MemoryCleanerService.TrimSelfWorkingSet);
 
             try { ServiceContainer.GetRequired<ISmartMemoryDaemonService>().Start(); }
-            catch (Exception ex) { LoggingService.LogException(ex, "App.StartSmartMemoryDaemon"); }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "App.StartSmartMemoryDaemon"); }
 
             try
             {
@@ -215,14 +248,14 @@ public partial class App : Application
                 updateCheckService.Start();
                 LoggingService.LogInfo("UpdateCheckService started - startup check, then roughly every 6 hours");
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "App.UpdateCheckServiceInit");
             }
 
             base.OnStartup(e);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LogException(ex);
             LoggingService.LogException(ex, "App.OnStartupFatal");
@@ -233,7 +266,7 @@ public partial class App : Application
 
     private static void RemoveLegacyAiCredentialVault()
     {
-        string vaultPath = Path.Combine(
+        string vaultPath = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Coclico",
             "ai_vault.dat");
@@ -246,18 +279,11 @@ public partial class App : Application
                 LoggingService.LogInfo("Removed the legacy AI API-key vault after cloud providers were removed.");
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogWarning($"Could not remove the legacy AI API-key vault: {ex.Message}");
         }
     }
-
-
-
-
-
-
-
 
     protected override void OnExit(ExitEventArgs e)
     {
@@ -268,7 +294,7 @@ public partial class App : Application
     private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
         if (e.Exception is NullReferenceException &&
-            (e.Exception.StackTrace?.Contains("TitleBar.HwndSourceHook") == true))
+            (e.Exception.StackTrace?.Contains("TitleBar.HwndSourceHook") is true))
         {
             LoggingService.LogDebug($"[App] TitleBar.HwndSourceHook NRE avalée (connue) : {e.Exception.Message}");
             e.Handled = true;

@@ -39,6 +39,7 @@ public sealed class CentralUnitService : IDisposable
     private const uint PowerThrottlingIgnoreTimerResolution = 0x4;
     private const uint MemoryPriorityVeryLow = 1;
     private const uint MemoryPriorityNormal = 5;
+
     private const int ExternalPressureCpuEnterPercent = 85;
     private const int ExternalPressureCpuExitPercent = 60;
     private const int ExternalPressureRamPercent = 92;
@@ -222,7 +223,7 @@ public sealed class CentralUnitService : IDisposable
             Activity.LevelChanged -= OnActivityLevelChanged;
             ApplyProcessPowerPolicy(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "CentralUnitService.Shutdown");
         }
@@ -249,6 +250,7 @@ public sealed class CentralUnitService : IDisposable
     {
         try
         {
+
             PowerThrottlingState state = new PowerThrottlingState
             {
                 Version = PowerThrottlingStateVersion,
@@ -263,7 +265,7 @@ public sealed class CentralUnitService : IDisposable
             };
             _ = SetThreadInformation(GetCurrentThread(), ThreadInformationMemoryPriority, ref priority, Marshal.SizeOf<MemoryPriorityInformation>());
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or System.InvalidOperationException)
         {
             LoggingService.LogException(ex, "CentralUnitService.ApplyCurrentThreadBackgroundQos");
         }
@@ -312,7 +314,7 @@ public sealed class CentralUnitService : IDisposable
             {
                 SamplePressure();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 LoggingService.LogException(ex, "CentralUnitService.SamplePressure");
             }
@@ -402,7 +404,8 @@ public sealed class CentralUnitService : IDisposable
 
         ulong idleTicks = ToTicks(idleTime);
         ulong totalTicks = ToTicks(kernelTime) + ToTicks(userTime);
-        TimeSpan ownCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+        using Process currentProcess = Process.GetCurrentProcess();
+        TimeSpan ownCpuTime = currentProcess.TotalProcessorTime;
 
         if (!_lastSampleValid || totalTicks <= _lastTotalTicks)
         {
@@ -442,7 +445,7 @@ public sealed class CentralUnitService : IDisposable
             };
             return GlobalMemoryStatusEx(ref status) && status.MemoryLoad >= ExternalPressureRamPercent;
         }
-        catch
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or System.InvalidOperationException)
         {
             return false;
         }
@@ -468,7 +471,7 @@ public sealed class CentralUnitService : IDisposable
             };
             _ = SetProcessInformation(process.Handle, ProcessInformationMemoryPriority, ref priority, Marshal.SizeOf<MemoryPriorityInformation>());
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or System.InvalidOperationException or System.Runtime.InteropServices.COMException)
         {
             LoggingService.LogException(ex, "CentralUnitService.ApplyProcessPowerPolicy");
         }
@@ -514,30 +517,37 @@ public sealed class CentralUnitService : IDisposable
         public uint MemoryPriority;
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetSystemTimes(out NativeFileTime idleTime, out NativeFileTime kernelTime, out NativeFileTime userTime);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GlobalMemoryStatusEx(ref MemoryStatus buffer);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetProcessInformation(IntPtr process, int processInformationClass, ref PowerThrottlingState processInformation, int processInformationSize);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetProcessInformation(IntPtr process, int processInformationClass, ref MemoryPriorityInformation processInformation, int processInformationSize);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetThreadInformation(IntPtr thread, int threadInformationClass, ref PowerThrottlingState threadInformation, int threadInformationSize);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetThreadInformation(IntPtr thread, int threadInformationClass, ref MemoryPriorityInformation threadInformation, int threadInformationSize);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("kernel32.dll")]
     private static extern IntPtr GetCurrentThread();
 }

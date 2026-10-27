@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Window x:Class="Coclico.Views.SplashWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -132,7 +133,7 @@
                                        FontFamily="Segoe UI Variable, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                         </StackPanel>
 
-                        <TextBlock x:Name="TxtVersion" Text="v2.1.0" FontSize="9.5" FontWeight="SemiBold"
+                        <TextBlock x:Name="TxtVersion" Text="v2.2.0" FontSize="9.5" FontWeight="SemiBold"
                                    Foreground="#706760" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
 

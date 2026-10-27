@@ -26,7 +26,7 @@ public class AppProfile
 
 public class ProfileService
 {
-    private static readonly string ProfilesDir = Path.Combine(
+    private static readonly string ProfilesDir = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Coclico", "profiles");
 
     private static readonly JsonSerializerOptions _opts = new() { WriteIndented = true };
@@ -50,7 +50,7 @@ public class ProfileService
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException)
         {
             LoggingService.LogException(ex, "ProfileService.GetAllProfiles");
         }
@@ -64,7 +64,7 @@ public class ProfileService
             string path = GetPath(name);
             return !File.Exists(path) ? null : JsonSerializer.Deserialize<AppProfile>(File.ReadAllText(path));
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "ProfileService.Load"); return null; }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "ProfileService.Load"); return null; }
     }
 
     public async Task<AppProfile?> LoadAsync(string name)
@@ -74,7 +74,7 @@ public class ProfileService
             string path = GetPath(name);
             return !File.Exists(path) ? null : JsonSerializer.Deserialize<AppProfile>(await File.ReadAllTextAsync(path));
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "ProfileService.LoadAsync"); return null; }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or System.FormatException) { LoggingService.LogException(ex, "ProfileService.LoadAsync"); return null; }
     }
 
     public void Save(AppProfile profile)
@@ -83,7 +83,7 @@ public class ProfileService
         {
             WriteProfileAtomically(GetPath(profile.Name), profile);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "ProfileService.Save"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "ProfileService.Save"); }
     }
 
     public async Task SaveAsync(AppProfile profile)
@@ -92,12 +92,12 @@ public class ProfileService
         {
             await WriteProfileAtomicallyAsync(GetPath(profile.Name), profile);
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "ProfileService.SaveAsync"); }
+        catch (Exception ex) when (ex is not System.OutOfMemoryException) { LoggingService.LogException(ex, "ProfileService.SaveAsync"); }
     }
 
     public void Delete(string name)
     {
-        try { File.Delete(GetPath(name)); } catch (Exception ex) { LoggingService.LogException(ex, "ProfileService.Delete"); }
+        try { File.Delete(GetPath(name)); } catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "ProfileService.Delete"); }
     }
 
     public void Rename(string oldName, string newName)
@@ -119,7 +119,7 @@ public class ProfileService
                 File.Delete(oldPath);
             }
         }
-        catch (Exception ex) { LoggingService.LogException(ex, "ProfileService.Rename"); }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { LoggingService.LogException(ex, "ProfileService.Rename"); }
     }
 
     public AppProfile Snapshot(string name, InstalledProgramsService svc)
@@ -159,6 +159,6 @@ public class ProfileService
         string safeName = Path.GetFileName(name.Replace('/', '_').Replace('\\', '_'));
         return string.IsNullOrWhiteSpace(safeName)
             ? throw new ArgumentException("Invalid profile name.", nameof(name))
-            : Path.Combine(ProfilesDir, safeName.Replace(' ', '_') + ".json");
+            : Path.Join(ProfilesDir, safeName.Replace(' ', '_') + ".json");
     }
 }

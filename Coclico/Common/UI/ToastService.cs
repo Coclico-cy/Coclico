@@ -41,6 +41,8 @@ public static class ToastService
 
     private static void ShowOnUi(string title, string message, ControlAppearance appearance, TimeSpan duration)
     {
+        ServiceContainer.GetOptional<NotificationService>()?.Record(title, message);
+
         ISnackbarService? svc = _svc;
         if (svc == null)
         {

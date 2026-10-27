@@ -16,6 +16,14 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
     private readonly NetworkMonitorService? _monitorService;
     private readonly IDisposable? _monitorSubscription;
     private CancellationTokenSource? _cts;
+    private NetworkAdapterInfo? _selectedAdapter;
+    private bool _isBusy;
+    private double _progressValue;
+    private string _statusText = string.Empty;
+    private string _livePingText = "--";
+    private string _liveDownloadText = "--";
+    private NetworkTestReport? _beforeTest;
+    private NetworkTestReport? _afterTest;
 
     public ObservableCollection<NetworkAdapterInfo> Adapters { get; } = [];
     public ObservableCollection<NetworkTuningParameter> TuningParameters { get; } = [];
@@ -66,8 +74,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
 
         _ = RefreshAsync();
     }
-
-    private NetworkAdapterInfo? _selectedAdapter;
     public NetworkAdapterInfo? SelectedAdapter
     {
         get => _selectedAdapter;
@@ -84,8 +90,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             }
         }
     }
-
-    private bool _isBusy;
     public bool IsBusy
     {
         get => _isBusy;
@@ -111,8 +115,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
     }
 
     public bool IsNotBusy => !IsBusy;
-
-    private double _progressValue;
     public double ProgressValue
     {
         get => _progressValue;
@@ -125,8 +127,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             }
         }
     }
-
-    private string _statusText = string.Empty;
     public string StatusText
     {
         get => _statusText;
@@ -139,8 +139,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             }
         }
     }
-
-    private string _livePingText = "--";
     public string LivePingText
     {
         get => _livePingText;
@@ -153,8 +151,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             }
         }
     }
-
-    private string _liveDownloadText = "--";
     public string LiveDownloadText
     {
         get => _liveDownloadText;
@@ -167,8 +163,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             }
         }
     }
-
-    private NetworkTestReport? _beforeTest;
     public NetworkTestReport? BeforeTest
     {
         get => _beforeTest;
@@ -179,8 +173,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             RefreshComparison();
         }
     }
-
-    private NetworkTestReport? _afterTest;
     public NetworkTestReport? AfterTest
     {
         get => _afterTest;
@@ -201,14 +193,14 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
     public string JitterBeforeText => BeforeTest?.JitterDisplay ?? "--";
     public string JitterAfterText => AfterTest?.JitterDisplay ?? "--";
 
-    public string DownloadDeltaText => ComputeDeltaText(BeforeTest?.DownloadSucceeded == true ? BeforeTest.DownloadMbps : null,
-        AfterTest?.DownloadSucceeded == true ? AfterTest.DownloadMbps : null, higherIsBetter: true);
-    public string DownloadDeltaColor => ComputeDeltaColor(BeforeTest?.DownloadSucceeded == true ? BeforeTest.DownloadMbps : null,
-        AfterTest?.DownloadSucceeded == true ? AfterTest.DownloadMbps : null, higherIsBetter: true);
-    public string UploadDeltaText => ComputeDeltaText(BeforeTest?.UploadSucceeded == true ? BeforeTest.UploadMbps : null,
-        AfterTest?.UploadSucceeded == true ? AfterTest.UploadMbps : null, higherIsBetter: true);
-    public string UploadDeltaColor => ComputeDeltaColor(BeforeTest?.UploadSucceeded == true ? BeforeTest.UploadMbps : null,
-        AfterTest?.UploadSucceeded == true ? AfterTest.UploadMbps : null, higherIsBetter: true);
+    public string DownloadDeltaText => ComputeDeltaText(BeforeTest?.DownloadSucceeded is true ? BeforeTest.DownloadMbps : null,
+        AfterTest?.DownloadSucceeded is true ? AfterTest.DownloadMbps : null, higherIsBetter: true);
+    public string DownloadDeltaColor => ComputeDeltaColor(BeforeTest?.DownloadSucceeded is true ? BeforeTest.DownloadMbps : null,
+        AfterTest?.DownloadSucceeded is true ? AfterTest.DownloadMbps : null, higherIsBetter: true);
+    public string UploadDeltaText => ComputeDeltaText(BeforeTest?.UploadSucceeded is true ? BeforeTest.UploadMbps : null,
+        AfterTest?.UploadSucceeded is true ? AfterTest.UploadMbps : null, higherIsBetter: true);
+    public string UploadDeltaColor => ComputeDeltaColor(BeforeTest?.UploadSucceeded is true ? BeforeTest.UploadMbps : null,
+        AfterTest?.UploadSucceeded is true ? AfterTest.UploadMbps : null, higherIsBetter: true);
     public string LatencyDeltaText => ComputeDeltaText(BeforeTest?.LatencyMs, AfterTest?.LatencyMs, higherIsBetter: false);
     public string LatencyDeltaColor => ComputeDeltaColor(BeforeTest?.LatencyMs, AfterTest?.LatencyMs, higherIsBetter: false);
     public string JitterDeltaText => ComputeDeltaText(BeforeTest?.JitterMs, AfterTest?.JitterMs, higherIsBetter: false);
@@ -227,7 +219,6 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             return "≈ 0 %";
         }
 
-        bool improvement = higherIsBetter ? pct > 0 : pct < 0;
         string sign = pct > 0 ? "+" : string.Empty;
         return $"{sign}{pct:F1} %";
     }
@@ -245,8 +236,7 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             return "#94A3B8";
         }
 
-        bool improvement = higherIsBetter ? pct > 0 : pct < 0;
-        return improvement ? "#10B981" : "#EF4444";
+        return (higherIsBetter ? pct > 0 : pct < 0) ? "#10B981" : "#EF4444";
     }
 
     private void RefreshComparison()
@@ -321,7 +311,7 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
 
             await LoadTuningStatusAsync().ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerViewModel.RefreshAsync");
         }
@@ -354,7 +344,7 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
                 OnPropertyChanged(nameof(TuningParameters));
             });
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerViewModel.LoadTuningStatusAsync");
         }
@@ -373,21 +363,21 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             NetworkTestReport report = await _netService.RunCompleteTestAsync(
                 4,
                 (stage, run) => AddLog(stage == "down"
-                    ? string.Format(L("Network_TestRun"), run, L("Network_MetricDownload"))
-                    : string.Format(L("Network_TestRun"), run, L("Network_MetricUpload"))),
+                    ? TextFormatService.Format(L("Network_TestRun"), run, L("Network_MetricDownload"))
+                    : TextFormatService.Format(L("Network_TestRun"), run, L("Network_MetricUpload"))),
                 p => ProgressValue = p,
                 _cts.Token).ConfigureAwait(false);
 
             BeforeTest = report;
             AfterTest = null;
-            StatusText = string.Format(L("Network_TestDone"), report.DownloadDisplay, report.UploadDisplay, report.LatencyDisplay);
+            StatusText = TextFormatService.Format(L("Network_TestDone"), report.DownloadDisplay, report.UploadDisplay, report.LatencyDisplay);
             AddLog($"↓ {report.DownloadDisplay} · ↑ {report.UploadDisplay} · {report.LatencyDisplay} · {report.JitterDisplay}");
         }
         catch (OperationCanceledException)
         {
             StatusText = L("Network_Cancelled");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerViewModel.RunTestAsync");
             StatusText = L("Network_TestError");
@@ -429,7 +419,7 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             StatusText = L("Network_Cancelled");
             AddLog(L("Network_Cancelled"));
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerViewModel.RunTuningAsync");
             StatusText = L("Network_TuningError");
@@ -454,7 +444,7 @@ public class NetworkOptimizerViewModel : INotifyPropertyChanged, IDisposable
             AddLog(StatusText);
             await LoadTuningStatusAsync().ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not System.OutOfMemoryException)
         {
             LoggingService.LogException(ex, "NetworkOptimizerViewModel.RestoreAsync");
             StatusText = L("Network_TuningError");

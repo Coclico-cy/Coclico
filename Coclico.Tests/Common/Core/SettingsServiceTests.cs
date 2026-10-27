@@ -32,8 +32,8 @@ public sealed class SettingsServiceTests
         AppSettings settings = JsonSerializer.Deserialize<AppSettings>(partialJson) ?? new AppSettings();
 
         Assert.Equal("en", settings.Language);
-        Assert.True(settings.StartMaximized); // valeur par défaut conservée
-        Assert.Equal("LocalGGUF", settings.AiProvider); // idem
+        Assert.True(settings.StartMaximized);
+        Assert.Equal("LocalGGUF", settings.AiProvider);
     }
 
     [Fact]
