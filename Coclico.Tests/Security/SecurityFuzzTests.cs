@@ -104,6 +104,30 @@ public sealed class SecurityFuzzTests : IDisposable
     }
 
     [Fact]
+    public void ArchiveGuardAcceptsDirectoryEntriesAndStillRejectsEscapes()
+    {
+        string[] directories =
+        [
+            "runtime/", "libs/native/", "runtimes/win-x64/native/cuda12/"
+        ];
+
+        foreach (string candidate in directories)
+        {
+            Assert.True(ArchiveGuard.IsSafeArchiveEntry(candidate), $"ArchiveGuard should accept '{candidate}'");
+        }
+
+        string[] rejected =
+        [
+            "/", "//", "..", "../", "..\\", "a//", "/x/", "C:/x/", "a/b/../", "\\\\srv\\share\\", "CON/"
+        ];
+
+        foreach (string candidate in rejected)
+        {
+            Assert.False(ArchiveGuard.IsSafeArchiveEntry(candidate), $"ArchiveGuard should reject '{candidate}'");
+        }
+    }
+
+    [Fact]
     public void ArchiveLimitGuardsMatchContract()
     {
         Assert.False(ArchiveGuard.IsEntryCountAllowed(0));

@@ -174,5 +174,6 @@ public partial class UpdateWindow : FluentWindow
         catch (Exception ex) when (ex is not System.OutOfMemoryException) { _ = ex; }
 
         Application.Current.Shutdown();
+        Environment.Exit(0);
     }
 }

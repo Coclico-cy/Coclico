@@ -42,17 +42,37 @@ public static class InstallService
     {
         foreach (var process in Process.GetProcessesByName("Coclico"))
         {
+            bool closed = false;
             try
             {
-                if (!process.CloseMainWindow())
+                if (!process.HasExited)
                 {
-                    process.Kill();
+                    _ = process.CloseMainWindow();
                 }
-                process.WaitForExit(3000);
+
+                closed = process.WaitForExit(5000);
+                if (!closed)
+                {
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch (Exception killEx) when (killEx is not System.OutOfMemoryException)
+                    {
+                        Debug.WriteLine($"[InstallService] Arrêt forcé du processus Coclico échoué : {killEx.Message}");
+                    }
+
+                    closed = process.WaitForExit(5000);
+                }
             }
             catch (Exception ex) when (ex is not System.OutOfMemoryException)
             {
                 Debug.WriteLine($"[InstallService] Fermeture du processus Coclico échouée : {ex.Message}");
+            }
+
+            if (!closed)
+            {
+                throw new InvalidOperationException("Coclico n'a pas pu être fermé, ferme-le manuellement puis relance l'installation.");
             }
         }
     }
@@ -141,10 +161,10 @@ public static class InstallService
                     if (Directory.Exists(installFullPath))
                     {
                         backupDir = installFullPath + ".backup-" + DateTime.Now.ToString("yyyyMMddHHmmss");
-                        Directory.Move(installFullPath, backupDir);
+                        MoveWithRetry(installFullPath, backupDir);
                     }
 
-                    Directory.Move(stagingDir, installFullPath);
+                    MoveWithRetry(stagingDir, installFullPath);
                     switched = true;
                 }
                 catch (Exception switchEx) when (switchEx is IOException or UnauthorizedAccessException)
@@ -660,6 +680,22 @@ public static class InstallService
         {
             Debug.WriteLine($"[InstallService] Planification de la suppression au redémarrage impossible pour '{filePath}' : {ex.Message}");
             return false;
+        }
+    }
+
+    private static void MoveWithRetry(string sourceDir, string destDir)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try
+            {
+                Directory.Move(sourceDir, destDir);
+                return;
+            }
+            catch (Exception ex) when (attempt < 4 && ex is IOException or UnauthorizedAccessException)
+            {
+                Thread.Sleep(1000);
+            }
         }
     }
 

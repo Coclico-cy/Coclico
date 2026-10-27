@@ -16,16 +16,26 @@ public static class ArchiveGuard
 
     public static bool IsSafeArchiveEntry(string entryName)
     {
-        if (string.IsNullOrWhiteSpace(entryName) ||
-            entryName.Length > MaxPathChars ||
-            entryName.Contains(':') ||
-            entryName.StartsWith('/') || entryName.StartsWith('\\') ||
-            Path.IsPathRooted(entryName))
+        if (string.IsNullOrWhiteSpace(entryName) || entryName.Length > MaxPathChars)
         {
             return false;
         }
 
-        string[] segments = entryName.Split('/', '\\');
+        string name = entryName;
+        if (name.EndsWith('/') || name.EndsWith('\\'))
+        {
+            name = name[..^1];
+        }
+
+        if (string.IsNullOrWhiteSpace(name) ||
+            name.Contains(':') ||
+            name.StartsWith('/') || name.StartsWith('\\') ||
+            Path.IsPathRooted(name))
+        {
+            return false;
+        }
+
+        string[] segments = name.Split('/', '\\');
         foreach (string segment in segments)
         {
             if (string.IsNullOrEmpty(segment) || segment is "." or "..")
