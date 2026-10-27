@@ -1,0 +1,24 @@
+name: "Demande de fonctionnalité"
+description: "Proposer une nouvelle fonctionnalité pour Coclico"
+title: "[Suggestion] "
+labels: [ "enhancement" ]
+body:
+  - type: textarea
+    id: probleme
+    attributes:
+      label: "Quel problème voulez-vous résoudre ?"
+      description: "Décrivez le besoin ou la frustration actuelle."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "La solution que vous proposez"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives envisagées (facultatif)"

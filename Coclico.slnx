@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Coclico/Coclico.csproj" />
+  <Project Path="Coclico.Installer/Coclico.Installer.csproj" />
+  <Project Path="Coclico.Tests/Coclico.Tests.csproj" />
+</Solution>
