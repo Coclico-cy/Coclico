@@ -50,7 +50,7 @@ public sealed class TestWorld : IDisposable
         return full;
     }
 
-    public SignedIntegrityManifest BuildManifest(string version = "2.2.0", int generation = 1, bool sign = true)
+    public SignedIntegrityManifest BuildManifest(string version = "2.2.1", int generation = 1, bool sign = true)
     {
         List<ManifestFileEntry> entries = [];
         foreach (string file in Directory.EnumerateFiles(RootDir, "*", SearchOption.AllDirectories))

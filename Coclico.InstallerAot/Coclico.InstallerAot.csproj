@@ -16,6 +16,7 @@
     <RootNamespace>Coclico.Installer</RootNamespace>
     <AssemblyName>Coclico.Installer</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\Coclico\Resources\icone\plage.ico</ApplicationIcon>
     <Product>Coclico Setup</Product>
     <Description>Installeur Coclico — Avalonia NativeAOT</Description>
     <Copyright>© $([System.DateTime]::UtcNow.Year) Coclico</Copyright>
