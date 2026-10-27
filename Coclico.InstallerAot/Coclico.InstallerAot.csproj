@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.3.8" />
+        <PackageReference Include="Avalonia" Version="12.1.4" />
     <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
