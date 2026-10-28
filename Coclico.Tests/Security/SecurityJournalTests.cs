@@ -16,8 +16,8 @@ public sealed class SecurityJournalTests : IDisposable
         System.Security.Cryptography.RandomNumberGenerator.Fill(key);
 
         var journal = new SecurityJournal(journalPath, key);
-        journal.Append(DateTime.UtcNow, "2.2.1", "StartupCheck", "Integrity", "Valid", "None", "initial check");
-        journal.Append(DateTime.UtcNow, "2.2.1", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "StartupCheck", "Integrity", "Valid", "None", "initial check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
 
         JournalVerification verification = journal.Verify();
         Assert.True(verification.IsIntact);
@@ -32,8 +32,8 @@ public sealed class SecurityJournalTests : IDisposable
         System.Security.Cryptography.RandomNumberGenerator.Fill(key);
 
         var journal = new SecurityJournal(journalPath, key);
-        journal.Append(DateTime.UtcNow, "2.2.1", "StartupCheck", "Integrity", "Valid", "None", "initial check");
-        journal.Append(DateTime.UtcNow, "2.2.1", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "StartupCheck", "Integrity", "Valid", "None", "initial check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
         string[] lines = File.ReadAllLines(journalPath);
         lines[1] = lines[1].Replace("Valid", "Altered");
         File.WriteAllLines(journalPath, lines);
@@ -52,8 +52,8 @@ public sealed class SecurityJournalTests : IDisposable
         System.Security.Cryptography.RandomNumberGenerator.Fill(key);
 
         var journal = new SecurityJournal(journalPath, key);
-        journal.Append(DateTime.UtcNow, "2.2.1", "StartupCheck", "Integrity", "Valid", "None", "initial check");
-        journal.Append(DateTime.UtcNow, "2.2.1", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "StartupCheck", "Integrity", "Valid", "None", "initial check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
         string[] lines = File.ReadAllLines(journalPath)[..1];
         File.WriteAllLines(journalPath, lines);
 
@@ -65,7 +65,7 @@ public sealed class SecurityJournalTests : IDisposable
     [Fact]
     public void EntrySanitizationRemovesSeparators()
     {
-        string line = SecurityJournal.BuildLine(DateTime.UtcNow, "2.2.1", "Event", "Comp", "Valid", "None", "a|b\nc");
+        string line = SecurityJournal.BuildLine(DateTime.UtcNow, "2.2.2", "Event", "Comp", "Valid", "None", "a|b\nc");
         Assert.DoesNotContain("|a|b", line);
         Assert.DoesNotContain('\n', line);
         string[] fields = line.Split('|');
@@ -81,8 +81,8 @@ public sealed class SecurityJournalTests : IDisposable
         System.Security.Cryptography.RandomNumberGenerator.Fill(key);
 
         var journal = new SecurityJournal(journalPath, key);
-        journal.Append(DateTime.UtcNow, "2.2.1", "StartupCheck", "Integrity", "Valid", "None", "initial check");
-        journal.Append(DateTime.UtcNow, "2.2.1", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "StartupCheck", "Integrity", "Valid", "None", "initial check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "PeriodicCheck", "Integrity", "Valid", "None", "periodic check");
 
         string exportPath = Path.Join(_dir, "export", "journal-export.log");
         JournalExportResult export = journal.ExportSigned(exportPath);
@@ -115,7 +115,7 @@ public sealed class SecurityJournalTests : IDisposable
         System.Security.Cryptography.RandomNumberGenerator.Fill(key);
 
         var journal = new SecurityJournal(journalPath, key);
-        journal.Append(DateTime.UtcNow, "2.2.1", "StartupCheck", "Integrity", "Valid", "None", "initial check");
+        journal.Append(DateTime.UtcNow, "2.2.2", "StartupCheck", "Integrity", "Valid", "None", "initial check");
         string[] lines = File.ReadAllLines(journalPath);
         lines[1] = lines[1].Replace("Valid", "Altered");
         File.WriteAllLines(journalPath, lines);

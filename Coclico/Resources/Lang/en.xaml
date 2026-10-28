@@ -54,7 +54,7 @@
     <system:String x:Key="Welcome_Card4_Title">Control &amp; Stability</system:String>
     <system:String x:Key="Welcome_HeroDesc">Rebuilt architecture, intelligent optimization, and a modernized experience designed for precise system control.</system:String>
     <system:String x:Key="Welcome_HeroTitle">A new generation of Coclico begins here.</system:String>
-    <system:String x:Key="Welcome_Title">Welcome to Coclico 2.2.1</system:String>
+    <system:String x:Key="Welcome_Title">Welcome to Coclico 2.2.2</system:String>
     <system:String x:Key="Cleaning_Btn_CleanSelection">Clean selection</system:String>
     <system:String x:Key="Cleaning_Btn_CleanSelectionWithTotal">Clean selection ({0})</system:String>
     <system:String x:Key="Cleaning_Btn_Cleaning">Cleaning in progress...</system:String>
@@ -670,7 +670,7 @@ Estimated: {0} across {1} categories.</system:String>
     <system:String x:Key="Settings_AiAndAudit">AI &amp; Audit</system:String>
     <system:String x:Key="Settings_AiSectionTitle">AI ASSISTANT &amp; COPILOT</system:String>
     <system:String x:Key="Settings_AppDesc">Windows system manager</system:String>
-    <system:String x:Key="Settings_AppVersion">Version 2.2.1</system:String>
+    <system:String x:Key="Settings_AppVersion">Version 2.2.2</system:String>
     <system:String x:Key="Settings_Appearance">Appearance</system:String>
     <system:String x:Key="Settings_Apply">Apply</system:String>
     <system:String x:Key="Settings_AuditRetentionDays">Audit log retention period (days)</system:String>

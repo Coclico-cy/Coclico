@@ -133,7 +133,7 @@
                                        FontFamily="Segoe UI Variable, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                         </StackPanel>
 
-                        <TextBlock x:Name="TxtVersion" Text="v2.2.1" FontSize="9.5" FontWeight="SemiBold"
+                        <TextBlock x:Name="TxtVersion" Text="v2.2.2" FontSize="9.5" FontWeight="SemiBold"
                                    Foreground="#706760" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
 
