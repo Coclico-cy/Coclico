@@ -112,6 +112,7 @@ public static class InstallService
 
             try
             {
+                PurgeOrphanInstallFolders(installParent);
                 Directory.CreateDirectory(stagingDir);
 
                 progress.Report(new InstallProgressReport(12, "Recherche des composants d'installation...", ""));
@@ -158,6 +159,8 @@ public static class InstallService
                 progress.Report(new InstallProgressReport(71, "Bascule contrôlée de l'installation...", "L'ancienne version est conservée jusqu'à validation"));
                 try
                 {
+                    CloseProcessesUsingDirectory(installFullPath);
+
                     if (Directory.Exists(installFullPath))
                     {
                         backupDir = installFullPath + ".backup-" + DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -692,10 +695,93 @@ public static class InstallService
                 Directory.Move(sourceDir, destDir);
                 return;
             }
-            catch (Exception ex) when (attempt < 4 && ex is IOException or UnauthorizedAccessException)
+            catch (Exception ex) when (attempt < 9 && ex is IOException or UnauthorizedAccessException)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
             }
+        }
+    }
+
+    private static void CloseProcessesUsingDirectory(string directory)
+    {
+        string normalized = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        foreach (Process process in Process.GetProcesses())
+        {
+            string? modulePath = null;
+            try
+            {
+                modulePath = process.MainModule?.FileName;
+            }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
+            {
+                Debug.WriteLine($"[InstallService] Module principal de '{process.ProcessName}' illisible : {ex.Message}");
+            }
+
+            if (string.IsNullOrWhiteSpace(modulePath))
+            {
+                continue;
+            }
+
+            string normalizedModule = Path.GetFullPath(modulePath);
+            if (!normalizedModule.StartsWith(normalized + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            bool closed = false;
+            try
+            {
+                closed = process.WaitForExit(3000);
+                if (!closed)
+                {
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch (Exception killEx) when (killEx is not System.OutOfMemoryException)
+                    {
+                        Debug.WriteLine($"[InstallService] Arrêt forcé de '{process.ProcessName}' échoué : {killEx.Message}");
+                    }
+
+                    closed = process.WaitForExit(5000);
+                }
+            }
+            catch (Exception ex) when (ex is not System.OutOfMemoryException)
+            {
+                Debug.WriteLine($"[InstallService] Fermeture de '{process.ProcessName}' échouée : {ex.Message}");
+            }
+
+            if (!closed)
+            {
+                throw new InvalidOperationException($"Le processus {process.ProcessName} utilise encore le dossier d'installation, ferme-le manuellement puis relance l'installation.");
+            }
+        }
+    }
+
+    private static void PurgeOrphanInstallFolders(string installParent)
+    {
+        try
+        {
+            string parent = Path.GetFullPath(installParent);
+            string[] patterns = [".coclico-stage-*", "Coclico.staging-*", "Coclico.backup-*"];
+            foreach (string pattern in patterns)
+            {
+                foreach (string dir in Directory.GetDirectories(parent, pattern))
+                {
+                    try
+                    {
+                        Directory.Delete(dir, recursive: true);
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                    {
+                        Debug.WriteLine($"[InstallService] Suppression du dossier orphelin '{dir}' échouée : {ex.Message}");
+                    }
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.OutOfMemoryException)
+        {
+            Debug.WriteLine($"[InstallService] Nettoyage des dossiers orphelins échoué : {ex.Message}");
         }
     }
 

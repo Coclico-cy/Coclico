@@ -344,7 +344,8 @@ public class UpdateManager(ILogger<UpdateManager> logger)
             {
                 FileName = fullPath,
                 UseShellExecute = true,
-                Verb = "runas"
+                Verb = "runas",
+                WorkingDirectory = Path.GetTempPath()
             };
             _ = Process.Start(psi);
             return true;

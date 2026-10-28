@@ -15,6 +15,12 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        try
+        {
+            Environment.CurrentDirectory = Path.GetTempPath();
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) { _ = ex; }
+
         IsUninstallMode = args.Any(arg => arg.Equals("--uninstall", StringComparison.OrdinalIgnoreCase) || arg.Equals("/uninstall", StringComparison.OrdinalIgnoreCase));
         IsSilentMode = args.Any(arg => arg.Equals("--silent", StringComparison.OrdinalIgnoreCase) || arg.Equals("/silent", StringComparison.OrdinalIgnoreCase));
         NativeLibBundle.ExtractAndLoad();
